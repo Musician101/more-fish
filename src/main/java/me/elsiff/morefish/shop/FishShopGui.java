@@ -52,12 +52,12 @@ public final class FishShopGui implements Listener {
     }
 
     @Nonnull
-    private final List<GUIButton> buttons = new ArrayList<>();
-    @Nonnull
     protected final Inventory inventory;
     @Nonnull
-    private final String name;
+    private final List<GUIButton> buttons = new ArrayList<>();
     private final FishItemStackConverter converter;
+    @Nonnull
+    private final String name;
     private final OneTickScheduler oneTickScheduler;
     private final FishShop shop;
     private final Player user;
@@ -96,12 +96,6 @@ public final class FishShopGui implements Listener {
         return name == null ? Bukkit.createInventory(player, size) : Bukkit.createInventory(player, size, name);
     }
 
-    private void setButton(GUIButton guiButton) {
-        buttons.removeIf(g -> g.getSlot() == guiButton.getSlot() && g.getClickType() == guiButton.getClickType());
-        buttons.add(guiButton);
-        inventory.setItem(guiButton.getSlot(), guiButton.getItemStack());
-    }
-
     private final List<ItemStack> allFishItemStacks() {
         return IntStream.range(0, 45).mapToObj(inventory::getItem).filter(Objects::nonNull).filter(converter::isFish).filter(itemStack -> shop.priceOf(converter.fish(itemStack)) >= 0).collect(Collectors.toList());
     }
@@ -117,18 +111,6 @@ public final class FishShopGui implements Listener {
         }).sum();
     }
 
-    private boolean isCorrectInventory(InventoryView inventoryView) {
-        return inventoryView.getTitle().equals(name) && inventoryView.getPlayer().getUniqueId().equals(user.getUniqueId());
-    }
-
-    @EventHandler
-    public void handleClose(InventoryCloseEvent event) {
-        if (isCorrectInventory(event.getView())) {
-            oneTickScheduler.cancelAllOf(this);
-            dropAllFish();
-        }
-    }
-
     @EventHandler
     public final void handleClick(InventoryClickEvent event) {
         if (isCorrectInventory(event.getView())) {
@@ -142,11 +124,29 @@ public final class FishShopGui implements Listener {
     }
 
     @EventHandler
+    public void handleClose(InventoryCloseEvent event) {
+        if (isCorrectInventory(event.getView())) {
+            oneTickScheduler.cancelAllOf(this);
+            dropAllFish();
+        }
+    }
+
+    @EventHandler
     public void handleDrag(InventoryDragEvent event) {
         if (isCorrectInventory(event.getView())) {
             inventory.setItem(49, ItemUtil.EMPTY);
             oneTickScheduler.scheduleLater(this, this::updatePriceIcon);
         }
+    }
+
+    private boolean isCorrectInventory(InventoryView inventoryView) {
+        return inventoryView.getTitle().equals(name) && inventoryView.getPlayer().getUniqueId().equals(user.getUniqueId());
+    }
+
+    private void setButton(GUIButton guiButton) {
+        buttons.removeIf(g -> g.getSlot() == guiButton.getSlot() && g.getClickType() == guiButton.getClickType());
+        buttons.add(guiButton);
+        inventory.setItem(guiButton.getSlot(), guiButton.getItemStack());
     }
 
     private void updatePriceIcon() {

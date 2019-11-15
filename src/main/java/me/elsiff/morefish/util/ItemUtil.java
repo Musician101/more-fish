@@ -22,21 +22,6 @@ public class ItemUtil {
 
     }
 
-    public static ItemStack named(@Nonnull Material material, @Nonnull String name) {
-        return setDisplayName(new ItemStack(material), name);
-    }
-
-    public static ItemStack setDisplayName(@Nonnull ItemStack itemStack, @Nonnull String name) {
-        if (itemStack.getType() == Material.AIR) {
-            return itemStack;
-        }
-
-        ItemMeta itemMeta = itemStack.getItemMeta();
-        itemMeta.setDisplayName(name);
-        itemStack.setItemMeta(itemMeta);
-        return itemStack;
-    }
-
     public static ItemStack addHiddenGlow(@Nonnull ItemStack itemStack) {
         if (itemStack.getType() == Material.AIR) {
             return itemStack;
@@ -54,6 +39,21 @@ public class ItemUtil {
         ItemMeta meta = itemStack.getItemMeta();
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         itemStack.setItemMeta(meta);
+        return itemStack;
+    }
+
+    public static ItemStack named(@Nonnull Material material, @Nonnull String name) {
+        return setDisplayName(new ItemStack(material), name);
+    }
+
+    public static ItemStack setDisplayName(@Nonnull ItemStack itemStack, @Nonnull String name) {
+        if (itemStack.getType() == Material.AIR) {
+            return itemStack;
+        }
+
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.setDisplayName(name);
+        itemStack.setItemMeta(itemMeta);
         return itemStack;
     }
 
