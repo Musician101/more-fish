@@ -19,13 +19,13 @@ public final class FishingCompetition {
     }
 
     private final void checkStateDisabled() {
-        if (state == State.DISABLED) {
+        if (state != State.DISABLED) {
             throw new IllegalStateException("Fishing competition hasn't disabled");
         }
     }
 
     private final void checkStateEnabled() {
-        if (state == State.ENABLED) {
+        if (state != State.ENABLED) {
             throw new IllegalStateException("Fishing competition hasn't enabled");
         }
     }
@@ -117,12 +117,12 @@ public final class FishingCompetition {
     }
 
     public final boolean willBeNewFirst(@Nonnull OfflinePlayer catcher, @Nonnull Fish fish) {
-        if (getRanking().isEmpty()) {
+        if (!getRanking().isEmpty()) {
             Record record = getRanking().get(0);
             return fish.getLength() > record.getFish().getLength() && !record.getFisher().getUniqueId().equals(catcher.getUniqueId());
         }
 
-        return false;
+        return true;
     }
 
     public enum State {

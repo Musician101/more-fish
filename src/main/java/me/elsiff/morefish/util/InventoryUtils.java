@@ -1,5 +1,6 @@
 package me.elsiff.morefish.util;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -21,7 +22,7 @@ public final class InventoryUtils {
             delivery.setAmount(delivery.getAmount() - givingAmount);
         });
 
-        acceptableSlots.stream().filter(slot -> InventoryExtension.isEmptyAt(inventory, slot)).forEach(slot -> {
+        acceptableSlots.stream().filter(slot -> isEmptyAt(inventory, slot)).forEach(slot -> {
             int placingAmount = Math.min(delivery.getAmount(), delivery.getMaxStackSize());
             ItemStack deliveryClone = delivery.clone();
             deliveryClone.setAmount(placingAmount);
@@ -31,11 +32,25 @@ public final class InventoryUtils {
     }
 
     public static void deliverTo(@Nonnull Inventory inventory, @Nonnull ItemStack delivery) {
-        deliverTo(inventory, delivery, InventoryExtension.slots(inventory));
+        deliverTo(inventory, delivery, slots(inventory));
     }
 
     @Nonnull
     public static ItemStack emptyStack() {
         return new ItemStack(Material.AIR);
+    }
+
+    public static final boolean isEmptyAt(@Nonnull Inventory inventory, int slot) {
+        ItemStack item = inventory.getItem(slot);
+        return item == null || item.getType() == Material.AIR;
+    }
+
+    @Nonnull
+    public static final List<Integer> slots(@Nonnull Inventory inventory) {
+        List<Integer> slots = new ArrayList<>();
+        for (int i = 0; i < inventory.getSize(); i++) {
+            slots.add(i);
+        }
+        return slots;
     }
 }

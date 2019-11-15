@@ -2,7 +2,6 @@ package me.elsiff.morefish.shop;
 
 import java.util.Collection;
 import javax.annotation.Nonnull;
-import me.elsiff.egui.GuiOpener;
 import me.elsiff.morefish.configuration.Config;
 import me.elsiff.morefish.fishing.Fish;
 import me.elsiff.morefish.hooker.VaultHooker;
@@ -15,28 +14,26 @@ import org.bukkit.entity.Player;
 public final class FishShop {
 
     private final FishItemStackConverter converter;
-    private final GuiOpener guiOpener;
     private final OneTickScheduler oneTickScheduler;
     private final VaultHooker vault;
 
-    public FishShop(@Nonnull GuiOpener guiOpener, @Nonnull OneTickScheduler oneTickScheduler, @Nonnull FishItemStackConverter converter, @Nonnull VaultHooker vault) {
+    public FishShop(@Nonnull OneTickScheduler oneTickScheduler, @Nonnull FishItemStackConverter converter, @Nonnull VaultHooker vault) {
         super();
-        this.guiOpener = guiOpener;
         this.oneTickScheduler = oneTickScheduler;
         this.converter = converter;
         this.vault = vault;
     }
 
     private final Economy getEconomy() {
-        if (vault.hasHooked()) {
+        if (!vault.hasHooked()) {
             throw new IllegalStateException("Vault must be hooked for fish shop feature");
         }
 
-        if (vault.hasEconomy()) {
+        if (!vault.hasEconomy()) {
             throw new IllegalStateException("Vault doesn't have economy plugin");
         }
 
-        if (vault.getEconomy().isEnabled()) {
+        if (!vault.getEconomy().isEnabled()) {
             throw new IllegalStateException("Economy must be enabled");
         }
 
@@ -60,7 +57,8 @@ public final class FishShop {
     }
 
     public final void openGuiTo(@Nonnull Player player) {
-        this.guiOpener.open(player, new FishShopGui(this, this.converter, this.oneTickScheduler, player));
+        //this.guiOpener.open(player, new FishShopGui(this, this.converter, this.oneTickScheduler, player));
+        new FishShopGui(this, converter, oneTickScheduler, player);
     }
 
     public final double priceOf(@Nonnull Fish fish) {

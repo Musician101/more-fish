@@ -14,11 +14,11 @@ public final class NumberUtils {
 
     @Nonnull
     public static String ordinalSuffixOf(int number) {
-        int var2 = number % 100;
-        if (11 <= var2) {
-            if (13 >= var2) {
+        switch (number % 100) {
+            case 11:
+            case 12:
+            case 13:
                 return "th";
-            }
         }
 
         switch (number % 10) {

@@ -8,6 +8,7 @@ import javax.annotation.Nonnull;
 import me.elsiff.morefish.configuration.Config;
 import me.elsiff.morefish.fishing.FishRarity;
 import me.elsiff.morefish.fishing.catchhandler.CatchCommandExecutor;
+import me.elsiff.morefish.fishing.catchhandler.CatchFireworkSpawner;
 import me.elsiff.morefish.fishing.catchhandler.CatchHandler;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -23,10 +24,14 @@ public final class FishRaritySetLoader implements CustomLoader<Set<FishRarity>> 
 
     @Nonnull
     public Set<FishRarity> loadFrom(@Nonnull ConfigurationSection section, @Nonnull String path) {
-        return section.getKeys(false).stream().map(section::getConfigurationSection).map(cs -> {
+        ConfigurationSection rarities = section.getConfigurationSection(path);
+        return rarities.getKeys(false).stream().map(rarities::getConfigurationSection).map(cs -> {
             List<CatchHandler> catchHandlers = new ArrayList<>();
             if (cs.contains("commands")) {
                 catchHandlers.add(new CatchCommandExecutor(cs.getStringList("commands")));
+            }
+            else if (cs.getBoolean("firework", false)) {
+                catchHandlers.add(new CatchFireworkSpawner());
             }
 
             return new FishRarity(cs.getName(), cs.getString("display-name"), cs.getBoolean("default", false), cs.getDouble("chance", 0D) / 100D, chatColorLoader.loadFrom(cs, "color"), catchHandlers, playerAnnouncementLoader.loadIfExists(cs, "catch-announce").orElse(Config.INSTANCE.getDefaultCatchAnnouncement()), cs.getBoolean("skip-item-format", false), cs.getBoolean("no-display", false), cs.getBoolean("firework", false), cs.getDouble("additional-price", 0D));

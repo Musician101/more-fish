@@ -101,7 +101,7 @@ public final class FishingCompetitionHost {
                 }
                 else {
                     Entry<Integer, Record> entry = competition.rankedRecordOf((OfflinePlayer) receiver);
-                    String msg = Lang.INSTANCE.format("top-mine").replace(topReplacementOf(entry.getKey(), entry.getValue())).output((Player) receiver);
+                    String msg = Lang.INSTANCE.format("top-mine").replace(topReplacementOf(entry.getKey() + 1, entry.getValue())).output((Player) receiver);
                     receiver.sendMessage(msg);
                 }
             }
@@ -126,7 +126,7 @@ public final class FishingCompetitionHost {
         }
 
         if (getMsgConfig().getBoolean("broadcast-start")) {
-            plugin.getServer().broadcastMessage(Lang.INSTANCE.text("context-start"));
+            plugin.getServer().broadcastMessage(Lang.INSTANCE.text("contest-start"));
             String msg = Lang.INSTANCE.format("contest-start-timer").replace(ImmutableMap.of("%time%", Lang.INSTANCE.time(duration))).output();
             plugin.getServer().broadcastMessage(msg);
         }

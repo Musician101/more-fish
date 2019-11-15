@@ -9,21 +9,15 @@ public final class PlayerAnnouncementLoader implements CustomLoader<PlayerAnnoun
     @Nonnull
     public PlayerAnnouncement loadFrom(@Nonnull ConfigurationSection section, @Nonnull String path) {
         double configuredValue = section.getDouble(path);
-        PlayerAnnouncement announcement;
         switch ((int) configuredValue) {
             case -2:
-                announcement = PlayerAnnouncement.ofEmpty();
-                break;
+                return PlayerAnnouncement.ofEmpty();
             case -1:
-                announcement = PlayerAnnouncement.ofServerBroadcast();
-                break;
+                return PlayerAnnouncement.ofServerBroadcast();
             case 0:
-                announcement = PlayerAnnouncement.ofBaseOnly();
-                break;
+                return PlayerAnnouncement.ofBaseOnly();
             default:
-                announcement = PlayerAnnouncement.ofRanged(configuredValue);
+                return PlayerAnnouncement.ofRanged(configuredValue);
         }
-
-        return announcement;
     }
 }

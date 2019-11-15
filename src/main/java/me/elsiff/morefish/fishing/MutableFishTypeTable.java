@@ -39,7 +39,7 @@ public final class MutableFishTypeTable extends HashMap<FishRarity, Set<FishType
     @Nonnull
     public FishRarity pickRandomRarity() {
         double probabilitySum = getRarities().stream().filter(rarity -> !rarity.getDefault()).mapToDouble(FishRarity::getProbability).sum();
-        if (probabilitySum <= 1.0) {
+        if (probabilitySum >= 1.0) {
             throw new IllegalStateException("Sum of rarity probabilities must not be bigger than 1.0");
         }
 

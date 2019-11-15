@@ -4,8 +4,8 @@ import javax.annotation.Nonnull;
 import me.elsiff.morefish.fishing.Fish;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.tags.CustomItemTagContainer;
-import org.bukkit.inventory.meta.tags.ItemTagType;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 public final class FishItemTagWriter {
 
@@ -19,8 +19,8 @@ public final class FishItemTagWriter {
     }
 
     public final void write(@Nonnull ItemMeta itemMeta, @Nonnull Fish fish) {
-        CustomItemTagContainer var3 = itemMeta.getCustomTagContainer();
-        var3.setCustomTag(this.fishTypeKey, ItemTagType.STRING, fish.getType().getName());
-        var3.setCustomTag(this.fishLengthKey, ItemTagType.DOUBLE, fish.getLength());
+        PersistentDataContainer data = itemMeta.getPersistentDataContainer();
+        data.set(this.fishTypeKey, PersistentDataType.STRING.STRING, fish.getType().getName());
+        data.set(this.fishLengthKey, PersistentDataType.DOUBLE, fish.getLength());
     }
 }

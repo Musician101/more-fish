@@ -11,6 +11,7 @@ import javax.annotation.Nonnull;
 import me.elsiff.morefish.fishing.FishRarity;
 import me.elsiff.morefish.fishing.FishType;
 import me.elsiff.morefish.fishing.catchhandler.CatchCommandExecutor;
+import me.elsiff.morefish.fishing.catchhandler.CatchFireworkSpawner;
 import me.elsiff.morefish.fishing.catchhandler.CatchHandler;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -34,14 +35,17 @@ public final class FishTypeMapLoader implements CustomLoader<Map<FishRarity, Set
 
     @Nonnull
     public Map<FishRarity, Set<FishType>> loadFrom(@Nonnull ConfigurationSection section, @Nonnull String path) {
-        ConfigurationSection root = section.getConfigurationSection(path);
-        Set<FishRarity> rarities = fishRaritySetLoader.loadFrom(root, "rarity-list");
-        return root.getConfigurationSection("fish-list").getKeys(true).stream().map(root::getConfigurationSection).map(groupByRarity -> {
+        Set<FishRarity> rarities = fishRaritySetLoader.loadFrom(section, "rarity-list");
+        ConfigurationSection fishList = section.getConfigurationSection("fish-list");
+        return fishList.getKeys(false).stream().map(fishList::getConfigurationSection).map(groupByRarity -> {
             FishRarity rarity = findRarity(rarities, groupByRarity.getName());
-            Set<FishType> fishTypes = groupByRarity.getKeys(true).stream().map(groupByRarity::getConfigurationSection).map(cs -> {
+            Set<FishType> fishTypes = groupByRarity.getKeys(false).stream().map(groupByRarity::getConfigurationSection).map(cs -> {
                 List<CatchHandler> catchHandlers = new ArrayList<>(rarity.getCatchHandlers());
                 if (cs.contains("commands")) {
                     catchHandlers.add(new CatchCommandExecutor(cs.getStringList("commands")));
+                }
+                else if (cs.getBoolean("firework", false)) {
+                    catchHandlers.add(new CatchFireworkSpawner());
                 }
 
                 return new FishType(cs.getName(), rarity, cs.getString("display-name"), cs.getDouble("length-min"), cs.getDouble("length-max"), customItemStackLoader.loadFrom(cs, "icon"), catchHandlers, playerAnnouncementLoader.loadIfExists(cs, "catch-announce").orElse(rarity.getCatchAnnouncement()), fishConditionSetLoader.loadFrom(cs, "conditions"), cs.getBoolean("skip-item-format", rarity.getHasNotFishItemFormat()), cs.getBoolean("no-display", rarity.getNoDisplay()), cs.getBoolean("firework", rarity.getHasCatchFirework()), rarity.getAdditionalPrice() + cs.getDouble("additional-price", 0D));

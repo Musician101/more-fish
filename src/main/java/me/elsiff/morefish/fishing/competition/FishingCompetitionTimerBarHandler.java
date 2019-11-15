@@ -47,8 +47,7 @@ public final class FishingCompetitionTimerBarHandler {
         timerBar = plugin.getServer().createBossBar(timerBarKey, "", barColor, BarStyle.SEGMENTED_10);
         plugin.getServer().getOnlinePlayers().forEach(timerBar::addPlayer);
         barUpdatingTask = new TimerBarUpdater(duration).runTaskTimer(plugin, 0, 20L);
-        barDisplayer = new TimerBarDisplayer();
-        plugin.getServer().getPluginManager().registerEvents(barDisplayer, plugin);
+        plugin.getServer().getPluginManager().registerEvents(barDisplayer = new TimerBarDisplayer(), plugin);
     }
 
     public final boolean getHasTimerEnabled() {
@@ -61,11 +60,9 @@ public final class FishingCompetitionTimerBarHandler {
 
     private final class TimerBarDisplayer implements Listener {
 
-        public TimerBarDisplayer() {
-        }
-
         @EventHandler
         public final void onPlayerJoin(@Nonnull PlayerJoinEvent event) {
+            event.getPlayer().sendMessage("quack");
             timerBar.removePlayer(event.getPlayer());
         }
 

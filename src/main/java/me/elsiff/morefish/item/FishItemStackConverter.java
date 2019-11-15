@@ -1,6 +1,7 @@
 package me.elsiff.morefish.item;
 
 import com.google.common.collect.ImmutableMap;
+import java.util.List;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import me.elsiff.morefish.configuration.Config;
@@ -35,9 +36,13 @@ public final class FishItemStackConverter {
             Map<String, Object> replacement = getFormatReplacementMap(fish, catcher);
             ItemMeta itemMeta = itemStack.getItemMeta();
             itemMeta.setDisplayName(new TextFormat(getFormatConfig().getString("display-name")).replace(replacement).output(catcher));
-            itemMeta.setLore(new TextListFormat(getFormatConfig().getStringList("lore")).replace(replacement).output(catcher));
-            itemStack.setItemMeta(itemMeta);
+            List<String> lore = getFormatConfig().getStringList("lore");
+            if (itemMeta.getLore() != null) {
+                lore.addAll(itemMeta.getLore());
+            }
+            itemMeta.setLore(new TextListFormat(lore).replace(replacement).output(catcher));
             fishWriter.write(itemMeta, fish);
+            itemStack.setItemMeta(itemMeta);
         }
 
         return itemStack;
@@ -53,7 +58,7 @@ public final class FishItemStackConverter {
     }
 
     private final Map<String, Object> getFormatReplacementMap(Fish fish, Player catcher) {
-        return ImmutableMap.of("%player%", catcher.getName(), "%rarity%", fish.getType().getRarity().getName().toUpperCase(), "%rarity_color%", fish.getType().getRarity().getColor().toString(), "%length%", fish.getLength(), "%first%", fish.getType().getDisplayName());
+        return ImmutableMap.of("%player%", catcher.getName(), "%rarity%", fish.getType().getRarity().getName().toUpperCase(), "%rarity_color%", fish.getType().getRarity().getColor().toString(), "%length%", fish.getLength(), "%fish%", fish.getType().getDisplayName());
     }
 
     public final boolean isFish(@Nonnull ItemStack itemStack) {

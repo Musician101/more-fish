@@ -42,16 +42,14 @@ public final class MainCommand extends BaseCommand {
         if (!this.competition.isEnabled()) {
             if (args.length == 1) {
                 try {
-                    String msg = args[0];
-                    long runningTime = Long.parseLong(msg);
+                    long runningTime = Long.parseLong(args[0]);
                     if (runningTime < 0L) {
                         sender.sendMessage(Lang.INSTANCE.text("not-positive"));
                     }
                     else {
                         this.competitionHost.openCompetitionFor(runningTime * (long) 20);
                         if (!Config.INSTANCE.getStandard().getBoolean("messages.broadcast-start", false)) {
-                            msg = Lang.INSTANCE.format("contest-start-timer").replace(ImmutableMap.of("%time%", Lang.INSTANCE.time(runningTime))).output();
-                            sender.sendMessage(msg);
+                            sender.sendMessage(Lang.INSTANCE.format("contest-start-timer").replace(ImmutableMap.of("%time%", Lang.INSTANCE.time(runningTime))).output());
                         }
                     }
                 }
@@ -61,7 +59,7 @@ public final class MainCommand extends BaseCommand {
                 }
             }
             else {
-                this.competitionHost.openCompetition();
+                competitionHost.openCompetitionFor(Config.INSTANCE.getStandard().getInt("auto-running.timer"));
                 if (!Config.INSTANCE.getStandard().getBoolean("messages.broadcast-start", false)) {
                     sender.sendMessage(Lang.INSTANCE.text("contest-start"));
                 }
@@ -165,7 +163,7 @@ public final class MainCommand extends BaseCommand {
         }
         else {
             this.fishShop.openGuiTo(guiUser);
-            if (guiUser.getUniqueId().equals(((Player) sender).getUniqueId())) {
+            if (!guiUser.getUniqueId().equals(((Player) sender).getUniqueId())) {
                 String msg = Lang.INSTANCE.format("forced-player-to-shop").replace(ImmutableMap.of("%s", guiUser.getName())).output();
                 sender.sendMessage(msg);
             }

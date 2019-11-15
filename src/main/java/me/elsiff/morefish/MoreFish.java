@@ -5,8 +5,6 @@ import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
 import javax.annotation.Nonnull;
-import me.elsiff.egui.GuiOpener;
-import me.elsiff.egui.GuiRegistry;
 import me.elsiff.morefish.command.MainCommand;
 import me.elsiff.morefish.configuration.Config;
 import me.elsiff.morefish.configuration.loader.CustomLoader;
@@ -55,10 +53,6 @@ public final class MoreFish extends JavaPlugin {
     @Nonnull
     private final List<CatchHandler> globalCatchHandlers;
     @Nonnull
-    private final GuiOpener guiOpener;
-    @Nonnull
-    private final GuiRegistry guiRegistry = new GuiRegistry(this);
-    @Nonnull
     private final McmmoHooker mcmmoHooker = new McmmoHooker();
     @Nonnull
     private final OneTickScheduler oneTickScheduler;
@@ -74,14 +68,13 @@ public final class MoreFish extends JavaPlugin {
     private final WorldGuardHooker worldGuardHooker = new WorldGuardHooker();
 
     public MoreFish() {
-        guiOpener = new GuiOpener(guiRegistry);
         oneTickScheduler = new OneTickScheduler(this);
         fishTypeTable = new MutableFishTypeTable();
         competition = new FishingCompetition();
         competitionHost = new FishingCompetitionHost(this, competition);
         autoRunner = new FishingCompetitionAutoRunner(this, competitionHost);
         converter = new FishItemStackConverter(this, fishTypeTable);
-        fishShop = new FishShop(guiOpener, oneTickScheduler, converter, vault);
+        fishShop = new FishShop(oneTickScheduler, converter, vault);
         globalCatchHandlers = Arrays.asList(new CatchBroadcaster(), new NewFirstBroadcaster(competition), new CompetitionRecordAdder(competition));
         updateChecker = new UpdateChecker(22926, getDescription().getVersion());
     }
@@ -95,7 +88,6 @@ public final class MoreFish extends JavaPlugin {
         Config.INSTANCE.getCustomItemStackLoader().setProtocolLib(protocolLib);
         Config.INSTANCE.getFishConditionSetLoader().init(mcmmoHooker, worldGuardHooker);
         fishTypeTable.clear();
-        Config.INSTANCE.getFishTypeMapLoader().loadFrom(Config.INSTANCE.getFish(), CustomLoader.ROOT_PATH);
         fishTypeTable.clear();
         fishTypeTable.putAll(Config.INSTANCE.getFishTypeMapLoader().loadFrom(Config.INSTANCE.getFish(), CustomLoader.ROOT_PATH));
         getLogger().info("Loaded " + fishTypeTable.getRarities().size() + " rarities and " + fishTypeTable.getTypes().size() + " fish types");
@@ -147,16 +139,6 @@ public final class MoreFish extends JavaPlugin {
     }
 
     @Nonnull
-    public final GuiOpener getGuiOpener() {
-        return guiOpener;
-    }
-
-    @Nonnull
-    public final GuiRegistry getGuiRegistry() {
-        return guiRegistry;
-    }
-
-    @Nonnull
     public final McmmoHooker getMcmmoHooker() {
         return mcmmoHooker;
     }
@@ -196,7 +178,6 @@ public final class MoreFish extends JavaPlugin {
     }
 
     public void onDisable() {
-        guiRegistry.clear(true);
         if (autoRunner.isEnabled()) {
             autoRunner.disable();
         }

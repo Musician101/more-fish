@@ -18,7 +18,7 @@ public interface PlayerAnnouncement {
 
     @Nonnull
     static PlayerAnnouncement ofRanged(double radius) {
-        if (radius >= 0) {
+        if (radius <= 0) {
             throw new IllegalArgumentException("Radius must not be negative");
         }
 

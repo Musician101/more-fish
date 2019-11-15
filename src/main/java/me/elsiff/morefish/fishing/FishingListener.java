@@ -74,14 +74,17 @@ public final class FishingListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public final void onPlayerFish(@Nonnull PlayerFishEvent event) {
         if (event.getState() == State.CAUGHT_FISH && event.getCaught() instanceof Item) {
-            if (Config.INSTANCE.getStandard().getBoolean("general.no-fishing-unless-contest") && !competition.isEnabled()) {
-                event.setCancelled(true);
-                event.getPlayer().sendMessage(Lang.INSTANCE.text("no-fishing-allowed"));
+            if (competition.isDisabled()) {
+                if (Config.INSTANCE.getStandard().getBoolean("general.no-fishing-unless-contest")) {
+                    event.setCancelled(true);
+                    event.getPlayer().sendMessage(Lang.INSTANCE.text("no-fishing-allowed"));
+                }
             }
             else if (canReplaceVanillaFishing(event)) {
                 Item caught = (Item) event.getCaught();
                 Fish fish = fishTypeTable.pickRandomType(caught, event.getPlayer(), competition).generateFish();
                 catchHandlersOf(event, fish).forEach(handler -> handler.handle(event.getPlayer(), fish));
+                caught.setItemStack(converter.createItemStack(fish, event.getPlayer()));
             }
         }
     }

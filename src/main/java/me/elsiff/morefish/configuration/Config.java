@@ -3,10 +3,9 @@ package me.elsiff.morefish.configuration;
 import com.google.common.collect.ImmutableMap;
 import java.io.File;
 import java.io.IOException;
-import java.util.AbstractMap.SimpleEntry;
-import java.util.Collections;
 import java.util.Map;
 import javax.annotation.Nonnull;
+import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.announcement.PlayerAnnouncement;
 import me.elsiff.morefish.configuration.loader.ChatColorLoader;
 import me.elsiff.morefish.configuration.loader.CustomItemStackLoader;
@@ -25,30 +24,30 @@ public final class Config {
 
     public static final Config INSTANCE = new Config();
     @Nonnull
-    private static final ChatColorLoader chatColorLoader = new ChatColorLoader();
+    private final ChatColorLoader chatColorLoader = new ChatColorLoader();
     @Nonnull
-    private static final EnchantmentMapLoader enchantmentMapLoader = new EnchantmentMapLoader();
+    private final EnchantmentMapLoader enchantmentMapLoader = new EnchantmentMapLoader();
     @Nonnull
-    private static final CustomItemStackLoader customItemStackLoader = new CustomItemStackLoader(enchantmentMapLoader);
+    private final CustomItemStackLoader customItemStackLoader = new CustomItemStackLoader(enchantmentMapLoader);
     @Nonnull
-    private static final YamlConfiguration fish = new YamlConfiguration();
+    private final YamlConfiguration fish = new YamlConfiguration();
     @Nonnull
-    private static final FishConditionSetLoader fishConditionSetLoader = new FishConditionSetLoader();
+    private final FishConditionSetLoader fishConditionSetLoader = new FishConditionSetLoader();
     @Nonnull
-    private static final YamlConfiguration lang = new YamlConfiguration();
+    private final YamlConfiguration lang = new YamlConfiguration();
     @Nonnull
-    private static final LocalTimeListLoader localTimeListLoader = new LocalTimeListLoader();
+    private final LocalTimeListLoader localTimeListLoader = new LocalTimeListLoader();
     @Nonnull
-    private static final PlayerAnnouncementLoader playerAnnouncementLoader = new PlayerAnnouncementLoader();
+    private final PlayerAnnouncementLoader playerAnnouncementLoader = new PlayerAnnouncementLoader();
     @Nonnull
-    private static final FishRaritySetLoader fishRaritySetLoader = new FishRaritySetLoader(chatColorLoader, playerAnnouncementLoader);
+    private final FishRaritySetLoader fishRaritySetLoader = new FishRaritySetLoader(chatColorLoader, playerAnnouncementLoader);
     @Nonnull
-    private static final FishTypeMapLoader fishTypeMapLoader = new FishTypeMapLoader(fishRaritySetLoader, customItemStackLoader, fishConditionSetLoader, playerAnnouncementLoader);
+    private final FishTypeMapLoader fishTypeMapLoader = new FishTypeMapLoader(fishRaritySetLoader, customItemStackLoader, fishConditionSetLoader, playerAnnouncementLoader);
     @Nonnull
-    private static final PrizeMapLoader prizeMapLoader = new PrizeMapLoader();
+    private final PrizeMapLoader prizeMapLoader = new PrizeMapLoader();
     @Nonnull
-    private static final YamlConfiguration standard = new YamlConfiguration();
-    private static final Map<YamlConfiguration, Integer> configurationVersionMap = ImmutableMap.of(standard, 300, fish, 300, lang, 211);
+    private final YamlConfiguration standard = (YamlConfiguration) MoreFish.instance().getConfig();
+    private final Map<YamlConfiguration, Integer> configurationVersionMap = ImmutableMap.of(standard, 300, fish, 300, lang, 211);
 
     private Config() {
 
@@ -127,8 +126,9 @@ public final class Config {
     public final void load(@Nonnull Plugin plugin) {
         String locale = standard.getString("general.locale");
         standard.set("file-name", "config.yml");
-        String fishFile = "fish_" + locale + ".yml";
+        String fishFile = "locale/fish_" + locale + ".yml";
         try {
+            plugin.saveResource(fishFile, false);
             fish.load(new File(plugin.getDataFolder(), fishFile));
             fish.set("file-name", fishFile);
         }
@@ -136,8 +136,9 @@ public final class Config {
             plugin.getLogger().severe("Failed to load " + fishFile);
         }
 
-        String langFile = "lang_" + locale + ".yml";
+        String langFile = "locale/lang_" + locale + ".yml";
         try {
+            plugin.saveResource(langFile, false);
             lang.load(new File(plugin.getDataFolder(), langFile));
             standard.set("file-name", langFile);
         }
@@ -147,7 +148,7 @@ public final class Config {
 
         configurationVersionMap.forEach((yaml, requiredVersion) -> {
             if (yaml.getInt("version") < requiredVersion) {
-                String msg = Lang.INSTANCE.format("old-file").replace(Collections.singletonList(new SimpleEntry<>("%s", yaml.getString("file-name")))).output();
+                String msg = Lang.INSTANCE.format("old-file").replace(ImmutableMap.of("%s", yaml.getString("file-name"))).output();
                 plugin.getServer().getConsoleSender().sendMessage(msg);
             }
         });

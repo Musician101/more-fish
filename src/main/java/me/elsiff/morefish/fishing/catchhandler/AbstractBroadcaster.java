@@ -17,11 +17,12 @@ public abstract class AbstractBroadcaster implements CatchHandler {
     public abstract PlayerAnnouncement announcement(@Nonnull Fish var1);
 
     private final String fishNameWithRarity(FishType fishType) {
+        String s = fishType.getDisplayName();
         if (fishType.getNoDisplay()) {
-            return "";
+            return s;
         }
 
-        return fishType.getRarity().getDisplayName().toUpperCase() + " " + fishType.getDisplayName();
+        return fishType.getRarity().getDisplayName().toUpperCase() + " " + s;
     }
 
     @Nonnull
@@ -34,7 +35,7 @@ public abstract class AbstractBroadcaster implements CatchHandler {
                 receivers.removeIf(player -> player.getInventory().getItemInMainHand().getType() != Material.FISHING_ROD);
             }
 
-            String msg = getCatchMessageFormat().replace(ImmutableMap.<String, Object>builder().put("%player%", catcher.getName()).put("%length%", fish.getLength()).put("%rarity%", fish.getType().getRarity().getDisplayName().toUpperCase()).put("%rarity_color", fish.getType().getRarity().getColor()).put("%fish%", fish.getType().getName()).put("%fish_with_rarity%", fishNameWithRarity(fish.getType())).build()).output(catcher);
+            String msg = getCatchMessageFormat().replace(ImmutableMap.<String, Object>builder().put("%player%", catcher.getName()).put("%length%", fish.getLength()).put("%rarity%", fish.getType().getRarity().getDisplayName().toUpperCase()).put("%rarity_color%", fish.getType().getRarity().getColor()).put("%fish%", fish.getType().getName()).put("%fish_with_rarity%", fishNameWithRarity(fish.getType())).build()).output(catcher);
             receivers.forEach(player -> player.sendMessage(msg));
         }
     }

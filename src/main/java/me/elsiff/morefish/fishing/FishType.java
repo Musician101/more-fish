@@ -60,7 +60,7 @@ public final class FishType {
 
     @Nonnull
     public final Fish generateFish() {
-        if (lengthMin <= lengthMax) {
+        if (lengthMin > lengthMax) {
             throw new IllegalStateException("Max-length must not be smaller than min-length");
         }
 

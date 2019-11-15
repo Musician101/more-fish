@@ -101,7 +101,7 @@ public final class YamlRecordDao implements RecordDao {
             throw new IllegalArgumentException("Record must exist in the ranking");
         }
 
-        setRecord(yaml.getConfigurationSection("id"), record);
+        setRecord(yaml.getConfigurationSection(id), record);
         try {
             yaml.save(file);
         }

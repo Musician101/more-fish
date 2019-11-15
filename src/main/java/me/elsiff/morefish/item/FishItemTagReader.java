@@ -6,8 +6,8 @@ import me.elsiff.morefish.fishing.FishType;
 import me.elsiff.morefish.fishing.FishTypeTable;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.tags.CustomItemTagContainer;
-import org.bukkit.inventory.meta.tags.ItemTagType;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 public final class FishItemTagReader {
 
@@ -22,24 +22,24 @@ public final class FishItemTagReader {
     }
 
     public final boolean canRead(@Nonnull ItemMeta itemMeta) {
-        CustomItemTagContainer tags = itemMeta.getCustomTagContainer();
-        return tags.hasCustomTag(fishTypeKey, ItemTagType.STRING) && tags.hasCustomTag(fishLengthKey, ItemTagType.DOUBLE);
+        PersistentDataContainer tags = itemMeta.getPersistentDataContainer();
+        return tags.has(fishTypeKey, PersistentDataType.STRING) && tags.has(fishLengthKey, PersistentDataType.DOUBLE);
     }
 
     @Nonnull
     public final Fish read(@Nonnull ItemMeta itemMeta) {
-        CustomItemTagContainer tags = itemMeta.getCustomTagContainer();
-        if (!tags.hasCustomTag(fishTypeKey, ItemTagType.STRING)) {
+        PersistentDataContainer tags = itemMeta.getPersistentDataContainer();
+        if (!tags.has(fishTypeKey, PersistentDataType.STRING)) {
             throw new IllegalArgumentException("Item meta must have fish type tag");
         }
 
-        if (!tags.hasCustomTag(fishLengthKey, ItemTagType.DOUBLE)) {
+        if (!tags.has(fishLengthKey, PersistentDataType.DOUBLE)) {
             throw new IllegalArgumentException("Item meta must have fish length tag");
         }
 
-        String typeName = tags.getCustomTag(fishTypeKey, ItemTagType.STRING);
+        String typeName = tags.get(fishTypeKey, PersistentDataType.STRING);
         FishType type = fishTypeTable.getTypes().stream().filter(it -> typeName.equals(it.getName())).findFirst().orElseThrow(() -> new IllegalStateException("Fish type doesn't exist"));
-        Double length = tags.getCustomTag(fishLengthKey, ItemTagType.DOUBLE);
+        Double length = tags.get(fishLengthKey, PersistentDataType.DOUBLE);
         return new Fish(type, length);
     }
 }

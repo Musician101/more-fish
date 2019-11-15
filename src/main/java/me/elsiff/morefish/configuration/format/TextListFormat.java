@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
+import me.elsiff.morefish.configuration.ColorCodeTranslatingExtension;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,7 +20,7 @@ public final class TextListFormat implements Format<TextListFormat, List<String>
 
     @Nonnull
     public List<String> output(@Nullable Player player) {
-        return strings.stream().map(string -> Format.Companion.tryReplacing(string, player)).collect(Collectors.toList());
+        return ColorCodeTranslatingExtension.translated(strings.stream().map(string -> Format.Companion.tryReplacing(string, player)).collect(Collectors.toList()));
     }
 
     @Override
