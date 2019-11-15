@@ -53,11 +53,11 @@ public final class FishItemStackConverter {
         return fishReader.read(itemStack.getItemMeta());
     }
 
-    private final ConfigurationSection getFormatConfig() {
+    private ConfigurationSection getFormatConfig() {
         return Config.INSTANCE.getFish().getConfigurationSection("item-format");
     }
 
-    private final Map<String, Object> getFormatReplacementMap(Fish fish, Player catcher) {
+    private Map<String, Object> getFormatReplacementMap(Fish fish, Player catcher) {
         return ImmutableMap.of("%player%", catcher.getName(), "%rarity%", fish.getType().getRarity().getName().toUpperCase(), "%rarity_color%", fish.getType().getRarity().getColor().toString(), "%length%", fish.getLength(), "%fish%", fish.getType().getDisplayName());
     }
 

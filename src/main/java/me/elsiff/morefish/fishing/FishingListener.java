@@ -55,11 +55,11 @@ public final class FishingListener implements Listener {
         });
     }
 
-    private final boolean canReplaceVanillaFishing(PlayerFishEvent event) {
+    private boolean canReplaceVanillaFishing(PlayerFishEvent event) {
         return replacingVanillaConditions.stream().anyMatch(it -> it.test(event));
     }
 
-    private final Collection<CatchHandler> catchHandlersOf(PlayerFishEvent event, Fish fish) {
+    private Collection<CatchHandler> catchHandlersOf(PlayerFishEvent event, Fish fish) {
         List<CatchHandler> catchHandlers = new ArrayList<>(globalCatchHandlers);
         catchHandlers.addAll(fish.getType().getCatchHandlers());
         List<World> contestDisabledWorlds = Config.INSTANCE.getStandard().getStringList("general.contest-disabled-worlds").stream().map(Bukkit::getWorld).filter(Objects::nonNull).collect(Collectors.toList());

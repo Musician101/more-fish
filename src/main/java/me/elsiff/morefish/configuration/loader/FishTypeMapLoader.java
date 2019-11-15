@@ -29,7 +29,7 @@ public final class FishTypeMapLoader implements CustomLoader<Map<FishRarity, Set
         this.playerAnnouncementLoader = playerAnnouncementLoader;
     }
 
-    private final FishRarity findRarity(Set<FishRarity> rarities, String name) {
+    private FishRarity findRarity(Set<FishRarity> rarities, String name) {
         return rarities.stream().filter(fishRarity -> name.equals(fishRarity.getName())).findFirst().orElseThrow(() -> new IllegalStateException("Rarity " + name + " doesn't exist."));
     }
 

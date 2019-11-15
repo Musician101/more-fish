@@ -8,8 +8,6 @@ import net.citizensnpcs.api.trait.TraitInfo;
 
 public final class CitizensHooker implements PluginHooker {
 
-    @Nonnull
-    private final String pluginName = "Citizens";
     private boolean hasHooked;
     private TraitInfo traitInfo;
 
@@ -19,7 +17,7 @@ public final class CitizensHooker implements PluginHooker {
 
     @Nonnull
     public String getPluginName() {
-        return this.pluginName;
+        return "Citizens";
     }
 
     public boolean hasHooked() {

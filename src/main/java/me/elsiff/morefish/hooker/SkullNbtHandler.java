@@ -19,11 +19,11 @@ public final class SkullNbtHandler {
 
         NbtCompound tag = (NbtCompound) NbtFactory.fromItemTag(editingStack);
         NbtCompound skullOwner = NbtFactory.ofCompound("SkullOwner");
-        NbtCompound properites = NbtFactory.ofCompound("Properties");
+        NbtCompound properties = NbtFactory.ofCompound("Properties");
         NbtCompound compound = NbtFactory.ofCompound("");
         compound.put("Value", textureValue);
         NbtList<NbtCompound> textures = NbtFactory.ofList("textures", compound);
-        properites.put(textures);
+        properties.put(textures);
         skullOwner.put("Id", UUID.randomUUID().toString());
         tag.put(skullOwner);
         NbtFactory.setItemTag(editingStack, tag);

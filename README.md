@@ -23,7 +23,7 @@ It's the key feature of this plugin. I'm sure that you will love it.
 
 #### Giving Prizes for Contest Winner:
 On the end of competition, prizes you set may be given to specific ranker!  
-You can configure it via config.yml really simplely.
+You can configure it via config.yml really simply.
 
 #### Schedule Contest Automatically:
 Use auto-running feature: start the contest periodically with timer!  

@@ -9,12 +9,12 @@ import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-public final class InventoryUtils {
+final class InventoryUtils {
 
     private InventoryUtils() {
     }
 
-    public static void deliverTo(@Nonnull Inventory inventory, @Nonnull ItemStack delivery, @Nonnull List<Integer> acceptableSlots) {
+    private static void deliverTo(@Nonnull Inventory inventory, @Nonnull ItemStack delivery, @Nonnull List<Integer> acceptableSlots) {
         List<ItemStack> contents = acceptableSlots.stream().map(inventory::getItem).filter(Objects::nonNull).filter(itemStack -> itemStack.getType() != Material.AIR).collect(Collectors.toList());
         contents.stream().filter(it -> it.isSimilar(delivery)).forEach(itemStack -> {
             int givingAmount = Math.min(delivery.getAmount(), itemStack.getMaxStackSize() - itemStack.getAmount());
@@ -40,13 +40,13 @@ public final class InventoryUtils {
         return new ItemStack(Material.AIR);
     }
 
-    public static final boolean isEmptyAt(@Nonnull Inventory inventory, int slot) {
+    private static boolean isEmptyAt(@Nonnull Inventory inventory, int slot) {
         ItemStack item = inventory.getItem(slot);
         return item == null || item.getType() == Material.AIR;
     }
 
     @Nonnull
-    public static final List<Integer> slots(@Nonnull Inventory inventory) {
+    private static List<Integer> slots(@Nonnull Inventory inventory) {
         List<Integer> slots = new ArrayList<>();
         for (int i = 0; i < inventory.getSize(); i++) {
             slots.add(i);

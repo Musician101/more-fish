@@ -10,7 +10,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 public final class FishingCompetitionAutoRunner {
 
-    public static final long HALF_MINUTE = 600L;
+    private static final long HALF_MINUTE = 600L;
     private final FishingCompetitionHost competitionHost;
     private final Plugin plugin;
     private Collection<LocalTime> scheduledTimes;
@@ -47,7 +47,7 @@ public final class FishingCompetitionAutoRunner {
         this.scheduledTimes = scheduledTimes;
     }
 
-    private final void tryOpenCompetition() {
+    private void tryOpenCompetition() {
         int requiredPlayers = Config.INSTANCE.getStandard().getInt("auto-running.required-players");
         if (!competitionHost.getCompetition().isEnabled() && plugin.getServer().getOnlinePlayers().size() >= requiredPlayers) {
             long duration = Config.INSTANCE.getStandard().getLong("auto-running.timer") * 20L;
@@ -60,7 +60,7 @@ public final class FishingCompetitionAutoRunner {
 
         private final Runnable work;
 
-        public TimeChecker(@Nonnull Runnable work) {
+        TimeChecker(@Nonnull Runnable work) {
             super();
             this.work = work;
         }

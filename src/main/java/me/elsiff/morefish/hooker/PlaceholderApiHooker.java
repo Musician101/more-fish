@@ -12,13 +12,11 @@ import org.jetbrains.annotations.Nullable;
 
 public final class PlaceholderApiHooker implements PluginHooker {
 
-    @Nonnull
-    private final String pluginName = "PlaceholderAPI";
     private boolean hasHooked = false;
 
     @Nonnull
     public String getPluginName() {
-        return this.pluginName;
+        return "PlaceholderAPI";
     }
 
     public boolean hasHooked() {

@@ -12,7 +12,7 @@ import org.bukkit.configuration.ConfigurationSection;
 
 public final class PrizeMapLoader implements CustomLoader<Map<IntRange, Prize>> {
 
-    private final IntRange intRangeFrom(String string) {
+    private IntRange intRangeFrom(String string) {
         String[] tokens = string.split("~");
         int start = Integer.parseInt(tokens[0]);
         int end = Integer.MAX_VALUE;

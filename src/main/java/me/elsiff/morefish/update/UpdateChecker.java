@@ -14,7 +14,7 @@ public final class UpdateChecker {
 
     private final String currentVersion;
     @Nullable
-    public String newVersion;
+    private String newVersion;
     private URL checkUrl;
 
     public UpdateChecker(int projectId, @Nonnull String currentVersion) {

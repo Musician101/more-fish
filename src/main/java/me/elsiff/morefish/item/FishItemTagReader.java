@@ -9,7 +9,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-public final class FishItemTagReader {
+final class FishItemTagReader {
 
     private final NamespacedKey fishLengthKey;
     private final NamespacedKey fishTypeKey;

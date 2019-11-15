@@ -6,15 +6,13 @@ import me.elsiff.morefish.MoreFish;
 
 public final class ProtocolLibHooker implements PluginHooker {
 
-    @Nonnull
-    private final String pluginName = "ProtocolLib";
     @Nullable
     public SkullNbtHandler skullNbtHandler;
     private boolean hasHooked;
 
     @Nonnull
     public String getPluginName() {
-        return this.pluginName;
+        return "ProtocolLib";
     }
 
     public boolean hasHooked() {

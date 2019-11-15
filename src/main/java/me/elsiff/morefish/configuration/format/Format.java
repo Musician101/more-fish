@@ -20,7 +20,7 @@ public interface Format<T, R> {
 
     final class Companion {
 
-        public static PlaceholderApiHooker placeholderApiHooker;
+        static PlaceholderApiHooker placeholderApiHooker;
 
         private Companion() {
 
@@ -31,7 +31,7 @@ public interface Format<T, R> {
         }
 
         @Nonnull
-        public static String tryReplacing(@Nonnull String string, @Nullable Player player) {
+        static String tryReplacing(@Nonnull String string, @Nullable Player player) {
             if (placeholderApiHooker != null && placeholderApiHooker.hasHooked()) {
                 return placeholderApiHooker.tryReplacing(string, player);
             }

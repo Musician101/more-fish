@@ -24,7 +24,7 @@ public final class FishShop {
         this.vault = vault;
     }
 
-    private final Economy getEconomy() {
+    private Economy getEconomy() {
         if (!vault.hasHooked()) {
             throw new IllegalStateException("Vault must be hooked for fish shop feature");
         }
@@ -44,15 +44,15 @@ public final class FishShop {
         return getShopConfig().getBoolean("enable");
     }
 
-    private final double getPriceMultiplier() {
+    private double getPriceMultiplier() {
         return getShopConfig().getDouble("multiplier");
     }
 
-    private final boolean getRoundDecimalPoints() {
+    private boolean getRoundDecimalPoints() {
         return getShopConfig().getBoolean("round-decimal-points");
     }
 
-    private final ConfigurationSection getShopConfig() {
+    private ConfigurationSection getShopConfig() {
         return Config.INSTANCE.getStandard().getConfigurationSection("fish-shop");
     }
 

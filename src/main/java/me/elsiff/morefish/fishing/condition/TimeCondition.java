@@ -32,7 +32,7 @@ public final class TimeCondition implements FishCondition {
         }
 
         @Nonnull
-        public static Optional<TimeState> fromTime(long worldTime) {
+        static Optional<TimeState> fromTime(long worldTime) {
             return Stream.of(values()).filter(state -> Stream.of(state.range).anyMatch(range -> range.containsInteger(worldTime))).findFirst();
         }
 

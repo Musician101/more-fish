@@ -88,7 +88,6 @@ public final class MoreFish extends JavaPlugin {
         Config.INSTANCE.getCustomItemStackLoader().setProtocolLib(protocolLib);
         Config.INSTANCE.getFishConditionSetLoader().init(mcmmoHooker, worldGuardHooker);
         fishTypeTable.clear();
-        fishTypeTable.clear();
         fishTypeTable.putAll(Config.INSTANCE.getFishTypeMapLoader().loadFrom(Config.INSTANCE.getFish(), CustomLoader.ROOT_PATH));
         getLogger().info("Loaded " + fishTypeTable.getRarities().size() + " rarities and " + fishTypeTable.getTypes().size() + " fish types");
         if (Config.INSTANCE.getStandard().getBoolean("auto-running.enable") && !autoRunner.isEnabled()) {

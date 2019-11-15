@@ -16,7 +16,7 @@ public abstract class AbstractBroadcaster implements CatchHandler {
     @Nonnull
     public abstract PlayerAnnouncement announcement(@Nonnull Fish var1);
 
-    private final String fishNameWithRarity(FishType fishType) {
+    private String fishNameWithRarity(FishType fishType) {
         String s = fishType.getDisplayName();
         if (fishType.getNoDisplay()) {
             return s;
@@ -26,7 +26,7 @@ public abstract class AbstractBroadcaster implements CatchHandler {
     }
 
     @Nonnull
-    public abstract TextFormat getCatchMessageFormat();
+    protected abstract TextFormat getCatchMessageFormat();
 
     public void handle(@Nonnull Player catcher, @Nonnull Fish fish) {
         if (meetBroadcastCondition(catcher, fish)) {
@@ -40,5 +40,5 @@ public abstract class AbstractBroadcaster implements CatchHandler {
         }
     }
 
-    public abstract boolean meetBroadcastCondition(@Nonnull Player var1, @Nonnull Fish var2);
+    protected abstract boolean meetBroadcastCondition(@Nonnull Player var1, @Nonnull Fish var2);
 }

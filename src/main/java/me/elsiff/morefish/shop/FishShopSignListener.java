@@ -21,11 +21,11 @@ public final class FishShopSignListener implements Listener {
         this.fishShop = fishShop;
     }
 
-    private final String getShopSignCreation() {
+    private String getShopSignCreation() {
         return Config.INSTANCE.getStandard().getString("fish-shop.sign.creation");
     }
 
-    private final String getShopSignTitle() {
+    private String getShopSignTitle() {
         return Config.INSTANCE.getStandard().getString("fish-shop.sign.title");
     }
 

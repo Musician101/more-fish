@@ -8,8 +8,6 @@ import org.bukkit.Location;
 
 public final class WorldGuardHooker implements PluginHooker {
 
-    @Nonnull
-    private final String pluginName = "WorldGuard";
     private boolean hasHooked;
 
     public final boolean containsLocation(@Nonnull String regionId, @Nonnull Location location) {
@@ -26,7 +24,7 @@ public final class WorldGuardHooker implements PluginHooker {
 
     @Nonnull
     public String getPluginName() {
-        return this.pluginName;
+        return "WorldGuard";
     }
 
     public boolean hasHooked() {

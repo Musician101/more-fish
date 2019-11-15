@@ -73,12 +73,12 @@ public final class FishingCompetitionHost {
         return competition;
     }
 
-    private final ConfigurationSection getMsgConfig() {
+    private ConfigurationSection getMsgConfig() {
         return Config.INSTANCE.getStandard().getConfigurationSection("messages");
     }
 
     @Nonnull
-    public final Map<IntRange, Prize> getPrizes() {
+    private Map<IntRange, Prize> getPrizes() {
         return Config.INSTANCE.getPrizeMapLoader().loadFrom(Config.INSTANCE.getStandard(), "contest-prizes");
     }
 
@@ -132,7 +132,7 @@ public final class FishingCompetitionHost {
         }
     }
 
-    private final Map<String, Object> topReplacementOf(int number, Record record) {
+    private Map<String, Object> topReplacementOf(int number, Record record) {
         return ImmutableMap.of("%ordinal%", NumberUtils.ordinalOf(number), "%number%", String.valueOf(number), "%player%", "record.fisher.name", "%length%", String.valueOf(record.getFish().getLength()), "%fish%", record.getFish().getType().getName());
     }
 }

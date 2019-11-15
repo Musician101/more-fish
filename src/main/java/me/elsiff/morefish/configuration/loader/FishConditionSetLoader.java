@@ -36,7 +36,7 @@ public final class FishConditionSetLoader implements CustomLoader {
     private McmmoHooker mcmmoHooker;
     private WorldGuardHooker worldGuardHooker;
 
-    private final FishCondition fishConditionFrom(String id, List<String> args) {
+    private FishCondition fishConditionFrom(String id, List<String> args) {
         switch (id) {
             case "raining":
                 return new RainingCondition(Boolean.parseBoolean(args.get(0)));

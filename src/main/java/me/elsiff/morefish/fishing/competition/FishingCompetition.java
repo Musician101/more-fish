@@ -18,13 +18,13 @@ public final class FishingCompetition {
         this.state = State.DISABLED;
     }
 
-    private final void checkStateDisabled() {
+    private void checkStateDisabled() {
         if (state != State.DISABLED) {
             throw new IllegalStateException("Fishing competition hasn't disabled");
         }
     }
 
-    private final void checkStateEnabled() {
+    private void checkStateEnabled() {
         if (state != State.ENABLED) {
             throw new IllegalStateException("Fishing competition hasn't enabled");
         }
@@ -53,7 +53,7 @@ public final class FishingCompetition {
         return this.getRecords().all();
     }
 
-    private final RecordDao getRecords() {
+    private RecordDao getRecords() {
         return DaoFactory.INSTANCE.getRecords();
     }
 
@@ -127,6 +127,6 @@ public final class FishingCompetition {
 
     public enum State {
         ENABLED,
-        DISABLED;
+        DISABLED
     }
 }

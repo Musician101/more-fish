@@ -85,7 +85,7 @@ public final class YamlRecordDao implements RecordDao {
         }
     }
 
-    private final void setRecord(ConfigurationSection section, Record record) {
+    private void setRecord(ConfigurationSection section, Record record) {
         section.set("fish-type", record.getFish().getType().getName());
         section.set("fish-length", record.getFish().getLength());
     }

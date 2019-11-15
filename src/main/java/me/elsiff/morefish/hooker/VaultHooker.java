@@ -8,10 +8,8 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 
 public final class VaultHooker implements PluginHooker {
 
-    @Nonnull
-    private final String pluginName = "Vault";
     @Nullable
-    public Economy economy;
+    private Economy economy;
     private boolean hasHooked;
 
     @Nullable
@@ -21,7 +19,7 @@ public final class VaultHooker implements PluginHooker {
 
     @Nonnull
     public String getPluginName() {
-        return pluginName;
+        return "Vault";
     }
 
     public final boolean hasEconomy() {

@@ -32,7 +32,7 @@ public final class OneTickScheduler {
         private final Runnable action;
         private final Object client;
 
-        public OneTickRunnable(@Nonnull Object client, @Nonnull Runnable action) {
+        OneTickRunnable(@Nonnull Object client, @Nonnull Runnable action) {
             super();
             this.client = client;
             this.action = action;

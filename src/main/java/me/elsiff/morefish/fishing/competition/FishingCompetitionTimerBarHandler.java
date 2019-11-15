@@ -23,7 +23,7 @@ public final class FishingCompetitionTimerBarHandler {
     private FishingCompetitionTimerBarHandler.TimerBarDisplayer barDisplayer;
     private BukkitTask barUpdatingTask;
     private BossBar timerBar;
-    private NamespacedKey timerBarKey;
+    private final NamespacedKey timerBarKey;
 
     public FishingCompetitionTimerBarHandler(@Nonnull Plugin plugin) {
         this.plugin = plugin;
@@ -54,7 +54,7 @@ public final class FishingCompetitionTimerBarHandler {
         return this.timerBar != null;
     }
 
-    private final String timerBarTitle(long remainingSeconds) {
+    private String timerBarTitle(long remainingSeconds) {
         return Lang.INSTANCE.format("timer-boss-bar").replace(ImmutableMap.of("%time%", Lang.INSTANCE.time(remainingSeconds))).output();
     }
 

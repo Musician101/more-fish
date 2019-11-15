@@ -32,7 +32,7 @@ public final class FishType {
     @Nonnull
     private final FishRarity rarity;
 
-    public FishType(@Nonnull String name, @Nonnull FishRarity rarity, @Nonnull String displayName, double lengthMin, double lengthMax, @Nonnull ItemStack icon, @Nonnull List catchHandlers, @Nonnull PlayerAnnouncement catchAnnouncement, @Nonnull Set conditions, boolean hasNotFishItemFormat, boolean noDisplay, boolean hasCatchFirework, double additionalPrice) {
+    public FishType(@Nonnull String name, @Nonnull FishRarity rarity, @Nonnull String displayName, double lengthMin, double lengthMax, @Nonnull ItemStack icon, @Nonnull List<CatchHandler> catchHandlers, @Nonnull PlayerAnnouncement catchAnnouncement, @Nonnull Set<FishCondition> conditions, boolean hasNotFishItemFormat, boolean noDisplay, boolean hasCatchFirework, double additionalPrice) {
         this.name = name;
         this.rarity = rarity;
         this.displayName = displayName;
@@ -48,12 +48,12 @@ public final class FishType {
         this.additionalPrice = additionalPrice;
     }
 
-    private final double clamp(double value, double min, double max) {
+    private double clamp(double value, double min, double max) {
         double var7 = Math.min(value, max);
         return Math.max(var7, min);
     }
 
-    private final double floorToTwoDecimalPlaces(double value) {
+    private double floorToTwoDecimalPlaces(double value) {
         double var3 = value * (double) 10;
         return Math.floor(var3) / (double) 10;
     }

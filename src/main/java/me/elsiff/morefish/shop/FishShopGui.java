@@ -52,7 +52,7 @@ public final class FishShopGui implements Listener {
     }
 
     @Nonnull
-    protected final Inventory inventory;
+    private final Inventory inventory;
     @Nonnull
     private final List<GUIButton> buttons = new ArrayList<>();
     private final FishItemStackConverter converter;
@@ -65,7 +65,7 @@ public final class FishShopGui implements Listener {
     public FishShopGui(@Nonnull FishShop shop, @Nonnull FishItemStackConverter converter, @Nonnull OneTickScheduler oneTickScheduler, @Nonnull Player user) {
         this.user = user;
         this.name = Lang.INSTANCE.text("shop-gui-title");
-        this.inventory = parseInventory(user, name, 54);
+        this.inventory = parseInventory(user, name);
         this.shop = shop;
         this.converter = converter;
         this.oneTickScheduler = oneTickScheduler;
@@ -92,19 +92,19 @@ public final class FishShopGui implements Listener {
         });
     }
 
-    private static Inventory parseInventory(Player player, String name, int size) {
-        return name == null ? Bukkit.createInventory(player, size) : Bukkit.createInventory(player, size, name);
+    private static Inventory parseInventory(Player player, String name) {
+        return name == null ? Bukkit.createInventory(player, 54) : Bukkit.createInventory(player, 54, name);
     }
 
-    private final List<ItemStack> allFishItemStacks() {
+    private List<ItemStack> allFishItemStacks() {
         return IntStream.range(0, 45).mapToObj(inventory::getItem).filter(Objects::nonNull).filter(converter::isFish).filter(itemStack -> shop.priceOf(converter.fish(itemStack)) >= 0).collect(Collectors.toList());
     }
 
-    private final void dropAllFish() {
+    private void dropAllFish() {
         IntStream.range(0, 45).mapToObj(inventory::getItem).filter(Objects::nonNull).forEach(itemStack -> user.getWorld().dropItem(user.getLocation(), itemStack.clone()));
     }
 
-    private final double getTotalPrice() {
+    private double getTotalPrice() {
         return allFishItemStacks().stream().mapToDouble(itemStack -> {
             Fish fish = converter.fish(itemStack);
             return (shop.priceOf(fish) * itemStack.getAmount());
@@ -153,7 +153,7 @@ public final class FishShopGui implements Listener {
         updatePriceIcon(getTotalPrice());
     }
 
-    private final void updatePriceIcon(double price) {
+    private void updatePriceIcon(double price) {
         setButton(new GUIButton(49, ClickType.LEFT, ItemUtil.named(Material.EMERALD, Lang.INSTANCE.format("shop-emerald-icon-name").replace(ImmutableMap.of("%price%", String.valueOf(price))).output()), p -> {
             List<ItemStack> allFishItemStacks = allFishItemStacks();
             if (allFishItemStacks.isEmpty()) {

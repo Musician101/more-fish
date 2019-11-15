@@ -7,13 +7,11 @@ import org.bukkit.entity.Player;
 
 public final class McmmoHooker implements PluginHooker {
 
-    @Nonnull
-    private final String pluginName = "mcMMO";
     private boolean hasHooked;
 
     @Nonnull
     public String getPluginName() {
-        return this.pluginName;
+        return "mcMMO";
     }
 
     public boolean hasHooked() {

@@ -25,7 +25,7 @@ public final class FishRarity {
     private final boolean noDisplay;
     private final double probability;
 
-    public FishRarity(@Nonnull String name, @Nonnull String displayName, boolean var3, double probability, @Nonnull ChatColor color, @Nonnull List catchHandlers, @Nonnull PlayerAnnouncement catchAnnouncement, boolean hasNotFishItemFormat, boolean noDisplay, boolean hasCatchFirework, double additionalPrice) {
+    public FishRarity(@Nonnull String name, @Nonnull String displayName, boolean var3, double probability, @Nonnull ChatColor color, @Nonnull List<CatchHandler> catchHandlers, @Nonnull PlayerAnnouncement catchAnnouncement, boolean hasNotFishItemFormat, boolean noDisplay, boolean hasCatchFirework, double additionalPrice) {
         this.name = name;
         this.displayName = displayName;
         this.isDefault = var3;
@@ -40,7 +40,7 @@ public final class FishRarity {
     }
 
     @Nonnull
-    public final FishRarity copy(@Nonnull String name, @Nonnull String displayName, boolean var3, double probability, @Nonnull ChatColor color, @Nonnull List catchHandlers, @Nonnull PlayerAnnouncement catchAnnouncement, boolean hasNotFishItemFormat, boolean noDisplay, boolean hasCatchFirework, double additionalPrice) {
+    public final FishRarity copy(@Nonnull String name, @Nonnull String displayName, boolean var3, double probability, @Nonnull ChatColor color, @Nonnull List<CatchHandler> catchHandlers, @Nonnull PlayerAnnouncement catchAnnouncement, boolean hasNotFishItemFormat, boolean noDisplay, boolean hasCatchFirework, double additionalPrice) {
         return new FishRarity(name, displayName, var3, probability, color, catchHandlers, catchAnnouncement, hasNotFishItemFormat, noDisplay, hasCatchFirework, additionalPrice);
     }
 
