@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import me.elsiff.morefish.configuration.Config;
 import me.elsiff.morefish.configuration.format.TextFormat;
 import me.elsiff.morefish.configuration.format.TextListFormat;
@@ -61,7 +62,11 @@ public final class FishItemStackConverter {
         return ImmutableMap.of("%player%", catcher.getName(), "%rarity%", fish.getType().getRarity().getName().toUpperCase(), "%rarity_color%", fish.getType().getRarity().getColor().toString(), "%length%", fish.getLength(), "%fish%", fish.getType().getDisplayName());
     }
 
-    public final boolean isFish(@Nonnull ItemStack itemStack) {
+    public final boolean isFish(@Nullable ItemStack itemStack) {
+        if (itemStack == null) {
+            return false;
+        }
+
         return fishReader.canRead(itemStack.getItemMeta());
     }
 }

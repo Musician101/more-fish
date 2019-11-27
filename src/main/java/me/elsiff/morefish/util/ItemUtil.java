@@ -1,6 +1,7 @@
 package me.elsiff.morefish.util;
 
 import java.util.List;
+import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -44,6 +45,16 @@ public class ItemUtil {
 
     public static ItemStack named(@Nonnull Material material, @Nonnull String name) {
         return setDisplayName(new ItemStack(material), name);
+    }
+
+    public static ItemStack removeGlow(ItemStack itemStack) {
+        Stream.of(Enchantment.values()).forEach(itemStack::removeEnchantment);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        if (itemMeta != null) {
+            itemMeta.removeItemFlags(ItemFlag.HIDE_ENCHANTS);
+        }
+
+        return itemStack;
     }
 
     public static ItemStack setDisplayName(@Nonnull ItemStack itemStack, @Nonnull String name) {

@@ -1,103 +1,90 @@
 package me.elsiff.morefish.shop;
 
 import com.google.common.collect.ImmutableMap;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import javax.annotation.Nonnull;
 import me.elsiff.morefish.MoreFish;
+import me.elsiff.morefish.configuration.Config;
 import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.Fish;
+import me.elsiff.morefish.fishing.FishBags;
+import me.elsiff.morefish.fishing.FishRarity;
+import me.elsiff.morefish.gui.AbstractGUI;
 import me.elsiff.morefish.gui.GUIButton;
 import me.elsiff.morefish.item.FishItemStackConverter;
 import me.elsiff.morefish.util.ItemUtil;
 import me.elsiff.morefish.util.OneTickScheduler;
+import net.milkbowl.vault.economy.EconomyResponse.ResponseType;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
-public final class FishShopGui implements Listener {
-
-    private static final String SERVER_VERSION = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-    private static Field activeContainer;
-    private static Field defaultContainer;
-    private static Method getHandle;
-    private static Method handleInventoryCloseEvent;
-
-    static {
-        try {
-            final Class<?> entityHuman = Class.forName("net.minecraft.server." + SERVER_VERSION + ".EntityHuman");
-            handleInventoryCloseEvent = Class.forName("org.bukkit.craftbukkit." + SERVER_VERSION + ".event.CraftEventFactory").getDeclaredMethod("handleInventoryCloseEvent", entityHuman);
-            getHandle = Class.forName("org.bukkit.craftbukkit." + SERVER_VERSION + ".entity.CraftPlayer").getDeclaredMethod("getHandle");
-            defaultContainer = entityHuman.getDeclaredField("defaultContainer");
-            activeContainer = entityHuman.getDeclaredField("activeContainer");
-        }
-        catch (ClassNotFoundException | NoSuchMethodException | NoSuchFieldException e) {
-            e.printStackTrace();
-        }
-    }
+public final class FishShopGui extends AbstractGUI {
 
     @Nonnull
-    private final Inventory inventory;
-    @Nonnull
-    private final List<GUIButton> buttons = new ArrayList<>();
-    private final FishItemStackConverter converter;
-    @Nonnull
-    private final String name;
-    private final OneTickScheduler oneTickScheduler;
-    private final FishShop shop;
-    private final Player user;
+    private final List<FishRarity> selectedRarities;
 
-    public FishShopGui(@Nonnull FishShop shop, @Nonnull FishItemStackConverter converter, @Nonnull OneTickScheduler oneTickScheduler, @Nonnull Player user) {
-        this.user = user;
-        this.name = Lang.INSTANCE.text("shop-gui-title");
-        this.inventory = parseInventory(user, name);
-        this.shop = shop;
-        this.converter = converter;
-        this.oneTickScheduler = oneTickScheduler;
-        for (int i = 45; i < 54; i++) {
-            setButton(new GUIButton(i, ClickType.LEFT, ItemUtil.named(Material.LIGHT_BLUE_STAINED_GLASS_PANE, " "), null));
-        }
+    public FishShopGui(@Nonnull FishShop shop, @Nonnull FishItemStackConverter converter, @Nonnull OneTickScheduler oneTickScheduler, @Nonnull Player user, int page, @Nonnull List<FishRarity> selectedRarities) {
+        super(Lang.INSTANCE.text("shop-gui-title"), shop, converter, oneTickScheduler, user);
+        this.selectedRarities = selectedRarities;
+        this.clickExtraHandler = event -> {
+            if (!converter.isFish(event.getCurrentItem())) {
+                return;
+            }
 
+            Bukkit.getScheduler().scheduleSyncDelayedTask(MoreFish.instance(), this::updatePriceIcon, 2);
+        };
+        this.closeExtraHandler = event -> {
+            Player player = (Player) event.getPlayer();
+            FishBags fishBags = MoreFish.instance().getFishBags();
+            if (fishBags.getMaxAllowedPages(player) > 0) {
+                fishBags.update(player, inventory.getContents(), page);
+                return;
+            }
+
+            dropAllFish();
+        };
+        this.dragExtraHandler = event -> {
+            inventory.setItem(49, ItemUtil.EMPTY);
+            oneTickScheduler.scheduleLater(this, this::updatePriceIcon);
+        };
+        FishBags fishBags = MoreFish.instance().getFishBags();
+        Bukkit.getScheduler().scheduleSyncDelayedTask(MoreFish.instance(), () -> inventory.addItem(fishBags.getFish(user, page).toArray(new ItemStack[0])));
+        IntStream.of(46, 48, 50, 52).forEach(this::glassPaneButton);
         updatePriceIcon(0D);
-        Bukkit.getScheduler().scheduleSyncDelayedTask(MoreFish.instance(), () -> {
-            try {
-                inventory.clear();
-                buttons.forEach(button -> inventory.setItem(button.getSlot(), button.getItemStack()));
+        int userMaxAllowedPages = fishBags.getMaxAllowedPages(user);
+        if (page == 1 && userMaxAllowedPages != 0) {
+            glassPaneButton(45);
+        }
+        else {
+            setButton(new GUIButton(45, ClickType.LEFT, ItemUtil.named(Material.ARROW, "Back Page"), p -> new FishShopGui(shop, converter, oneTickScheduler, p, page - 1, selectedRarities)));
+        }
 
-                final Object entityHuman = getHandle.invoke(user);
-                handleInventoryCloseEvent.invoke(null, entityHuman);
-                activeContainer.set(entityHuman, defaultContainer.get(entityHuman));
+        if (page < userMaxAllowedPages) {
+            setButton(new GUIButton(53, ClickType.LEFT, ItemUtil.named(Material.ARROW, "Next Page"), p -> new FishShopGui(shop, converter, oneTickScheduler, p, page + 1, selectedRarities)));
+        }
+        else {
+            glassPaneButton(53);
+        }
 
-                user.openInventory(inventory);
-                Bukkit.getPluginManager().registerEvents(this, MoreFish.instance());
-            }
-            catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
-            }
-        });
-    }
-
-    private static Inventory parseInventory(Player player, String name) {
-        return name == null ? Bukkit.createInventory(player, 54) : Bukkit.createInventory(player, 54, name);
+        setButton(new GUIButton(47, ClickType.LEFT, ItemUtil.named(Material.CHEST, "Set Sale Filter(s)"), p -> new FishShopFilterGui(1, shop, converter, oneTickScheduler, p, selectedRarities)));
+        Bukkit.getScheduler().scheduleSyncDelayedTask(MoreFish.instance(), () -> updateUpgradeIcon(userMaxAllowedPages), 3);
     }
 
     private List<ItemStack> allFishItemStacks() {
-        return IntStream.range(0, 45).mapToObj(inventory::getItem).filter(Objects::nonNull).filter(converter::isFish).filter(itemStack -> shop.priceOf(converter.fish(itemStack)) >= 0).collect(Collectors.toList());
+        return IntStream.range(0, 45).mapToObj(inventory::getItem).filter(Objects::nonNull).filter(converter::isFish).filter(itemStack -> shop.priceOf(converter.fish(itemStack)) >= 0).filter(itemStack -> selectedRarities.contains(converter.fish(itemStack).getType().getRarity())).collect(Collectors.toList());
     }
 
     private void dropAllFish() {
@@ -107,46 +94,8 @@ public final class FishShopGui implements Listener {
     private double getTotalPrice() {
         return allFishItemStacks().stream().mapToDouble(itemStack -> {
             Fish fish = converter.fish(itemStack);
-            return (shop.priceOf(fish) * itemStack.getAmount());
+            return shop.priceOf(fish) * itemStack.getAmount();
         }).sum();
-    }
-
-    @EventHandler
-    public final void handleClick(InventoryClickEvent event) {
-        if (isCorrectInventory(event.getView())) {
-            if (buttons.stream().map(GUIButton::getSlot).anyMatch(i -> i == event.getRawSlot())) {
-                event.setCancelled(true);
-                buttons.stream().filter(button -> button.getSlot() == event.getRawSlot() && button.getClickType() == event.getClick()).findFirst().flatMap(GUIButton::getAction).ifPresent(action -> action.accept((Player) event.getWhoClicked()));
-            }
-
-            Bukkit.getScheduler().scheduleSyncDelayedTask(MoreFish.instance(), this::updatePriceIcon, 2);
-        }
-    }
-
-    @EventHandler
-    public void handleClose(InventoryCloseEvent event) {
-        if (isCorrectInventory(event.getView())) {
-            oneTickScheduler.cancelAllOf(this);
-            dropAllFish();
-        }
-    }
-
-    @EventHandler
-    public void handleDrag(InventoryDragEvent event) {
-        if (isCorrectInventory(event.getView())) {
-            inventory.setItem(49, ItemUtil.EMPTY);
-            oneTickScheduler.scheduleLater(this, this::updatePriceIcon);
-        }
-    }
-
-    private boolean isCorrectInventory(InventoryView inventoryView) {
-        return inventoryView.getTitle().equals(name) && inventoryView.getPlayer().getUniqueId().equals(user.getUniqueId());
-    }
-
-    private void setButton(GUIButton guiButton) {
-        buttons.removeIf(g -> g.getSlot() == guiButton.getSlot() && g.getClickType() == guiButton.getClickType());
-        buttons.add(guiButton);
-        inventory.setItem(guiButton.getSlot(), guiButton.getItemStack());
     }
 
     private void updatePriceIcon() {
@@ -176,6 +125,33 @@ public final class FishShopGui implements Listener {
                 String msg = Lang.INSTANCE.format("shop-sold").replace(ImmutableMap.of("%price%", totalPrice)).output();
                 p.sendMessage(msg);
             }
+        }));
+    }
+
+    private void updateUpgradeIcon(int userMaxAllowedPages) {
+        ConfigurationSection upgrades = Config.INSTANCE.getStandard().getConfigurationSection("fish-bag-upgrades");
+        List<Entry<Integer, Integer>> upgradeEntries = upgrades.getKeys(false).stream().map(key -> {
+            int maxAllowedPages = Integer.parseInt(key);
+            int price = upgrades.getInt(key);
+            return new SimpleEntry<>(maxAllowedPages, price);
+        }).filter(entry -> entry.getKey() > userMaxAllowedPages).sorted(Comparator.comparingInt(Entry::getKey)).collect(Collectors.toList());
+
+        if (upgradeEntries.isEmpty()) {
+            glassPaneButton(51);
+            return;
+        }
+
+        Entry<Integer, Integer> upgrade = upgradeEntries.get(0);
+        ItemStack icon = ItemUtil.setLore(ItemUtil.named(Material.GOLD_INGOT, "Bag Upgrades"), Collections.singletonList(ChatColor.GREEN + "" + upgrade.getKey() + " page(s) for $" + upgrade.getValue()));
+        setButton(new GUIButton(51, ClickType.LEFT, icon, p -> {
+            MoreFish plugin = MoreFish.instance();
+            if (plugin.getVault().getEconomy().withdrawPlayer(user, upgrade.getValue()).type == ResponseType.SUCCESS) {
+                plugin.getFishBags().setMaxAllowedPages(user, upgrade.getKey());
+                Bukkit.getScheduler().scheduleSyncDelayedTask(MoreFish.instance(), () -> updateUpgradeIcon(upgrade.getKey()), 2);
+                return;
+            }
+
+            user.sendMessage(ChatColor.AQUA + "[MoreFish]" + ChatColor.RESET + " You do not have enough money for that upgrade!");
         }));
     }
 }

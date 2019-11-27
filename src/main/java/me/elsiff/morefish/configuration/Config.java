@@ -47,6 +47,7 @@ public final class Config {
     private final PrizeMapLoader prizeMapLoader = new PrizeMapLoader();
     @Nonnull
     private final YamlConfiguration standard = (YamlConfiguration) MoreFish.instance().getConfig();
+    @Nonnull
     private final Map<YamlConfiguration, Integer> configurationVersionMap = ImmutableMap.of(standard, 300, fish, 300, lang, 211);
 
     private Config() {

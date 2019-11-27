@@ -133,6 +133,6 @@ public final class FishingCompetitionHost {
     }
 
     private Map<String, Object> topReplacementOf(int number, Record record) {
-        return ImmutableMap.of("%ordinal%", NumberUtils.ordinalOf(number), "%number%", String.valueOf(number), "%player%", "record.fisher.name", "%length%", String.valueOf(record.getFish().getLength()), "%fish%", record.getFish().getType().getName());
+        return ImmutableMap.of("%ordinal%", NumberUtils.ordinalOf(number), "%number%", String.valueOf(number), "%player%", record.getFisher().getName(), "%length%", String.valueOf(record.getFish().getLength()), "%fish%", record.getFish().getType().getName());
     }
 }

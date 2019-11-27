@@ -13,9 +13,9 @@ import javax.annotation.Nullable;
 public final class UpdateChecker {
 
     private final String currentVersion;
+    private URL checkUrl;
     @Nullable
     private String newVersion;
-    private URL checkUrl;
 
     public UpdateChecker(int projectId, @Nonnull String currentVersion) {
         super();

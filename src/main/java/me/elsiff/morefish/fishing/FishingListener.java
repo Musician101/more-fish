@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
+import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.configuration.Config;
 import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.catchhandler.CatchHandler;
@@ -25,6 +26,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerFishEvent.State;
+import org.bukkit.inventory.ItemStack;
 
 public final class FishingListener implements Listener {
 
@@ -84,6 +86,14 @@ public final class FishingListener implements Listener {
                 Item caught = (Item) event.getCaught();
                 Fish fish = fishTypeTable.pickRandomType(caught, event.getPlayer(), competition).generateFish();
                 catchHandlersOf(event, fish).forEach(handler -> handler.handle(event.getPlayer(), fish));
+                Player player = event.getPlayer();
+                FishBags fishBags = MoreFish.instance().getFishBags();
+                ItemStack itemStack = converter.createItemStack(fish, player);
+                if (fishBags.addFish(player, itemStack)) {
+                    caught.remove();
+                    return;
+                }
+
                 caught.setItemStack(converter.createItemStack(fish, event.getPlayer()));
             }
         }

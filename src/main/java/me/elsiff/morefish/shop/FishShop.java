@@ -1,5 +1,6 @@
 package me.elsiff.morefish.shop;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import javax.annotation.Nonnull;
 import me.elsiff.morefish.configuration.Config;
@@ -57,8 +58,7 @@ public final class FishShop {
     }
 
     public final void openGuiTo(@Nonnull Player player) {
-        //this.guiOpener.open(player, new FishShopGui(this, this.converter, this.oneTickScheduler, player));
-        new FishShopGui(this, converter, oneTickScheduler, player);
+        new FishShopGui(this, converter, oneTickScheduler, player, 1, new ArrayList<>());
     }
 
     public final double priceOf(@Nonnull Fish fish) {

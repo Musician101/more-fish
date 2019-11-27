@@ -20,10 +20,10 @@ import org.bukkit.scheduler.BukkitTask;
 public final class FishingCompetitionTimerBarHandler {
 
     private final Plugin plugin;
+    private final NamespacedKey timerBarKey;
     private FishingCompetitionTimerBarHandler.TimerBarDisplayer barDisplayer;
     private BukkitTask barUpdatingTask;
     private BossBar timerBar;
-    private final NamespacedKey timerBarKey;
 
     public FishingCompetitionTimerBarHandler(@Nonnull Plugin plugin) {
         this.plugin = plugin;

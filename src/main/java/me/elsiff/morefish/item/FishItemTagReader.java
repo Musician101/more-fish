@@ -1,6 +1,7 @@
 package me.elsiff.morefish.item;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import me.elsiff.morefish.fishing.Fish;
 import me.elsiff.morefish.fishing.FishType;
 import me.elsiff.morefish.fishing.FishTypeTable;
@@ -21,7 +22,11 @@ final class FishItemTagReader {
         this.fishLengthKey = fishLengthKey;
     }
 
-    public final boolean canRead(@Nonnull ItemMeta itemMeta) {
+    public final boolean canRead(@Nullable ItemMeta itemMeta) {
+        if (itemMeta == null) {
+            return false;
+        }
+
         PersistentDataContainer tags = itemMeta.getPersistentDataContainer();
         return tags.has(fishTypeKey, PersistentDataType.STRING) && tags.has(fishLengthKey, PersistentDataType.DOUBLE);
     }

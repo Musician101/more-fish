@@ -6,7 +6,7 @@
 # Warning: DO NOT edit rewards.yml with your file editor, instead use in-game command '/mf rewards'.
 #
 
-version: 300
+version: 301
 
 general:
   locale: 'en'
@@ -32,6 +32,9 @@ auto-running:
     - "14:00"
     - "18:00"
     - "21:00"
+
+fish-bag-upgrades:
+  1: 1000
 
 fish-shop:
   enable: false

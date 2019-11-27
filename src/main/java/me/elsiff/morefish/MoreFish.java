@@ -7,10 +7,12 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import me.elsiff.morefish.command.MainCommand;
 import me.elsiff.morefish.configuration.Config;
+import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.configuration.loader.CustomLoader;
 import me.elsiff.morefish.dao.DaoFactory;
+import me.elsiff.morefish.fishing.FishBags;
+import me.elsiff.morefish.fishing.FishTypeTable;
 import me.elsiff.morefish.fishing.FishingListener;
-import me.elsiff.morefish.fishing.MutableFishTypeTable;
 import me.elsiff.morefish.fishing.catchhandler.CatchBroadcaster;
 import me.elsiff.morefish.fishing.catchhandler.CatchHandler;
 import me.elsiff.morefish.fishing.catchhandler.CompetitionRecordAdder;
@@ -30,6 +32,7 @@ import me.elsiff.morefish.shop.FishShopSignListener;
 import me.elsiff.morefish.update.UpdateChecker;
 import me.elsiff.morefish.update.UpdateNotifierListener;
 import me.elsiff.morefish.util.OneTickScheduler;
+import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -47,9 +50,11 @@ public final class MoreFish extends JavaPlugin {
     @Nonnull
     private final FishItemStackConverter converter;
     @Nonnull
+    private final FishBags fishBags = new FishBags();
+    @Nonnull
     private final FishShop fishShop;
     @Nonnull
-    private final MutableFishTypeTable fishTypeTable;
+    private final FishTypeTable fishTypeTable;
     @Nonnull
     private final List<CatchHandler> globalCatchHandlers;
     @Nonnull
@@ -69,7 +74,7 @@ public final class MoreFish extends JavaPlugin {
 
     public MoreFish() {
         oneTickScheduler = new OneTickScheduler(this);
-        fishTypeTable = new MutableFishTypeTable();
+        fishTypeTable = new FishTypeTable();
         competition = new FishingCompetition();
         competitionHost = new FishingCompetitionHost(this, competition);
         autoRunner = new FishingCompetitionAutoRunner(this, competitionHost);
@@ -84,6 +89,13 @@ public final class MoreFish extends JavaPlugin {
     }
 
     public final void applyConfig() {
+        getServer().getOnlinePlayers().forEach(player -> {
+            String title = player.getOpenInventory().getTitle();
+            if (title.equals(Lang.INSTANCE.text("shop-gui-title")) || title.equals("Set Sale Filter(s)")) {
+                player.closeInventory();
+                player.sendMessage(ChatColor.AQUA + "[MoreFish]" + ChatColor.RESET + " The config is being updated. To prevent issues, the window has been closed.");
+            }
+        });
         Config.INSTANCE.load(this);
         Config.INSTANCE.getCustomItemStackLoader().setProtocolLib(protocolLib);
         Config.INSTANCE.getFishConditionSetLoader().init(mcmmoHooker, worldGuardHooker);
@@ -123,12 +135,17 @@ public final class MoreFish extends JavaPlugin {
     }
 
     @Nonnull
+    public FishBags getFishBags() {
+        return fishBags;
+    }
+
+    @Nonnull
     public final FishShop getFishShop() {
         return fishShop;
     }
 
     @Nonnull
-    public final MutableFishTypeTable getFishTypeTable() {
+    public final FishTypeTable getFishTypeTable() {
         return fishTypeTable;
     }
 
@@ -176,7 +193,9 @@ public final class MoreFish extends JavaPlugin {
         return getDescription().getVersion().contains("SNAPSHOT");
     }
 
+    @Override
     public void onDisable() {
+        fishBags.save();
         if (autoRunner.isEnabled()) {
             autoRunner.disable();
         }
@@ -188,6 +207,7 @@ public final class MoreFish extends JavaPlugin {
         getLogger().info("Plugin has been disabled.");
     }
 
+    @Override
     public void onEnable() {
         DaoFactory.INSTANCE.init(this);
         protocolLib.hookIfEnabled(this);
@@ -196,6 +216,7 @@ public final class MoreFish extends JavaPlugin {
         worldGuardHooker.hookIfEnabled(this);
         citizensHooker.hookIfEnabled(this);
         placeholderApiHooker.hookIfEnabled(this);
+        fishBags.load();
         applyConfig();
         Server server = getServer();
         PluginManager pm = server.getPluginManager();
