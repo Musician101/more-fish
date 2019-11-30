@@ -9,6 +9,7 @@ import me.elsiff.morefish.configuration.Config;
 import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.util.NumberUtils;
 import org.apache.commons.lang.math.IntRange;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -53,7 +54,7 @@ public final class FishingCompetitionHost {
                 List<Record> ranking = competition.getRanking();
                 getPrizes().forEach((range, prize) -> {
                     IntRange rangeInIndex = new IntRange(range.getMinimumInteger() - 1, Math.min(range.getMaximumInteger() - 1, ranking.size() - 1));
-                    ranking.subList(rangeInIndex.getMinimumInteger(), rangeInIndex.getMaximumInteger()).forEach(record -> prize.giveTo(record.getFisher(), competition.rankNumberOf(record), plugin));
+                    ranking.subList(rangeInIndex.getMinimumInteger(), rangeInIndex.getMaximumInteger()).forEach(record -> prize.giveTo(Bukkit.getOfflinePlayer(record.getFisher()), competition.rankNumberOf(record), plugin));
                 });
             }
 
@@ -87,7 +88,7 @@ public final class FishingCompetitionHost {
             receiver.sendMessage(Lang.INSTANCE.text("top-no-record"));
         }
         else {
-            int topSize = getMsgConfig().getInt("top-number", 0);
+            int topSize = getMsgConfig().getInt("top-number", 1);
             List<Record> top = competition.top(topSize);
             top.forEach(record -> {
                 int number = top.indexOf(record) + 1;
@@ -95,7 +96,7 @@ public final class FishingCompetitionHost {
             });
 
             if (receiver instanceof Player) {
-                if (!competition.containsContestant((OfflinePlayer) receiver)) {
+                if (!competition.containsContestant(((Player) receiver).getUniqueId())) {
                     receiver.sendMessage(Lang.INSTANCE.text("top-mine-no-record"));
                 }
                 else {
@@ -119,7 +120,7 @@ public final class FishingCompetitionHost {
     public final void openCompetitionFor(long tick) {
         long duration = tick / (long) 20;
         competition.enable();
-        timerTask = plugin.getServer().getScheduler().runTaskLater(plugin, this::closeCompetition, tick);
+        timerTask = plugin.getServer().getScheduler().runTaskLater(plugin, (Runnable) this::closeCompetition, tick);
         if (Config.INSTANCE.getStandard().getBoolean("general.use-boss-bar")) {
             timerBarHandler.enableTimer(duration);
         }
@@ -132,6 +133,6 @@ public final class FishingCompetitionHost {
     }
 
     private Map<String, Object> topReplacementOf(int number, Record record) {
-        return ImmutableMap.of("%ordinal%", NumberUtils.ordinalOf(number), "%number%", String.valueOf(number), "%player%", record.getFisher().getName(), "%length%", String.valueOf(record.getFish().getLength()), "%fish%", record.getFish().getType().getName());
+        return ImmutableMap.of("%ordinal%", NumberUtils.ordinalOf(number), "%number%", String.valueOf(number), "%player%", Bukkit.getOfflinePlayer(record.getFisher()).getName(), "%length%", String.valueOf(record.getFish().getLength()), "%fish%", record.getFish().getType().getName());
     }
 }

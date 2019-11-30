@@ -7,6 +7,7 @@ import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.configuration.format.Format;
 import me.elsiff.morefish.fishing.competition.FishingCompetition;
 import me.elsiff.morefish.fishing.competition.Record;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -52,7 +53,7 @@ public final class PlaceholderApiHooker implements PluginHooker {
             if (identifier.startsWith("top_player_")) {
                 int number = Integer.parseInt(identifier.replace("top_player_", ""));
                 if (competition.getRanking().size() >= number) {
-                    return competition.recordOf(number).getFisher().getName();
+                    return Bukkit.getOfflinePlayer(competition.recordOf(number).getFisher()).getName();
                 }
 
                 return "no one";
@@ -75,16 +76,16 @@ public final class PlaceholderApiHooker implements PluginHooker {
             }
             else if (player != null) {
                 if (identifier.equals("rank")) {
-                    if (competition.containsContestant(player)) {
-                        Record record = competition.recordOf(player);
+                    if (competition.containsContestant(player.getUniqueId())) {
+                        Record record = competition.recordOf(player.getUniqueId());
                         return String.valueOf(competition.rankNumberOf(record));
                     }
 
                     return "0";
                 }
                 else if (identifier.equals("fish")) {
-                    if (competition.containsContestant(player)) {
-                        return competition.recordOf(player).getFish().getType().getName();
+                    if (competition.containsContestant(player.getUniqueId())) {
+                        return competition.recordOf(player.getUniqueId()).getFish().getType().getName();
                     }
 
                     return "none";

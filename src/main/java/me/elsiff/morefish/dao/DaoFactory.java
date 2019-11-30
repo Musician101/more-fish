@@ -2,7 +2,6 @@ package me.elsiff.morefish.dao;
 
 import javax.annotation.Nonnull;
 import me.elsiff.morefish.MoreFish;
-import me.elsiff.morefish.dao.yaml.YamlRecordDao;
 
 public final class DaoFactory {
 
@@ -13,7 +12,7 @@ public final class DaoFactory {
     }
 
     @Nonnull
-    public final RecordDao getRecords() {
+    public final YamlRecordDao getRecords() {
         return new YamlRecordDao(moreFish, moreFish.getFishTypeTable());
     }
 

@@ -17,7 +17,7 @@ public final class CompetitionRecordAdder implements CatchHandler {
 
     public void handle(@Nonnull Player catcher, @Nonnull Fish fish) {
         if (this.competition.isEnabled()) {
-            this.competition.putRecord(new Record(catcher, fish));
+            this.competition.putRecord(new Record(catcher.getUniqueId(), fish));
         }
 
     }

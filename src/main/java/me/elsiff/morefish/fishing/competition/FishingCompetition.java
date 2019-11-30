@@ -3,9 +3,10 @@ package me.elsiff.morefish.fishing.competition;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.UUID;
 import javax.annotation.Nonnull;
 import me.elsiff.morefish.dao.DaoFactory;
-import me.elsiff.morefish.dao.RecordDao;
+import me.elsiff.morefish.dao.YamlRecordDao;
 import me.elsiff.morefish.fishing.Fish;
 import org.bukkit.OfflinePlayer;
 
@@ -34,8 +35,8 @@ public final class FishingCompetition {
         getRecords().clear();
     }
 
-    public final boolean containsContestant(@Nonnull OfflinePlayer contestant) {
-        return getRanking().stream().anyMatch(record -> record.getFisher().getUniqueId().equals(contestant.getUniqueId()));
+    public final boolean containsContestant(@Nonnull UUID contestant) {
+        return getRanking().stream().anyMatch(record -> contestant.equals(record.getFisher()));
     }
 
     public final void disable() {
@@ -53,7 +54,7 @@ public final class FishingCompetition {
         return this.getRecords().all();
     }
 
-    private RecordDao getRecords() {
+    private YamlRecordDao getRecords() {
         return DaoFactory.INSTANCE.getRecords();
     }
 
@@ -94,12 +95,12 @@ public final class FishingCompetition {
 
     @Nonnull
     public final Entry<Integer, Record> rankedRecordOf(@Nonnull OfflinePlayer contestant) {
-        return getRanking().stream().filter(record -> contestant.getUniqueId().equals(record.getFisher().getUniqueId())).findFirst().map(record -> new SimpleEntry<>(getRanking().indexOf(record) + 1, record)).orElseThrow(() -> new IllegalStateException("Record not found"));
+        return getRanking().stream().filter(record -> contestant.getUniqueId().equals(record.getFisher())).findFirst().map(record -> new SimpleEntry<>(getRanking().indexOf(record) + 1, record)).orElseThrow(() -> new IllegalStateException("Record not found"));
     }
 
     @Nonnull
-    public final Record recordOf(@Nonnull OfflinePlayer contestant) {
-        return getRanking().stream().filter(record -> contestant.getUniqueId().equals(record.getFisher().getUniqueId())).findFirst().orElseThrow(() -> new IllegalStateException("Record not found"));
+    public final Record recordOf(@Nonnull UUID contestant) {
+        return getRanking().stream().filter(record -> contestant.equals(record.getFisher())).findFirst().orElseThrow(() -> new IllegalStateException("Record not found"));
     }
 
     @Nonnull
@@ -119,7 +120,7 @@ public final class FishingCompetition {
     public final boolean willBeNewFirst(@Nonnull OfflinePlayer catcher, @Nonnull Fish fish) {
         if (!getRanking().isEmpty()) {
             Record record = getRanking().get(0);
-            return fish.getLength() > record.getFish().getLength() && !record.getFisher().getUniqueId().equals(catcher.getUniqueId());
+            return fish.getLength() > record.getFish().getLength() && !record.getFisher().equals(catcher.getUniqueId());
         }
 
         return true;
