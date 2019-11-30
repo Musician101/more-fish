@@ -91,8 +91,7 @@ public final class FishingCompetitionHost {
             List<Record> top = competition.top(topSize);
             top.forEach(record -> {
                 int number = top.indexOf(record) + 1;
-                String msg = Lang.INSTANCE.format("top-list").replace(topReplacementOf(number, record)).output();
-                receiver.sendMessage(msg);
+                receiver.sendMessage(Lang.INSTANCE.format("top-list").replace(topReplacementOf(number, record)).output());
             });
 
             if (receiver instanceof Player) {
@@ -120,7 +119,7 @@ public final class FishingCompetitionHost {
     public final void openCompetitionFor(long tick) {
         long duration = tick / (long) 20;
         competition.enable();
-        timerTask = plugin.getServer().getScheduler().runTaskLater(plugin, (Runnable) this::closeCompetition, tick);
+        timerTask = plugin.getServer().getScheduler().runTaskLater(plugin, this::closeCompetition, tick);
         if (Config.INSTANCE.getStandard().getBoolean("general.use-boss-bar")) {
             timerBarHandler.enableTimer(duration);
         }

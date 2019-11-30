@@ -27,7 +27,7 @@ public class FishShopFilterGui extends AbstractGUI {
     public FishShopFilterGui(int page, @Nonnull FishShop shop, @Nonnull FishItemStackConverter converter, @Nonnull OneTickScheduler oneTickScheduler, @Nonnull Player user, @Nonnull List<FishRarity> selectedRarities) {
         super("Set Sale Filter(s)", shop, converter, oneTickScheduler, user);
         this.selectedRarities = selectedRarities;
-        List<FishRarity> fishRarities = MoreFish.instance().getFishTypeTable().getRarities().stream().filter(rarity -> rarity.getAdditionalPrice() > 0).collect(Collectors.toList());
+        List<FishRarity> fishRarities = MoreFish.instance().getFishTypeTable().getRarities().stream().filter(rarity -> rarity.getAdditionalPrice() >= 0).collect(Collectors.toList());
         IntStream.range(0, 45).forEach(x -> {
             try {
                 FishRarity fishRarity = fishRarities.get(x + (page - 1) * 45);
@@ -44,7 +44,6 @@ public class FishShopFilterGui extends AbstractGUI {
 
     private void updateIcon(int slot, FishRarity fishRarity) {
         ItemStack itemStack = ItemUtil.named(Material.COD, fishRarity.getColor() + fishRarity.getDisplayName());
-        user.sendMessage("contains rarity: " + selectedRarities.contains(fishRarity));
         if (selectedRarities.contains(fishRarity)) {
             ItemUtil.setLore(itemStack, Collections.singletonList(ChatColor.GREEN + "Selected."));
         }

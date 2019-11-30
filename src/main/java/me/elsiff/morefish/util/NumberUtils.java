@@ -9,28 +9,25 @@ public final class NumberUtils {
 
     @Nonnull
     public static String ordinalOf(int number) {
-        return number + ordinalSuffixOf(number);
-    }
-
-    @Nonnull
-    public static String ordinalSuffixOf(int number) {
+        String suffix = "th";
         switch (number % 100) {
             case 11:
             case 12:
             case 13:
-                return "th";
+                suffix =  "th";
         }
 
         switch (number % 10) {
             case 1:
-                return "st";
+                suffix = "st";
+                break;
             case 2:
-                return "nd";
+                suffix =  "nd";
+                break;
             case 3:
-                return "rd";
-            default:
-                return "th";
+                suffix = "rd";
         }
-    }
 
+        return number + suffix;
+    }
 }

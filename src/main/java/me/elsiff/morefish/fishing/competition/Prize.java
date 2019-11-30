@@ -18,8 +18,7 @@ public final class Prize {
 
     public final void giveTo(@Nonnull OfflinePlayer player, int rankNumber, @Nonnull Plugin plugin) {
         if (!player.isOnline()) {
-            String ordinal = NumberUtils.ordinalOf(rankNumber);
-            plugin.getLogger().warning(ordinal + " fisher " + player.getName() + " isn't online! Contest prizes may not be sent.");
+            plugin.getLogger().warning(NumberUtils.ordinalOf(rankNumber) + " fisher " + player.getName() + " isn't online! Contest prizes may not be sent.");
         }
 
         Server server = plugin.getServer();

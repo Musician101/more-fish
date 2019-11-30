@@ -44,7 +44,7 @@ public final class FishShopGui extends AbstractGUI {
                 return;
             }
 
-            Bukkit.getScheduler().scheduleSyncDelayedTask(MoreFish.instance(), this::updatePriceIcon, 2);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(MoreFish.instance(), this::updatePriceIcon, 4);
         };
         this.closeExtraHandler = event -> {
             Player player = (Player) event.getPlayer();
@@ -54,7 +54,7 @@ public final class FishShopGui extends AbstractGUI {
                 return;
             }
 
-            dropAllFish();
+            IntStream.range(0, 45).mapToObj(inventory::getItem).filter(Objects::nonNull).forEach(itemStack -> user.getWorld().dropItem(user.getLocation(), itemStack.clone()));
         };
         this.dragExtraHandler = event -> {
             inventory.setItem(49, ItemUtil.EMPTY);
@@ -63,9 +63,9 @@ public final class FishShopGui extends AbstractGUI {
         FishBags fishBags = MoreFish.instance().getFishBags();
         Bukkit.getScheduler().scheduleSyncDelayedTask(MoreFish.instance(), () -> inventory.addItem(fishBags.getFish(user, page).toArray(new ItemStack[0])));
         IntStream.of(46, 48, 50, 52).forEach(this::glassPaneButton);
-        updatePriceIcon(0D);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(MoreFish.instance(), () -> updatePriceIcon(getTotalPrice()), 2);
         int userMaxAllowedPages = fishBags.getMaxAllowedPages(user);
-        if (page == 1 && userMaxAllowedPages != 0) {
+        if (page == 1) {
             glassPaneButton(45);
         }
         else {
@@ -83,16 +83,12 @@ public final class FishShopGui extends AbstractGUI {
         Bukkit.getScheduler().scheduleSyncDelayedTask(MoreFish.instance(), () -> updateUpgradeIcon(userMaxAllowedPages), 3);
     }
 
-    private List<ItemStack> allFishItemStacks() {
+    private List<ItemStack> getFilteredFish() {
         return IntStream.range(0, 45).mapToObj(inventory::getItem).filter(Objects::nonNull).filter(converter::isFish).filter(itemStack -> shop.priceOf(converter.fish(itemStack)) >= 0).filter(itemStack -> selectedRarities.contains(converter.fish(itemStack).getType().getRarity())).collect(Collectors.toList());
     }
 
-    private void dropAllFish() {
-        IntStream.range(0, 45).mapToObj(inventory::getItem).filter(Objects::nonNull).forEach(itemStack -> user.getWorld().dropItem(user.getLocation(), itemStack.clone()));
-    }
-
     private double getTotalPrice() {
-        return allFishItemStacks().stream().mapToDouble(itemStack -> {
+        return getFilteredFish().stream().mapToDouble(itemStack -> {
             Fish fish = converter.fish(itemStack);
             return shop.priceOf(fish) * itemStack.getAmount();
         }).sum();
@@ -104,14 +100,14 @@ public final class FishShopGui extends AbstractGUI {
 
     private void updatePriceIcon(double price) {
         setButton(new GUIButton(49, ClickType.LEFT, ItemUtil.named(Material.EMERALD, Lang.INSTANCE.format("shop-emerald-icon-name").replace(ImmutableMap.of("%price%", String.valueOf(price))).output()), p -> {
-            List<ItemStack> allFishItemStacks = allFishItemStacks();
-            if (allFishItemStacks.isEmpty()) {
+            List<ItemStack> filteredFish = getFilteredFish();
+            if (filteredFish.isEmpty()) {
                 p.sendMessage(Lang.INSTANCE.text("shop-no-fish"));
             }
             else {
                 double totalPrice = getTotalPrice();
                 List<Fish> fishList = new ArrayList<>();
-                allFishItemStacks.forEach(itemStack -> {
+                filteredFish.forEach(itemStack -> {
                     Fish fish = converter.fish(itemStack);
                     for (int i = 0; i < itemStack.getAmount(); i++) {
                         fishList.add(fish);
@@ -121,9 +117,8 @@ public final class FishShopGui extends AbstractGUI {
                 });
 
                 shop.sell(p, fishList);
-                updatePriceIcon(0D);
-                String msg = Lang.INSTANCE.format("shop-sold").replace(ImmutableMap.of("%price%", totalPrice)).output();
-                p.sendMessage(msg);
+                updatePriceIcon(totalPrice);
+                p.sendMessage(Lang.INSTANCE.format("shop-sold").replace(ImmutableMap.of("%price%", totalPrice)).output());
             }
         }));
     }

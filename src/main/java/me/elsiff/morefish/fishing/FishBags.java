@@ -66,18 +66,17 @@ public class FishBags {
                 FishBag fishBag = new FishBag(uuid);
                 fishBag.setMaxAllowedPages(yaml.getInt("max_allowed_pages", 0));
                 ConfigurationSection fishSection = yaml.getConfigurationSection("fish");
-                if (fishSection == null) {
-                    return;
+                if (fishSection != null) {
+                    IntStream.range(1, fishBag.getMaxAllowedPages() + 1).forEach(page -> {
+                        ConfigurationSection pageSection = fishSection.getConfigurationSection(page + "");
+                        if (pageSection == null) {
+                            return;
+                        }
+
+                        fishBag.updatePage(page, IntStream.range(0, 45).mapToObj(Integer::toString).map(pageSection::getItemStack).filter(Objects::nonNull).collect(Collectors.toList()));
+                    });
                 }
 
-                IntStream.range(1, fishBag.getMaxAllowedPages() + 1).forEach(page -> {
-                    ConfigurationSection pageSection = fishSection.getConfigurationSection(page + "");
-                    if (pageSection == null) {
-                        return;
-                    }
-
-                    fishBag.updatePage(page, IntStream.range(0, 45).mapToObj(Integer::toString).map(pageSection::getItemStack).filter(Objects::nonNull).collect(Collectors.toList()));
-                });
                 bags.add(fishBag);
             });
         }
