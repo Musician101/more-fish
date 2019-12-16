@@ -24,7 +24,7 @@ public final class FishTypeTable {
 
     @Nonnull
     public Optional<FishRarity> getDefaultRarity() {
-        Set<FishRarity> defaultRarities = getRarities().stream().filter(FishRarity::getDefault).collect(Collectors.toSet());
+        Set<FishRarity> defaultRarities = getRarities().stream().filter(FishRarity::isDefault).collect(Collectors.toSet());
         if (defaultRarities.size() <= 1) {
             if (!defaultRarities.isEmpty()) {
                 return Optional.of(defaultRarities.iterator().next());
@@ -46,7 +46,7 @@ public final class FishTypeTable {
 
     @Nonnull
     public FishRarity pickRandomRarity() {
-        double probabilitySum = getRarities().stream().filter(rarity -> !rarity.getDefault()).mapToDouble(FishRarity::getProbability).sum();
+        double probabilitySum = getRarities().stream().filter(rarity -> !rarity.isDefault()).mapToDouble(FishRarity::getProbability).sum();
         if (probabilitySum >= 1.0) {
             throw new IllegalStateException("Sum of rarity probabilities must not be bigger than 1.0");
         }
@@ -55,7 +55,7 @@ public final class FishTypeTable {
         double randomVal = new Random().nextDouble();
         double chanceSum = 0.0;
         for (FishRarity rarity : rarities) {
-            if (!rarity.getDefault()) {
+            if (!rarity.isDefault()) {
                 chanceSum += rarity.getProbability();
                 if (randomVal <= chanceSum) {
                     return rarity;

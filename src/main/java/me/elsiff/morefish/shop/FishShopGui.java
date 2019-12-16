@@ -17,7 +17,6 @@ import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.Fish;
 import me.elsiff.morefish.fishing.FishBags;
 import me.elsiff.morefish.fishing.FishRarity;
-import me.elsiff.morefish.gui.AbstractGUI;
 import me.elsiff.morefish.gui.GUIButton;
 import me.elsiff.morefish.item.FishItemStackConverter;
 import me.elsiff.morefish.util.ItemUtil;
@@ -31,14 +30,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
-public final class FishShopGui extends AbstractGUI {
+public final class FishShopGui extends AbstractFishShopGUI {
 
     @Nonnull
     private final List<FishRarity> selectedRarities;
 
-    public FishShopGui(@Nonnull FishShop shop, @Nonnull FishItemStackConverter converter, @Nonnull OneTickScheduler oneTickScheduler, @Nonnull Player user, int page, @Nonnull List<FishRarity> selectedRarities) {
+    public FishShopGui(@Nonnull FishShop shop, @Nonnull FishItemStackConverter converter, @Nonnull OneTickScheduler oneTickScheduler, @Nonnull Player user, int page) {
         super(Lang.INSTANCE.text("shop-gui-title"), shop, converter, oneTickScheduler, user);
-        this.selectedRarities = selectedRarities;
+        this.selectedRarities = FishShopFilterGui.filters.getOrDefault(user.getUniqueId(), new ArrayList<>());
         this.clickExtraHandler = event -> {
             if (!converter.isFish(event.getCurrentItem())) {
                 return;
@@ -69,17 +68,17 @@ public final class FishShopGui extends AbstractGUI {
             glassPaneButton(45);
         }
         else {
-            setButton(new GUIButton(45, ClickType.LEFT, ItemUtil.named(Material.ARROW, "Back Page"), p -> new FishShopGui(shop, converter, oneTickScheduler, p, page - 1, selectedRarities)));
+            setButton(new GUIButton(45, ClickType.LEFT, ItemUtil.named(Material.ARROW, "Back Page"), p -> new FishShopGui(shop, converter, oneTickScheduler, p, page - 1)));
         }
 
         if (page < userMaxAllowedPages) {
-            setButton(new GUIButton(53, ClickType.LEFT, ItemUtil.named(Material.ARROW, "Next Page"), p -> new FishShopGui(shop, converter, oneTickScheduler, p, page + 1, selectedRarities)));
+            setButton(new GUIButton(53, ClickType.LEFT, ItemUtil.named(Material.ARROW, "Next Page"), p -> new FishShopGui(shop, converter, oneTickScheduler, p, page + 1)));
         }
         else {
             glassPaneButton(53);
         }
 
-        setButton(new GUIButton(47, ClickType.LEFT, ItemUtil.named(Material.CHEST, "Set Sale Filter(s)"), p -> new FishShopFilterGui(1, shop, converter, oneTickScheduler, p, selectedRarities)));
+        setButton(new GUIButton(47, ClickType.LEFT, ItemUtil.named(Material.CHEST, "Set Sale Filter(s)"), p -> new FishShopFilterGui(1, shop, converter, oneTickScheduler, p)));
         Bukkit.getScheduler().scheduleSyncDelayedTask(MoreFish.instance(), () -> updateUpgradeIcon(userMaxAllowedPages), 3);
     }
 

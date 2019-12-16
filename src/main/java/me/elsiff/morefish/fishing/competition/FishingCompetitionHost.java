@@ -101,8 +101,7 @@ public final class FishingCompetitionHost {
                 }
                 else {
                     Entry<Integer, Record> entry = competition.rankedRecordOf((OfflinePlayer) receiver);
-                    String msg = Lang.INSTANCE.format("top-mine").replace(topReplacementOf(entry.getKey() + 1, entry.getValue())).output((Player) receiver);
-                    receiver.sendMessage(msg);
+                    receiver.sendMessage(Lang.INSTANCE.format("top-mine").replace(topReplacementOf(entry.getKey() + 1, entry.getValue())).output());
                 }
             }
         }

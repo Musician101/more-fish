@@ -36,6 +36,8 @@ public final class Config {
     @Nonnull
     private final YamlConfiguration lang = new YamlConfiguration();
     @Nonnull
+    private final YamlConfiguration rewards = new YamlConfiguration();
+    @Nonnull
     private final LocalTimeListLoader localTimeListLoader = new LocalTimeListLoader();
     @Nonnull
     private final PlayerAnnouncementLoader playerAnnouncementLoader = new PlayerAnnouncementLoader();
@@ -119,6 +121,10 @@ public final class Config {
         return prizeMapLoader;
     }
 
+    public YamlConfiguration getRewards() {
+        return rewards;
+    }
+
     @Nonnull
     public final YamlConfiguration getStandard() {
         return standard;
@@ -153,5 +159,13 @@ public final class Config {
                 plugin.getServer().getConsoleSender().sendMessage(msg);
             }
         });
+
+        /*try {
+            plugin.saveResource("rewards.yml", false);
+            rewards.load(new File(plugin.getDataFolder(), "rewards.yml"));
+        }
+        catch (IOException | InvalidConfigurationException e) {
+            plugin.getLogger().severe("Failed to load rewards.yml");
+        }*/
     }
 }

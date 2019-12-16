@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.function.Consumer;
 import javax.annotation.Nonnull;
 import me.elsiff.morefish.MoreFish;
-import me.elsiff.morefish.item.FishItemStackConverter;
-import me.elsiff.morefish.shop.FishShop;
 import me.elsiff.morefish.util.ItemUtil;
 import me.elsiff.morefish.util.OneTickScheduler;
 import org.bukkit.Bukkit;
@@ -47,17 +45,13 @@ public abstract class AbstractGUI implements Listener {
     }
 
     @Nonnull
-    protected final FishItemStackConverter converter;
-    @Nonnull
     protected final Inventory inventory;
-    @Nonnull
-    protected final OneTickScheduler oneTickScheduler;
-    @Nonnull
-    protected final FishShop shop;
     @Nonnull
     protected final String title;
     @Nonnull
     protected final Player user;
+    @Nonnull
+    protected final OneTickScheduler oneTickScheduler;
     @Nonnull
     private final List<GUIButton> buttons = new ArrayList<>();
     @Nonnull
@@ -70,12 +64,10 @@ public abstract class AbstractGUI implements Listener {
     protected Consumer<InventoryDragEvent> dragExtraHandler = e -> {
     };
 
-    protected AbstractGUI(@Nonnull String title, @Nonnull FishShop shop, @Nonnull FishItemStackConverter converter, @Nonnull OneTickScheduler oneTickScheduler, @Nonnull Player user) {
+    protected AbstractGUI(@Nonnull String title, @Nonnull OneTickScheduler oneTickScheduler, @Nonnull Player user) {
         this.user = user;
         this.title = title;
         this.inventory = parseInventory(user, this.title);
-        this.shop = shop;
-        this.converter = converter;
         this.oneTickScheduler = oneTickScheduler;
         Bukkit.getScheduler().scheduleSyncDelayedTask(MoreFish.instance(), () -> {
             try {

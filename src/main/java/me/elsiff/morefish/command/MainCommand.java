@@ -123,8 +123,18 @@ public final class MainCommand extends BaseCommand {
             var3.printStackTrace();
             sender.sendMessage(Lang.INSTANCE.text("failed-to-reload"));
         }
-
     }
+
+    /*@Subcommand("rewards")
+    @CommandPermission("morefish.admin")
+    public final void rewards(@Nonnull CommandSender sender) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(ChatColor.AQUA + "[MoreFish]" + ChatColor.RESET + " This command is for players only.");
+            return;
+        }
+
+
+    }*/
 
     @Subcommand("shop")
     public final void shop(@Nonnull CommandSender sender, @Nonnull String[] args) {

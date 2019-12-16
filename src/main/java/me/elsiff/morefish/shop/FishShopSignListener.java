@@ -33,7 +33,7 @@ public final class FishShopSignListener implements Listener {
     public final void onPlayerInteract(@Nonnull PlayerInteractEvent event) {
         Block block = event.getClickedBlock();
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK && block != null && block.getState() instanceof Sign) {
-            Sign sign = (Sign) block;
+            Sign sign = (Sign) block.getState();
             if (sign.getLines()[0].equals(getShopSignTitle())) {
                 if (Config.INSTANCE.getStandard().getBoolean("fish-shop.enable")) {
                     fishShop.openGuiTo(event.getPlayer());

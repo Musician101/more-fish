@@ -12,7 +12,6 @@ public final class Prize {
     private final List<String> commands;
 
     public Prize(@Nonnull List<String> commands) {
-        super();
         this.commands = commands;
     }
 

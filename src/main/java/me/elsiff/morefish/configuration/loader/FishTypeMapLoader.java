@@ -48,7 +48,7 @@ public final class FishTypeMapLoader implements CustomLoader<Map<FishRarity, Set
                     catchHandlers.add(new CatchFireworkSpawner());
                 }
 
-                return new FishType(cs.getName(), rarity, cs.getString("display-name"), cs.getDouble("length-min"), cs.getDouble("length-max"), customItemStackLoader.loadFrom(cs, "icon"), catchHandlers, playerAnnouncementLoader.loadIfExists(cs, "catch-announce").orElse(rarity.getCatchAnnouncement()), fishConditionSetLoader.loadFrom(cs, "conditions"), cs.getBoolean("skip-item-format", rarity.getHasNotFishItemFormat()), cs.getBoolean("no-display", rarity.getNoDisplay()), cs.getBoolean("firework", rarity.getHasCatchFirework()), rarity.getAdditionalPrice() + cs.getDouble("additional-price", 0D));
+                return new FishType(cs.getName(), rarity, cs.getString("display-name"), cs.getDouble("length-min"), cs.getDouble("length-max"), customItemStackLoader.loadFrom(cs, "icon"), catchHandlers, playerAnnouncementLoader.loadIfExists(cs, "catch-announce").orElse(rarity.getCatchAnnouncement()), fishConditionSetLoader.loadFrom(cs, "conditions"), cs.getBoolean("skip-item-format", rarity.hasNotFishItemFormat()), cs.getBoolean("no-display", rarity.getNoDisplay()), cs.getBoolean("firework", rarity.hasCatchFirework()), rarity.getAdditionalPrice() + cs.getDouble("additional-price", 0D));
             }).collect(Collectors.toSet());
             return new SimpleEntry<>(rarity, fishTypes);
         }).collect(Collectors.toMap(Entry::getKey, Entry::getValue));

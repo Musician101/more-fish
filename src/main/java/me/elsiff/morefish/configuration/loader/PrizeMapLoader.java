@@ -16,7 +16,7 @@ public final class PrizeMapLoader implements CustomLoader<Map<IntRange, Prize>> 
         String[] tokens = string.split("~");
         int start = Integer.parseInt(tokens[0]);
         int end = Integer.MAX_VALUE;
-        if (tokens.length > 2) {
+        if (tokens.length > 1) {
             if (!tokens[1].isEmpty()) {
                 end = Integer.parseInt(tokens[1]);
             }

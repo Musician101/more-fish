@@ -80,7 +80,7 @@ public final class FishingCompetition {
         if (containsContestant(record.getFisher())) {
             Record oldRecord = recordOf(record.getFisher());
             if (record.getFish().getLength() > oldRecord.getFish().getLength()) {
-                this.getRecords().update(record);
+                getRecords().update(record);
             }
         }
         else {
@@ -95,7 +95,17 @@ public final class FishingCompetition {
 
     @Nonnull
     public final Entry<Integer, Record> rankedRecordOf(@Nonnull OfflinePlayer contestant) {
-        return getRanking().stream().filter(record -> contestant.getUniqueId().equals(record.getFisher())).findFirst().map(record -> new SimpleEntry<>(getRanking().indexOf(record) + 1, record)).orElseThrow(() -> new IllegalStateException("Record not found"));
+        List<Record> records = getRanking();
+        int place = 0;
+        for (Record record : records) {
+            if (record.getFisher().equals(contestant.getUniqueId())) {
+                return new SimpleEntry<>(place, record);
+            }
+
+            place++;
+        }
+
+        throw new IllegalStateException("Record not found");
     }
 
     @Nonnull

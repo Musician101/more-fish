@@ -6,7 +6,7 @@ import me.elsiff.morefish.announcement.PlayerAnnouncement;
 import me.elsiff.morefish.fishing.catchhandler.CatchHandler;
 import org.bukkit.ChatColor;
 
-public final class FishRarity {
+public final class FishRarity implements Comparable<FishRarity> {
 
     private final double additionalPrice;
     @Nonnull
@@ -39,6 +39,15 @@ public final class FishRarity {
         this.additionalPrice = additionalPrice;
     }
 
+    @Override
+    public int compareTo(@Nonnull FishRarity o) {
+        if (isDefault) {
+            return 0;
+        }
+
+        return Double.compare(this.probability, o.probability);
+    }
+
     @Nonnull
     public final FishRarity copy(@Nonnull String name, @Nonnull String displayName, boolean var3, double probability, @Nonnull ChatColor color, @Nonnull List<CatchHandler> catchHandlers, @Nonnull PlayerAnnouncement catchAnnouncement, boolean hasNotFishItemFormat, boolean noDisplay, boolean hasCatchFirework, double additionalPrice) {
         return new FishRarity(name, displayName, var3, probability, color, catchHandlers, catchAnnouncement, hasNotFishItemFormat, noDisplay, hasCatchFirework, additionalPrice);
@@ -63,7 +72,7 @@ public final class FishRarity {
         return this.color;
     }
 
-    public final boolean getDefault() {
+    public final boolean isDefault() {
         return isDefault;
     }
 
@@ -72,11 +81,11 @@ public final class FishRarity {
         return this.displayName;
     }
 
-    public final boolean getHasCatchFirework() {
+    public final boolean hasCatchFirework() {
         return this.hasCatchFirework;
     }
 
-    public final boolean getHasNotFishItemFormat() {
+    public final boolean hasNotFishItemFormat() {
         return this.hasNotFishItemFormat;
     }
 
