@@ -8,7 +8,6 @@ import javax.annotation.Nonnull;
 import me.elsiff.morefish.configuration.Config;
 import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.util.NumberUtils;
-import org.apache.commons.lang.math.IntRange;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -50,11 +49,11 @@ public final class FishingCompetitionHost {
         }
 
         if (!suspend) {
-            if (getPrizes().isEmpty()) {
+            if (!getPrizes().isEmpty()) {
                 List<Record> ranking = competition.getRanking();
-                getPrizes().forEach((range, prize) -> {
-                    IntRange rangeInIndex = new IntRange(range.getMinimumInteger() - 1, Math.min(range.getMaximumInteger() - 1, ranking.size() - 1));
-                    ranking.subList(rangeInIndex.getMinimumInteger(), rangeInIndex.getMaximumInteger()).forEach(record -> prize.giveTo(Bukkit.getOfflinePlayer(record.getFisher()), competition.rankNumberOf(record), plugin));
+                getPrizes().forEach((place, prize) -> {
+                    Record record = ranking.get(place);
+                    prize.giveTo(Bukkit.getOfflinePlayer(record.getFisher()), competition.rankNumberOf(record), plugin);
                 });
             }
 
@@ -79,7 +78,7 @@ public final class FishingCompetitionHost {
     }
 
     @Nonnull
-    private Map<IntRange, Prize> getPrizes() {
+    private Map<Integer, Prize> getPrizes() {
         return Config.INSTANCE.getPrizeMapLoader().loadFrom(Config.INSTANCE.getStandard(), "contest-prizes");
     }
 

@@ -159,13 +159,5 @@ public final class Config {
                 plugin.getServer().getConsoleSender().sendMessage(msg);
             }
         });
-
-        /*try {
-            plugin.saveResource("rewards.yml", false);
-            rewards.load(new File(plugin.getDataFolder(), "rewards.yml"));
-        }
-        catch (IOException | InvalidConfigurationException e) {
-            plugin.getLogger().severe("Failed to load rewards.yml");
-        }*/
     }
 }
