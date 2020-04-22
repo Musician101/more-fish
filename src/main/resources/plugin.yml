@@ -1,8 +1,10 @@
-name: @pluginName@
-author: @author@
-website: @website@
-version: @project.version@
-main: @mainClass@
+name: MoreFish
+authors:
+  - elsiff
+  - Musician101
+website: https://elsiff.me, musician101.github.io
+version: @version@
+main: me.elsiff.morefish.MoreFish
 api-version: '1.15'
 softdepend: [Vault, Citizens, PlaceholderAPI, ProtocolLib, mcMMO, WorldGuard]
 commands:

@@ -1,16 +1,11 @@
-import org.apache.tools.ant.filters.*
-
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: "com.github.johnrengelman.shadow"
 
 group = 'me.elsiff'
-version = '3.0.4'
+version = '3.0.5'
 
-ext.pluginName = 'MoreFish'
-ext.mainPackage = 'me.elsiff.morefish'
-ext.mainClass = "${mainPackage}.MoreFish"
-ext.spigotVersion = '1.15.2-R0.1-SNAPSHOT'
+def spigotVersion = '1.15.2-R0.1-SNAPSHOT'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -61,17 +56,14 @@ dependencies {
 }
 
 shadowJar {
-    relocate 'co.aikar.commands', "${mainPackage}.acf"
+    relocate 'co.aikar.commands', "me.elsiff.morefish.acf"
 }
 build { dependsOn shadowJar }
 
+import org.apache.tools.ant.filters.ReplaceTokens
+
 processResources {
-    filteringCharset = 'UTF-8'
-    filter ReplaceTokens, tokens: [
-            "pluginName"     : pluginName,
-            "project.version": project.property("version"),
-            "authors"         : "elsiff, Musician101",
-            "websites"        : "https://elsiff.me, musician101.github.io",
-            "mainClass"      : mainClass
-    ]
+    from(sourceSets.main.resources.srcDirs) {
+        filter ReplaceTokens, tokens: ["version": version]
+    }
 }
