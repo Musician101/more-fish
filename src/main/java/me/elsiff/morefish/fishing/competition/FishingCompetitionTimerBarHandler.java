@@ -62,13 +62,12 @@ public final class FishingCompetitionTimerBarHandler {
 
         @EventHandler
         public final void onPlayerJoin(@Nonnull PlayerJoinEvent event) {
-            event.getPlayer().sendMessage("quack");
-            timerBar.removePlayer(event.getPlayer());
+            timerBar.addPlayer(event.getPlayer());
         }
 
         @EventHandler
         public final void onPlayerQuit(@Nonnull PlayerQuitEvent event) {
-            timerBar.addPlayer(event.getPlayer());
+            timerBar.removePlayer(event.getPlayer());
         }
     }
 

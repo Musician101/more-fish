@@ -102,7 +102,11 @@ public final class MoreFish extends JavaPlugin {
         fishTypeTable.clear();
         fishTypeTable.putAll(Config.INSTANCE.getFishTypeMapLoader().loadFrom(Config.INSTANCE.getFish(), CustomLoader.ROOT_PATH));
         getLogger().info("Loaded " + fishTypeTable.getRarities().size() + " rarities and " + fishTypeTable.getTypes().size() + " fish types");
-        if (Config.INSTANCE.getStandard().getBoolean("auto-running.enable") && !autoRunner.isEnabled()) {
+        if (autoRunner.isEnabled()) {
+            autoRunner.disable();
+        }
+
+        if (Config.INSTANCE.getStandard().getBoolean("auto-running.enable")) {
             List<LocalTime> scheduledTimes = Config.INSTANCE.getLocalTimeListLoader().loadFrom(Config.INSTANCE.getStandard(), "auto-running.start-time");
             autoRunner.setScheduledTimes(scheduledTimes);
             autoRunner.enable();

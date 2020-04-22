@@ -20,7 +20,8 @@ public final class BiomeCondition implements FishCondition {
     public boolean check(@Nonnull Item caught, @Nonnull Player fisher, @Nonnull FishingCompetition fishingCompetition) {
         Location location = caught.getLocation();
         int x = location.getBlockX();
+        int y = location.getBlockY();
         int z = location.getBlockZ();
-        return biomes.contains(caught.getWorld().getBiome(x, z));
+        return biomes.contains(caught.getWorld().getBiome(x, y, z));
     }
 }

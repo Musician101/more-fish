@@ -67,7 +67,7 @@ public final class FishingCompetitionAutoRunner {
 
         public void run() {
             LocalTime currentTime = LocalTime.now().withSecond(0).withNano(0);
-            scheduledTimes.stream().filter(it -> it == currentTime).forEach(it -> work.run());
+            scheduledTimes.stream().filter(it -> it.equals(currentTime)).forEach(it -> work.run());
         }
     }
 }

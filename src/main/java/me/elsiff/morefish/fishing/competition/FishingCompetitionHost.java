@@ -51,10 +51,14 @@ public final class FishingCompetitionHost {
         if (!suspend) {
             if (!getPrizes().isEmpty()) {
                 List<Record> ranking = competition.getRanking();
-                getPrizes().forEach((place, prize) -> {
-                    Record record = ranking.get(place);
-                    prize.giveTo(Bukkit.getOfflinePlayer(record.getFisher()), competition.rankNumberOf(record), plugin);
-                });
+                if (!ranking.isEmpty()) {
+                    getPrizes().forEach((place, prize) -> {
+                        if (ranking.size() > place) {
+                            Record record = ranking.get(place);
+                            prize.giveTo(Bukkit.getOfflinePlayer(record.getFisher()), competition.rankNumberOf(record), plugin);
+                        }
+                    });
+                }
             }
 
             if (broadcast && getMsgConfig().getBoolean("show-top-on-ending")) {
@@ -65,7 +69,6 @@ public final class FishingCompetitionHost {
         if (!Config.INSTANCE.getStandard().getBoolean("general.save-records")) {
             competition.clearRecords();
         }
-
     }
 
     @Nonnull

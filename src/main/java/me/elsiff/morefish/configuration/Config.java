@@ -48,7 +48,7 @@ public final class Config {
     @Nonnull
     private final PrizeMapLoader prizeMapLoader = new PrizeMapLoader();
     @Nonnull
-    private final YamlConfiguration standard = (YamlConfiguration) MoreFish.instance().getConfig();
+    private YamlConfiguration standard = (YamlConfiguration) MoreFish.instance().getConfig();
     @Nonnull
     private final Map<YamlConfiguration, Integer> configurationVersionMap = ImmutableMap.of(standard, 300, fish, 300, lang, 211);
 
@@ -131,6 +131,8 @@ public final class Config {
     }
 
     public final void load(@Nonnull Plugin plugin) {
+        plugin.reloadConfig();
+        standard = (YamlConfiguration) plugin.getConfig();
         String locale = standard.getString("general.locale");
         standard.set("file-name", "config.yml");
         String fishFile = "locale/fish_" + locale + ".yml";
