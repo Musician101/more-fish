@@ -34,7 +34,7 @@ repositories {
     maven { url "http://repo.citizensnpcs.co/" }
     maven { url "http://repo.extendedclip.com/content/repositories/placeholderapi/" }
     maven { url "https://repo.dmulloy2.net/nexus/repository/public/" }
-    maven { url "http://maven.sk89q.com/repo/" }
+    maven { url "https://maven.enginehub.org/repo/" }
     maven { url "https://repo.aikar.co/content/groups/aikar/" }
     maven { url "https://hub.spigotmc.org/nexus/content/groups/public/" }
     maven { url 'https://jitpack.io' }
@@ -50,8 +50,8 @@ compileJava {
 dependencies {
     implementation 'co.aikar:acf-core:0.5.0-SNAPSHOT'
     implementation 'co.aikar:acf-paper:0.5.0-SNAPSHOT'
-    compileOnly 'com.comphenix.protocol:ProtocolLib-API:4.5.0'
-    compileOnly 'com.sk89q:worldguard:7.0.2'
+    compileOnly 'com.comphenix.protocol:ProtocolLib:4.5.0'
+    compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.2'
     compileOnly "org.spigotmc:spigot-api:${spigotVersion}"
     compileOnly "org.spigotmc:spigot:${spigotVersion}"
     compileOnly 'net.milkbowl.vault:VaultAPI:1.7'
