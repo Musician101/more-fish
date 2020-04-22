@@ -47,11 +47,11 @@ public abstract class AbstractGUI implements Listener {
     @Nonnull
     protected final Inventory inventory;
     @Nonnull
+    protected final OneTickScheduler oneTickScheduler;
+    @Nonnull
     protected final String title;
     @Nonnull
     protected final Player user;
-    @Nonnull
-    protected final OneTickScheduler oneTickScheduler;
     @Nonnull
     private final List<GUIButton> buttons = new ArrayList<>();
     @Nonnull

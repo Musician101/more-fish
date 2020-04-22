@@ -1,6 +1,5 @@
 package me.elsiff.morefish;
 
-import co.aikar.commands.PaperCommandManager;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
@@ -85,7 +84,7 @@ public final class MoreFish extends JavaPlugin {
     }
 
     public static MoreFish instance() {
-        return JavaPlugin.getPlugin(MoreFish.class);
+        return getPlugin(MoreFish.class);
     }
 
     public final void applyConfig() {
@@ -154,7 +153,7 @@ public final class MoreFish extends JavaPlugin {
     }
 
     @Nonnull
-    public final List getGlobalCatchHandlers() {
+    public final List<CatchHandler> getGlobalCatchHandlers() {
         return globalCatchHandlers;
     }
 
@@ -226,9 +225,7 @@ public final class MoreFish extends JavaPlugin {
         PluginManager pm = server.getPluginManager();
         pm.registerEvents(new FishingListener(fishTypeTable, converter, competition, globalCatchHandlers), this);
         pm.registerEvents(new FishShopSignListener(fishShop), this);
-        PaperCommandManager commands = new PaperCommandManager(this);
-        MainCommand mainCommand = new MainCommand(this, competitionHost, fishShop);
-        commands.registerCommand(mainCommand);
+        server.getPluginCommand("morefish").setExecutor(new MainCommand());
         if (!isSnapshotVersion()) {
             updateChecker.check();
             if (updateChecker.hasNewVersion()) {

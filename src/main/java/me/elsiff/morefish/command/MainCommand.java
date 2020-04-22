@@ -1,11 +1,10 @@
 package me.elsiff.morefish.command;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Subcommand;
 import com.google.common.collect.ImmutableMap;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.configuration.Config;
@@ -13,32 +12,33 @@ import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.competition.FishingCompetition;
 import me.elsiff.morefish.fishing.competition.FishingCompetitionHost;
 import me.elsiff.morefish.shop.FishShop;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 
-@CommandAlias("morefish|mf|fish")
-public final class MainCommand extends BaseCommand {
+public final class MainCommand implements TabExecutor {
 
     private final FishingCompetition competition;
     private final FishingCompetitionHost competitionHost;
     private final FishShop fishShop;
-    private final MoreFish moreFish;
-    private final PluginDescriptionFile pluginInfo;
+    private final MoreFish moreFish = MoreFish.instance();
 
-    public MainCommand(@Nonnull MoreFish moreFish, @Nonnull FishingCompetitionHost competitionHost, @Nonnull FishShop fishShop) {
-        super();
-        this.moreFish = moreFish;
-        this.competitionHost = competitionHost;
-        this.fishShop = fishShop;
-        this.pluginInfo = this.moreFish.getDescription();
+    public MainCommand() {
+        this.competitionHost = moreFish.getCompetitionHost();
+        this.fishShop = moreFish.getFishShop();
         this.competition = this.competitionHost.getCompetition();
     }
 
-    @Subcommand("begin|start")
-    @CommandPermission("morefish.admin")
-    public final void begin(@Nonnull CommandSender sender, @Nonnull String[] args) {
+    private void begin(@Nonnull CommandSender sender, @Nonnull String[] args) {
+        if (sender.hasPermission("morefish.admin")) {
+            sender.sendMessage(Lang.INSTANCE.text("no-permission"));
+            return;
+        }
+
         if (!this.competition.isEnabled()) {
             if (args.length == 1) {
                 try {
@@ -47,13 +47,13 @@ public final class MainCommand extends BaseCommand {
                         sender.sendMessage(Lang.INSTANCE.text("not-positive"));
                     }
                     else {
-                        this.competitionHost.openCompetitionFor(runningTime * (long) 20);
+                        this.competitionHost.openCompetitionFor(runningTime * 20L);
                         if (!Config.INSTANCE.getStandard().getBoolean("messages.broadcast-start", false)) {
                             sender.sendMessage(Lang.INSTANCE.format("contest-start-timer").replace(ImmutableMap.of("%time%", Lang.INSTANCE.time(runningTime))).output());
                         }
                     }
                 }
-                catch (NumberFormatException var6) {
+                catch (NumberFormatException e) {
                     String msg = Lang.INSTANCE.format("not-number").replace(ImmutableMap.of("%s", args[0])).output();
                     sender.sendMessage(msg);
                 }
@@ -71,16 +71,22 @@ public final class MainCommand extends BaseCommand {
 
     }
 
-    @Subcommand("clear")
-    @CommandPermission("morefish.admin")
-    public final void clear(@Nonnull CommandSender sender) {
+    private void clear(@Nonnull CommandSender sender) {
+        if (sender.hasPermission("morefish.admin")) {
+            sender.sendMessage(Lang.INSTANCE.text("no-permission"));
+            return;
+        }
+
         this.competition.clearRecords();
         sender.sendMessage(Lang.INSTANCE.text("clear-records"));
     }
 
-    @Subcommand("end")
-    @CommandPermission("morefish.admin")
-    public final void end(@Nonnull CommandSender sender) {
+    private void end(@Nonnull CommandSender sender) {
+        if (sender.hasPermission("morefish.admin")) {
+            sender.sendMessage(Lang.INSTANCE.text("no-permission"));
+            return;
+        }
+
         if (!this.competition.isDisabled()) {
             competitionHost.closeCompetition();
             if (!Config.INSTANCE.getStandard().getBoolean("messages.broadcast-stop", false)) {
@@ -93,28 +99,82 @@ public final class MainCommand extends BaseCommand {
 
     }
 
-    @Default
-    @Subcommand("help")
-    @CommandPermission("morefish.help")
-    public final void help(@Nonnull CommandSender sender) {
+    private void help(@Nonnull CommandSender sender) {
+        if (sender.hasPermission("morefish.help")) {
+            sender.sendMessage(Lang.INSTANCE.text("no-permission"));
+            return;
+        }
+
+        PluginDescriptionFile pluginInfo = moreFish.getDescription();
         String pluginName = pluginInfo.getName();
         String prefix = ChatColor.AQUA + "[" + pluginName + "]" + ChatColor.RESET + " ";
-        sender.sendMessage(prefix + ChatColor.DARK_AQUA + "> ===== " + ChatColor.AQUA + ChatColor.BOLD + pluginName + ' ' + ChatColor.AQUA + 'v' + this.pluginInfo.getVersion() + ChatColor.DARK_AQUA + " ===== <");
-        String label = this.getExecCommandLabel();
-        sender.sendMessage(prefix + '/' + label + " help");
-        sender.sendMessage(prefix + '/' + label + " begin [runningTime(sec)]");
-        sender.sendMessage(prefix + '/' + label + " suspend");
-        sender.sendMessage(prefix + '/' + label + " end");
-        sender.sendMessage(prefix + '/' + label + " rewards");
-        sender.sendMessage(prefix + '/' + label + " clear");
-        sender.sendMessage(prefix + '/' + label + " reload");
-        sender.sendMessage(prefix + '/' + label + " top");
-        sender.sendMessage(prefix + '/' + label + " shop [player]");
+        sender.sendMessage(prefix + ChatColor.DARK_AQUA + "> ===== " + ChatColor.AQUA + ChatColor.BOLD + pluginName + ' ' + ChatColor.AQUA + 'v' + pluginInfo.getVersion() + ChatColor.DARK_AQUA + " ===== <");
+        String label = prefix + "/mf";
+        sender.sendMessage(label + " help");
+        sender.sendMessage(label + " begin [runningTime(sec)]");
+        sender.sendMessage(label + " suspend");
+        sender.sendMessage(label + " end");
+        sender.sendMessage(label + " rewards");
+        sender.sendMessage(label + " clear");
+        sender.sendMessage(label + " reload");
+        sender.sendMessage(label + " top");
+        sender.sendMessage(label + " shop [player]");
     }
 
-    @Subcommand("reload")
-    @CommandPermission("morefish.admin")
-    public final void reload(@Nonnull CommandSender sender) {
+    @Override
+    public boolean onCommand(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String label, @Nonnull String[] args) {
+        if (args.length > 0) {
+            switch (args[0]) {
+                case "begin":
+                case "start":
+                    begin(sender, shiftArgs(args));
+                    break;
+                case "clear":
+                    clear(sender);
+                    break;
+                case "end":
+                    end(sender);
+                    break;
+                case "reload":
+                    reload(sender);
+                    break;
+                case "shop":
+                    shop(sender, shiftArgs(args));
+                    break;
+                case "suspend":
+                    suspend(sender);
+                    break;
+                case "top":
+                case "ranking":
+                    top(sender);
+                    break;
+            }
+        }
+
+        help(sender);
+        return true;
+    }
+
+    @Nonnull
+    @Override
+    public List<String> onTabComplete(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String alias, @Nonnull String[] args) {
+        if (args.length == 1) {
+
+            return Stream.of("begin", "start", "clear", "end", "reload", "shop", "suspend", "top", "ranking").filter(s -> s.startsWith(args[0])).collect(Collectors.toList());
+        }
+        if (args.length > 1 && args[0].equalsIgnoreCase("shop") && sender.hasPermission("morefish.admin")) {
+            return Bukkit.getOnlinePlayers().stream().map(Player::getName).filter(s -> s.startsWith(args[1])).collect(Collectors.toList());
+        }
+
+        return Collections.emptyList();
+    }
+
+    private void reload(@Nonnull CommandSender sender) {
+        if (sender.hasPermission("morefish.admin")) {
+            sender.sendMessage(Lang.INSTANCE.text("no-permission"));
+            return;
+        }
+
         try {
             this.moreFish.applyConfig();
             sender.sendMessage(Lang.INSTANCE.text("reload-config"));
@@ -125,19 +185,13 @@ public final class MainCommand extends BaseCommand {
         }
     }
 
-    /*@Subcommand("rewards")
-    @CommandPermission("morefish.admin")
-    public final void rewards(@Nonnull CommandSender sender) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.AQUA + "[MoreFish]" + ChatColor.RESET + " This command is for players only.");
-            return;
-        }
+    private String[] shiftArgs(@Nonnull String... args) {
+        String[] newArgs = new String[args.length - 1];
+        System.arraycopy(args, 1, newArgs, 0, newArgs.length);
+        return newArgs;
+    }
 
-
-    }*/
-
-    @Subcommand("shop")
-    public final void shop(@Nonnull CommandSender sender, @Nonnull String[] args) {
+    private void shop(@Nonnull CommandSender sender, @Nonnull String[] args) {
         Player guiUser;
         if (args.length == 1) {
             if (!sender.hasPermission("morefish.admin")) {
@@ -147,8 +201,7 @@ public final class MainCommand extends BaseCommand {
 
             Player target = sender.getServer().getPlayerExact(args[0]);
             if (target == null) {
-                String msg = Lang.INSTANCE.format("player-not-found").replace(ImmutableMap.of("%s", args[0])).output();
-                sender.sendMessage(msg);
+                sender.sendMessage(Lang.INSTANCE.format("player-not-found").replace(ImmutableMap.of("%s", args[0])).output());
                 return;
             }
 
@@ -181,9 +234,12 @@ public final class MainCommand extends BaseCommand {
 
     }
 
-    @Subcommand("suspend")
-    @CommandPermission("morefish.admin")
-    public final void suspend(@Nonnull CommandSender sender) {
+    private void suspend(@Nonnull CommandSender sender) {
+        if (sender.hasPermission("morefish.admin")) {
+            sender.sendMessage(Lang.INSTANCE.text("no-permission"));
+            return;
+        }
+
         if (!this.competition.isDisabled()) {
             this.competitionHost.closeCompetition(true);
             if (!Config.INSTANCE.getStandard().getBoolean("messages.broadcast-stop", false)) {
@@ -196,9 +252,12 @@ public final class MainCommand extends BaseCommand {
 
     }
 
-    @Subcommand("top|ranking")
-    @CommandPermission("morefish.top")
-    public final void top(@Nonnull CommandSender sender) {
+    private void top(@Nonnull CommandSender sender) {
+        if (sender.hasPermission("morefish.top")) {
+            sender.sendMessage(Lang.INSTANCE.text("no-permission"));
+            return;
+        }
+
         this.competitionHost.informAboutRanking(sender);
     }
 }

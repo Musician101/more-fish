@@ -3,9 +3,9 @@ package me.elsiff.morefish.configuration.format;
 import java.util.Collection;
 import java.util.Map.Entry;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import me.elsiff.morefish.configuration.ColorCodeTranslatingExtension;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.Nullable;
 
 public final class TextFormat implements Format<TextFormat, String> {
 

@@ -1,5 +1,6 @@
 package me.elsiff.morefish.fishing.condition;
 
+import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
 import javax.annotation.Nonnull;
 import me.elsiff.morefish.fishing.competition.FishingCompetition;
 import me.elsiff.morefish.hooker.McmmoHooker;
@@ -11,9 +12,9 @@ public final class McmmoSkillCondition implements FishCondition {
 
     private final McmmoHooker mcmmoHooker;
     private final int minLevel;
-    private final String skillType;
+    private final PrimarySkillType skillType;
 
-    public McmmoSkillCondition(@Nonnull McmmoHooker mcmmoHooker, @Nonnull String skillType, int minLevel) {
+    public McmmoSkillCondition(@Nonnull McmmoHooker mcmmoHooker, @Nonnull PrimarySkillType skillType, int minLevel) {
         this.mcmmoHooker = mcmmoHooker;
         this.skillType = skillType;
         this.minLevel = minLevel;

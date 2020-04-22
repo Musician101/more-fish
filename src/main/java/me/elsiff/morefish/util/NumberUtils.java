@@ -14,7 +14,7 @@ public final class NumberUtils {
             case 11:
             case 12:
             case 13:
-                suffix =  "th";
+                suffix = "th";
         }
 
         switch (number % 10) {
@@ -22,7 +22,7 @@ public final class NumberUtils {
                 suffix = "st";
                 break;
             case 2:
-                suffix =  "nd";
+                suffix = "nd";
                 break;
             case 3:
                 suffix = "rd";

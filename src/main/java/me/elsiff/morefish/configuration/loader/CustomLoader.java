@@ -2,8 +2,8 @@ package me.elsiff.morefish.configuration.loader;
 
 import java.util.Optional;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.bukkit.configuration.ConfigurationSection;
-import org.jetbrains.annotations.Nullable;
 
 public interface CustomLoader<T> {
 

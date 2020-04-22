@@ -1,15 +1,15 @@
 package me.elsiff.morefish.hooker;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import me.clip.placeholderapi.PlaceholderAPI;
-import me.clip.placeholderapi.external.EZPlaceholderHook;
+import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.configuration.format.Format;
 import me.elsiff.morefish.fishing.competition.FishingCompetition;
 import me.elsiff.morefish.fishing.competition.Record;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.Nullable;
 
 public final class PlaceholderApiHooker implements PluginHooker {
 
@@ -25,7 +25,7 @@ public final class PlaceholderApiHooker implements PluginHooker {
     }
 
     public void hook(@Nonnull MoreFish plugin) {
-        new MoreFishPlaceholder(plugin).hook();
+        new MoreFishPlaceholder(plugin).register();
         Format.Companion.init(this);
         setHasHooked(true);
     }
@@ -39,13 +39,27 @@ public final class PlaceholderApiHooker implements PluginHooker {
         return PlaceholderAPI.setPlaceholders(player, string);
     }
 
-    public static final class MoreFishPlaceholder extends EZPlaceholderHook {
+    public static final class MoreFishPlaceholder extends PlaceholderExpansion {
 
         private final FishingCompetition competition;
 
         public MoreFishPlaceholder(@Nonnull MoreFish moreFish) {
-            super(moreFish, "morefish");
             this.competition = moreFish.getCompetition();
+        }
+
+        @Override
+        public String getIdentifier() {
+            return "morefish";
+        }
+
+        @Override
+        public String getAuthor() {
+            return "Musician101";
+        }
+
+        @Override
+        public String getVersion() {
+            return MoreFish.instance().getDescription().getVersion();
         }
 
         @Nullable

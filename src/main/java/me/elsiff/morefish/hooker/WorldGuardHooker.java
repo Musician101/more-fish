@@ -22,7 +22,6 @@ public final class WorldGuardHooker implements PluginHooker {
             return false;
         }
 
-
         RegionManager regionManager = WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(world));
         if (regionManager == null) {
             return false;

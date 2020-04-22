@@ -1,6 +1,7 @@
 package me.elsiff.morefish.hooker;
 
 import com.gmail.nossr50.api.ExperienceAPI;
+import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
 import javax.annotation.Nonnull;
 import me.elsiff.morefish.MoreFish;
 import org.bukkit.entity.Player;
@@ -26,7 +27,7 @@ public final class McmmoHooker implements PluginHooker {
         this.hasHooked = var1;
     }
 
-    public final int skillLevelOf(@Nonnull Player player, @Nonnull String skillType) {
+    public final int skillLevelOf(@Nonnull Player player, @Nonnull PrimarySkillType skillType) {
         return ExperienceAPI.getLevel(player, skillType);
     }
 }

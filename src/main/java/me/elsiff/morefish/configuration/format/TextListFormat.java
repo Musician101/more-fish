@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import me.elsiff.morefish.configuration.ColorCodeTranslatingExtension;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.Nullable;
 
 public final class TextListFormat implements Format<TextListFormat, List<String>> {
 

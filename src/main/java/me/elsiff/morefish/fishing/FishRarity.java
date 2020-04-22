@@ -72,21 +72,9 @@ public final class FishRarity implements Comparable<FishRarity> {
         return this.color;
     }
 
-    public final boolean isDefault() {
-        return isDefault;
-    }
-
     @Nonnull
     public final String getDisplayName() {
         return this.displayName;
-    }
-
-    public final boolean hasCatchFirework() {
-        return this.hasCatchFirework;
-    }
-
-    public final boolean hasNotFishItemFormat() {
-        return this.hasNotFishItemFormat;
     }
 
     @Nonnull
@@ -100,5 +88,17 @@ public final class FishRarity implements Comparable<FishRarity> {
 
     public final double getProbability() {
         return this.probability;
+    }
+
+    public final boolean hasCatchFirework() {
+        return this.hasCatchFirework;
+    }
+
+    public final boolean hasNotFishItemFormat() {
+        return this.hasNotFishItemFormat;
+    }
+
+    public final boolean isDefault() {
+        return isDefault;
     }
 }

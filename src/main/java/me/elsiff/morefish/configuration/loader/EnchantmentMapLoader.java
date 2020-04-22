@@ -7,9 +7,9 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 
-public final class EnchantmentMapLoader implements CustomLoader {
+public final class EnchantmentMapLoader implements CustomLoader<Map<Enchantment, Integer>> {
 
-    private static final String DELIMITER = "|";
+    private static final String DELIMITER = "\\|";
 
     @Nonnull
     public Map<Enchantment, Integer> loadFrom(@Nonnull ConfigurationSection section, @Nonnull String path) {

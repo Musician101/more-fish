@@ -4,9 +4,9 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import me.elsiff.morefish.hooker.PlaceholderApiHooker;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.Nullable;
 
 public interface Format<T, R> {
 

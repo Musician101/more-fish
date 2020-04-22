@@ -36,8 +36,6 @@ public final class Config {
     @Nonnull
     private final YamlConfiguration lang = new YamlConfiguration();
     @Nonnull
-    private final YamlConfiguration rewards = new YamlConfiguration();
-    @Nonnull
     private final LocalTimeListLoader localTimeListLoader = new LocalTimeListLoader();
     @Nonnull
     private final PlayerAnnouncementLoader playerAnnouncementLoader = new PlayerAnnouncementLoader();
@@ -47,6 +45,8 @@ public final class Config {
     private final FishTypeMapLoader fishTypeMapLoader = new FishTypeMapLoader(fishRaritySetLoader, customItemStackLoader, fishConditionSetLoader, playerAnnouncementLoader);
     @Nonnull
     private final PrizeMapLoader prizeMapLoader = new PrizeMapLoader();
+    @Nonnull
+    private final YamlConfiguration rewards = new YamlConfiguration();
     @Nonnull
     private YamlConfiguration standard = (YamlConfiguration) MoreFish.instance().getConfig();
     @Nonnull
@@ -121,6 +121,7 @@ public final class Config {
         return prizeMapLoader;
     }
 
+    @Nonnull
     public YamlConfiguration getRewards() {
         return rewards;
     }
