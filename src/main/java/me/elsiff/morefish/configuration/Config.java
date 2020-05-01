@@ -153,7 +153,7 @@ public final class Config {
             standard.set("file-name", langFile);
         }
         catch (IOException | InvalidConfigurationException e) {
-            plugin.getLogger().severe("Failed to load " + fishFile);
+            plugin.getLogger().severe("Failed to load " + langFile);
         }
 
         configurationVersionMap.forEach((yaml, requiredVersion) -> {
