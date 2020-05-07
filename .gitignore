@@ -116,3 +116,7 @@ Thumbs.db
 !/ios-moe/xcode/*.xcodeproj/xcshareddata
 !/ios-moe/xcode/*.xcodeproj/project.pbxproj
 /ios-moe/xcode/native/
+morefish-common/build/
+morefish-forge/build/
+morefish-spigot/build/
+morefish-sponge/build/

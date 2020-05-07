@@ -1,49 +1,30 @@
-plugins {
-    id 'java'
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
+    }
 }
 
-group = 'me.elsiff'
-version = '3.1.0'
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'maven'
+    apply plugin: 'com.github.johnrengelman.shadow'
 
-def spigotVersion = '1.15.2-R0.1-SNAPSHOT'
+    group = 'io.musician101'
+    version = '3.2.0-SNAPSHOT'
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
 
-repositories {
-    jcenter()
-    mavenCentral()
-    maven { url "http://nexus.hc.to/content/repositories/pub_releases" }
-    maven { url "http://repo.citizensnpcs.co/" }
-    maven { url "http://repo.extendedclip.com/content/repositories/placeholderapi/" }
-    maven { url "https://repo.dmulloy2.net/nexus/repository/public/" }
-    maven { url "https://maven.enginehub.org/repo/" }
-    maven { url "https://hub.spigotmc.org/nexus/content/groups/public/" }
-    maven { url 'https://jitpack.io' }
-    mavenLocal()
-}
+    repositories {
+        mavenCentral()
+        mavenLocal()
+    }
 
-compileJava {
-    options.compilerArgs += ["-parameters"]
-    options.fork = true
-    options.forkOptions.executable = 'javac'
-}
-
-dependencies {
-    compileOnly 'com.comphenix.protocol:ProtocolLib:4.5.0'
-    compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.2'
-    compileOnly "org.spigotmc:spigot-api:${spigotVersion}"
-    compileOnly "org.spigotmc:spigot:${spigotVersion}"
-    compileOnly 'net.milkbowl.vault:VaultAPI:1.7'
-    compileOnly 'net.citizensnpcs:citizensapi:2.0.26-SNAPSHOT'
-    compileOnly 'me.clip:placeholderapi:2.10.3'
-    compileOnly 'com.github.mcMMO-Dev:mcMMO:f82ad99c82'
-}
-
-import org.apache.tools.ant.filters.ReplaceTokens
-
-processResources {
-    from(sourceSets.main.resources.srcDirs) {
-        filter ReplaceTokens, tokens: ["version": version]
+    build {
+        dependsOn shadowJar
     }
 }

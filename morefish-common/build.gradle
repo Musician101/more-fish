@@ -1,0 +1,43 @@
+def configurateVersion = 3.5
+
+dependencies {
+    compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
+    compile 'io.musician101:musicianlibrary-common:3.0-SNAPSHOT'
+    compile "me.lucko.configurate:configurate-core:${configurateVersion}"
+    compile "me.lucko.configurate:configurate-hocon:${configurateVersion}"
+    compile "me.lucko.configurate:configurate-toml:${configurateVersion}"
+    compile "me.lucko.configurate:configurate-yaml:${configurateVersion}"
+}
+
+shadowJar {
+    dependencies {
+        include(dependency(":musicianlibrary-common:"))
+        include dependency(':configurate-core:')
+        include dependency(':configurate-hocon:')
+        include dependency(':configurate-toml:')
+        include dependency(':configurate-yaml:')
+    }
+
+    relocate 'me.lucko.commodore', 'io.musician101.morefish.spigot.commodore'
+    relocate 'io.musician101.musicianlibrary', 'io.musician101.morefish.common.musicianlibrary'
+}
+
+compileJava {
+    def reference = 'Reference.java'
+    def fullReference = "src/main/java/io/musician101/morefish/common/${reference}"
+    def tempDir = 'build/tmp/sourcesCache'
+    doFirst {
+        copy {
+            from fullReference
+            into tempDir
+        }
+        ant.replace(file: fullReference, token: '@VERSION@', value: project.version)
+    }
+    doLast {
+        copy {
+            from "${tempDir}/${reference}"
+            project.println project.file(reference).parent
+            into project.file(fullReference).parent
+        }
+    }
+}

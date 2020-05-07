@@ -1,1 +1,3 @@
 rootProject.name = 'more-fish'
+
+include 'morefish-common', 'morefish-spigot', 'morefish-sponge', 'morefish-forge'
