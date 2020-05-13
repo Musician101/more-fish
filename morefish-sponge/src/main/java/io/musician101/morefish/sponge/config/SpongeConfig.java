@@ -11,7 +11,6 @@ import io.musician101.morefish.common.config.MessagesConfig;
 import io.musician101.morefish.common.fishing.Fish;
 import io.musician101.morefish.common.fishing.FishRarity;
 import io.musician101.morefish.common.fishing.FishType;
-import io.musician101.morefish.common.fishing.competition.FishingCompetition.State;
 import io.musician101.morefish.sponge.SpongeMoreFish;
 import io.musician101.morefish.sponge.announcement.SpongePlayerAnnouncement;
 import io.musician101.morefish.sponge.config.format.SpongeTextFormat;
@@ -20,20 +19,9 @@ import io.musician101.morefish.sponge.fishing.catchhandler.SpongeCatchCommandExe
 import io.musician101.morefish.sponge.fishing.catchhandler.SpongeCatchFireworkSpawner;
 import io.musician101.morefish.sponge.fishing.catchhandler.SpongeCatchHandler;
 import io.musician101.morefish.sponge.fishing.competition.SpongePrize;
-import io.musician101.morefish.sponge.fishing.condition.SpongeBiomeCondition;
-import io.musician101.morefish.sponge.fishing.condition.SpongeCompetitionCondition;
-import io.musician101.morefish.sponge.fishing.condition.SpongeEnchantmentCondition;
 import io.musician101.morefish.sponge.fishing.condition.SpongeFishCondition;
-import io.musician101.morefish.sponge.fishing.condition.SpongeLocationYCondition;
-import io.musician101.morefish.sponge.fishing.condition.SpongePotionEffectCondition;
-import io.musician101.morefish.sponge.fishing.condition.SpongeRainingCondition;
-import io.musician101.morefish.sponge.fishing.condition.SpongeThunderingCondition;
-import io.musician101.morefish.sponge.fishing.condition.SpongeTimeCondition;
-import io.musician101.morefish.sponge.fishing.condition.SpongeTimeCondition.TimeState;
-import io.musician101.morefish.sponge.fishing.condition.SpongeXPLevelCondition;
 import io.musician101.morefish.sponge.hooker.SpongeEconomyHooker;
 import io.musician101.morefish.sponge.shop.FishShopGui;
-import io.musician101.morefish.sponge.util.NumberUtils.DoubleRange;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -47,7 +35,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.SimpleConfigurationNode;
 import ninja.leaping.configurate.Types;
@@ -58,7 +45,6 @@ import org.spongepowered.api.asset.Asset;
 import org.spongepowered.api.boss.BossBarColor;
 import org.spongepowered.api.boss.BossBarColors;
 import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.effect.potion.PotionEffectType;
 import org.spongepowered.api.entity.Item;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
@@ -74,7 +60,6 @@ import org.spongepowered.api.text.format.TextColor;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
 import org.spongepowered.api.text.serializer.TextSerializers;
-import org.spongepowered.api.world.biome.BiomeType;
 
 @SuppressWarnings("ConstantConditions")
 public final class SpongeConfig {
@@ -191,28 +176,7 @@ public final class SpongeConfig {
                 String id = tokens.get(0);
                 tokens.remove(0);
                 String[] args = tokens.toArray(new String[0]);
-                switch (id) {
-                    case "raining":
-                        return new SpongeRainingCondition(Boolean.parseBoolean(args[0]));
-                    case "thundering":
-                        return new SpongeThunderingCondition(Boolean.parseBoolean(args[0]));
-                    case "time":
-                        return new SpongeTimeCondition(TimeState.valueOf(args[0].toUpperCase()));
-                    case "biome":
-                        return new SpongeBiomeCondition(Stream.of(args).map(s -> registry.getType(BiomeType.class, s).orElseThrow(() -> new IllegalArgumentException(s + " is not a valid biome ID."))).collect(Collectors.toSet()));
-                    case "enchantment":
-                        return new SpongeEnchantmentCondition(registry.getType(EnchantmentType.class, args[0]).orElseThrow(() -> new IllegalArgumentException(args[0] + " is not a valid enchantment ID.")), Integer.parseInt(args[1]));
-                    case "level":
-                        return new SpongeXPLevelCondition(Integer.parseInt(args[0]));
-                    case "contest":
-                        return new SpongeCompetitionCondition(State.valueOf(args[0].toUpperCase()));
-                    case "potion-effect":
-                        return new SpongePotionEffectCondition(registry.getType(PotionEffectType.class, args[0]).orElseThrow(() -> new IllegalArgumentException(args[0] + " is not a valid potion effect type ID.")), Integer.parseInt(args[1]));
-                    case "location-y":
-                        return new SpongeLocationYCondition(new DoubleRange(Double.parseDouble(args[0]), Double.parseDouble(args[1])));
-                    default:
-                        throw new IllegalStateException("There's no fish condition whose id is " + id);
-                }
+                return SpongeMoreFish.getInstance().getFishConditionManager().getFishCondition(id, args).orElseThrow(() -> new IllegalStateException("There's no fish condition whose id is " + id));
             });
             boolean skipItemFormat = type.getNode("skip-item-format").getBoolean(rarity.hasNotFishItemFormat());
             boolean noDisplay = type.getNode("no-display").getBoolean(rarity.getNoDisplay());

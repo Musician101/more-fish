@@ -15,6 +15,8 @@ import io.musician101.morefish.common.fishing.FishRarity;
 import io.musician101.morefish.common.fishing.FishType;
 import io.musician101.morefish.common.fishing.Records;
 import io.musician101.morefish.common.fishing.competition.FishingCompetition;
+import io.musician101.morefish.common.fishing.competition.FishingCompetition.State;
+import io.musician101.morefish.common.fishing.condition.FishConditionManager;
 import io.musician101.morefish.sponge.announcement.SpongePlayerAnnouncement;
 import io.musician101.morefish.sponge.command.MoreFishCommand;
 import io.musician101.morefish.sponge.config.SpongeConfig;
@@ -31,25 +33,41 @@ import io.musician101.morefish.sponge.fishing.catchhandler.SpongeNewFirstBroadca
 import io.musician101.morefish.sponge.fishing.competition.FishingCompetitionAutoRunner;
 import io.musician101.morefish.sponge.fishing.competition.FishingCompetitionHost;
 import io.musician101.morefish.sponge.fishing.competition.SpongePrize;
+import io.musician101.morefish.sponge.fishing.condition.SpongeBiomeCondition;
+import io.musician101.morefish.sponge.fishing.condition.SpongeCompetitionCondition;
+import io.musician101.morefish.sponge.fishing.condition.SpongeEnchantmentCondition;
 import io.musician101.morefish.sponge.fishing.condition.SpongeFishCondition;
+import io.musician101.morefish.sponge.fishing.condition.SpongeLocationYCondition;
+import io.musician101.morefish.sponge.fishing.condition.SpongePotionEffectCondition;
+import io.musician101.morefish.sponge.fishing.condition.SpongeRainingCondition;
+import io.musician101.morefish.sponge.fishing.condition.SpongeThunderingCondition;
+import io.musician101.morefish.sponge.fishing.condition.SpongeTimeCondition;
+import io.musician101.morefish.sponge.fishing.condition.SpongeTimeCondition.TimeState;
+import io.musician101.morefish.sponge.fishing.condition.SpongeXPLevelCondition;
 import io.musician101.morefish.sponge.hooker.SpongeEconomyHooker;
 import io.musician101.morefish.sponge.item.FishItemStackConverter;
 import io.musician101.morefish.sponge.shop.FishShopSignListener;
+import io.musician101.morefish.sponge.util.NumberUtils.DoubleRange;
 import io.musician101.musicianlibrary.java.minecraft.sponge.plugin.AbstractSpongePlugin;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.annotation.Nonnull;
+import org.spongepowered.api.GameRegistry;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.boss.BossBarColor;
 import org.spongepowered.api.data.DataRegistration;
 import org.spongepowered.api.data.persistence.DataTranslators;
+import org.spongepowered.api.effect.potion.PotionEffectType;
 import org.spongepowered.api.entity.Item;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.EventManager;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppedServerEvent;
+import org.spongepowered.api.item.enchantment.EnchantmentType;
 import org.spongepowered.api.item.inventory.Container;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.property.InventoryTitle;
@@ -59,10 +77,13 @@ import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColor;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.world.biome.BiomeType;
 
 @Plugin(id = Reference.ID, name = Reference.NAME, version = Reference.VERSION, url = "https://github.com/Musician101", authors = {"elsiff", "Musician101"})
 public class SpongeMoreFish extends AbstractSpongePlugin<Config<FishConfig<SpongeFishCondition, Item, Player, FishRarity<SpongePlayerAnnouncement, TextColor, SpongeCatchHandler>, FishType<SpongePlayerAnnouncement, TextColor, SpongeFishCondition, SpongeCatchHandler, ItemStack>>, LangConfig<SpongeTextFormat, SpongeTextListFormat, Text>, MessagesConfig<SpongePlayerAnnouncement, BossBarColor>, FishShopConfig<Fish<SpongePlayerAnnouncement, TextColor, SpongeFishCondition, SpongeCatchHandler, ItemStack>, Player, Text>, SpongePrize>> {
 
+    @Nonnull
+    private final FishConditionManager<SpongeFishCondition> fishConditionManager = new FishConditionManager<>();
     @Nonnull
     private final FishingCompetitionAutoRunner autoRunner = new FishingCompetitionAutoRunner();
     @Nonnull
@@ -134,6 +155,11 @@ public class SpongeMoreFish extends AbstractSpongePlugin<Config<FishConfig<Spong
     }
 
     @Nonnull
+    public FishConditionManager<SpongeFishCondition> getFishConditionManager() {
+        return fishConditionManager;
+    }
+
+    @Nonnull
     public final List<SpongeCatchHandler> getGlobalCatchHandlers() {
         return globalCatchHandlers;
     }
@@ -148,6 +174,7 @@ public class SpongeMoreFish extends AbstractSpongePlugin<Config<FishConfig<Spong
     public void onServerStart(GameStartedServerEvent event) {
         economy.hookIfEnabled();
         fishBags.load();
+        registerConditions();
         applyConfig();
         EventManager em = Sponge.getEventManager();
         em.registerListeners(this, new FishingListener());
@@ -167,5 +194,18 @@ public class SpongeMoreFish extends AbstractSpongePlugin<Config<FishConfig<Spong
             autoRunner.disable();
         }
         getLogger().info("Plugin has been disabled.");
+    }
+
+    private void registerConditions() {
+        GameRegistry registry = Sponge.getRegistry();
+        fishConditionManager.registerFishCondition("raining", args -> new SpongeRainingCondition(Boolean.parseBoolean(args[0])));
+        fishConditionManager.registerFishCondition("thundering", args -> new SpongeThunderingCondition(Boolean.parseBoolean(args[0])));
+        fishConditionManager.registerFishCondition("time", args -> new SpongeTimeCondition(TimeState.valueOf(args[0].toUpperCase())));
+        fishConditionManager.registerFishCondition("biome", args -> new SpongeBiomeCondition(Stream.of(args).map(s -> registry.getType(BiomeType.class, s).orElseThrow(() -> new IllegalArgumentException(s + " is not a valid biome ID."))).collect(Collectors.toSet())));
+        fishConditionManager.registerFishCondition("enchantment", args -> new SpongeEnchantmentCondition(registry.getType(EnchantmentType.class, args[0]).orElseThrow(() -> new IllegalArgumentException(args[0] + " is not a valid enchantment ID.")), Integer.parseInt(args[1])));
+        fishConditionManager.registerFishCondition("level", args -> new SpongeXPLevelCondition(Integer.parseInt(args[0])));
+        fishConditionManager.registerFishCondition("contest", args -> new SpongeCompetitionCondition(State.valueOf(args[0].toUpperCase())));
+        fishConditionManager.registerFishCondition("potion-effect", args -> new SpongePotionEffectCondition(registry.getType(PotionEffectType.class, args[0]).orElseThrow(() -> new IllegalArgumentException(args[0] + " is not a valid potion effect type ID.")), Integer.parseInt(args[1])));
+        fishConditionManager.registerFishCondition("location-y", args -> new SpongeLocationYCondition(new DoubleRange(Double.parseDouble(args[0]), Double.parseDouble(args[1]))));
     }
 }

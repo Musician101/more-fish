@@ -1,6 +1,5 @@
 package io.musician101.morefish.spigot.config;
 
-import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
 import com.google.common.collect.ImmutableMap;
 import io.musician101.morefish.common.ConfigurateLoader;
 import io.musician101.morefish.common.Reference;
@@ -12,7 +11,6 @@ import io.musician101.morefish.common.config.MessagesConfig;
 import io.musician101.morefish.common.fishing.Fish;
 import io.musician101.morefish.common.fishing.FishRarity;
 import io.musician101.morefish.common.fishing.FishType;
-import io.musician101.morefish.common.fishing.competition.FishingCompetition.State;
 import io.musician101.morefish.common.hooker.PluginHooker;
 import io.musician101.morefish.spigot.SpigotMoreFish;
 import io.musician101.morefish.spigot.announcement.SpigotPlayerAnnouncement;
@@ -22,19 +20,7 @@ import io.musician101.morefish.spigot.fishing.catchhandler.SpigotCatchCommandExe
 import io.musician101.morefish.spigot.fishing.catchhandler.SpigotCatchFireworkSpawner;
 import io.musician101.morefish.spigot.fishing.catchhandler.SpigotCatchHandler;
 import io.musician101.morefish.spigot.fishing.competition.SpigotPrize;
-import io.musician101.morefish.spigot.fishing.condition.SpigotBiomeCondition;
-import io.musician101.morefish.spigot.fishing.condition.SpigotCompetitionCondition;
-import io.musician101.morefish.spigot.fishing.condition.SpigotEnchantmentCondition;
 import io.musician101.morefish.spigot.fishing.condition.SpigotFishCondition;
-import io.musician101.morefish.spigot.fishing.condition.SpigotLocationYCondition;
-import io.musician101.morefish.spigot.fishing.condition.SpigotMCMMOSkillCondition;
-import io.musician101.morefish.spigot.fishing.condition.SpigotPotionEffectCondition;
-import io.musician101.morefish.spigot.fishing.condition.SpigotRainingCondition;
-import io.musician101.morefish.spigot.fishing.condition.SpigotThunderingCondition;
-import io.musician101.morefish.spigot.fishing.condition.SpigotTimeCondition;
-import io.musician101.morefish.spigot.fishing.condition.SpigotTimeCondition.TimeState;
-import io.musician101.morefish.spigot.fishing.condition.SpigotWorldGuardRegionCondition;
-import io.musician101.morefish.spigot.fishing.condition.SpigotXPLevelCondition;
 import io.musician101.morefish.spigot.hooker.SpigotProtocolLibHooker;
 import io.musician101.morefish.spigot.hooker.SpigotVaultHooker;
 import io.musician101.morefish.spigot.shop.FishShopGui;
@@ -50,17 +36,14 @@ import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import net.milkbowl.vault.economy.Economy;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.SimpleConfigurationNode;
 import ninja.leaping.configurate.Types;
-import org.apache.commons.lang.math.DoubleRange;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.block.Biome;
 import org.bukkit.boss.BarColor;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Item;
@@ -69,7 +52,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.potion.PotionEffectType;
 
 @SuppressWarnings("ConstantConditions")
 public final class SpigotConfig {
@@ -181,33 +163,7 @@ public final class SpigotConfig {
                 String id = tokens.get(0);
                 tokens.remove(0);
                 String[] args = tokens.toArray(new String[0]);
-                SpigotMoreFish plugin = SpigotMoreFish.getInstance();
-                switch (id) {
-                    case "raining":
-                        return new SpigotRainingCondition(Boolean.parseBoolean(args[0]));
-                    case "thundering":
-                        return new SpigotThunderingCondition(Boolean.parseBoolean(args[0]));
-                    case "time":
-                        return new SpigotTimeCondition(TimeState.valueOf(args[0].toUpperCase()));
-                    case "biome":
-                        return new SpigotBiomeCondition(Stream.of(args).map(String::toUpperCase).map(Biome::valueOf).collect(Collectors.toSet()));
-                    case "enchantment":
-                        return new SpigotEnchantmentCondition(Enchantment.getByKey(NamespacedKey.minecraft(args[0])), Integer.parseInt(args[1]));
-                    case "level":
-                        return new SpigotXPLevelCondition(Integer.parseInt(args[0]));
-                    case "contest":
-                        return new SpigotCompetitionCondition(State.valueOf(args[0].toUpperCase()));
-                    case "potion-effect":
-                        return new SpigotPotionEffectCondition(PotionEffectType.getByName(args[0]), Integer.parseInt(args[1]));
-                    case "location-y":
-                        return new SpigotLocationYCondition(new DoubleRange(Double.parseDouble(args[0]), Double.parseDouble(args[1])));
-                    case "mcmmo-skill":
-                        return new SpigotMCMMOSkillCondition(plugin.getMCMMOHooker(), PrimarySkillType.getSkill(args[0]), Integer.parseInt(args[1]));
-                    case "worldguard-region":
-                        return new SpigotWorldGuardRegionCondition(plugin.getWorldGuardHooker(), args[0]);
-                    default:
-                        throw new IllegalStateException("There's no fish condition whose id is " + id);
-                }
+                return SpigotMoreFish.getInstance().getFishConditionManager().getFishCondition(id, args).orElseThrow(() -> new IllegalStateException("There's no fish condition whose id is " + id));
             });
             boolean skipItemFormat = type.getNode("skip-item-format").getBoolean(rarity.hasNotFishItemFormat());
             boolean noDisplay = type.getNode("no-display").getBoolean(rarity.getNoDisplay());

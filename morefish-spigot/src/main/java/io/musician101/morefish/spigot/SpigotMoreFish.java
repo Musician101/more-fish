@@ -1,5 +1,6 @@
 package io.musician101.morefish.spigot;
 
+import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
 import io.musician101.morefish.common.ConfigurateLoader;
 import io.musician101.morefish.common.config.AutoRunningConfig;
 import io.musician101.morefish.common.config.Config;
@@ -13,6 +14,8 @@ import io.musician101.morefish.common.fishing.FishRarity;
 import io.musician101.morefish.common.fishing.FishType;
 import io.musician101.morefish.common.fishing.Records;
 import io.musician101.morefish.common.fishing.competition.FishingCompetition;
+import io.musician101.morefish.common.fishing.competition.FishingCompetition.State;
+import io.musician101.morefish.common.fishing.condition.FishConditionManager;
 import io.musician101.morefish.spigot.announcement.SpigotPlayerAnnouncement;
 import io.musician101.morefish.spigot.command.MoreFishCommand;
 import io.musician101.morefish.spigot.config.SpigotConfig;
@@ -26,7 +29,19 @@ import io.musician101.morefish.spigot.fishing.catchhandler.SpigotNewFirstBroadca
 import io.musician101.morefish.spigot.fishing.competition.FishingCompetitionAutoRunner;
 import io.musician101.morefish.spigot.fishing.competition.FishingCompetitionHost;
 import io.musician101.morefish.spigot.fishing.competition.SpigotPrize;
+import io.musician101.morefish.spigot.fishing.condition.SpigotBiomeCondition;
+import io.musician101.morefish.spigot.fishing.condition.SpigotCompetitionCondition;
+import io.musician101.morefish.spigot.fishing.condition.SpigotEnchantmentCondition;
 import io.musician101.morefish.spigot.fishing.condition.SpigotFishCondition;
+import io.musician101.morefish.spigot.fishing.condition.SpigotLocationYCondition;
+import io.musician101.morefish.spigot.fishing.condition.SpigotMCMMOSkillCondition;
+import io.musician101.morefish.spigot.fishing.condition.SpigotPotionEffectCondition;
+import io.musician101.morefish.spigot.fishing.condition.SpigotRainingCondition;
+import io.musician101.morefish.spigot.fishing.condition.SpigotThunderingCondition;
+import io.musician101.morefish.spigot.fishing.condition.SpigotTimeCondition;
+import io.musician101.morefish.spigot.fishing.condition.SpigotTimeCondition.TimeState;
+import io.musician101.morefish.spigot.fishing.condition.SpigotWorldGuardRegionCondition;
+import io.musician101.morefish.spigot.fishing.condition.SpigotXPLevelCondition;
 import io.musician101.morefish.spigot.hooker.SpigotCitizensHooker;
 import io.musician101.morefish.spigot.hooker.SpigotMCMMOHooker;
 import io.musician101.morefish.spigot.hooker.SpigotPlaceholderApiHooker;
@@ -41,18 +56,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.annotation.Nonnull;
+import org.apache.commons.lang.math.DoubleRange;
 import org.bukkit.ChatColor;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Server;
+import org.bukkit.block.Biome;
 import org.bukkit.boss.BarColor;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffectType;
 
 public final class SpigotMoreFish extends JavaPlugin {
 
+    @Nonnull
+    private final FishConditionManager<SpigotFishCondition> fishConditionManager = new FishConditionManager<>();
     @Nonnull
     private final FishingCompetitionAutoRunner autoRunner = new FishingCompetitionAutoRunner();
     @Nonnull
@@ -136,6 +159,11 @@ public final class SpigotMoreFish extends JavaPlugin {
     }
 
     @Nonnull
+    public FishConditionManager<SpigotFishCondition> getFishConditionManager() {
+        return fishConditionManager;
+    }
+
+    @Nonnull
     public final List<SpigotCatchHandler> getGlobalCatchHandlers() {
         return globalCatchHandlers;
     }
@@ -192,6 +220,7 @@ public final class SpigotMoreFish extends JavaPlugin {
         citizensHooker.hookIfEnabled();
         placeholderApiHooker.hookIfEnabled();
         fishBags.load();
+        registerConditions();
         applyConfig();
         Server server = getServer();
         PluginManager pm = server.getPluginManager();
@@ -202,5 +231,20 @@ public final class SpigotMoreFish extends JavaPlugin {
         if (config.autoStart()) {
             competitionHost.openCompetition();
         }
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    private void registerConditions() {
+        fishConditionManager.registerFishCondition("raining", args -> new SpigotRainingCondition(Boolean.parseBoolean(args[0])));
+        fishConditionManager.registerFishCondition("thundering", args -> new SpigotThunderingCondition(Boolean.parseBoolean(args[0])));
+        fishConditionManager.registerFishCondition("time", args -> new SpigotTimeCondition(TimeState.valueOf(args[0].toUpperCase())));
+        fishConditionManager.registerFishCondition("biome", args -> new SpigotBiomeCondition(Stream.of(args).map(String::toUpperCase).map(Biome::valueOf).collect(Collectors.toList())));
+        fishConditionManager.registerFishCondition("enchantment", args -> new SpigotEnchantmentCondition(Enchantment.getByKey(NamespacedKey.minecraft(args[0])), Integer.parseInt(args[1])));
+        fishConditionManager.registerFishCondition("level", args -> new SpigotXPLevelCondition(Integer.parseInt(args[0])));
+        fishConditionManager.registerFishCondition("contest", args -> new SpigotCompetitionCondition(State.valueOf(args[0].toUpperCase())));
+        fishConditionManager.registerFishCondition("potion-effect", args -> new SpigotPotionEffectCondition(PotionEffectType.getByName(args[0]), Integer.parseInt(args[1])));
+        fishConditionManager.registerFishCondition("location-y", args -> new SpigotLocationYCondition(new DoubleRange(Double.parseDouble(args[0]), Double.parseDouble(args[1]))));
+        fishConditionManager.registerFishCondition("mcmmo-skill", args -> new SpigotMCMMOSkillCondition(PrimarySkillType.getSkill(args[0]), Integer.parseInt(args[1])));
+        fishConditionManager.registerFishCondition("worldguard-region", args -> new SpigotWorldGuardRegionCondition(args[0]));
     }
 }
