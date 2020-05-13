@@ -63,7 +63,7 @@ public final class SpigotMoreFish extends JavaPlugin {
     private final FishItemStackConverter converter = new FishItemStackConverter();
     @SuppressWarnings("ConstantConditions")
     @Nonnull
-    private final FishBags<ItemStack> fishBags = new FishBags<>(new File(SpigotMoreFish.getInstance().getDataFolder(), "fish_bags"), ConfigurateLoader.YAML, ".yml", node -> ItemStack.deserialize(((Map<?, ?>) node.getValue()).entrySet().stream().collect(Collectors.toMap(e -> e.getKey().toString(), Entry::getValue))));
+    private final FishBags<ItemStack> fishBags = new FishBags<>(new File(getDataFolder(), "fish_bags"), ConfigurateLoader.YAML, ".yml", node -> ItemStack.deserialize(((Map<?, ?>) node.getValue()).entrySet().stream().collect(Collectors.toMap(e -> e.getKey().toString(), Entry::getValue))));
     @Nonnull
     private final List<SpigotCatchHandler> globalCatchHandlers = Arrays.asList(new SpigotCatchBroadcaster(), new SpigotNewFirstBroadcaster(), new SpigotCompetitionRecordAdder());
     @Nonnull

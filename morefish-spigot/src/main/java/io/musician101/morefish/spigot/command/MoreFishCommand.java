@@ -119,13 +119,15 @@ public final class MoreFishCommand {
         PluginDescriptionFile pluginInfo = getPlugin().getDescription();
         String pluginName = pluginInfo.getName();
         String prefix = ChatColor.AQUA + "[" + pluginName + "]" + ChatColor.RESET + " ";
-        sender.sendMessage(prefix + ChatColor.DARK_AQUA + "> ===== " + ChatColor.AQUA + ChatColor.BOLD + pluginName + ' ' + ChatColor.AQUA + 'v' + pluginInfo.getVersion() + ChatColor.DARK_AQUA + " ===== <");
+        sender.sendMessage(prefix + ChatColor.DARK_AQUA + "> ===== " +
+                ChatColor.AQUA + ChatColor.BOLD + pluginName + ' ' +
+                ChatColor.AQUA + 'v' + pluginInfo.getVersion() +
+                ChatColor.DARK_AQUA + " ===== <");
         String label = prefix + "/mf";
         sender.sendMessage(label + " help");
         sender.sendMessage(label + " begin [runningTime(sec)]");
         sender.sendMessage(label + " suspend");
         sender.sendMessage(label + " end");
-        sender.sendMessage(label + " rewards");
         sender.sendMessage(label + " clear");
         sender.sendMessage(label + " reload");
         sender.sendMessage(label + " top");
@@ -135,8 +137,8 @@ public final class MoreFishCommand {
 
     public static void init() {
         Commodore commodore = CommodoreProvider.getCommodore(SpigotMoreFish.getInstance());
-        LiteralCommandNode<Object> test = literal("morefish").executes(o -> help(commodore.getBukkitSender(o))).then(begin(commodore)).then(clear(commodore)).then(end(commodore)).then(reload(commodore)).then(shop(commodore)).then(suspend(commodore)).then(top(commodore)).build();
-        commodore.register(redirect("fish", redirect("mf", test).build()));
+        LiteralCommandNode<Object> command = literal("morefish").executes(o -> help(commodore.getBukkitSender(o.getSource()))).then(begin(commodore)).then(clear(commodore)).then(end(commodore)).then(reload(commodore)).then(shop(commodore)).then(suspend(commodore)).then(top(commodore)).build();
+        commodore.register(redirect("fish", redirect("mf", command).build()));
     }
 
     private static LiteralArgumentBuilder<Object> literal(@Nonnull String name) {

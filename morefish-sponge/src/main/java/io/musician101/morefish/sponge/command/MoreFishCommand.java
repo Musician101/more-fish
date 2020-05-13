@@ -124,7 +124,6 @@ public final class MoreFishCommand {
         source.sendMessage(Text.of(label + " begin [runningTime(sec)]"));
         source.sendMessage(Text.of(label + " suspend"));
         source.sendMessage(Text.of(label + " end"));
-        source.sendMessage(Text.of(label + " rewards"));
         source.sendMessage(Text.of(label + " clear"));
         source.sendMessage(Text.of(label + " reload"));
         source.sendMessage(Text.of(label + " top"));

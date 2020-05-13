@@ -136,11 +136,12 @@ public final class SpigotConfig {
             String itemID = iconCN.getNode("id").getString();
             Material itemType = Material.matchMaterial(itemID);
             int amount = iconCN.getNode("amount").getInt(1);
-            List<String> lore = iconCN.getNode("lore").getList(Object::toString).stream().map(s -> ChatColor.translateAlternateColorCodes('&', s)).collect(Collectors.toList());
-            Map<Enchantment, Integer> enchantments = iconCN.getList(Object::toString).stream().map(s -> s.split("\\|")).map(tokens -> {
+            List<String> lore = iconCN.getNode("lore").getList(o -> ChatColor.translateAlternateColorCodes('&', Types.asString(o)));
+            Map<Enchantment, Integer> enchantments = iconCN.getList(o -> {
+                String[] tokens = Types.asString(o).split("\\|");
                 String[] namespaceKey = tokens[0].split(":");
                 return new SimpleEntry<>(Enchantment.getByKey(new NamespacedKey(namespaceKey[0], namespaceKey[1])), Integer.parseInt(tokens[1]));
-            }).collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+            }).stream().collect(Collectors.toMap(Entry::getKey, Entry::getValue));
             ItemStack icon = new ItemStack(itemType, amount);
             icon.addUnsafeEnchantments(enchantments);
             ItemMeta meta = icon.getItemMeta();

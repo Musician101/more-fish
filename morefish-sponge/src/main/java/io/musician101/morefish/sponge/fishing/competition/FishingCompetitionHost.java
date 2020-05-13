@@ -64,9 +64,7 @@ public final class FishingCompetitionHost {
                     getPrizes().forEach((place, prize) -> {
                         if (ranking.size() > place) {
                             Record<SpongePlayerAnnouncement, TextColor, SpongeFishCondition, SpongeCatchHandler, ItemStack> record = ranking.get(place);
-                            Sponge.getGame().getServiceManager().provideUnchecked(UserStorageService.class).get(record.getFisher()).ifPresent(user -> {
-                                prize.giveTo(user, getCompetition().rankNumberOf(record));
-                            });
+                            Sponge.getGame().getServiceManager().provideUnchecked(UserStorageService.class).get(record.getFisher()).ifPresent(user -> prize.giveTo(user, getCompetition().rankNumberOf(record)));
                         }
                     });
                 }

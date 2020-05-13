@@ -7,13 +7,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import ninja.leaping.configurate.ConfigurationNode;
+import ninja.leaping.configurate.Types;
 
 public final class AutoRunningConfig implements ConfigModule {
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
     protected boolean enabled = false;
     protected int requiredPlayers = 5;
-    protected List<LocalTime> startTimes = Stream.of("09:00", "11:30", "14:00", "18:00", "21:00").map(this::parseLocalTime).collect(Collectors.toList());
+    protected List<LocalTime> startTimes = Stream.of("09:00", "11:30", "14:00", "18:00", "21:00").map(s -> LocalTime.parse(s, FORMATTER)).collect(Collectors.toList());
     protected int timer = 300;
 
     public int getRequiredPlayers() {
@@ -32,6 +33,7 @@ public final class AutoRunningConfig implements ConfigModule {
         return enabled;
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void load(@Nonnull ConfigurationNode node) {
         if (node.isVirtual()) {
@@ -41,10 +43,6 @@ public final class AutoRunningConfig implements ConfigModule {
         enabled = node.getNode("enable").getBoolean(false);
         requiredPlayers = node.getNode("required-player").getInt(5);
         timer = node.getNode("timer").getInt(300);
-        startTimes = node.getNode("start-time").getList(Object::toString).stream().map(this::parseLocalTime).collect(Collectors.toList());
-    }
-
-    protected final LocalTime parseLocalTime(String s) {
-        return LocalTime.parse(s, FORMATTER);
+        startTimes = node.getNode("start-time").getList(o -> LocalTime.parse(Types.asString(o), FORMATTER));
     }
 }
