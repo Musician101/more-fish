@@ -8,14 +8,7 @@ import org.bukkit.block.Biome;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 
-public final class BiomeCondition implements FishCondition {
-
-    private final Collection<Biome> biomes;
-
-    public BiomeCondition(@Nonnull Collection<Biome> biomes) {
-        super();
-        this.biomes = biomes;
-    }
+public record BiomeCondition(@Nonnull Collection<Biome> biomes) implements FishCondition {
 
     public boolean check(@Nonnull Item caught, @Nonnull Player fisher, @Nonnull FishingCompetition fishingCompetition) {
         Location location = caught.getLocation();

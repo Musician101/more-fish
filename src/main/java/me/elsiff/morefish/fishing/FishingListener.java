@@ -9,16 +9,15 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import me.elsiff.morefish.MoreFish;
-import me.elsiff.morefish.configuration.Config;
 import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.catchhandler.CatchHandler;
 import me.elsiff.morefish.fishing.catchhandler.CompetitionRecordAdder;
 import me.elsiff.morefish.fishing.catchhandler.NewFirstBroadcaster;
 import me.elsiff.morefish.fishing.competition.FishingCompetition;
-import me.elsiff.morefish.item.FishItemStackConverter;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -28,34 +27,30 @@ import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerFishEvent.State;
 import org.bukkit.inventory.ItemStack;
 
+import static me.elsiff.morefish.item.FishItemStackConverter.createItemStack;
+
 public final class FishingListener implements Listener {
 
-    private final FishingCompetition competition;
-    private final FishItemStackConverter converter;
     private final List<Material> fishMaterials = Arrays.asList(Material.COD, Material.SALMON, Material.PUFFERFISH, Material.TROPICAL_FISH);
-    private final FishTypeTable fishTypeTable;
-    private final List<CatchHandler> globalCatchHandlers;
-    private final List<Predicate<PlayerFishEvent>> replacingVanillaConditions;
+    private final MoreFish plugin = MoreFish.instance();
+    private final FishingCompetition competition = plugin.getCompetition();
+    private final List<Predicate<PlayerFishEvent>> replacingVanillaConditions = Arrays.asList(event -> {
+        if (getConfig().getBoolean("general.only-for-contest")) {
+            return competition.isEnabled();
+        }
 
-    public FishingListener(@Nonnull FishTypeTable fishTypeTable, @Nonnull FishItemStackConverter converter, @Nonnull FishingCompetition competition, @Nonnull List<CatchHandler> globalCatchHandlers) {
-        this.fishTypeTable = fishTypeTable;
-        this.converter = converter;
-        this.competition = competition;
-        this.globalCatchHandlers = globalCatchHandlers;
-        this.replacingVanillaConditions = Arrays.asList(event -> {
-            if (Config.INSTANCE.getStandard().getBoolean("general.only-for-contest")) {
-                return competition.isEnabled();
-            }
-
-            return true;
-        }, event -> {
-            if (Config.INSTANCE.getStandard().getBoolean("general.replace-only-fish")) {
+        return true;
+    }, event -> {
+        if (getConfig().getBoolean("general.replace-only-fish")) {
+            if (event.getCaught() != null) {
                 return fishMaterials.contains(((Item) event.getCaught()).getItemStack().getType());
             }
+        }
 
-            return true;
-        });
-    }
+        return true;
+    });
+    private final FishTypeTable fishTypeTable = plugin.getFishTypeTable();
+    private final List<CatchHandler> globalCatchHandlers = plugin.getGlobalCatchHandlers();
 
     private boolean canReplaceVanillaFishing(PlayerFishEvent event) {
         return replacingVanillaConditions.stream().anyMatch(it -> it.test(event));
@@ -64,7 +59,7 @@ public final class FishingListener implements Listener {
     private Collection<CatchHandler> catchHandlersOf(PlayerFishEvent event, Fish fish) {
         List<CatchHandler> catchHandlers = new ArrayList<>(globalCatchHandlers);
         catchHandlers.addAll(fish.getType().getCatchHandlers());
-        List<World> contestDisabledWorlds = Config.INSTANCE.getStandard().getStringList("general.contest-disabled-worlds").stream().map(Bukkit::getWorld).filter(Objects::nonNull).collect(Collectors.toList());
+        List<World> contestDisabledWorlds = getConfig().getStringList("general.contest-disabled-worlds").stream().map(Bukkit::getWorld).filter(Objects::nonNull).toList();
         Player player = event.getPlayer();
         if (contestDisabledWorlds.contains(player.getWorld())) {
             return catchHandlers.stream().filter(catchHandler -> !(catchHandler instanceof CompetitionRecordAdder) && !(catchHandler instanceof NewFirstBroadcaster)).collect(Collectors.toList());
@@ -73,13 +68,17 @@ public final class FishingListener implements Listener {
         return catchHandlers;
     }
 
+    private FileConfiguration getConfig() {
+        return plugin.getConfig();
+    }
+
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public final void onPlayerFish(@Nonnull PlayerFishEvent event) {
+    public void onPlayerFish(@Nonnull PlayerFishEvent event) {
         if (event.getState() == State.CAUGHT_FISH && event.getCaught() instanceof Item) {
             if (competition.isDisabled()) {
-                if (Config.INSTANCE.getStandard().getBoolean("general.no-fishing-unless-contest")) {
+                if (getConfig().getBoolean("general.no-fishing-unless-contest")) {
                     event.setCancelled(true);
-                    event.getPlayer().sendMessage(Lang.INSTANCE.text("no-fishing-allowed"));
+                    event.getPlayer().sendMessage(Lang.NO_FISHING_ALLOWED);
                 }
             }
             else if (canReplaceVanillaFishing(event)) {
@@ -87,14 +86,14 @@ public final class FishingListener implements Listener {
                 Fish fish = fishTypeTable.pickRandomType(caught, event.getPlayer(), competition).generateFish();
                 catchHandlersOf(event, fish).forEach(handler -> handler.handle(event.getPlayer(), fish));
                 Player player = event.getPlayer();
-                FishBags fishBags = MoreFish.instance().getFishBags();
-                ItemStack itemStack = converter.createItemStack(fish, player);
+                FishBags fishBags = plugin.getFishBags();
+                ItemStack itemStack = createItemStack(fish, player);
                 if (fishBags.addFish(player, itemStack)) {
                     caught.remove();
                     return;
                 }
 
-                caught.setItemStack(converter.createItemStack(fish, event.getPlayer()));
+                caught.setItemStack(createItemStack(fish, event.getPlayer()));
             }
         }
     }

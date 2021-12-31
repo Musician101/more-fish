@@ -6,14 +6,7 @@ import me.elsiff.morefish.fishing.Fish;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 
-public final class CatchCommandExecutor implements CatchHandler {
-
-    private final List<String> commands;
-
-    public CatchCommandExecutor(@Nonnull List<String> commands) {
-        super();
-        this.commands = commands;
-    }
+public record CatchCommandExecutor(@Nonnull List<String> commands) implements CatchHandler {
 
     public void handle(@Nonnull Player catcher, @Nonnull Fish fish) {
         Server server = catcher.getServer();

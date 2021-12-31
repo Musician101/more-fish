@@ -1,10 +1,11 @@
-package me.elsiff.morefish.dao;
+package me.elsiff.morefish;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
@@ -14,17 +15,17 @@ import me.elsiff.morefish.fishing.FishTypeTable;
 import me.elsiff.morefish.fishing.competition.Record;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.Plugin;
 
-public final class YamlRecordDao {
+public final class RecordHandler {
 
     private final File file;
     private final FishTypeTable fishTypeTable;
     private final YamlConfiguration yaml;
 
-    public YamlRecordDao(@Nonnull Plugin plugin, @Nonnull FishTypeTable fishTypeTable) {
-        super();
-        this.fishTypeTable = fishTypeTable;
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public RecordHandler() {
+        MoreFish plugin = MoreFish.instance();
+        this.fishTypeTable = plugin.getFishTypeTable();
         Path path = plugin.getDataFolder().toPath().resolve("records");
         file = path.toFile();
         if (!file.exists()) {
@@ -41,7 +42,7 @@ public final class YamlRecordDao {
 
     @Nonnull
     public List<Record> all() {
-        return yaml.getKeys(false).stream().map(yaml::getConfigurationSection).map(section -> {
+        return yaml.getKeys(false).stream().map(yaml::getConfigurationSection).filter(Objects::nonNull).map(section -> {
             UUID id = UUID.fromString(section.getName());
             String fishTypeName = section.getString("fish-type");
             FishType fishType = fishTypeTable.getTypes().stream().filter(it -> it.getName().equals(fishTypeName)).findFirst().orElseThrow(() -> new IllegalStateException("Fish type doesn't exist for " + fishTypeName));
@@ -88,11 +89,12 @@ public final class YamlRecordDao {
 
     public void update(@Nonnull Record record) {
         String id = record.getFisher().toString();
-        if (!yaml.contains(id)) {
+        ConfigurationSection cs = yaml.getConfigurationSection(id);
+        if (!yaml.contains(id) || cs == null) {
             throw new IllegalArgumentException("Record must exist in the ranking");
         }
 
-        setRecord(yaml.getConfigurationSection(id), record);
+        setRecord(cs, record);
         try {
             yaml.save(file);
         }

@@ -2,24 +2,14 @@ package me.elsiff.morefish.fishing;
 
 import javax.annotation.Nonnull;
 
-public final class Fish {
+public record Fish(@Nonnull FishType type, double length) {
 
-    private final double length;
-    @Nonnull
-    private final FishType type;
-
-    public Fish(@Nonnull FishType type, double length) {
-        super();
-        this.type = type;
-        this.length = length;
-    }
-
-    public final double getLength() {
+    public double getLength() {
         return this.length;
     }
 
     @Nonnull
-    public final FishType getType() {
+    public FishType getType() {
         return this.type;
     }
 }

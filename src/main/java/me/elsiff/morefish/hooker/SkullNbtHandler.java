@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack;
 public final class SkullNbtHandler {
 
     @Nonnull
-    public final ItemStack writeTexture(@Nonnull ItemStack itemStack, @Nonnull String textureValue) {
+    public ItemStack writeTexture(@Nonnull ItemStack itemStack, @Nonnull String textureValue) {
         ItemStack editingStack = MinecraftReflection.getBukkitItemStack(itemStack);
         if (MinecraftReflection.isCraftItemStack(itemStack)) {
             editingStack = itemStack;

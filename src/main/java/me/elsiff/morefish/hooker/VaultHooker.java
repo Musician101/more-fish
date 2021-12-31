@@ -1,5 +1,6 @@
 package me.elsiff.morefish.hooker;
 
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import me.elsiff.morefish.MoreFish;
@@ -12,9 +13,9 @@ public final class VaultHooker implements PluginHooker {
     private Economy economy;
     private boolean hasHooked;
 
-    @Nullable
-    public final Economy getEconomy() {
-        return economy;
+    @Nonnull
+    public Optional<Economy> getEconomy() {
+        return Optional.ofNullable(economy);
     }
 
     @Nonnull
@@ -22,7 +23,7 @@ public final class VaultHooker implements PluginHooker {
         return "Vault";
     }
 
-    public final boolean hasEconomy() {
+    public boolean hasEconomy() {
         return economy != null;
     }
 
@@ -31,7 +32,7 @@ public final class VaultHooker implements PluginHooker {
     }
 
     public void hook(@Nonnull MoreFish plugin) {
-        PluginHooker.Companion.checkEnabled(this, plugin.getServer().getPluginManager());
+        PluginHooker.checkEnabled(this, plugin.getServer().getPluginManager());
         RegisteredServiceProvider<Economy> registration = plugin.getServer().getServicesManager().getRegistration(Economy.class);
         if (registration != null) {
             economy = registration.getProvider();
@@ -40,7 +41,4 @@ public final class VaultHooker implements PluginHooker {
         hasHooked = true;
     }
 
-    public void setHasHooked(boolean hasHooked) {
-        this.hasHooked = hasHooked;
-    }
 }

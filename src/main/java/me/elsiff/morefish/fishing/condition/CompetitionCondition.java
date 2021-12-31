@@ -6,14 +6,7 @@ import me.elsiff.morefish.fishing.competition.FishingCompetition.State;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 
-public final class CompetitionCondition implements FishCondition {
-
-    private final State state;
-
-    public CompetitionCondition(@Nonnull State state) {
-        super();
-        this.state = state;
-    }
+public record CompetitionCondition(@Nonnull State state) implements FishCondition {
 
     public boolean check(@Nonnull Item caught, @Nonnull Player fisher, @Nonnull FishingCompetition fishingCompetition) {
         return fishingCompetition.getState() == this.state;

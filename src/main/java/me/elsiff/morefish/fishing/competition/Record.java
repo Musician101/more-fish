@@ -4,29 +4,19 @@ import java.util.UUID;
 import javax.annotation.Nonnull;
 import me.elsiff.morefish.fishing.Fish;
 
-public final class Record implements Comparable<Record> {
-
-    @Nonnull
-    private final Fish fish;
-    @Nonnull
-    private final UUID fisher;
-
-    public Record(@Nonnull UUID fisher, @Nonnull Fish fish) {
-        this.fisher = fisher;
-        this.fish = fish;
-    }
+public record Record(@Nonnull UUID fisher, @Nonnull Fish fish) implements Comparable<Record> {
 
     public int compareTo(@Nonnull Record other) {
         return Double.compare(fish.getLength(), other.fish.getLength());
     }
 
     @Nonnull
-    public final Fish getFish() {
+    public Fish getFish() {
         return this.fish;
     }
 
     @Nonnull
-    public final UUID getFisher() {
+    public UUID getFisher() {
         return this.fisher;
     }
 }

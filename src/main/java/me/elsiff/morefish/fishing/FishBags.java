@@ -18,6 +18,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+@SuppressWarnings("ResultOfMethodCallIgnored")
 public class FishBags {
 
     @Nonnull
@@ -96,7 +97,7 @@ public class FishBags {
             });
 
             try {
-                yaml.save(new File(bagsFolder, uuid.toString() + ".yml"));
+                yaml.save(new File(bagsFolder, uuid + ".yml"));
             }
             catch (IOException e) {
                 e.printStackTrace();

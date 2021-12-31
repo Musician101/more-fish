@@ -1,49 +1,48 @@
 plugins {
-    id 'java'
+    id 'java-library'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
 group = 'me.elsiff'
-version = '3.1.0'
+version = '4.0'
 
-def spigotVersion = '1.15.2-R0.1-SNAPSHOT'
-
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 repositories {
-    jcenter()
-    mavenCentral()
-    maven { url "http://nexus.hc.to/content/repositories/pub_releases" }
-    maven { url "http://repo.citizensnpcs.co/" }
-    maven { url "http://repo.extendedclip.com/content/repositories/placeholderapi/" }
+    maven { url "https://papermc.io/repo/repository/maven-public/"}
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
     maven { url "https://repo.dmulloy2.net/nexus/repository/public/" }
-    maven { url "https://maven.enginehub.org/repo/" }
-    maven { url "https://hub.spigotmc.org/nexus/content/groups/public/" }
-    maven { url 'https://jitpack.io' }
+    maven { url "https://jitpack.io"}
+    mavenCentral()
     mavenLocal()
 }
 
-compileJava {
-    options.compilerArgs += ["-parameters"]
-    options.fork = true
-    options.forkOptions.executable = 'javac'
-}
-
 dependencies {
-    compileOnly 'com.comphenix.protocol:ProtocolLib:4.5.0'
-    compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.2'
-    compileOnly "org.spigotmc:spigot-api:${spigotVersion}"
-    compileOnly "org.spigotmc:spigot:${spigotVersion}"
-    compileOnly 'net.milkbowl.vault:VaultAPI:1.7'
-    compileOnly 'net.citizensnpcs:citizensapi:2.0.26-SNAPSHOT'
-    compileOnly 'me.clip:placeholderapi:2.10.3'
-    compileOnly 'com.github.mcMMO-Dev:mcMMO:f82ad99c82'
+    compileOnly 'io.papermc.paper:paper-api:1.18.1-R0.1-SNAPSHOT'
+    implementation('io.musician101.musicianlibrary:spigot:4.2') {
+        exclude group: 'org.spigotmc'
+    }
+    implementation 'io.musician101:bukkitier:1.0'
+    implementation 'com.mojang:brigadier:1.0.18'
+    compileOnly 'com.comphenix.protocol:ProtocolLib:4.7.0'
+    compileOnly 'com.github.MilkBowl:VaultAPI:1.7.1'
 }
-
-import org.apache.tools.ant.filters.ReplaceTokens
 
 processResources {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
     from(sourceSets.main.resources.srcDirs) {
-        filter ReplaceTokens, tokens: ["version": version]
+        expand 'version': project.version
     }
+}
+
+shadowJar {
+    dependencies {
+        include dependency('io.musician101:')
+        include dependency('io.musician101.musicianlibrary:')
+    }
+
+    archiveFileName = "more-fish-${project.version}.jar"
+    relocate 'io.musician101.musicianlibrary', 'com.campmongoose.serversaturday.lib.io.musician101.musicianlibrary'
+    relocate 'io.musician101.bukkitier', 'com.campmongoose.serversaturday.lib.io.musician101.bukkitier'
+    dependsOn build
 }

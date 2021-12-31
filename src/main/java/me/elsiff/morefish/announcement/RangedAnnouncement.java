@@ -5,13 +5,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import org.bukkit.entity.Player;
 
-public final class RangedAnnouncement implements PlayerAnnouncement {
-
-    private final double radius;
-
-    public RangedAnnouncement(double radius) {
-        this.radius = radius;
-    }
+public record RangedAnnouncement(double radius) implements PlayerAnnouncement {
 
     @Nonnull
     public List<Player> receiversOf(@Nonnull Player catcher) {

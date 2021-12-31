@@ -20,12 +20,9 @@ public final class ProtocolLibHooker implements PluginHooker {
     }
 
     public void hook(@Nonnull MoreFish plugin) {
-        PluginHooker.Companion.checkEnabled(this, plugin.getServer().getPluginManager());
+        PluginHooker.checkEnabled(this, plugin.getServer().getPluginManager());
         skullNbtHandler = new SkullNbtHandler();
         hasHooked = true;
     }
 
-    public void setHasHooked(boolean var1) {
-        this.hasHooked = var1;
-    }
 }

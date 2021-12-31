@@ -1,10 +1,14 @@
 package me.elsiff.morefish.shop;
 
+import java.util.List;
 import javax.annotation.Nonnull;
-import me.elsiff.morefish.configuration.Config;
+import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.configuration.Lang;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -12,52 +16,52 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-public final class FishShopSignListener implements Listener {
+public record FishShopSignListener() implements Listener {
 
-    private final FishShop fishShop;
-
-    public FishShopSignListener(@Nonnull FishShop fishShop) {
-        super();
-        this.fishShop = fishShop;
+    private FileConfiguration getConfig() {
+        return getPlugin().getConfig();
     }
 
-    private String getShopSignCreation() {
-        return Config.INSTANCE.getStandard().getString("fish-shop.sign.creation");
+    private MoreFish getPlugin() {
+        return MoreFish.instance();
     }
 
-    private String getShopSignTitle() {
-        return Config.INSTANCE.getStandard().getString("fish-shop.sign.title");
+    private Component getShopSignCreation() {
+        return Component.text(getConfig().getString("fish-shop.sign.creation", "[FishShop]"));
+    }
+
+    private Component getShopSignTitle() {
+        return LegacyComponentSerializer.legacy('&').deserialize(getConfig().getString("fish-shop.sign.title", "&b&l[FishShop]"));
     }
 
     @EventHandler
-    public final void onPlayerInteract(@Nonnull PlayerInteractEvent event) {
+    public void onPlayerInteract(@Nonnull PlayerInteractEvent event) {
         Block block = event.getClickedBlock();
-        if (event.getAction() == Action.RIGHT_CLICK_BLOCK && block != null && block.getState() instanceof Sign) {
-            Sign sign = (Sign) block.getState();
-            if (sign.getLines()[0].equals(getShopSignTitle())) {
-                if (Config.INSTANCE.getStandard().getBoolean("fish-shop.enable")) {
-                    fishShop.openGuiTo(event.getPlayer());
+        if (event.getAction() == Action.RIGHT_CLICK_BLOCK && block != null && block.getState() instanceof Sign sign) {
+            if (sign.line(0).equals(getShopSignTitle())) {
+                if (getConfig().getBoolean("fish-shop.enable")) {
+                    MoreFish.instance().getFishShop().openGuiTo(event.getPlayer());
                     return;
                 }
 
-                event.getPlayer().sendMessage(Lang.INSTANCE.text("shop-disabled"));
+                event.getPlayer().sendMessage(Lang.SHOP_DISABLED);
             }
         }
 
     }
 
     @EventHandler
-    public final void onSignChange(@Nonnull SignChangeEvent event) {
-        String[] lines = event.getLines();
-        if (lines[0].equals(getShopSignCreation()) || lines[0].equals(getShopSignTitle())) {
+    public void onSignChange(@Nonnull SignChangeEvent event) {
+        List<Component> lines = event.lines();
+        if (lines.get(0).equals(getShopSignCreation()) || lines.get(0).equals(getShopSignTitle())) {
             Player player = event.getPlayer();
             if (event.getPlayer().hasPermission("morefish.admin")) {
-                event.setLine(0, getShopSignTitle());
-                player.sendMessage(Lang.INSTANCE.text("created-sign-shop"));
+                event.line(0, getShopSignTitle());
+                player.sendMessage(Lang.CREATED_SIGN_SHOP);
                 return;
             }
 
-            player.sendMessage(Lang.INSTANCE.text("no-permission"));
+            player.sendMessage(Lang.NO_PERMISSION);
         }
     }
 }

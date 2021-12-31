@@ -1,7 +1,7 @@
 package me.elsiff.morefish.shop;
 
+import io.musician101.musicianlibrary.java.minecraft.spigot.gui.chest.SpigotIconBuilder;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -12,12 +12,8 @@ import javax.annotation.Nonnull;
 import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.fishing.FishRarity;
 import me.elsiff.morefish.fishing.FishTypeTable;
-import me.elsiff.morefish.gui.GUIButton;
-import me.elsiff.morefish.item.FishItemStackConverter;
-import me.elsiff.morefish.util.ItemUtil;
-import me.elsiff.morefish.util.OneTickScheduler;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -30,8 +26,8 @@ public class FishShopFilterGui extends AbstractFishShopGUI {
     @Nonnull
     private final List<FishRarity> selectedRarities;
 
-    public FishShopFilterGui(int page, @Nonnull FishShop shop, @Nonnull FishItemStackConverter converter, @Nonnull OneTickScheduler oneTickScheduler, @Nonnull Player user) {
-        super("Set Sale Filter(s)", shop, converter, oneTickScheduler, user);
+    public FishShopFilterGui(int page, @Nonnull Player user) {
+        super("Set Sale Filter(s)", user);
         this.selectedRarities = filters.getOrDefault(user.getUniqueId(), new ArrayList<>());
         List<FishRarity> fishRarities = new ArrayList<>();
         FishTypeTable fishTypeTable = MoreFish.instance().getFishTypeTable();
@@ -48,22 +44,15 @@ public class FishShopFilterGui extends AbstractFishShopGUI {
         });
 
         IntStream.of(45, 46, 47, 48, 50, 51, 52, 53).forEach(this::glassPaneButton);
-        setButton(new GUIButton(49, ClickType.LEFT, ItemUtil.named(Material.BARRIER, "Back to Shop"), p -> {
+        setButton(49, SpigotIconBuilder.of(Material.BARRIER, "Back to Shop"), Map.of(ClickType.LEFT, p -> {
             filters.put(p.getUniqueId(), selectedRarities);
-            new FishShopGui(shop, converter, oneTickScheduler, p, 1);
+            new FishShopGui(p, 1);
         }));
     }
 
     private void updateIcon(int slot, FishRarity fishRarity) {
-        ItemStack itemStack = ItemUtil.named(Material.COD, fishRarity.getColor() + fishRarity.getDisplayName());
-        if (selectedRarities.contains(fishRarity)) {
-            ItemUtil.setLore(itemStack, Collections.singletonList(ChatColor.GREEN + "Selected."));
-        }
-        else {
-            ItemUtil.setLore(itemStack, Collections.singletonList(ChatColor.RED + "Not selected."));
-        }
-
-        setButton(new GUIButton(slot, ClickType.LEFT, itemStack, p -> {
+        ItemStack itemStack = SpigotIconBuilder.builder(Material.COD).name(fishRarity.getColor() + fishRarity.getDisplayName()).description(List.of(selectedRarities.contains(fishRarity) ? ChatColor.GREEN + "Selected." : ChatColor.RED + "Not selected.")).build();
+        setButton(slot, itemStack, Map.of(ClickType.LEFT, p -> {
             if (selectedRarities.contains(fishRarity)) {
                 selectedRarities.remove(fishRarity);
             }

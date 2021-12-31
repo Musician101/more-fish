@@ -3,26 +3,20 @@ package me.elsiff.morefish.fishing.competition;
 import java.time.LocalTime;
 import java.util.Collection;
 import javax.annotation.Nonnull;
-import me.elsiff.morefish.configuration.Config;
-import org.bukkit.plugin.Plugin;
+import me.elsiff.morefish.MoreFish;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 public final class FishingCompetitionAutoRunner {
 
     private static final long HALF_MINUTE = 600L;
-    private final FishingCompetitionHost competitionHost;
-    private final Plugin plugin;
+    private final MoreFish plugin = MoreFish.instance();
+    private final FishingCompetitionHost competitionHost = plugin.getCompetitionHost();
     private Collection<LocalTime> scheduledTimes;
     private BukkitTask timeCheckingTask;
 
-    public FishingCompetitionAutoRunner(@Nonnull Plugin plugin, @Nonnull FishingCompetitionHost competitionHost) {
-        super();
-        this.plugin = plugin;
-        this.competitionHost = competitionHost;
-    }
-
-    public final void disable() {
+    public void disable() {
         if (timeCheckingTask == null) {
             throw new IllegalStateException("Auto runner must not be disabled");
         }
@@ -31,7 +25,7 @@ public final class FishingCompetitionAutoRunner {
         timeCheckingTask = null;
     }
 
-    public final void enable() {
+    public void enable() {
         if (timeCheckingTask != null) {
             throw new IllegalStateException("Auto runner must not be already enabled");
         }
@@ -39,18 +33,19 @@ public final class FishingCompetitionAutoRunner {
         timeCheckingTask = new TimeChecker(this::tryOpenCompetition).runTaskTimer(plugin, 0, HALF_MINUTE);
     }
 
-    public final boolean isEnabled() {
+    public boolean isEnabled() {
         return this.timeCheckingTask != null;
     }
 
-    public final void setScheduledTimes(@Nonnull Collection<LocalTime> scheduledTimes) {
+    public void setScheduledTimes(@Nonnull Collection<LocalTime> scheduledTimes) {
         this.scheduledTimes = scheduledTimes;
     }
 
     private void tryOpenCompetition() {
-        int requiredPlayers = Config.INSTANCE.getStandard().getInt("auto-running.required-players");
-        if (!competitionHost.getCompetition().isEnabled() && plugin.getServer().getOnlinePlayers().size() >= requiredPlayers) {
-            long duration = Config.INSTANCE.getStandard().getLong("auto-running.timer") * 20L;
+        FileConfiguration config = plugin.getConfig();
+        int requiredPlayers = config.getInt("auto-running.required-players");
+        if (competitionHost.getCompetition().isDisabled() && plugin.getServer().getOnlinePlayers().size() >= requiredPlayers) {
+            long duration = config.getLong("auto-running.timer") * 20L;
             competitionHost.openCompetitionFor(duration);
         }
 

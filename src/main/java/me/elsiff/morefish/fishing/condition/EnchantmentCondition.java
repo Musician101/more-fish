@@ -8,16 +8,7 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public final class EnchantmentCondition implements FishCondition {
-
-    private final Enchantment enchantment;
-    private final int minLevel;
-
-    public EnchantmentCondition(@Nonnull Enchantment enchantment, int minLevel) {
-        super();
-        this.enchantment = enchantment;
-        this.minLevel = minLevel;
-    }
+public record EnchantmentCondition(@Nonnull Enchantment enchantment, int minLevel) implements FishCondition {
 
     public boolean check(@Nonnull Item caught, @Nonnull Player fisher, @Nonnull FishingCompetition fishingCompetition) {
         ItemStack fishingRod = fisher.getInventory().getItemInMainHand();

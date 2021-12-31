@@ -5,19 +5,14 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.UUID;
 import javax.annotation.Nonnull;
-import me.elsiff.morefish.dao.DaoFactory;
-import me.elsiff.morefish.dao.YamlRecordDao;
+import me.elsiff.morefish.RecordHandler;
 import me.elsiff.morefish.fishing.Fish;
 import org.bukkit.OfflinePlayer;
 
 public final class FishingCompetition {
 
     @Nonnull
-    private FishingCompetition.State state;
-
-    public FishingCompetition() {
-        this.state = State.DISABLED;
-    }
+    private FishingCompetition.State state = State.DISABLED;
 
     private void checkStateDisabled() {
         if (state != State.DISABLED) {
@@ -31,51 +26,47 @@ public final class FishingCompetition {
         }
     }
 
-    public final void clearRecords() {
+    public void clearRecords() {
         getRecords().clear();
     }
 
-    public final boolean containsContestant(@Nonnull UUID contestant) {
+    public boolean containsContestant(@Nonnull UUID contestant) {
         return getRanking().stream().anyMatch(record -> contestant.equals(record.getFisher()));
     }
 
-    public final void disable() {
+    public void disable() {
         this.checkStateEnabled();
         this.state = FishingCompetition.State.DISABLED;
     }
 
-    public final void enable() {
+    public void enable() {
         this.checkStateDisabled();
         this.state = FishingCompetition.State.ENABLED;
     }
 
     @Nonnull
-    public final List<Record> getRanking() {
+    public List<Record> getRanking() {
         return this.getRecords().all();
     }
 
-    private YamlRecordDao getRecords() {
-        return DaoFactory.INSTANCE.getRecords();
+    private RecordHandler getRecords() {
+        return new RecordHandler();
     }
 
     @Nonnull
-    public final FishingCompetition.State getState() {
+    public FishingCompetition.State getState() {
         return this.state;
     }
 
-    public final void setState(@Nonnull FishingCompetition.State state) {
-        this.state = state;
-    }
-
-    public final boolean isDisabled() {
+    public boolean isDisabled() {
         return this.state == FishingCompetition.State.DISABLED;
     }
 
-    public final boolean isEnabled() {
+    public boolean isEnabled() {
         return this.state == FishingCompetition.State.ENABLED;
     }
 
-    public final void putRecord(@Nonnull Record record) {
+    public void putRecord(@Nonnull Record record) {
         checkStateEnabled();
         if (containsContestant(record.getFisher())) {
             Record oldRecord = recordOf(record.getFisher());
@@ -89,12 +80,12 @@ public final class FishingCompetition {
 
     }
 
-    public final int rankNumberOf(@Nonnull Record record) {
+    public int rankNumberOf(@Nonnull Record record) {
         return getRanking().indexOf(record) + 1;
     }
 
     @Nonnull
-    public final Entry<Integer, Record> rankedRecordOf(@Nonnull OfflinePlayer contestant) {
+    public Entry<Integer, Record> rankedRecordOf(@Nonnull OfflinePlayer contestant) {
         List<Record> records = getRanking();
         int place = 0;
         for (Record record : records) {
@@ -109,12 +100,12 @@ public final class FishingCompetition {
     }
 
     @Nonnull
-    public final Record recordOf(@Nonnull UUID contestant) {
+    public Record recordOf(@Nonnull UUID contestant) {
         return getRanking().stream().filter(record -> contestant.equals(record.getFisher())).findFirst().orElseThrow(() -> new IllegalStateException("Record not found"));
     }
 
     @Nonnull
-    public final Record recordOf(int rankNumber) {
+    public Record recordOf(int rankNumber) {
         if (rankNumber >= 1 && rankNumber <= getRanking().size()) {
             return getRanking().get(rankNumber - 1);
         }
@@ -123,11 +114,11 @@ public final class FishingCompetition {
     }
 
     @Nonnull
-    public final List<Record> top(int size) {
+    public List<Record> top(int size) {
         return getRecords().top(size);
     }
 
-    public final boolean willBeNewFirst(@Nonnull OfflinePlayer catcher, @Nonnull Fish fish) {
+    public boolean willBeNewFirst(@Nonnull OfflinePlayer catcher, @Nonnull Fish fish) {
         if (!getRanking().isEmpty()) {
             Record record = getRanking().get(0);
             return fish.getLength() > record.getFish().getLength() && !record.getFisher().equals(catcher.getUniqueId());

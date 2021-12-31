@@ -9,17 +9,15 @@
 version: 301
 
 general:
-  locale: 'en'
-  check-update: true
   auto-start: false
   use-boss-bar: true
   only-for-contest: false
   no-fishing-unless-contest: false
-  contest-disabled-worlds: []
+  contest-disabled-worlds: [ ]
   replace-only-fish: false
   save-records: false
 
-contest-prizes: {}
+contest-prizes: { }
 
 auto-running:
   enable: false
