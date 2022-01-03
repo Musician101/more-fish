@@ -120,3 +120,7 @@ morefish-common/build/
 morefish-forge/build/
 morefish-spigot/build/
 morefish-sponge/build/
+common/build/
+forge/build/
+logs/
+sponge/build/

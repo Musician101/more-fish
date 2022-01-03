@@ -1,0 +1,28 @@
+{
+    "plugins": [
+        {
+            "loader": "java_plain",
+            "id": "more-fish",
+            "name": "MoreFish",
+            "version": "3.2.0",
+            "main-class": "io.musician101.morefish.sponge.SpongeMoreFish",
+            "description": "Fun fishing competition plugin.",
+            "contributors": [
+                {
+                    "name": "elsiff",
+                    "description": "Original Author"
+                },
+                {
+                    "name": "Musician101",
+                    "description": "Lead Developer"
+                }
+            ],
+            "dependencies": [
+                {
+                    "id": "spongeapi",
+                    "version": "8.0.0"
+                }
+            ]
+        }
+    ]
+}
