@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'me.elsiff'
-version = '4.0'
+version = '4.0.0'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
@@ -13,19 +13,21 @@ repositories {
     maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
     maven { url "https://repo.dmulloy2.net/nexus/repository/public/" }
     maven { url "https://jitpack.io"}
+    maven { url 'https://libraries.minecraft.net/' }
     mavenCentral()
     mavenLocal()
 }
 
 dependencies {
+    compileOnly 'com.comphenix.protocol:ProtocolLib:4.7.0'
+    compileOnly 'com.github.MilkBowl:VaultAPI:1.7.1'
+    compileOnly 'com.mojang:brigadier:1.0.18'
     compileOnly 'io.papermc.paper:paper-api:1.18.1-R0.1-SNAPSHOT'
+
     implementation('io.musician101.musicianlibrary:spigot:4.2') {
         exclude group: 'org.spigotmc'
     }
     implementation 'io.musician101:bukkitier:1.0'
-    implementation 'com.mojang:brigadier:1.0.18'
-    compileOnly 'com.comphenix.protocol:ProtocolLib:4.7.0'
-    compileOnly 'com.github.MilkBowl:VaultAPI:1.7.1'
 }
 
 processResources {
