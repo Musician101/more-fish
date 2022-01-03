@@ -5,7 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
+import me.elsiff.morefish.item.FishItemStackConverter;
 import org.bukkit.inventory.ItemStack;
 
 public class FishBag {
@@ -28,6 +30,15 @@ public class FishBag {
         }
 
         return false;
+    }
+
+    public void clearContraband() {
+        pages.forEach((k, v) -> v.removeIf(i -> !FishItemStackConverter.isFish(i)));
+    }
+
+    @Nonnull
+    public List<ItemStack> getContraband() {
+        return pages.values().stream().flatMap(List::stream).filter(i -> !FishItemStackConverter.isFish(i)).collect(Collectors.toList());
     }
 
     @Nonnull

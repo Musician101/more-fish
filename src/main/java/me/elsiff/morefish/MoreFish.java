@@ -131,6 +131,7 @@ public final class MoreFish extends JavaPlugin {
         PluginManager pm = server.getPluginManager();
         pm.registerEvents(new FishingListener(), this);
         pm.registerEvents(new FishShopSignListener(), this);
+        pm.registerEvents(fishBags, this);
         MFCommands.registerCommands();
         getLogger().info("Plugin has been enabled.");
         if (getConfig().getBoolean("general.auto-start")) {

@@ -13,13 +13,20 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import me.elsiff.morefish.MoreFish;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
-public class FishBags {
+public class FishBags implements Listener {
 
     @Nonnull
     private final List<FishBag> bags = new ArrayList<>();
@@ -50,6 +57,18 @@ public class FishBags {
         FishBag fb = new FishBag(player.getUniqueId());
         bags.add(fb);
         return fb;
+    }
+
+    @EventHandler
+    public void onJoin(@Nonnull PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        FishBag fishBag = getFishBag(player);
+        List<ItemStack> contraband = fishBag.getContraband();
+        if (contraband.isEmpty()) {
+            return;
+        }
+
+        Bukkit.getScheduler().scheduleSyncDelayedTask(MoreFish.instance(), () -> player.sendMessage(Component.text("[MF] CONTRABAND DETECTED IN YOUR FISH BAG. CLICK THIS MESSAGE TO RETRIEVE IT NOW.").color(NamedTextColor.RED).clickEvent(ClickEvent.runCommand("/mf contraband"))));
     }
 
     public int getMaxAllowedPages(@Nonnull Player player) {

@@ -6,10 +6,12 @@ import com.mojang.brigadier.context.CommandContext;
 import java.util.Map;
 import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.configuration.Lang;
+import me.elsiff.morefish.fishing.FishBag;
 import me.elsiff.morefish.fishing.competition.FishingCompetition;
 import me.elsiff.morefish.fishing.competition.FishingCompetitionHost;
 import me.elsiff.morefish.shop.FishShop;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -129,11 +131,26 @@ public interface MFCommands {
             sender.sendMessage(label + " shop" + (sender.hasPermission("morefish.admin") ? " [player]" : ""));
         }
 
+        sender.sendMessage(label + " contraband");
         return 1;
     }
 
     static void registerCommands() {
-        registerCommand(getPlugin(), literal("morefish").executes(MFCommands::help).then(begin("begin")).then(begin("start")).then(clear()).then(end()).then(help()).then(reload()).then(shop()).then(suspend()).then(top("top")).then(top("ranking")));
+        registerCommand(getPlugin(), literal("morefish").executes(MFCommands::help).then(begin("begin")).then(begin("start")).then(clear()).then(contraband()).then(end()).then(help()).then(reload()).then(shop()).then(suspend()).then(top("top")).then(top("ranking")));
+    }
+
+    static LiteralArgumentBuilder<CommandSender> contraband() {
+        return literal("contraband").requires(sender -> sender instanceof Player).executes(context -> {
+            Player player = (Player) context.getSource();
+            FishBag fishBag = getPlugin().getFishBags().getFishBag(player);
+            fishBag.getContraband().forEach(i -> {
+                World world = player.getWorld();
+                world.dropItem(player.getLocation(), i);
+            });
+            fishBag.clearContraband();
+            player.sendMessage(ChatColor.GREEN + " [MF] All contraband has been dropped from your bag. Make sure you get it all.");
+            return 1;
+        });
     }
 
     private static LiteralArgumentBuilder<CommandSender> reload() {
