@@ -3,6 +3,7 @@ package me.elsiff.morefish.item;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -27,8 +28,8 @@ public interface FishItemStackConverter {
         if (!fish.getType().getHasNotFishItemFormat()) {
             Map<String, Object> replacement = getFormatReplacementMap(fish, catcher);
             ItemMeta itemMeta = itemStack.getItemMeta();
-            itemMeta.displayName(Component.text(Lang.replace(getFormatConfig().getString("display-name", "null"), replacement, catcher)));
-            List<Component> lore = Lang.replace(getFormatConfig().getStringList("lore"), replacement, catcher).stream().map(Component::text).collect(Collectors.toList());
+            itemMeta.displayName(Component.text(Lang.replace(getFormatConfig().map(cs -> cs.getString("display-name")).orElse("null"), replacement, catcher)));
+            List<Component> lore = Lang.replace(getFormatConfig().map(cs -> cs.getStringList("lore")).orElse(List.of()), replacement, catcher).stream().map(Component::text).collect(Collectors.toList());
             List<Component> oldLore = itemMeta.lore();
             if (oldLore != null) {
                 lore.addAll(oldLore.stream().map(component -> {
@@ -66,7 +67,7 @@ public interface FishItemStackConverter {
         return new NamespacedKey(getPlugin(), "fishType");
     }
 
-    private static ConfigurationSection getFormatConfig() {
+    private static Optional<ConfigurationSection> getFormatConfig() {
         return getPlugin().getFishTypeTable().getItemFormat();
     }
 

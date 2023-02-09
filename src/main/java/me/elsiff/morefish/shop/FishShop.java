@@ -44,10 +44,6 @@ public record FishShop() {
         return getPlugin().getConfig().getConfigurationSection("fish-shop");
     }
 
-    public void openGuiTo(@Nonnull Player player) {
-        new FishShopGui(player, 1);
-    }
-
     public double priceOf(@Nonnull Fish fish) {
         double rarityPrice = fish.getType().getAdditionalPrice();
         double price = this.getPriceMultiplier() * fish.getLength() + rarityPrice;

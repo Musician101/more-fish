@@ -40,7 +40,7 @@ public record FishShopSignListener() implements Listener {
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK && block != null && block.getState() instanceof Sign sign) {
             if (sign.line(0).equals(getShopSignTitle())) {
                 if (getConfig().getBoolean("fish-shop.enable")) {
-                    MoreFish.instance().getFishShop().openGuiTo(event.getPlayer());
+                    new FishShopGui(event.getPlayer(), 1);
                     return;
                 }
 

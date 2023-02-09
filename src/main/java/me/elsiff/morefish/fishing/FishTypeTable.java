@@ -40,7 +40,6 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
-@SuppressWarnings("ALL")
 public final class FishTypeTable {
 
     private final YamlConfiguration fish = new YamlConfiguration();
@@ -59,8 +58,8 @@ public final class FishTypeTable {
     }
 
     @Nonnull
-    public ConfigurationSection getItemFormat() {
-        return fish.getConfigurationSection("item-format");
+    public Optional<ConfigurationSection> getItemFormat() {
+        return Optional.ofNullable(fish.getConfigurationSection("item-format"));
     }
 
     @Nonnull
@@ -96,13 +95,21 @@ public final class FishTypeTable {
                         throw new IllegalArgumentException("display-name is missing from " + cs.getCurrentPath() + ".");
                     }
 
-                    return new FishRarity(cs.getName(), displayName, cs.getBoolean("default", false), cs.getDouble("chance", 0D) / 100D, ChatColor.valueOf(cs.getString("color").toUpperCase()), catchHandlers, PlayerAnnouncement.fromConfigOrDefault(cs, "catch-announce", Config.getDefaultCatchAnnouncement()), cs.getBoolean("skip-item-format", false), cs.getBoolean("no-display", false), cs.getBoolean("firework", false), cs.getDouble("additional-price", 0D));
+                    boolean isDefault = cs.getBoolean("default", false);
+                    double chance = cs.getDouble("chance", 0D) / 100D;
+                    ChatColor color = Optional.ofNullable(cs.getString("color")).map(String::toUpperCase).map(ChatColor::valueOf).orElse(ChatColor.RESET);
+                    PlayerAnnouncement announcement = PlayerAnnouncement.fromConfigOrDefault(cs, "catch-announce", Config.getDefaultCatchAnnouncement());
+                    boolean skipItemFormat = cs.getBoolean("skip-item-format", false);
+                    boolean noDisplay = cs.getBoolean("no-display", false);
+                    boolean firework = cs.getBoolean("firework", false);
+                    double additionalPrice = cs.getDouble("additional-price", 0D);
+                    return new FishRarity(cs.getName(), displayName, isDefault, chance, color, catchHandlers, announcement, skipItemFormat, noDisplay, firework, additionalPrice);
                 }).toList();
                 ConfigurationSection fishList = fish.getConfigurationSection("fish-list");
                 if (fishList != null) {
                     fishList.getKeys(false).stream().map(fishList::getConfigurationSection).filter(Objects::nonNull).forEach(groupByRarity -> {
-                        String name = groupByRarity.getName();
-                        FishRarity rarity = rarities.stream().filter(fishRarity -> name.equals(fishRarity.getName())).findFirst().orElseThrow(() -> new IllegalStateException("Rarity " + name + " doesn't exist."));
+                        String rarityName = groupByRarity.getName();
+                        FishRarity rarity = rarities.stream().filter(fishRarity -> rarityName.equals(fishRarity.getName())).findFirst().orElseThrow(() -> new IllegalStateException("Rarity " + rarityName + " doesn't exist."));
                         List<FishType> fishTypes = groupByRarity.getKeys(false).stream().map(groupByRarity::getConfigurationSection).filter(Objects::nonNull).map(cs -> {
                             List<CatchHandler> catchHandlers = new ArrayList<>(rarity.getCatchHandlers());
                             if (cs.contains("commands")) {
@@ -117,7 +124,17 @@ public final class FishTypeTable {
                                 throw new IllegalArgumentException("display-name is missing from " + cs.getCurrentPath() + ".");
                             }
 
-                            return new FishType(cs.getName(), rarity, displayName, cs.getDouble("length-min"), cs.getDouble("length-max"), loadItemStack(cs.getConfigurationSection("icon")), catchHandlers, PlayerAnnouncement.fromConfigOrDefault(cs, "catch-announce", rarity.getCatchAnnouncement()), FishCondition.loadFrom(cs, "conditions"), cs.getBoolean("skip-item-format", rarity.hasNotFishItemFormat()), cs.getBoolean("no-display", rarity.getNoDisplay()), cs.getBoolean("firework", rarity.hasCatchFirework()), rarity.getAdditionalPrice() + cs.getDouble("additional-price", 0D));
+                            String name = cs.getName();
+                            double minLength = cs.getDouble("length-min");
+                            double maxLength = cs.getDouble("length-max");
+                            ItemStack itemStack = loadItemStack(name, cs.getConfigurationSection("icon"));
+                            PlayerAnnouncement announcement = PlayerAnnouncement.fromConfigOrDefault(cs, "catch-announce", rarity.getCatchAnnouncement());
+                            List<FishCondition> conditions = FishCondition.loadFrom(cs, "conditions");
+                            boolean skipItemFormat = cs.getBoolean("skip-item-format", rarity.hasNotFishItemFormat());
+                            boolean noDisplay = cs.getBoolean("no-display", rarity.getNoDisplay());
+                            boolean firework = cs.getBoolean("firework", rarity.hasCatchFirework());
+                            double additionalPrice = rarity.getAdditionalPrice() + cs.getDouble("additional-price", 0D);
+                            return new FishType(cs.getName(), rarity, displayName, minLength, maxLength, itemStack, catchHandlers, announcement, conditions, skipItemFormat, noDisplay, firework, additionalPrice);
                         }).toList();
                         map.put(rarity, fishTypes);
                     });
@@ -129,8 +146,11 @@ public final class FishTypeTable {
         }
     }
 
-    @Nonnull
-    private ItemStack loadItemStack(@Nonnull ConfigurationSection cs) {
+    private ItemStack loadItemStack(String name, ConfigurationSection cs) {
+        if (cs == null) {
+            throw new IllegalArgumentException("icon is missing from " + name);
+        }
+
         String id = cs.getString("id");
         if (id == null) {
             throw new IllegalArgumentException("id is missing from " + cs.getCurrentPath() + ".");

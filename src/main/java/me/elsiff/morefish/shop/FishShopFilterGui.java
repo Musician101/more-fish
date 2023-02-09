@@ -1,6 +1,5 @@
 package me.elsiff.morefish.shop;
 
-import io.musician101.musicianlibrary.java.minecraft.spigot.gui.chest.SpigotIconBuilder;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -19,16 +18,24 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
+import static io.musician101.musigui.spigot.chest.SpigotIconUtil.customName;
+import static io.musician101.musigui.spigot.chest.SpigotIconUtil.setLore;
+
 public class FishShopFilterGui extends AbstractFishShopGUI {
 
-    public static final Map<UUID, List<FishRarity>> filters = new HashMap<>();
+    public static final Map<UUID, List<FishRarity>> FILTERS = new HashMap<>();
 
     @Nonnull
     private final List<FishRarity> selectedRarities;
 
     public FishShopFilterGui(int page, @Nonnull Player user) {
         super("Set Sale Filter(s)", user);
-        this.selectedRarities = filters.getOrDefault(user.getUniqueId(), new ArrayList<>());
+        this.selectedRarities = FILTERS.getOrDefault(user.getUniqueId(), new ArrayList<>());
+        updateButtons(page);
+        IntStream.of(45, 46, 47, 48, 50, 51, 52, 53).forEach(this::glassPaneButton);
+    }
+
+    private void updateButtons(int page) {
         List<FishRarity> fishRarities = new ArrayList<>();
         FishTypeTable fishTypeTable = MoreFish.instance().getFishTypeTable();
         fishTypeTable.getDefaultRarity().ifPresent(fishRarities::add);
@@ -43,16 +50,17 @@ public class FishShopFilterGui extends AbstractFishShopGUI {
             }
         });
 
-        IntStream.of(45, 46, 47, 48, 50, 51, 52, 53).forEach(this::glassPaneButton);
-        setButton(49, SpigotIconBuilder.of(Material.BARRIER, "Back to Shop"), Map.of(ClickType.LEFT, p -> {
-            filters.put(p.getUniqueId(), selectedRarities);
+        setButton(49, customName(new ItemStack(Material.BARRIER), "Back to Shop"), ClickType.LEFT, p -> {
+            FILTERS.put(p.getUniqueId(), selectedRarities);
             new FishShopGui(p, 1);
-        }));
+        });
     }
 
     private void updateIcon(int slot, FishRarity fishRarity) {
-        ItemStack itemStack = SpigotIconBuilder.builder(Material.COD).name(fishRarity.getColor() + fishRarity.getDisplayName()).description(List.of(selectedRarities.contains(fishRarity) ? ChatColor.GREEN + "Selected." : ChatColor.RED + "Not selected.")).build();
-        setButton(slot, itemStack, Map.of(ClickType.LEFT, p -> {
+        String name = fishRarity.getColor() + fishRarity.getDisplayName();
+        String lore = selectedRarities.contains(fishRarity) ? ChatColor.GREEN + "Selected." : ChatColor.RED + "Not selected.";
+        ItemStack itemStack = setLore(customName(new ItemStack(Material.COD), name), lore);
+        setButton(slot, itemStack, ClickType.LEFT, p -> {
             if (selectedRarities.contains(fishRarity)) {
                 selectedRarities.remove(fishRarity);
             }
@@ -61,6 +69,6 @@ public class FishShopFilterGui extends AbstractFishShopGUI {
             }
 
             Bukkit.getScheduler().scheduleSyncDelayedTask(MoreFish.instance(), () -> updateIcon(slot, fishRarity), 2);
-        }));
+        });
     }
 }

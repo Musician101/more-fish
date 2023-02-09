@@ -4,7 +4,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import me.elsiff.morefish.fishing.competition.FishingCompetition;
-import org.apache.commons.lang.math.IntRange;
+import me.elsiff.morefish.util.NumberUtils.Range;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 
@@ -15,19 +15,20 @@ public record TimeCondition(@Nonnull TimeState state) implements FishCondition {
     }
 
     public enum TimeState {
-        DAY(new IntRange(1000, 13000)),
-        NIGHT(new IntRange(0, 1000), new IntRange(13000, 24000));
+        DAY(new Range<>(1000L, 13000L)),
+        NIGHT(new Range<>(0L, 1000L), new Range<>(13000L, 24000L));
 
         @Nonnull
-        private final IntRange[] range;
+        private final Range<Long>[] range;
 
-        TimeState(@Nonnull IntRange... range) {
+        @SafeVarargs
+        TimeState(@Nonnull Range<Long>... range) {
             this.range = range;
         }
 
         @Nonnull
         static Optional<TimeState> fromTime(long worldTime) {
-            return Stream.of(values()).filter(state -> Stream.of(state.range).anyMatch(range -> range.containsInteger(worldTime))).findFirst();
+            return Stream.of(values()).filter(state -> Stream.of(state.range).anyMatch(range -> range.containsLong(worldTime))).findFirst();
         }
     }
 }

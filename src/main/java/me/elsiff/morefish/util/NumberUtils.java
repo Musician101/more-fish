@@ -2,10 +2,14 @@ package me.elsiff.morefish.util;
 
 import javax.annotation.Nonnull;
 
-public interface NumberUtils {
+public class NumberUtils {
+
+    private NumberUtils() {
+
+    }
 
     @Nonnull
-    static String ordinalOf(int number) {
+    public static String ordinalOf(int number) {
         String suffix;
         switch (number % 10) {
             case 1 -> suffix = "st";
@@ -19,5 +23,20 @@ public interface NumberUtils {
         }
 
         return number + suffix;
+    }
+
+    public record Range<N extends Number>(N min, N max) {
+
+        public boolean containsInteger(int value) {
+            return value >= min.intValue() && value <= max.intValue();
+        }
+
+        public boolean containsLong(long value) {
+            return value >= min.longValue() && value <= max.longValue();
+        }
+
+        public boolean containsDouble(double value) {
+            return value >= min.doubleValue() && value <= max.doubleValue();
+        }
     }
 }

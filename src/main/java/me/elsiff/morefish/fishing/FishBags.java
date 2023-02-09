@@ -25,7 +25,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 
-@SuppressWarnings("ResultOfMethodCallIgnored")
 public class FishBags implements Listener {
 
     @Nonnull

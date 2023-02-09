@@ -22,7 +22,6 @@ public final class RecordHandler {
     private final FishTypeTable fishTypeTable;
     private final YamlConfiguration yaml;
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     public RecordHandler() {
         MoreFish plugin = MoreFish.instance();
         this.fishTypeTable = plugin.getFishTypeTable();

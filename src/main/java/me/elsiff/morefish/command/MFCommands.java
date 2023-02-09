@@ -10,6 +10,7 @@ import me.elsiff.morefish.fishing.FishBag;
 import me.elsiff.morefish.fishing.competition.FishingCompetition;
 import me.elsiff.morefish.fishing.competition.FishingCompetitionHost;
 import me.elsiff.morefish.shop.FishShop;
+import me.elsiff.morefish.shop.FishShopGui;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -21,7 +22,6 @@ import static io.musician101.bukkitier.Bukkitier.argument;
 import static io.musician101.bukkitier.Bukkitier.literal;
 import static io.musician101.bukkitier.Bukkitier.registerCommand;
 
-@SuppressWarnings("SameReturnValue")
 public interface MFCommands {
 
     private static LiteralArgumentBuilder<CommandSender> begin(String name) {
@@ -178,7 +178,7 @@ public interface MFCommands {
             sender.sendMessage(Lang.SHOP_DISABLED);
         }
         else {
-            getFishShop().openGuiTo(guiUser);
+            new FishShopGui(guiUser, 1);
             if (!guiUser.getUniqueId().equals(((Player) sender).getUniqueId())) {
                 sender.sendMessage(Lang.replace(Lang.FORCED_PLAYER_TO_SHOP, Map.of("%s", guiUser.getName())));
             }

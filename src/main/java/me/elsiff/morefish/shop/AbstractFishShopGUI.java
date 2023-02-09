@@ -1,11 +1,13 @@
 package me.elsiff.morefish.shop;
 
-import io.musician101.musicianlibrary.java.minecraft.spigot.gui.chest.SpigotChestGUI;
-import io.musician101.musicianlibrary.java.minecraft.spigot.gui.chest.SpigotIconBuilder;
+import io.musician101.musigui.spigot.chest.SpigotChestGUI;
 import javax.annotation.Nonnull;
 import me.elsiff.morefish.MoreFish;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+import static io.musician101.musigui.spigot.chest.SpigotIconUtil.customName;
 
 public class AbstractFishShopGUI extends SpigotChestGUI<MoreFish> {
 
@@ -17,6 +19,6 @@ public class AbstractFishShopGUI extends SpigotChestGUI<MoreFish> {
     }
 
     protected void glassPaneButton(int slot) {
-        setButton(slot, SpigotIconBuilder.of(Material.LIGHT_BLUE_STAINED_GLASS_PANE, " "));
+        setButton(slot, customName(new ItemStack(Material.LIGHT_BLUE_STAINED_GLASS_PANE), " "));
     }
 }
