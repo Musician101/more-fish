@@ -12,6 +12,7 @@ import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.Fish;
 import me.elsiff.morefish.fishing.FishType;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -24,12 +25,12 @@ public interface FishItemStackConverter {
 
     @Nonnull
     static ItemStack createItemStack(@Nonnull Fish fish, @Nonnull Player catcher) {
-        ItemStack itemStack = fish.getType().getIcon().clone();
-        if (!fish.getType().getHasNotFishItemFormat()) {
+        ItemStack itemStack = fish.type().icon().clone();
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        if (!fish.type().hasNotFishItemFormat()) {
             Map<String, Object> replacement = getFormatReplacementMap(fish, catcher);
-            ItemMeta itemMeta = itemStack.getItemMeta();
-            itemMeta.displayName(Component.text(Lang.replace(getFormatConfig().map(cs -> cs.getString("display-name")).orElse("null"), replacement, catcher)));
-            List<Component> lore = Lang.replace(getFormatConfig().map(cs -> cs.getStringList("lore")).orElse(List.of()), replacement, catcher).stream().map(Component::text).collect(Collectors.toList());
+            itemMeta.displayName(LegacyComponentSerializer.legacy('&').deserialize(Lang.replace(getFormatConfig().map(cs -> cs.getString("display-name")).orElse("null"), replacement, catcher)));
+            List<Component> lore = Lang.replace(getFormatConfig().map(cs -> cs.getStringList("lore")).orElse(List.of()), replacement, catcher).stream().map(content -> LegacyComponentSerializer.legacy('&').deserialize(content)).collect(Collectors.toList());
             List<Component> oldLore = itemMeta.lore();
             if (oldLore != null) {
                 lore.addAll(oldLore.stream().map(component -> {
@@ -45,12 +46,12 @@ public interface FishItemStackConverter {
             }
 
             itemMeta.lore(Lang.replaceComponents(lore, replacement, catcher));
-            PersistentDataContainer data = itemMeta.getPersistentDataContainer();
-            data.set(fishTypeKey(), PersistentDataType.STRING.STRING, fish.getType().getName());
-            data.set(fishLengthKey(), PersistentDataType.DOUBLE, fish.getLength());
-            itemStack.setItemMeta(itemMeta);
         }
 
+        PersistentDataContainer data = itemMeta.getPersistentDataContainer();
+        data.set(fishTypeKey(), PersistentDataType.STRING.STRING, fish.type().name());
+        data.set(fishLengthKey(), PersistentDataType.DOUBLE, fish.length());
+        itemStack.setItemMeta(itemMeta);
         return itemStack;
     }
 
@@ -72,7 +73,7 @@ public interface FishItemStackConverter {
     }
 
     private static Map<String, Object> getFormatReplacementMap(Fish fish, Player catcher) {
-        return Map.of("%player%", catcher.getName(), "%rarity%", fish.getType().getRarity().getName().toUpperCase(), "%rarity_color%", fish.getType().getRarity().getColor().toString(), "%length%", fish.getLength(), "%fish%", fish.getType().getDisplayName());
+        return Map.of("%player%", catcher.getName(), "%rarity%", fish.type().rarity().name().toUpperCase(), "%rarity_color%", fish.type().rarity().color().toString(), "%length%", fish.length(), "%fish%", fish.type().displayName());
     }
 
     private static MoreFish getPlugin() {
@@ -105,7 +106,7 @@ public interface FishItemStackConverter {
         }
 
         String typeName = tags.get(fishTypeKey(), PersistentDataType.STRING);
-        FishType type = MoreFish.instance().getFishTypeTable().getTypes().stream().filter(it -> it.getName().equals(typeName)).findFirst().orElseThrow(() -> new IllegalStateException("Fish type doesn't exist"));
+        FishType type = MoreFish.instance().getFishTypeTable().getTypes().stream().filter(it -> it.name().equals(typeName)).findFirst().orElseThrow(() -> new IllegalStateException("Fish type doesn't exist"));
         Double length = tags.get(fishLengthKey(), PersistentDataType.DOUBLE);
         return new Fish(type, length == null ? 0 : length);
     }

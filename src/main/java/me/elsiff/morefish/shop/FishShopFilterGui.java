@@ -39,7 +39,7 @@ public class FishShopFilterGui extends AbstractFishShopGUI {
         List<FishRarity> fishRarities = new ArrayList<>();
         FishTypeTable fishTypeTable = MoreFish.instance().getFishTypeTable();
         fishTypeTable.getDefaultRarity().ifPresent(fishRarities::add);
-        fishTypeTable.getRarities().stream().filter(rarity -> rarity.getAdditionalPrice() >= 0 && !rarity.isDefault()).sorted(Comparator.reverseOrder()).forEach(fishRarities::add);
+        fishTypeTable.getRarities().stream().filter(rarity -> rarity.additionalPrice() >= 0 && !rarity.isDefault()).sorted(Comparator.reverseOrder()).forEach(fishRarities::add);
         IntStream.range(0, 45).forEach(x -> {
             try {
                 FishRarity fishRarity = fishRarities.get(x + (page - 1) * 45);
@@ -57,7 +57,7 @@ public class FishShopFilterGui extends AbstractFishShopGUI {
     }
 
     private void updateIcon(int slot, FishRarity fishRarity) {
-        String name = fishRarity.getColor() + fishRarity.getDisplayName();
+        String name = fishRarity.color() + fishRarity.displayName();
         String lore = selectedRarities.contains(fishRarity) ? ChatColor.GREEN + "Selected." : ChatColor.RED + "Not selected.";
         ItemStack itemStack = setLore(customName(new ItemStack(Material.COD), name), lore);
         setButton(slot, itemStack, ClickType.LEFT, p -> {

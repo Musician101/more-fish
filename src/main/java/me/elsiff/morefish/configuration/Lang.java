@@ -37,7 +37,7 @@ public interface Lang {
     String SHOP_GUI_TITLE = "Put your fish to sell";
     String SHOP_NO_FISH = PREFIX + "There's no fish to sell. Please put them on the slots.";
     String SHOP_SOLD = PREFIX + "You sold fish for " + ChatColor.GREEN + "$%price%" + ChatColor.RESET + ".";
-    String TIMER_BOSS_BAR = ChatColor.AQUA + "" + ChatColor.BOLD + "Fishing Contest " + ChatColor.RESET + "[%time% left]";
+    String TIMER_BOSS_BAR = ChatColor.AQUA + String.valueOf(ChatColor.BOLD) + "Fishing Contest " + ChatColor.RESET + "[%time% left]";
     String TIME_FORMAT_MINUTES = "m";
     String TIME_FORMAT_SECONDS = "s";
     String TOP_LIST = PREFIX + ChatColor.YELLOW + "%ordinal%. " + ChatColor.DARK_GRAY + ": %player%, %length%cm %fish%";
@@ -68,7 +68,7 @@ public interface Lang {
     @Nonnull
     static String replace(@Nonnull String string, @Nonnull Map<String, Object> replacements, @Nullable Player player) {
         for (Entry<String, Object> replacement : replacements.entrySet()) {
-            string = string.replace(replacement.getKey(), replacement.getValue().toString());
+            string = string.replaceAll(replacement.getKey(), replacement.getValue().toString());
         }
 
         string = replaceTopPlayer(string);
@@ -100,20 +100,16 @@ public interface Lang {
 
         return component.replaceText(builder -> {
             builder.matchLiteral("%rank%");
-            builder.replacement(getCompetition().containsContestant(player.getUniqueId()) ? getCompetition().recordOf(player.getUniqueId()).getFish().getType().getName() : "0");
+            builder.replacement(getCompetition().containsContestant(player.getUniqueId()) ? getCompetition().recordOf(player.getUniqueId()).fish().type().name() : "0");
         });
     }
 
     private static String replaceFish(@Nonnull String string, @Nullable Player player) {
-        if (player == null) {
+        if (player == null || !getCompetition().containsContestant(player.getUniqueId())) {
             return string;
         }
 
-        if (getCompetition().containsContestant(player.getUniqueId())) {
-            return string.replaceAll("%fish%", getCompetition().recordOf(player.getUniqueId()).getFish().getType().getName());
-        }
-
-        return "0";
+        return string.replaceAll("%fish%", getCompetition().recordOf(player.getUniqueId()).fish().type().name());
     }
 
     private static Component replaceRank(@Nonnull Component component, @Nullable Player player) {
@@ -128,15 +124,11 @@ public interface Lang {
     }
 
     private static String replaceRank(@Nonnull String string, @Nullable Player player) {
-        if (player == null) {
+        if (player == null || !getCompetition().containsContestant(player.getUniqueId())) {
             return string;
         }
 
-        if (getCompetition().containsContestant(player.getUniqueId())) {
-            return string.replaceAll("%rank%", String.valueOf(getCompetition().rankNumberOf(getCompetition().recordOf(player.getUniqueId()))));
-        }
-
-        return "0";
+        return string.replaceAll("%rank%", String.valueOf(getCompetition().rankNumberOf(getCompetition().recordOf(player.getUniqueId()))));
     }
 
     private static Component replaceTopFish(@Nonnull Component component) {
@@ -147,7 +139,7 @@ public interface Lang {
                 int number = Integer.parseInt(match.replace("%top_fish_", "").replaceAll("%", ""));
                 return b.build().replaceText(b2 -> {
                     b2.matchLiteral(match);
-                    b2.replacement(getCompetition().getRanking().size() >= number ? getCompetition().recordOf(number).getFish().getType().getName() : "none");
+                    b2.replacement(getCompetition().getRanking().size() >= number ? getCompetition().recordOf(number).fish().type().name() : "none");
                 });
             });
         });
@@ -160,7 +152,7 @@ public interface Lang {
             String match = matcher.group();
             int number = Integer.parseInt(match.replace("top_fish_", "").replaceAll("%", ""));
             if (getCompetition().getRanking().size() >= number) {
-                return matcher.replaceAll(getCompetition().recordOf(number).getFish().getType().getName());
+                return matcher.replaceAll(getCompetition().recordOf(number).fish().type().name());
             }
 
             return matcher.replaceAll("none");
@@ -177,7 +169,7 @@ public interface Lang {
                 int number = Integer.parseInt(match.replace("%top_fish_length_", "").replaceAll("%", ""));
                 return b.build().replaceText(b2 -> {
                     b2.matchLiteral(match);
-                    b2.replacement(getCompetition().getRanking().size() >= number ? String.valueOf(getCompetition().recordOf(number).getFish().getLength()) : "0.0");
+                    b2.replacement(getCompetition().getRanking().size() >= number ? String.valueOf(getCompetition().recordOf(number).fish().length()) : "0.0");
                 });
             });
         });
@@ -190,7 +182,7 @@ public interface Lang {
             String match = matcher.group();
             int number = Integer.parseInt(match.replace("top_fish_length_", "").replaceAll("%", ""));
             if (getCompetition().getRanking().size() >= number) {
-                return matcher.replaceAll(String.valueOf(getCompetition().recordOf(number).getFish().getLength()));
+                return matcher.replaceAll(String.valueOf(getCompetition().recordOf(number).fish().length()));
             }
 
             return matcher.replaceAll("0.0");
@@ -207,7 +199,7 @@ public interface Lang {
                 int number = Integer.parseInt(match.replace("top_player_", "").replaceAll("%", ""));
                 return b.build().replaceText(b2 -> {
                     b2.matchLiteral(match);
-                    String name = Bukkit.getOfflinePlayer(getCompetition().recordOf(number).getFisher()).getName();
+                    String name = Bukkit.getOfflinePlayer(getCompetition().recordOf(number).fisher()).getName();
                     b2.replacement(getCompetition().getRanking().size() >= number ? (name != null ? name : "null") : "no one");
                 });
             });
@@ -221,7 +213,7 @@ public interface Lang {
             String match = matcher.group();
             int number = Integer.parseInt(match.replace("top_player_", "").replaceAll("%", ""));
             if (getCompetition().getRanking().size() >= number) {
-                return matcher.replaceAll(Bukkit.getOfflinePlayer(getCompetition().recordOf(number).getFisher()).getName());
+                return matcher.replaceAll(Bukkit.getOfflinePlayer(getCompetition().recordOf(number).fisher()).getName());
             }
 
             return matcher.replaceAll("no one");

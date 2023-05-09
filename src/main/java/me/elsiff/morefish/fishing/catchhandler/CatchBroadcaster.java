@@ -14,6 +14,6 @@ public final class CatchBroadcaster extends AbstractBroadcaster {
     }
 
     public boolean meetBroadcastCondition(@Nonnull Player catcher, @Nonnull Fish fish) {
-        return !(fish.getType().getCatchAnnouncement() instanceof NoAnnouncement);
+        return !(fish.type().catchAnnouncement() instanceof NoAnnouncement);
     }
 }

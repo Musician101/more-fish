@@ -12,6 +12,8 @@ import org.bukkit.OfflinePlayer;
 public final class FishingCompetition {
 
     @Nonnull
+    private final MFScoreboard scoreboard = new MFScoreboard();
+    @Nonnull
     private FishingCompetition.State state = State.DISABLED;
 
     private void checkStateDisabled() {
@@ -31,11 +33,12 @@ public final class FishingCompetition {
     }
 
     public boolean containsContestant(@Nonnull UUID contestant) {
-        return getRanking().stream().anyMatch(record -> contestant.equals(record.getFisher()));
+        return getRanking().stream().anyMatch(record -> contestant.equals(record.fisher()));
     }
 
     public void disable() {
         this.checkStateEnabled();
+        scoreboard.clear();
         this.state = FishingCompetition.State.DISABLED;
     }
 
@@ -54,6 +57,11 @@ public final class FishingCompetition {
     }
 
     @Nonnull
+    public MFScoreboard getScoreboard() {
+        return scoreboard;
+    }
+
+    @Nonnull
     public FishingCompetition.State getState() {
         return this.state;
     }
@@ -68,9 +76,9 @@ public final class FishingCompetition {
 
     public void putRecord(@Nonnull Record record) {
         checkStateEnabled();
-        if (containsContestant(record.getFisher())) {
-            Record oldRecord = recordOf(record.getFisher());
-            if (record.getFish().getLength() > oldRecord.getFish().getLength()) {
+        if (containsContestant(record.fisher())) {
+            Record oldRecord = recordOf(record.fisher());
+            if (record.fish().length() > oldRecord.fish().length()) {
                 getRecords().update(record);
             }
         }
@@ -78,6 +86,7 @@ public final class FishingCompetition {
             getRecords().insert(record);
         }
 
+        scoreboard.update();
     }
 
     public int rankNumberOf(@Nonnull Record record) {
@@ -89,7 +98,7 @@ public final class FishingCompetition {
         List<Record> records = getRanking();
         int place = 0;
         for (Record record : records) {
-            if (record.getFisher().equals(contestant.getUniqueId())) {
+            if (record.fisher().equals(contestant.getUniqueId())) {
                 return new SimpleEntry<>(place, record);
             }
 
@@ -101,7 +110,7 @@ public final class FishingCompetition {
 
     @Nonnull
     public Record recordOf(@Nonnull UUID contestant) {
-        return getRanking().stream().filter(record -> contestant.equals(record.getFisher())).findFirst().orElseThrow(() -> new IllegalStateException("Record not found"));
+        return getRanking().stream().filter(record -> contestant.equals(record.fisher())).findFirst().orElseThrow(() -> new IllegalStateException("Record not found"));
     }
 
     @Nonnull
@@ -121,7 +130,7 @@ public final class FishingCompetition {
     public boolean willBeNewFirst(@Nonnull OfflinePlayer catcher, @Nonnull Fish fish) {
         if (!getRanking().isEmpty()) {
             Record record = getRanking().get(0);
-            return fish.getLength() > record.getFish().getLength() && !record.getFisher().equals(catcher.getUniqueId());
+            return fish.length() > record.fish().length() && !record.fisher().equals(catcher.getUniqueId());
         }
 
         return true;

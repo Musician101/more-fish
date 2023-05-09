@@ -13,12 +13,12 @@ import org.bukkit.entity.Player;
 public abstract class AbstractBroadcaster implements CatchHandler {
 
     private String fishNameWithRarity(FishType fishType) {
-        String s = fishType.getDisplayName();
-        if (fishType.getNoDisplay()) {
+        String s = fishType.displayName();
+        if (fishType.noDisplay()) {
             return s;
         }
 
-        return fishType.getRarity().getDisplayName().toUpperCase() + " " + s;
+        return fishType.rarity().displayName().toUpperCase() + " " + s;
     }
 
     @Nonnull
@@ -26,12 +26,13 @@ public abstract class AbstractBroadcaster implements CatchHandler {
 
     public void handle(@Nonnull Player catcher, @Nonnull Fish fish) {
         if (meetBroadcastCondition(catcher, fish)) {
-            List<Player> receivers = fish.getType().getCatchAnnouncement().receiversOf(catcher);
+            List<Player> receivers = fish.type().catchAnnouncement().receiversOf(catcher);
             if (MoreFish.instance().getConfig().getBoolean("messages.only-announce-fishing-rod")) {
                 receivers.removeIf(player -> player.getInventory().getItemInMainHand().getType() != Material.FISHING_ROD);
             }
 
-            String msg = Lang.replace(getCatchMessageFormat(), Map.of("%player%", catcher.getName(), "%length%", fish.getLength(), "%rarity%", fish.getType().getRarity().getDisplayName().toUpperCase(), "%rarity_color%", fish.getType().getRarity().getColor(), "%fish%", fish.getType().getName(), "%fish_with_rarity%", fishNameWithRarity(fish.getType())), catcher);
+            String format = getCatchMessageFormat();
+            String msg = Lang.replace(format, Map.of("%player%", catcher.getName(), "%length%", fish.length(), "%rarity%", fish.type().rarity().displayName().toUpperCase(), "%rarity_color%", fish.type().rarity().color(), "%fish%", fish.type().name(), "%fish_with_rarity%", fishNameWithRarity(fish.type())), catcher);
             receivers.forEach(player -> player.sendMessage(msg));
         }
     }

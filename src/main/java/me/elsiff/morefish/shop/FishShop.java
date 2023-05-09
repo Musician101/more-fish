@@ -1,13 +1,11 @@
 package me.elsiff.morefish.shop;
 
-import java.util.Collection;
 import javax.annotation.Nonnull;
 import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.fishing.Fish;
 import me.elsiff.morefish.hooker.VaultHooker;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.Player;
 
 public record FishShop() {
 
@@ -45,12 +43,8 @@ public record FishShop() {
     }
 
     public double priceOf(@Nonnull Fish fish) {
-        double rarityPrice = fish.getType().getAdditionalPrice();
-        double price = this.getPriceMultiplier() * fish.getLength() + rarityPrice;
+        double rarityPrice = fish.type().additionalPrice();
+        double price = this.getPriceMultiplier() * fish.length() + rarityPrice;
         return getRoundDecimalPoints() ? Math.floor(price) : price;
-    }
-
-    public void sell(@Nonnull Player player, @Nonnull Collection<Fish> fish) {
-        getEconomy().depositPlayer(player, fish.stream().mapToDouble(this::priceOf).sum());
     }
 }

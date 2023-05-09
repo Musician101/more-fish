@@ -44,7 +44,7 @@ public final class RecordHandler {
         return yaml.getKeys(false).stream().map(yaml::getConfigurationSection).filter(Objects::nonNull).map(section -> {
             UUID id = UUID.fromString(section.getName());
             String fishTypeName = section.getString("fish-type");
-            FishType fishType = fishTypeTable.getTypes().stream().filter(it -> it.getName().equals(fishTypeName)).findFirst().orElseThrow(() -> new IllegalStateException("Fish type doesn't exist for " + fishTypeName));
+            FishType fishType = fishTypeTable.getTypes().stream().filter(it -> it.name().equals(fishTypeName)).findFirst().orElseThrow(() -> new IllegalStateException("Fish type doesn't exist for " + fishTypeName));
             double fishLength = section.getDouble("fish-length");
             Fish fish = new Fish(fishType, fishLength);
             return new Record(id, fish);
@@ -62,7 +62,7 @@ public final class RecordHandler {
     }
 
     public void insert(@Nonnull Record record) {
-        String id = record.getFisher().toString();
+        String id = record.fisher().toString();
         if (yaml.contains(id)) {
             throw new IllegalArgumentException("Record must not exist in the ranking");
         }
@@ -77,8 +77,8 @@ public final class RecordHandler {
     }
 
     private void setRecord(ConfigurationSection section, Record record) {
-        section.set("fish-type", record.getFish().getType().getName());
-        section.set("fish-length", record.getFish().getLength());
+        section.set("fish-type", record.fish().type().name());
+        section.set("fish-length", record.fish().length());
     }
 
     @Nonnull
@@ -87,7 +87,7 @@ public final class RecordHandler {
     }
 
     public void update(@Nonnull Record record) {
-        String id = record.getFisher().toString();
+        String id = record.fisher().toString();
         ConfigurationSection cs = yaml.getConfigurationSection(id);
         if (!yaml.contains(id) || cs == null) {
             throw new IllegalArgumentException("Record must exist in the ranking");

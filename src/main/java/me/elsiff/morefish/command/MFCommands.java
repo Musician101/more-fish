@@ -3,6 +3,7 @@ package me.elsiff.morefish.command;
 import com.mojang.brigadier.arguments.LongArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import io.papermc.paper.plugin.configuration.PluginMeta;
 import java.util.Map;
 import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.configuration.Lang;
@@ -16,7 +17,6 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.PluginDescriptionFile;
 
 import static io.musician101.bukkitier.Bukkitier.argument;
 import static io.musician101.bukkitier.Bukkitier.literal;
@@ -64,6 +64,20 @@ public interface MFCommands {
         });
     }
 
+    static LiteralArgumentBuilder<CommandSender> contraband() {
+        return literal("contraband").requires(sender -> sender instanceof Player).executes(context -> {
+            Player player = (Player) context.getSource();
+            FishBag fishBag = getPlugin().getFishBags().getFishBag(player);
+            fishBag.getContraband().forEach(i -> {
+                World world = player.getWorld();
+                world.dropItem(player.getLocation(), i);
+            });
+            fishBag.clearContraband();
+            player.sendMessage(ChatColor.GREEN + " [MF] All contraband has been dropped from your bag. Make sure you get it all.");
+            return 1;
+        });
+    }
+
     private static LiteralArgumentBuilder<CommandSender> end() {
         return literal("end").requires(sender -> sender.hasPermission("morefish.admin")).executes(context -> {
             CommandSender sender = context.getSource();
@@ -105,9 +119,10 @@ public interface MFCommands {
         return literal("help").executes(MFCommands::help);
     }
 
+    @SuppressWarnings("UnstableApiUsage")
     private static int help(CommandContext<CommandSender> context) {
         CommandSender sender = context.getSource();
-        PluginDescriptionFile pluginInfo = getPlugin().getDescription();
+        PluginMeta pluginInfo = getPlugin().getPluginMeta();
         String pluginName = pluginInfo.getName();
         String prefix = ChatColor.AQUA + "[" + pluginName + "]" + ChatColor.RESET + " ";
         sender.sendMessage(prefix + ChatColor.DARK_AQUA + "> ===== " + ChatColor.AQUA + ChatColor.BOLD + pluginName + ' ' + ChatColor.AQUA + 'v' + pluginInfo.getVersion() + ChatColor.DARK_AQUA + " ===== <");
@@ -139,20 +154,6 @@ public interface MFCommands {
         registerCommand(getPlugin(), literal("morefish").executes(MFCommands::help).then(begin("begin")).then(begin("start")).then(clear()).then(contraband()).then(end()).then(help()).then(reload()).then(shop()).then(suspend()).then(top("top")).then(top("ranking")));
     }
 
-    static LiteralArgumentBuilder<CommandSender> contraband() {
-        return literal("contraband").requires(sender -> sender instanceof Player).executes(context -> {
-            Player player = (Player) context.getSource();
-            FishBag fishBag = getPlugin().getFishBags().getFishBag(player);
-            fishBag.getContraband().forEach(i -> {
-                World world = player.getWorld();
-                world.dropItem(player.getLocation(), i);
-            });
-            fishBag.clearContraband();
-            player.sendMessage(ChatColor.GREEN + " [MF] All contraband has been dropped from your bag. Make sure you get it all.");
-            return 1;
-        });
-    }
-
     private static LiteralArgumentBuilder<CommandSender> reload() {
         return literal("reload").requires(sender -> sender.hasPermission("morefish.admin")).executes(context -> {
             CommandSender sender = context.getSource();
@@ -174,7 +175,7 @@ public interface MFCommands {
     }
 
     private static int shop(CommandSender sender, Player guiUser) {
-        if (!getFishShop().getEnabled()) {
+        if (!getFishShop().getEnabled() || !MoreFish.instance().getVault().hasEconomy()) {
             sender.sendMessage(Lang.SHOP_DISABLED);
         }
         else {

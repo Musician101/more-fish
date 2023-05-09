@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "me.elsiff"
-version = "4.0.3-SNAPSHOT"
+version = "4.1.2"
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(17))
@@ -23,32 +23,44 @@ repositories {
 dependencies {
     compileOnlyApi("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT")
     compileOnlyApi("com.github.MilkBowl:VaultAPI:1.7.1")
-    compileOnlyApi("io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT")
+    compileOnlyApi("io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT")
+    compileOnlyApi(files("lib/mcMMO.jar"))
 
-    api("com.github.musician101.musigui:spigot:d353c948a4") {
+    //TODO work around since Jitpack can't build the 1.1.0 release for some reason
+    api("com.github.musician101.musigui:spigot:e292d9c8e2") {
         exclude("com.google.code.findbugs")
         exclude("org.spigotmc")
     }
-    api("com.github.musician101:bukkitier:1.2") {
+    api("com.github.musician101:bukkitier:1.2.2") {
         exclude("org.spigotmc")
     }
 }
 
-tasks.withType(ProcessResources::class) {
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
-    filesMatching("plugin.yml") {
-        expand("version" to project.version)
+tasks {
+    processResources {
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+        filesMatching("plugin.yml") {
+            expand("version" to project.version)
+        }
+    }
+
+    shadowJar {
+        dependencies {
+            include(dependency(":common"))
+            include(dependency("com.github.musician101:"))
+            include(dependency("com.github.musician101.musigui:spigot:"))
+        }
+
+        archiveClassifier.set("")
+        relocate("io.musician101", "me.elsiff.morefish.lib.io.musician101")
+        dependsOn("build")
+    }
+
+    register<Copy>("prepTestJar") {
+        dependsOn("shadowJar")
+        from("build/libs/${project.name}-${project.version}.jar")
+        into("server/plugins")
     }
 }
 
-tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
-    dependencies {
-        include(dependency(":common"))
-        include(dependency("io.musician101:"))
-        include(dependency("io.musician101.musigui:"))
-    }
 
-    archiveBaseName.set("more-fish-${project.version}.jar")
-    relocate("io.musician101", "com.campmongoose.serversaturday.lib.io.musician101")
-    dependsOn("build")
-}

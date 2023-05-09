@@ -17,6 +17,7 @@ import me.elsiff.morefish.fishing.catchhandler.NewFirstBroadcaster;
 import me.elsiff.morefish.fishing.competition.FishingCompetition;
 import me.elsiff.morefish.fishing.competition.FishingCompetitionAutoRunner;
 import me.elsiff.morefish.fishing.competition.FishingCompetitionHost;
+import me.elsiff.morefish.hooker.McmmoHooker;
 import me.elsiff.morefish.hooker.ProtocolLibHooker;
 import me.elsiff.morefish.hooker.VaultHooker;
 import me.elsiff.morefish.shop.FishShop;
@@ -30,12 +31,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class MoreFish extends JavaPlugin {
 
     @Nonnull
-    private final FishingCompetitionAutoRunner autoRunner = new FishingCompetitionAutoRunner();
-    @Nonnull
-    private final FishingCompetition competition = new FishingCompetition();
-    @Nonnull
-    private final FishingCompetitionHost competitionHost = new FishingCompetitionHost();
-    @Nonnull
     private final FishBags fishBags = new FishBags();
     @Nonnull
     private final FishShop fishShop = new FishShop();
@@ -44,9 +39,17 @@ public final class MoreFish extends JavaPlugin {
     @Nonnull
     private final List<CatchHandler> globalCatchHandlers = Arrays.asList(new CatchBroadcaster(), new NewFirstBroadcaster(), new CompetitionRecordAdder());
     @Nonnull
+    private final McmmoHooker mcmmo = new McmmoHooker();
+    @Nonnull
     private final ProtocolLibHooker protocolLib = new ProtocolLibHooker();
     @Nonnull
     private final VaultHooker vault = new VaultHooker();
+    @Nonnull
+    private final FishingCompetitionAutoRunner autoRunner = new FishingCompetitionAutoRunner();
+    @Nonnull
+    private final FishingCompetition competition = new FishingCompetition();
+    @Nonnull
+    private final FishingCompetitionHost competitionHost = new FishingCompetitionHost();
 
     public static MoreFish instance() {
         return getPlugin(MoreFish.class);
@@ -107,6 +110,11 @@ public final class MoreFish extends JavaPlugin {
     }
 
     @Nonnull
+    public McmmoHooker getMcmmo() {
+        return mcmmo;
+    }
+
+    @Nonnull
     public VaultHooker getVault() {
         return vault;
     }
@@ -125,6 +133,7 @@ public final class MoreFish extends JavaPlugin {
     public void onEnable() {
         protocolLib.hookIfEnabled(this);
         vault.hookIfEnabled(this);
+        mcmmo.hookIfEnabled(this);
         fishBags.load();
         applyConfig();
         Server server = getServer();

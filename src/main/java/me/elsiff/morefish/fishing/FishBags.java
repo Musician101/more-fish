@@ -58,18 +58,6 @@ public class FishBags implements Listener {
         return fb;
     }
 
-    @EventHandler
-    public void onJoin(@Nonnull PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        FishBag fishBag = getFishBag(player);
-        List<ItemStack> contraband = fishBag.getContraband();
-        if (contraband.isEmpty()) {
-            return;
-        }
-
-        Bukkit.getScheduler().scheduleSyncDelayedTask(MoreFish.instance(), () -> player.sendMessage(Component.text("[MF] CONTRABAND DETECTED IN YOUR FISH BAG. CLICK THIS MESSAGE TO RETRIEVE IT NOW.").color(NamedTextColor.RED).clickEvent(ClickEvent.runCommand("/mf contraband"))));
-    }
-
     public int getMaxAllowedPages(@Nonnull Player player) {
         return getFishBag(player).getMaxAllowedPages();
     }
@@ -87,7 +75,7 @@ public class FishBags implements Listener {
                 ConfigurationSection fishSection = yaml.getConfigurationSection("fish");
                 if (fishSection != null) {
                     IntStream.range(1, fishBag.getMaxAllowedPages() + 1).forEach(page -> {
-                        ConfigurationSection pageSection = fishSection.getConfigurationSection(page + "");
+                        ConfigurationSection pageSection = fishSection.getConfigurationSection(String.valueOf(page));
                         if (pageSection == null) {
                             return;
                         }
@@ -99,6 +87,18 @@ public class FishBags implements Listener {
                 bags.add(fishBag);
             });
         }
+    }
+
+    @EventHandler
+    public void onJoin(@Nonnull PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        FishBag fishBag = getFishBag(player);
+        List<ItemStack> contraband = fishBag.getContraband();
+        if (contraband.isEmpty()) {
+            return;
+        }
+
+        Bukkit.getScheduler().scheduleSyncDelayedTask(MoreFish.instance(), () -> player.sendMessage(Component.text("[MF] CONTRABAND DETECTED IN YOUR FISH BAG. CLICK THIS MESSAGE TO RETRIEVE IT NOW.").color(NamedTextColor.RED).clickEvent(ClickEvent.runCommand("/mf contraband"))));
     }
 
     public void save() {

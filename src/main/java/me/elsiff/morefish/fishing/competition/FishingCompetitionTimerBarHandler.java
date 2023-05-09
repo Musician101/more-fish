@@ -18,8 +18,13 @@ import org.bukkit.scheduler.BukkitTask;
 
 public final class FishingCompetitionTimerBarHandler {
 
-    private final MoreFish plugin = MoreFish.instance();
-    private final NamespacedKey timerBarKey = new NamespacedKey(plugin, "fishing-competition-timer-bar");
+    private MoreFish getPlugin() {
+        return MoreFish.instance();
+    }
+
+    private NamespacedKey getTimerBarKey() {
+        return new NamespacedKey(getPlugin(), "fishing-competition-timer-bar");
+    }
     private FishingCompetitionTimerBarHandler.TimerBarDisplayer barDisplayer;
     private BukkitTask barUpdatingTask;
     private BossBar timerBar;
@@ -32,16 +37,16 @@ public final class FishingCompetitionTimerBarHandler {
         timerBar.removeAll();
         HandlerList.unregisterAll(barDisplayer);
         barDisplayer = null;
-        plugin.getServer().removeBossBar(timerBarKey);
+        getPlugin().getServer().removeBossBar(getTimerBarKey());
         timerBar = null;
     }
 
     public void enableTimer(long duration) {
-        BarColor barColor = BarColor.valueOf(plugin.getConfig().getString("messages.contest-bar-color", "blue").toUpperCase());
-        timerBar = plugin.getServer().createBossBar(timerBarKey, "", barColor, BarStyle.SEGMENTED_10);
-        plugin.getServer().getOnlinePlayers().forEach(timerBar::addPlayer);
-        barUpdatingTask = new TimerBarUpdater(duration).runTaskTimer(plugin, 0, 20L);
-        plugin.getServer().getPluginManager().registerEvents(barDisplayer = new TimerBarDisplayer(), plugin);
+        BarColor barColor = BarColor.valueOf(getPlugin().getConfig().getString("messages.contest-bar-color", "blue").toUpperCase());
+        timerBar = getPlugin().getServer().createBossBar(getTimerBarKey(), "", barColor, BarStyle.SEGMENTED_10);
+        getPlugin().getServer().getOnlinePlayers().forEach(timerBar::addPlayer);
+        barUpdatingTask = new TimerBarUpdater(duration).runTaskTimer(getPlugin(), 0, 20L);
+        getPlugin().getServer().getPluginManager().registerEvents(barDisplayer = new TimerBarDisplayer(), getPlugin());
     }
 
     public boolean getHasTimerEnabled() {

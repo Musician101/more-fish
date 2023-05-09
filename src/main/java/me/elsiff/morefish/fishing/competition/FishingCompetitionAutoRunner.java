@@ -11,8 +11,13 @@ import org.bukkit.scheduler.BukkitTask;
 public final class FishingCompetitionAutoRunner {
 
     private static final long HALF_MINUTE = 600L;
-    private final MoreFish plugin = MoreFish.instance();
-    private final FishingCompetitionHost competitionHost = plugin.getCompetitionHost();
+
+    private MoreFish getPlugin() {
+        return MoreFish.instance();
+    }
+    private FishingCompetitionHost getCompetitionHost() {
+        return getPlugin().getCompetitionHost();
+    }
     private Collection<LocalTime> scheduledTimes;
     private BukkitTask timeCheckingTask;
 
@@ -30,7 +35,7 @@ public final class FishingCompetitionAutoRunner {
             throw new IllegalStateException("Auto runner must not be already enabled");
         }
 
-        timeCheckingTask = new TimeChecker(this::tryOpenCompetition).runTaskTimer(plugin, 0, HALF_MINUTE);
+        timeCheckingTask = new TimeChecker(this::tryOpenCompetition).runTaskTimer(getPlugin(), 0, HALF_MINUTE);
     }
 
     public boolean isEnabled() {
@@ -42,11 +47,11 @@ public final class FishingCompetitionAutoRunner {
     }
 
     private void tryOpenCompetition() {
-        FileConfiguration config = plugin.getConfig();
+        FileConfiguration config = getPlugin().getConfig();
         int requiredPlayers = config.getInt("auto-running.required-players");
-        if (competitionHost.getCompetition().isDisabled() && plugin.getServer().getOnlinePlayers().size() >= requiredPlayers) {
+        if (getCompetitionHost().getCompetition().isDisabled() && getPlugin().getServer().getOnlinePlayers().size() >= requiredPlayers) {
             long duration = config.getLong("auto-running.timer") * 20L;
-            competitionHost.openCompetitionFor(duration);
+            getCompetitionHost().openCompetitionFor(duration);
         }
 
     }

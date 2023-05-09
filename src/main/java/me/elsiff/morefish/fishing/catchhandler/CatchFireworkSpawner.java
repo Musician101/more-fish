@@ -14,7 +14,7 @@ public final class CatchFireworkSpawner implements CatchHandler {
     private final FireworkEffect effect = FireworkEffect.builder().with(Type.BALL_LARGE).withColor(Color.AQUA).withFade(Color.BLUE).withTrail().withFlicker().build();
 
     public void handle(@Nonnull Player catcher, @Nonnull Fish fish) {
-        if (fish.getType().getHasCatchFirework()) {
+        if (fish.type().hasCatchFirework()) {
             catcher.getWorld().spawn(catcher.getLocation(), Firework.class, firework -> {
                 FireworkMeta meta = firework.getFireworkMeta();
                 meta.addEffect(effect);

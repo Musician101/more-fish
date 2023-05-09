@@ -12,6 +12,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.announcement.PlayerAnnouncement;
@@ -24,7 +25,7 @@ import me.elsiff.morefish.fishing.condition.FishCondition;
 import me.elsiff.morefish.hooker.PluginHooker;
 import me.elsiff.morefish.hooker.ProtocolLibHooker;
 import me.elsiff.morefish.hooker.SkullNbtHandler;
-import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -103,15 +104,16 @@ public final class FishTypeTable {
                     boolean noDisplay = cs.getBoolean("no-display", false);
                     boolean firework = cs.getBoolean("firework", false);
                     double additionalPrice = cs.getDouble("additional-price", 0D);
-                    return new FishRarity(cs.getName(), displayName, isDefault, chance, color, catchHandlers, announcement, skipItemFormat, noDisplay, firework, additionalPrice);
+                    List<FishCondition> conditions = FishCondition.loadFrom(cs, "conditions");
+                    return new FishRarity(cs.getName(), displayName, isDefault, chance, color, catchHandlers, conditions, announcement, skipItemFormat, noDisplay, firework, additionalPrice);
                 }).toList();
                 ConfigurationSection fishList = fish.getConfigurationSection("fish-list");
                 if (fishList != null) {
                     fishList.getKeys(false).stream().map(fishList::getConfigurationSection).filter(Objects::nonNull).forEach(groupByRarity -> {
                         String rarityName = groupByRarity.getName();
-                        FishRarity rarity = rarities.stream().filter(fishRarity -> rarityName.equals(fishRarity.getName())).findFirst().orElseThrow(() -> new IllegalStateException("Rarity " + rarityName + " doesn't exist."));
+                        FishRarity rarity = rarities.stream().filter(fishRarity -> rarityName.equals(fishRarity.name())).findFirst().orElseThrow(() -> new IllegalStateException("Rarity " + rarityName + " doesn't exist."));
                         List<FishType> fishTypes = groupByRarity.getKeys(false).stream().map(groupByRarity::getConfigurationSection).filter(Objects::nonNull).map(cs -> {
-                            List<CatchHandler> catchHandlers = new ArrayList<>(rarity.getCatchHandlers());
+                            List<CatchHandler> catchHandlers = new ArrayList<>(rarity.catchHandlers());
                             if (cs.contains("commands")) {
                                 catchHandlers.add(new CatchCommandExecutor(cs.getStringList("commands")));
                             }
@@ -128,12 +130,12 @@ public final class FishTypeTable {
                             double minLength = cs.getDouble("length-min");
                             double maxLength = cs.getDouble("length-max");
                             ItemStack itemStack = loadItemStack(name, cs.getConfigurationSection("icon"));
-                            PlayerAnnouncement announcement = PlayerAnnouncement.fromConfigOrDefault(cs, "catch-announce", rarity.getCatchAnnouncement());
-                            List<FishCondition> conditions = FishCondition.loadFrom(cs, "conditions");
+                            PlayerAnnouncement announcement = PlayerAnnouncement.fromConfigOrDefault(cs, "catch-announce", rarity.catchAnnouncement());
+                            List<FishCondition> conditions = Stream.concat(FishCondition.loadFrom(cs, "conditions").stream(), rarity.conditions().stream()).toList();
                             boolean skipItemFormat = cs.getBoolean("skip-item-format", rarity.hasNotFishItemFormat());
-                            boolean noDisplay = cs.getBoolean("no-display", rarity.getNoDisplay());
+                            boolean noDisplay = cs.getBoolean("no-display", rarity.noDisplay());
                             boolean firework = cs.getBoolean("firework", rarity.hasCatchFirework());
-                            double additionalPrice = rarity.getAdditionalPrice() + cs.getDouble("additional-price", 0D);
+                            double additionalPrice = rarity.additionalPrice() + cs.getDouble("additional-price", 0D);
                             return new FishType(cs.getName(), rarity, displayName, minLength, maxLength, itemStack, catchHandlers, announcement, conditions, skipItemFormat, noDisplay, firework, additionalPrice);
                         }).toList();
                         map.put(rarity, fishTypes);
@@ -164,7 +166,7 @@ public final class FishTypeTable {
         int amount = cs.getInt("amount", 1);
         ItemStack itemStack = new ItemStack(material, amount);
         ItemMeta itemMeta = itemStack.getItemMeta();
-        itemMeta.lore(cs.getStringList("lore").stream().map(Component::text).collect(Collectors.toList()));
+        itemMeta.lore(cs.getStringList("lore").stream().map(content -> LegacyComponentSerializer.legacy('&').deserialize(content)).collect(Collectors.toList()));
         if (cs.contains("enchantments")) {
             cs.getStringList("enchantments").stream().map(string -> string.split("\\|")).forEach(tokens -> {
                 Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(tokens[0]));
@@ -202,7 +204,7 @@ public final class FishTypeTable {
 
     @Nonnull
     public FishRarity pickRandomRarity() {
-        double probabilitySum = getRarities().stream().filter(rarity -> !rarity.isDefault()).mapToDouble(FishRarity::getProbability).sum();
+        double probabilitySum = getRarities().stream().filter(rarity -> !rarity.isDefault()).mapToDouble(FishRarity::probability).sum();
         if (probabilitySum >= 1.0) {
             throw new IllegalStateException("Sum of rarity probabilities must not be bigger than 1.0");
         }
@@ -212,7 +214,7 @@ public final class FishTypeTable {
         double chanceSum = 0.0;
         for (FishRarity rarity : rarities) {
             if (!rarity.isDefault()) {
-                chanceSum += rarity.getProbability();
+                chanceSum += rarity.probability();
                 if (randomVal <= chanceSum) {
                     return rarity;
                 }
@@ -233,9 +235,10 @@ public final class FishTypeTable {
             throw new IllegalStateException("Rarity must be contained in the table");
         }
 
-        List<FishType> types = map.get(rarity).stream().filter(type -> type.getConditions().stream().allMatch(condition -> condition.check(caught, fisher, competition))).toList();
+        List<FishType> types = map.get(rarity).stream().filter(type -> type.conditions().stream().allMatch(condition -> condition.check(caught, fisher, competition))).toList();
         if (types.isEmpty()) {
-            throw new IllegalStateException("No fish type matches given condition");
+            return pickRandomType(caught, fisher, competition);
+            //throw new IllegalStateException("No fish type matches given condition");
         }
 
         return types.get(new Random().nextInt(types.size()));
