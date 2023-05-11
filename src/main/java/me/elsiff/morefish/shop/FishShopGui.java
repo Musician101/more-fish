@@ -38,14 +38,17 @@ import static me.elsiff.morefish.item.FishItemStackConverter.isFish;
 public final class FishShopGui extends AbstractFishShopGUI {
 
     @Nonnull
+    private final FishBags fishBags;
+    @Nonnull
     private final List<FishRarity> selectedRarities;
     private int page;
 
     public FishShopGui(@Nonnull Player user, int page) {
         super(Lang.SHOP_GUI_TITLE, user);
+        this.page = page;
         this.selectedRarities = FishShopFilterGui.FILTERS.getOrDefault(user.getUniqueId(), new ArrayList<>());
-        FishBags fishBags = MoreFish.instance().getFishBags();
-        updateButtons(fishBags, page);
+        this.fishBags = MoreFish.instance().getFishBags();
+        updateButtons();
         IntStream.of(46, 48, 50, 52).forEach(this::glassPaneButton);
         setButton(47, customName(new ItemStack(Material.CHEST), "Set Sale Filter(s)"), ClickType.LEFT, p -> new FishShopFilterGui(1, p));
     }
@@ -81,7 +84,8 @@ public final class FishShopGui extends AbstractFishShopGUI {
             return;
         }
 
-        Bukkit.getScheduler().scheduleSyncDelayedTask(MoreFish.instance(), this::updatePriceIcon, 4);
+        updatePriceIcon();
+        fishBags.update(player, inventory.getContents(), page);
     }
 
     @Override
@@ -99,30 +103,43 @@ public final class FishShopGui extends AbstractFishShopGUI {
     @Override
     protected void handleExtraDrag(InventoryDragEvent event) {
         inventory.setItem(49, null);
-        Bukkit.getScheduler().scheduleSyncDelayedTask(MoreFish.instance(), this::updatePriceIcon);
+        updatePriceIcon();
     }
 
-    private void updateButtons(FishBags fishBags, int page) {
-        this.page = page;
-        inventory.clear();
-        inventory.addItem(fishBags.getFish(player, page).toArray(new ItemStack[0]));
-        Bukkit.getScheduler().scheduleSyncDelayedTask(MoreFish.instance(), this::updatePriceIcon, 4);
-        int userMaxAllowedPages = fishBags.getMaxAllowedPages(player);
-        if (page == 1) {
-            glassPaneButton(45);
-        }
-        else {
-            setButton(45, customName(new ItemStack(Material.ARROW), "Back Page"), ClickType.LEFT, p -> updateButtons(fishBags, page - 1));
-        }
+    private void updateButtons() {
+        Bukkit.getScheduler().scheduleSyncDelayedTask(MoreFish.instance(), () -> {
+            List<ItemStack> fish = fishBags.getFish(player, page);
+            IntStream.range(0, 45).forEach(i -> {
+                removeButton(i);
+                if (i < fish.size()) {
+                    addItem(i, fish.get(i));
+                }
+            });
 
-        if (page < userMaxAllowedPages) {
-            setButton(53, customName(new ItemStack(Material.ARROW), "Next Page"), ClickType.LEFT, p -> updateButtons(fishBags, page + 1));
-        }
-        else {
-            glassPaneButton(53);
-        }
+            updatePriceIcon();
+            int userMaxAllowedPages = fishBags.getMaxAllowedPages(player);
+            if (page == 1) {
+                glassPaneButton(45);
+            }
+            else {
+                setButton(45, customName(new ItemStack(Material.ARROW), "Back Page"), ClickType.LEFT, p -> {
+                    page--;
+                    updateButtons();
+                });
+            }
 
-        Bukkit.getScheduler().scheduleSyncDelayedTask(MoreFish.instance(), () -> updateUpgradeIcon(userMaxAllowedPages), 3);
+            if (page < userMaxAllowedPages) {
+                setButton(53, customName(new ItemStack(Material.ARROW), "Next Page"), ClickType.LEFT, p -> {
+                    page++;
+                    updateButtons();
+                });
+            }
+            else {
+                glassPaneButton(53);
+            }
+
+            updateUpgradeIcon(userMaxAllowedPages);
+        }, 2);
     }
 
     private void updatePriceIcon() {
@@ -130,28 +147,31 @@ public final class FishShopGui extends AbstractFishShopGUI {
     }
 
     private void updatePriceIcon(double price) {
-        String name = Lang.replace(Lang.SHOP_EMERALD_ICON_NAME, Map.of("%price%", String.valueOf(price)));
-        setButton(49, customName(new ItemStack(Material.EMERALD), name), ClickType.LEFT, p -> {
-            List<ItemStack> filteredFish = getFilteredFish();
-            if (filteredFish.isEmpty()) {
-                p.sendMessage(Lang.SHOP_NO_FISH);
-            }
-            else {
-                double totalPrice = getTotalPrice();
-                List<Fish> fishList = new ArrayList<>();
-                filteredFish.forEach(itemStack -> {
-                    Fish fish = fish(itemStack);
-                    for (int i = 0; i < itemStack.getAmount(); i++) {
-                        fishList.add(fish);
-                    }
+        Bukkit.getScheduler().scheduleSyncDelayedTask(MoreFish.instance(), () -> {
+            String name = Lang.replace(Lang.SHOP_EMERALD_ICON_NAME, Map.of("%price%", String.valueOf(price)));
+            setButton(49, customName(new ItemStack(Material.EMERALD), name), ClickType.LEFT, p -> {
+                List<ItemStack> filteredFish = getFilteredFish();
+                if (filteredFish.isEmpty()) {
+                    p.sendMessage(Lang.SHOP_NO_FISH);
+                }
+                else {
+                    double totalPrice = getTotalPrice();
+                    List<Fish> fishList = new ArrayList<>();
+                    filteredFish.forEach(itemStack -> {
+                        Fish fish = fish(itemStack);
+                        for (int i = 0; i < itemStack.getAmount(); i++) {
+                            fishList.add(fish);
+                        }
 
-                    itemStack.setAmount(0);
-                });
+                        itemStack.setAmount(0);
+                    });
 
-                getEconomy().depositPlayer(player, fishList.stream().mapToDouble(shop::priceOf).sum());
-                updatePriceIcon(totalPrice);
-                p.sendMessage(Lang.replace(Lang.SHOP_SOLD, Map.of("%price%", totalPrice)));
-            }
+                    getEconomy().depositPlayer(player, fishList.stream().mapToDouble(shop::priceOf).sum());
+                    fishBags.update(player, inventory.getContents(), page);
+                    updatePriceIcon(totalPrice);
+                    p.sendMessage(Lang.replace(Lang.SHOP_SOLD, Map.of("%price%", totalPrice)));
+                }
+            });
         });
     }
 
@@ -176,7 +196,7 @@ public final class FishShopGui extends AbstractFishShopGUI {
                 MoreFish plugin = MoreFish.instance();
                 if (plugin.getVault().getEconomy().filter(economy -> economy.withdrawPlayer(p, upgrade.getValue()).type == ResponseType.SUCCESS).isPresent()) {
                     plugin.getFishBags().setMaxAllowedPages(p, upgrade.getKey());
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(MoreFish.instance(), () -> updateUpgradeIcon(upgrade.getKey()), 2);
+                    updateUpgradeIcon(upgrade.getKey());
                     return;
                 }
 
