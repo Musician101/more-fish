@@ -1,5 +1,6 @@
 package me.elsiff.morefish.command;
 
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.LongArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -8,28 +9,53 @@ import java.util.Map;
 import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.FishBag;
+import me.elsiff.morefish.fishing.FishType;
 import me.elsiff.morefish.fishing.competition.FishingCompetition;
 import me.elsiff.morefish.fishing.competition.FishingCompetitionHost;
 import me.elsiff.morefish.shop.FishShop;
 import me.elsiff.morefish.shop.FishShopGui;
-import net.kyori.adventure.text.Component;
+import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import static io.musician101.bukkitier.Bukkitier.argument;
 import static io.musician101.bukkitier.Bukkitier.literal;
 import static io.musician101.bukkitier.Bukkitier.registerCommand;
-import static me.elsiff.morefish.configuration.Lang.join;
-import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
-import static net.kyori.adventure.text.format.NamedTextColor.DARK_AQUA;
-import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
-import static net.kyori.adventure.text.format.Style.style;
-import static net.kyori.adventure.text.format.TextDecoration.BOLD;
+import static me.elsiff.morefish.item.FishItemStackConverter.createItemStack;
 
 public interface MFCommands {
+
+    private static LiteralArgumentBuilder<CommandSender> give() {
+        return literal("give").requires(sender -> sender.hasPermission("morefish.admin")).then(argument("player", new PlayerArgumentType()).then(argument("fish", new FishTypeArgument()).executes(context -> {
+            FishType fishType = FishTypeArgument.get(context);
+            return giveFish(context, fishType);
+        }).then(argument("length", new FishLengthArgument()).executes(context -> {
+            FishType fishType = FishTypeArgument.get(context);
+            return giveFish(context, fishType, FishLengthArgument.get(context, fishType));
+        }).then(argument("amount", IntegerArgumentType.integer(1)).executes(context -> {
+            FishType fishType = FishTypeArgument.get(context);
+            return giveFish(context, fishType, FishLengthArgument.get(context, fishType), IntegerArgumentType.getInteger(context, "amount"));
+        })))));
+    }
+
+    private static int giveFish(CommandContext<CommandSender> context, FishType fishType) {
+        return giveFish(context, fishType, fishType.lengthMin());
+    }
+
+    private static int giveFish(CommandContext<CommandSender> context, FishType fishType, double length) {
+        return giveFish(context, fishType, length, 1);
+    }
+
+    private static int giveFish(CommandContext<CommandSender> context, FishType fishType, double length, int amount) {
+        Player player = context.getArgument("player", Player.class);
+        ItemStack itemStack = createItemStack(fishType.generateFish(), length, player);
+        itemStack.setAmount(amount);
+        player.getWorld().dropItem(player.getLocation(), itemStack);
+        return 1;
+    }
 
     private static LiteralArgumentBuilder<CommandSender> begin(String name) {
         return literal(name).requires(sender -> sender.hasPermission("morefish.admin")).executes(context -> {
@@ -80,7 +106,7 @@ public interface MFCommands {
                 world.dropItem(player.getLocation(), i);
             });
             fishBag.clearContraband();
-            player.sendMessage(text("[MF] All contraband has been dropped from your bag. Make sure you get it all.", GREEN));
+            player.sendMessage(ChatColor.GREEN + " [MF] All contraband has been dropped from your bag. Make sure you get it all.");
             return 1;
         });
     }
@@ -131,34 +157,35 @@ public interface MFCommands {
         CommandSender sender = context.getSource();
         PluginMeta pluginInfo = getPlugin().getPluginMeta();
         String pluginName = pluginInfo.getName();
-        Component prefix = text("[" + pluginName + "] ", AQUA);
-        sender.sendMessage(join(prefix, text("> ===== ", DARK_AQUA), text(pluginName + ' ', style(AQUA, BOLD)),  text('v' + pluginInfo.getVersion(), AQUA), text(" ===== <", DARK_AQUA)));
-        Component label = join(prefix, text("/mf"));
-        sender.sendMessage(join(label, text(" help")));
+        String prefix = ChatColor.AQUA + "[" + pluginName + "]" + ChatColor.RESET + " ";
+        sender.sendMessage(prefix + ChatColor.DARK_AQUA + "> ===== " + ChatColor.AQUA + ChatColor.BOLD + pluginName + ' ' + ChatColor.AQUA + 'v' + pluginInfo.getVersion() + ChatColor.DARK_AQUA + " ===== <");
+        String label = prefix + "/mf";
+        sender.sendMessage(label + " help");
 
         if (sender.hasPermission("morefish.admin")) {
-            sender.sendMessage(join(label, text(" begin [runningTime(sec)]")));
-            sender.sendMessage(join(label, text(" suspend")));
-            sender.sendMessage(join(label, text(" end")));
-            sender.sendMessage(join(label, text(" rewards")));
-            sender.sendMessage(join(label, text(" clear")));
-            sender.sendMessage(join(label, text(" reload")));
+            sender.sendMessage(label + " begin [runningTime(sec)]");
+            sender.sendMessage(label + " suspend");
+            sender.sendMessage(label + " end");
+            sender.sendMessage(label + " rewards");
+            sender.sendMessage(label + " clear");
+            sender.sendMessage(label + " give <player> <fish> [length] [amount]");
+            sender.sendMessage(label + " reload");
         }
 
         if (sender.hasPermission("morefish.top")) {
-            sender.sendMessage(join(label, text(" top")));
+            sender.sendMessage(label + " top");
         }
 
         if (sender.hasPermission("morefish.shop") || sender.hasPermission("morefish.admin")) {
-            sender.sendMessage(join(label, text(" shop"), text((sender.hasPermission("morefish.admin") ? " [player]" : ""))));
+            sender.sendMessage(label + " shop" + (sender.hasPermission("morefish.admin") ? " [player]" : ""));
         }
 
-        sender.sendMessage(join(label, text(" contraband")));
+        sender.sendMessage(label + " contraband");
         return 1;
     }
 
     static void registerCommands() {
-        registerCommand(getPlugin(), literal("morefish").executes(MFCommands::help).then(begin("begin")).then(begin("start")).then(clear()).then(contraband()).then(end()).then(help()).then(reload()).then(shop()).then(suspend()).then(top("top")).then(top("ranking")));
+        registerCommand(getPlugin(), literal("morefish").executes(MFCommands::help).then(begin("begin")).then(begin("start")).then(clear()).then(contraband()).then(give()).then(end()).then(help()).then(reload()).then(shop()).then(suspend()).then(top("top")).then(top("ranking")));
     }
 
     private static LiteralArgumentBuilder<CommandSender> reload() {

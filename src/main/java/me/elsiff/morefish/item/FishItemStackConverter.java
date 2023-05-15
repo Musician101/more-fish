@@ -1,7 +1,5 @@
 package me.elsiff.morefish.item;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -14,8 +12,9 @@ import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.Fish;
 import me.elsiff.morefish.fishing.FishType;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.NamespacedKey;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -26,15 +25,17 @@ public interface FishItemStackConverter {
 
     @Nonnull
     static ItemStack createItemStack(@Nonnull Fish fish, @Nonnull Player catcher) {
+        return createItemStack(fish, fish.length(), catcher);
+    }
+
+    @Nonnull
+    static ItemStack createItemStack(@Nonnull Fish fish, double length, @Nonnull Player catcher) {
         ItemStack itemStack = fish.type().icon().clone();
         ItemMeta itemMeta = itemStack.getItemMeta();
         if (!fish.type().hasNotFishItemFormat()) {
-            Map<String, Object> replacement = getFormatReplacementMap(fish, catcher);
-            Optional<JsonObject> jsonObject = getPlugin().getFishTypeTable().getItemFormat();
-            GsonComponentSerializer gson = GsonComponentSerializer.gson();
-            Component displayName = gson.deserialize(Lang.replace(jsonObject.map(json -> json.get("display-name").getAsString()).orElse("null"), replacement, catcher));
-            itemMeta.displayName(displayName);
-            List<Component> lore = Lang.replace(jsonObject.map(json -> json.getAsJsonArray("lore").asList().stream().map(JsonElement::toString).toList()).orElse(List.of()), replacement, catcher).stream().map(gson::deserialize).collect(Collectors.toList());
+            Map<String, Object> replacement = getFormatReplacementMap(fish, length, catcher);
+            itemMeta.displayName(LegacyComponentSerializer.legacy('&').deserialize(Lang.replace(getFormatConfig().map(cs -> cs.getString("display-name")).orElse("null"), replacement, catcher)));
+            List<Component> lore = Lang.replace(getFormatConfig().map(cs -> cs.getStringList("lore")).orElse(List.of()), replacement, catcher).stream().map(content -> LegacyComponentSerializer.legacy('&').deserialize(content)).collect(Collectors.toList());
             List<Component> oldLore = itemMeta.lore();
             if (oldLore != null) {
                 lore.addAll(oldLore.stream().map(component -> {
@@ -64,16 +65,20 @@ public interface FishItemStackConverter {
         return read(itemStack.getItemMeta());
     }
 
-    private static NamespacedKey fishLengthKey() {
+    static NamespacedKey fishLengthKey() {
         return new NamespacedKey(getPlugin(), "fishLength");
     }
 
-    private static NamespacedKey fishTypeKey() {
+    static NamespacedKey fishTypeKey() {
         return new NamespacedKey(getPlugin(), "fishType");
     }
 
-    private static Map<String, Object> getFormatReplacementMap(Fish fish, Player catcher) {
-        return Map.of("%player%", catcher.getName(), "%rarity%", fish.type().rarity().name().toUpperCase(), "%rarity_color%", fish.type().rarity().color().toString(), "%length%", fish.length(), "%fish%", fish.type().displayName());
+    private static Optional<ConfigurationSection> getFormatConfig() {
+        return getPlugin().getFishTypeTable().getItemFormat();
+    }
+
+    private static Map<String, Object> getFormatReplacementMap(Fish fish, double length, Player catcher) {
+        return Map.of("%player%", catcher.getName(), "%rarity%", fish.type().rarity().name().toUpperCase(), "%rarity_color%", fish.type().rarity().color().toString(), "%length%", length, "%fish%", fish.type().displayName());
     }
 
     private static MoreFish getPlugin() {
