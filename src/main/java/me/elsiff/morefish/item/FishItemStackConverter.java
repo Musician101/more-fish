@@ -25,10 +25,15 @@ public interface FishItemStackConverter {
 
     @Nonnull
     static ItemStack createItemStack(@Nonnull Fish fish, @Nonnull Player catcher) {
+        return createItemStack(fish, fish.length(), catcher);
+    }
+
+    @Nonnull
+    static ItemStack createItemStack(@Nonnull Fish fish, double length, @Nonnull Player catcher) {
         ItemStack itemStack = fish.type().icon().clone();
         ItemMeta itemMeta = itemStack.getItemMeta();
         if (!fish.type().hasNotFishItemFormat()) {
-            Map<String, Object> replacement = getFormatReplacementMap(fish, catcher);
+            Map<String, Object> replacement = getFormatReplacementMap(fish, length, catcher);
             itemMeta.displayName(LegacyComponentSerializer.legacy('&').deserialize(Lang.replace(getFormatConfig().map(cs -> cs.getString("display-name")).orElse("null"), replacement, catcher)));
             List<Component> lore = Lang.replace(getFormatConfig().map(cs -> cs.getStringList("lore")).orElse(List.of()), replacement, catcher).stream().map(content -> LegacyComponentSerializer.legacy('&').deserialize(content)).collect(Collectors.toList());
             List<Component> oldLore = itemMeta.lore();
@@ -60,11 +65,11 @@ public interface FishItemStackConverter {
         return read(itemStack.getItemMeta());
     }
 
-    private static NamespacedKey fishLengthKey() {
+    static NamespacedKey fishLengthKey() {
         return new NamespacedKey(getPlugin(), "fishLength");
     }
 
-    private static NamespacedKey fishTypeKey() {
+    static NamespacedKey fishTypeKey() {
         return new NamespacedKey(getPlugin(), "fishType");
     }
 
@@ -72,8 +77,8 @@ public interface FishItemStackConverter {
         return getPlugin().getFishTypeTable().getItemFormat();
     }
 
-    private static Map<String, Object> getFormatReplacementMap(Fish fish, Player catcher) {
-        return Map.of("%player%", catcher.getName(), "%rarity%", fish.type().rarity().name().toUpperCase(), "%rarity_color%", fish.type().rarity().color().toString(), "%length%", fish.length(), "%fish%", fish.type().displayName());
+    private static Map<String, Object> getFormatReplacementMap(Fish fish, double length, Player catcher) {
+        return Map.of("%player%", catcher.getName(), "%rarity%", fish.type().rarity().name().toUpperCase(), "%rarity_color%", fish.type().rarity().color().toString(), "%length%", length, "%fish%", fish.type().displayName());
     }
 
     private static MoreFish getPlugin() {

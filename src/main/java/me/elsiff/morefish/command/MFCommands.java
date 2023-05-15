@@ -1,5 +1,6 @@
 package me.elsiff.morefish.command;
 
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.LongArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -8,6 +9,7 @@ import java.util.Map;
 import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.FishBag;
+import me.elsiff.morefish.fishing.FishType;
 import me.elsiff.morefish.fishing.competition.FishingCompetition;
 import me.elsiff.morefish.fishing.competition.FishingCompetitionHost;
 import me.elsiff.morefish.shop.FishShop;
@@ -17,12 +19,43 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import static io.musician101.bukkitier.Bukkitier.argument;
 import static io.musician101.bukkitier.Bukkitier.literal;
 import static io.musician101.bukkitier.Bukkitier.registerCommand;
+import static me.elsiff.morefish.item.FishItemStackConverter.createItemStack;
 
 public interface MFCommands {
+
+    private static LiteralArgumentBuilder<CommandSender> give() {
+        return literal("give").requires(sender -> sender.hasPermission("morefish.admin")).then(argument("player", new PlayerArgumentType()).then(argument("fish", new FishTypeArgument()).executes(context -> {
+            FishType fishType = FishTypeArgument.get(context);
+            return giveFish(context, fishType);
+        }).then(argument("length", new FishLengthArgument()).executes(context -> {
+            FishType fishType = FishTypeArgument.get(context);
+            return giveFish(context, fishType, FishLengthArgument.get(context, fishType));
+        }).then(argument("amount", IntegerArgumentType.integer(1)).executes(context -> {
+            FishType fishType = FishTypeArgument.get(context);
+            return giveFish(context, fishType, FishLengthArgument.get(context, fishType), IntegerArgumentType.getInteger(context, "amount"));
+        })))));
+    }
+
+    private static int giveFish(CommandContext<CommandSender> context, FishType fishType) {
+        return giveFish(context, fishType, fishType.lengthMin());
+    }
+
+    private static int giveFish(CommandContext<CommandSender> context, FishType fishType, double length) {
+        return giveFish(context, fishType, length, 1);
+    }
+
+    private static int giveFish(CommandContext<CommandSender> context, FishType fishType, double length, int amount) {
+        Player player = context.getArgument("player", Player.class);
+        ItemStack itemStack = createItemStack(fishType.generateFish(), length, player);
+        itemStack.setAmount(amount);
+        player.getWorld().dropItem(player.getLocation(), itemStack);
+        return 1;
+    }
 
     private static LiteralArgumentBuilder<CommandSender> begin(String name) {
         return literal(name).requires(sender -> sender.hasPermission("morefish.admin")).executes(context -> {
@@ -135,6 +168,7 @@ public interface MFCommands {
             sender.sendMessage(label + " end");
             sender.sendMessage(label + " rewards");
             sender.sendMessage(label + " clear");
+            sender.sendMessage(label + " give <player> <fish> [length] [amount]");
             sender.sendMessage(label + " reload");
         }
 
@@ -151,7 +185,7 @@ public interface MFCommands {
     }
 
     static void registerCommands() {
-        registerCommand(getPlugin(), literal("morefish").executes(MFCommands::help).then(begin("begin")).then(begin("start")).then(clear()).then(contraband()).then(end()).then(help()).then(reload()).then(shop()).then(suspend()).then(top("top")).then(top("ranking")));
+        registerCommand(getPlugin(), literal("morefish").executes(MFCommands::help).then(begin("begin")).then(begin("start")).then(clear()).then(contraband()).then(give()).then(end()).then(help()).then(reload()).then(shop()).then(suspend()).then(top("top")).then(top("ranking")));
     }
 
     private static LiteralArgumentBuilder<CommandSender> reload() {
