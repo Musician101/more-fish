@@ -1,5 +1,7 @@
 package me.elsiff.morefish.item;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -12,9 +14,8 @@ import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.Fish;
 import me.elsiff.morefish.fishing.FishType;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.NamespacedKey;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -29,8 +30,11 @@ public interface FishItemStackConverter {
         ItemMeta itemMeta = itemStack.getItemMeta();
         if (!fish.type().hasNotFishItemFormat()) {
             Map<String, Object> replacement = getFormatReplacementMap(fish, catcher);
-            itemMeta.displayName(LegacyComponentSerializer.legacy('&').deserialize(Lang.replace(getFormatConfig().map(cs -> cs.getString("display-name")).orElse("null"), replacement, catcher)));
-            List<Component> lore = Lang.replace(getFormatConfig().map(cs -> cs.getStringList("lore")).orElse(List.of()), replacement, catcher).stream().map(content -> LegacyComponentSerializer.legacy('&').deserialize(content)).collect(Collectors.toList());
+            Optional<JsonObject> jsonObject = getPlugin().getFishTypeTable().getItemFormat();
+            GsonComponentSerializer gson = GsonComponentSerializer.gson();
+            Component displayName = gson.deserialize(Lang.replace(jsonObject.map(json -> json.get("display-name").getAsString()).orElse("null"), replacement, catcher));
+            itemMeta.displayName(displayName);
+            List<Component> lore = Lang.replace(jsonObject.map(json -> json.getAsJsonArray("lore").asList().stream().map(JsonElement::toString).toList()).orElse(List.of()), replacement, catcher).stream().map(gson::deserialize).collect(Collectors.toList());
             List<Component> oldLore = itemMeta.lore();
             if (oldLore != null) {
                 lore.addAll(oldLore.stream().map(component -> {
@@ -66,10 +70,6 @@ public interface FishItemStackConverter {
 
     private static NamespacedKey fishTypeKey() {
         return new NamespacedKey(getPlugin(), "fishType");
-    }
-
-    private static Optional<ConfigurationSection> getFormatConfig() {
-        return getPlugin().getFishTypeTable().getItemFormat();
     }
 
     private static Map<String, Object> getFormatReplacementMap(Fish fish, Player catcher) {

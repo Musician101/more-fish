@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "me.elsiff"
-version = "4.1.3"
+version = "4.2.0"
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(17))
@@ -21,15 +21,14 @@ repositories {
 }
 
 dependencies {
-    compileOnlyApi("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT")
+    compileOnlyApi("com.comphenix.protocol:ProtocolLib:5.0.0")
     compileOnlyApi("com.github.MilkBowl:VaultAPI:1.7.1")
     compileOnlyApi("io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT")
     compileOnlyApi(files("lib/mcMMO.jar"))
 
-    //TODO work around since Jitpack can't build the 1.1.0 release for some reason
-    api("com.github.musician101.musigui:spigot:e292d9c8e2") {
+    api("com.github.musician101.musigui:paper:1.2.1") {
         exclude("com.google.code.findbugs")
-        exclude("org.spigotmc")
+        exclude("io.papermc.paper")
     }
     api("com.github.musician101:bukkitier:1.2.2") {
         exclude("org.spigotmc")

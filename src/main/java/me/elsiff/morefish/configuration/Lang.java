@@ -11,39 +11,51 @@ import javax.annotation.Nullable;
 import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.fishing.competition.FishingCompetition;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.JoinConfiguration;
+import net.kyori.adventure.text.format.Style;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
+import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
+import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
+import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
+import static net.kyori.adventure.text.format.TextDecoration.BOLD;
 
 public interface Lang {
 
-    String PREFIX = ChatColor.AQUA + "[MoreFish] " + ChatColor.RESET;
-    String CATCH_FISH = PREFIX + ChatColor.YELLOW + "%player%" + ChatColor.RESET + " caught %rarity_color%%length%cm " + ChatColor.BOLD + "%fish_with_rarity%";
-    String GET_1ST = PREFIX + ChatColor.YELLOW + "%player%" + ChatColor.RESET + " is now the new 1st!";
-    String NO_FISHING_ALLOWED = PREFIX + "You can't fish unless the contest is ongoing.";
-    String CONTEST_START = PREFIX + "The fishing contest has started!";
-    String CONTEST_START_TIMER = PREFIX + "This contest will end in %time%.";
-    String CONTEST_STOP = PREFIX + "The fishing contest has ended!";
-    String NO_PERMISSION = PREFIX + "You don't have the permission.";
-    String ALREADY_ONGOING = PREFIX + "The contest is already ongoing.";
-    String ALREADY_STOPPED = PREFIX + "The contest is already stopped.";
-    String CLEAR_RECORDS = PREFIX + "The records has been cleared successfully.";
-    String FAILED_TO_RELOAD = PREFIX + "Failed to reload: Please check your console.";
-    String FORCED_PLAYER_TO_SHOP = PREFIX + "Forced %s to open Shop GUI.";
-    String CREATED_SIGN_SHOP = PREFIX + "You've created the Fish Shop!";
-    String RELOAD_CONFIG = PREFIX + "Reloaded the config successfully.";
-    String SHOP_DISABLED = PREFIX + "Fish Shop is disabled now.";
-    String SHOP_EMERALD_ICON_NAME = ChatColor.GREEN + "Sell for $%price%";
-    String SHOP_GUI_TITLE = "Put your fish to sell";
-    String SHOP_NO_FISH = PREFIX + "There's no fish to sell. Please put them on the slots.";
-    String SHOP_SOLD = PREFIX + "You sold fish for " + ChatColor.GREEN + "$%price%" + ChatColor.RESET + ".";
-    String TIMER_BOSS_BAR = ChatColor.AQUA + String.valueOf(ChatColor.BOLD) + "Fishing Contest " + ChatColor.RESET + "[%time% left]";
-    String TIME_FORMAT_MINUTES = "m";
-    String TIME_FORMAT_SECONDS = "s";
-    String TOP_LIST = PREFIX + ChatColor.YELLOW + "%ordinal%. " + ChatColor.DARK_GRAY + ": %player%, %length%cm %fish%";
-    String TOP_MINE = PREFIX + "You're %ordinal%: %length%cm %fish%";
-    String TOP_MINE_NO_RECORD = PREFIX + "You didn't get any record.";
-    String TOP_NO_RECORD = PREFIX + "Nobody made any record yet.";
+    static Component join(ComponentLike... components) {
+        return Component.join(JoinConfiguration.noSeparators(), components);
+    }
+
+    Component PREFIX = text("[MoreFish] ", AQUA);
+    Component CATCH_FISH = join(PREFIX, text("%player%", YELLOW), text(" caught %rarity_color%%length%cm "), text("%fish_with_rarity%", Style.style(BOLD)));
+    Component GET_1ST = join(PREFIX, text("%player%", YELLOW),  text(" is now the new 1st!"));
+    Component NO_FISHING_ALLOWED = join(PREFIX, text("You can't fish unless the contest is ongoing."));
+    Component CONTEST_START = join(PREFIX, text("The fishing contest has started!"));
+    Component CONTEST_START_TIMER = join(PREFIX, text("This contest will end in %time%."));
+    Component CONTEST_STOP = join(PREFIX, text("The fishing contest has ended!"));
+    Component NO_PERMISSION = join(PREFIX, text("You don't have the permission."));
+    Component ALREADY_ONGOING = join(PREFIX, text("The contest is already ongoing."));
+    Component ALREADY_STOPPED = join(PREFIX, text("The contest is already stopped."));
+    Component CLEAR_RECORDS = join(PREFIX, text("The records has been cleared successfully."));
+    Component FAILED_TO_RELOAD = join(PREFIX, text("Failed to reload: Please check your console."));
+    Component FORCED_PLAYER_TO_SHOP = join(PREFIX, text("Forced %s to open Shop GUI."));
+    Component CREATED_SIGN_SHOP = join(PREFIX, text("You've created the Fish Shop!"));
+    Component RELOAD_CONFIG = join(PREFIX, text("Reloaded the config successfully."));
+    Component SHOP_DISABLED = join(PREFIX, text("Fish Shop is disabled now."));
+    Component SHOP_GUI_TITLE = text("Put your fish to sell");
+    Component SHOP_NO_FISH = join(PREFIX, text("There's no fish to sell. Please put them on the slots."));
+    Component SHOP_SOLD = join(PREFIX, text("You sold fish for "), text("$%price%", GREEN), text("."));
+    Component TIMER_BOSS_BAR = join(text("Fishing Contest ", Style.style(AQUA, BOLD)), text("[%time% left]"));
+    Component TIME_FORMAT_MINUTES = text("m");
+    Component TIME_FORMAT_SECONDS = text("s");
+    Component TOP_LIST = join(PREFIX, text("%ordinal%. ", YELLOW), text(": %player%, %length%cm %fish%", DARK_GRAY));
+    Component TOP_MINE = join(PREFIX, text("You're %ordinal%: %length%cm %fish%"));
+    Component TOP_MINE_NO_RECORD = join(PREFIX, text("You didn't get any record."));
+    Component TOP_NO_RECORD = join(PREFIX, text("Nobody made any record yet."));
 
     private static FishingCompetition getCompetition() {
         return MoreFish.instance().getCompetition();
@@ -81,6 +93,11 @@ public interface Lang {
     @Nonnull
     static String replace(@Nonnull String string, @Nonnull Map<String, Object> replacements) {
         return replace(string, replacements, null);
+    }
+
+    @Nonnull
+    static Component replace(@Nonnull Component component, @Nonnull Map<String, Object> replacements) {
+        return replace(component, replacements, null);
     }
 
     @Nonnull

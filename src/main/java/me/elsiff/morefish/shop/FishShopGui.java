@@ -17,10 +17,10 @@ import me.elsiff.morefish.fishing.FishBags;
 import me.elsiff.morefish.fishing.FishRarity;
 import me.elsiff.morefish.hooker.VaultHooker;
 import me.elsiff.morefish.item.FishItemStackConverter;
+import net.kyori.adventure.text.Component;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse.ResponseType;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -30,10 +30,14 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.ItemStack;
 
-import static io.musician101.musigui.spigot.chest.SpigotIconUtil.customName;
-import static io.musician101.musigui.spigot.chest.SpigotIconUtil.setLore;
+import static io.musician101.musigui.paper.chest.PaperIconUtil.customName;
+import static io.musician101.musigui.paper.chest.PaperIconUtil.setLore;
+import static me.elsiff.morefish.configuration.Lang.PREFIX;
+import static me.elsiff.morefish.configuration.Lang.join;
 import static me.elsiff.morefish.item.FishItemStackConverter.fish;
 import static me.elsiff.morefish.item.FishItemStackConverter.isFish;
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 
 public final class FishShopGui extends AbstractFishShopGUI {
 
@@ -50,7 +54,7 @@ public final class FishShopGui extends AbstractFishShopGUI {
         this.fishBags = MoreFish.instance().getFishBags();
         updateButtons();
         IntStream.of(46, 48, 50, 52).forEach(this::glassPaneButton);
-        setButton(47, customName(new ItemStack(Material.CHEST), "Set Sale Filter(s)"), ClickType.LEFT, p -> new FishShopFilterGui(1, p));
+        setButton(47, customName(new ItemStack(Material.CHEST), text("Set Sale Filter(s)")), ClickType.LEFT, p -> new FishShopFilterGui(1, p));
     }
 
     private Economy getEconomy() {
@@ -122,14 +126,14 @@ public final class FishShopGui extends AbstractFishShopGUI {
                 glassPaneButton(45);
             }
             else {
-                setButton(45, customName(new ItemStack(Material.ARROW), "Back Page"), ClickType.LEFT, p -> {
+                setButton(45, customName(new ItemStack(Material.ARROW), text("Back Page")), ClickType.LEFT, p -> {
                     page--;
                     updateButtons();
                 });
             }
 
             if (page < userMaxAllowedPages) {
-                setButton(53, customName(new ItemStack(Material.ARROW), "Next Page"), ClickType.LEFT, p -> {
+                setButton(53, customName(new ItemStack(Material.ARROW), text("Next Page")), ClickType.LEFT, p -> {
                     page++;
                     updateButtons();
                 });
@@ -148,7 +152,7 @@ public final class FishShopGui extends AbstractFishShopGUI {
 
     private void updatePriceIcon(double price) {
         Bukkit.getScheduler().scheduleSyncDelayedTask(MoreFish.instance(), () -> {
-            String name = Lang.replace(Lang.SHOP_EMERALD_ICON_NAME, Map.of("%price%", String.valueOf(price)));
+            Component name = Lang.replace(text("Sell for $%price%"), Map.of("%price%", String.valueOf(price)));
             setButton(49, customName(new ItemStack(Material.EMERALD), name), ClickType.LEFT, p -> {
                 List<ItemStack> filteredFish = getFilteredFish();
                 if (filteredFish.isEmpty()) {
@@ -190,8 +194,8 @@ public final class FishShopGui extends AbstractFishShopGUI {
             }
 
             Entry<Integer, Integer> upgrade = upgradeEntries.get(0);
-            String lore = ChatColor.GREEN + String.valueOf(upgrade.getKey()) + " page(s) for $" + upgrade.getValue();
-            ItemStack icon = setLore(customName(new ItemStack(Material.GOLD_INGOT), "Bag Upgrades"), lore);
+            Component lore = text(upgrade.getKey() + " page(s) for $" + upgrade.getValue(), GREEN);
+            ItemStack icon = setLore(customName(new ItemStack(Material.GOLD_INGOT), text("Bag Upgrades")), lore);
             setButton(51, icon, ClickType.LEFT, p -> {
                 MoreFish plugin = MoreFish.instance();
                 if (plugin.getVault().getEconomy().filter(economy -> economy.withdrawPlayer(p, upgrade.getValue()).type == ResponseType.SUCCESS).isPresent()) {
@@ -200,7 +204,7 @@ public final class FishShopGui extends AbstractFishShopGUI {
                     return;
                 }
 
-                p.sendMessage(Lang.PREFIX + ChatColor.RESET + " You do not have enough money for that upgrade!");
+                p.sendMessage(join(PREFIX, text("You do not have enough money for that upgrade!")));
             });
         }
     }

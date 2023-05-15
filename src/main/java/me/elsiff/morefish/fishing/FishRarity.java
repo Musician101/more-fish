@@ -5,10 +5,10 @@ import javax.annotation.Nonnull;
 import me.elsiff.morefish.announcement.PlayerAnnouncement;
 import me.elsiff.morefish.fishing.catchhandler.CatchHandler;
 import me.elsiff.morefish.fishing.condition.FishCondition;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.TextColor;
 
 public record FishRarity(@Nonnull String name, @Nonnull String displayName, boolean isDefault, double probability,
-                         @Nonnull ChatColor color, @Nonnull List<CatchHandler> catchHandlers,
+                         @Nonnull TextColor color, @Nonnull List<CatchHandler> catchHandlers,
                          @Nonnull List<FishCondition> conditions, @Nonnull PlayerAnnouncement catchAnnouncement,
                          boolean hasNotFishItemFormat, boolean noDisplay, boolean hasCatchFirework,
                          double additionalPrice) implements Comparable<FishRarity> {

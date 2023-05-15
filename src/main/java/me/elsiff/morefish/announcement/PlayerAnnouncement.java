@@ -1,20 +1,20 @@
 package me.elsiff.morefish.announcement;
 
+import com.google.gson.JsonObject;
 import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 public interface PlayerAnnouncement {
 
     @Nonnull
-    static PlayerAnnouncement fromConfigOrDefault(@Nullable ConfigurationSection cs, @Nonnull String path, @Nonnull PlayerAnnouncement def) {
-        if (cs == null || !cs.contains(path)) {
+    static PlayerAnnouncement fromConfigOrDefault(@Nullable JsonObject json, @Nonnull String path, @Nonnull PlayerAnnouncement def) {
+        if (json == null || !json.has(path)) {
             return def;
         }
 
-        return fromValue(cs.getDouble(path));
+        return fromValue(json.getAsJsonPrimitive(path).getAsDouble());
     }
 
     @Nonnull

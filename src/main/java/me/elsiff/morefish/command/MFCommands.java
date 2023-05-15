@@ -12,7 +12,7 @@ import me.elsiff.morefish.fishing.competition.FishingCompetition;
 import me.elsiff.morefish.fishing.competition.FishingCompetitionHost;
 import me.elsiff.morefish.shop.FishShop;
 import me.elsiff.morefish.shop.FishShopGui;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -21,6 +21,13 @@ import org.bukkit.entity.Player;
 import static io.musician101.bukkitier.Bukkitier.argument;
 import static io.musician101.bukkitier.Bukkitier.literal;
 import static io.musician101.bukkitier.Bukkitier.registerCommand;
+import static me.elsiff.morefish.configuration.Lang.join;
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
+import static net.kyori.adventure.text.format.NamedTextColor.DARK_AQUA;
+import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
+import static net.kyori.adventure.text.format.Style.style;
+import static net.kyori.adventure.text.format.TextDecoration.BOLD;
 
 public interface MFCommands {
 
@@ -73,7 +80,7 @@ public interface MFCommands {
                 world.dropItem(player.getLocation(), i);
             });
             fishBag.clearContraband();
-            player.sendMessage(ChatColor.GREEN + " [MF] All contraband has been dropped from your bag. Make sure you get it all.");
+            player.sendMessage(text("[MF] All contraband has been dropped from your bag. Make sure you get it all.", GREEN));
             return 1;
         });
     }
@@ -124,29 +131,29 @@ public interface MFCommands {
         CommandSender sender = context.getSource();
         PluginMeta pluginInfo = getPlugin().getPluginMeta();
         String pluginName = pluginInfo.getName();
-        String prefix = ChatColor.AQUA + "[" + pluginName + "]" + ChatColor.RESET + " ";
-        sender.sendMessage(prefix + ChatColor.DARK_AQUA + "> ===== " + ChatColor.AQUA + ChatColor.BOLD + pluginName + ' ' + ChatColor.AQUA + 'v' + pluginInfo.getVersion() + ChatColor.DARK_AQUA + " ===== <");
-        String label = prefix + "/mf";
-        sender.sendMessage(label + " help");
+        Component prefix = text("[" + pluginName + "] ", AQUA);
+        sender.sendMessage(join(prefix, text("> ===== ", DARK_AQUA), text(pluginName + ' ', style(AQUA, BOLD)),  text('v' + pluginInfo.getVersion(), AQUA), text(" ===== <", DARK_AQUA)));
+        Component label = join(prefix, text("/mf"));
+        sender.sendMessage(join(label, text(" help")));
 
         if (sender.hasPermission("morefish.admin")) {
-            sender.sendMessage(label + " begin [runningTime(sec)]");
-            sender.sendMessage(label + " suspend");
-            sender.sendMessage(label + " end");
-            sender.sendMessage(label + " rewards");
-            sender.sendMessage(label + " clear");
-            sender.sendMessage(label + " reload");
+            sender.sendMessage(join(label, text(" begin [runningTime(sec)]")));
+            sender.sendMessage(join(label, text(" suspend")));
+            sender.sendMessage(join(label, text(" end")));
+            sender.sendMessage(join(label, text(" rewards")));
+            sender.sendMessage(join(label, text(" clear")));
+            sender.sendMessage(join(label, text(" reload")));
         }
 
         if (sender.hasPermission("morefish.top")) {
-            sender.sendMessage(label + " top");
+            sender.sendMessage(join(label, text(" top")));
         }
 
         if (sender.hasPermission("morefish.shop") || sender.hasPermission("morefish.admin")) {
-            sender.sendMessage(label + " shop" + (sender.hasPermission("morefish.admin") ? " [player]" : ""));
+            sender.sendMessage(join(label, text(" shop"), text((sender.hasPermission("morefish.admin") ? " [player]" : ""))));
         }
 
-        sender.sendMessage(label + " contraband");
+        sender.sendMessage(join(label, text(" contraband")));
         return 1;
     }
 

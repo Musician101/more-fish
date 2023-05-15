@@ -1,0 +1,314 @@
+{
+    "item-format": {
+        "lore": [
+            {
+                "text": "%length%cm",
+                "color": "gray"
+            },
+            {
+                "text": "Caught by %player%",
+                "color": "gray"
+            }
+        ],
+        "display-name": {
+            "text": "%rarity_color%%fish%"
+        }
+    },
+    "rarity-list": {
+        "junk": {
+            "color": "gray",
+            "display-name": "JUNK",
+            "chance": 1,
+            "no-display": true,
+            "additional-price": -999999
+        },
+        "epic": {
+            "color": "light_purple",
+            "display-name": "EPIC",
+            "chance": 6.5,
+            "additional-price": 4.0
+        },
+        "rare": {
+            "color": "aqua",
+            "display-name": "RARE",
+            "chance": 22,
+            "additional-price": 3.0
+        },
+        "common": {
+            "announcement": 0,
+            "no-display": true,
+            "default": true,
+            "display-name": "COMMON",
+            "color": "reset",
+            "additional-price": 0.0
+        },
+        "legendary": {
+            "color": "green",
+            "display-name": "LEGENDARY",
+            "firework": true,
+            "chance": 0.5,
+            "additional-price": 5.0
+        }
+    },
+    "fish-list": {
+        "junk": {
+            "Breadfish": {
+                "skip-item-format": false,
+                "display-name": "Breadfish",
+                "length-max": 30,
+                "length-min": 10,
+                "icon": {
+                    "lore": [
+                        "&7Tell me have you seen",
+                        "&7the marvellous breadfish"
+                    ],
+                    "id": "minecraft:bread"
+                }
+            },
+            "SpongeBob": {
+                "skip-item-format": true,
+                "display-name": "Nice Cook Of The Krusty Krab",
+                "length-max": 16,
+                "length-min": 16,
+                "icon": {
+                    "id": "minecraft:sponge"
+                }
+            },
+            "FishingRod": {
+                "skip-item-format": true,
+                "display-name": "Fishing Rod That Someone Dropped Hitting 'Q' By Mistake",
+                "length-max": 16,
+                "length-min": 16,
+                "icon": {
+                    "id": "minecraft:fishing_rod",
+                    "durability": 30
+                }
+            },
+            "WoodenAxe": {
+                "skip-item-format": false,
+                "display-name": "Admin's Wooden Axe",
+                "length-max": 16,
+                "length-min": 16,
+                "icon": {
+                    "lore": [
+                        "&7//cut"
+                    ],
+                    "id": "minecraft:wooden_axe"
+                }
+            },
+            "Magikarp": {
+                "skip-item-format": false,
+                "display-name": "Magikarp",
+                "length-max": 35,
+                "length-min": 25,
+                "icon": {
+                    "lore": [
+                        "&7Magikarp used Splash!"
+                    ],
+                    "id": "minecraft:cod"
+                }
+            },
+            "Pie": {
+                "skip-item-format": true,
+                "display-name": "Pie",
+                "length-max": 3.14,
+                "length-min": 3.14,
+                "icon": {
+                    "id": "minecraft:pumpkin_pie"
+                }
+            }
+        },
+        "epic": {
+            "Pufferfish": {
+                "display-name": "Pufferfish",
+                "length-max": 30,
+                "length-min": 20,
+                "icon": {
+                    "id": "minecraft:pufferfish",
+                    "durability": 3
+                }
+            },
+            "Clownfish": {
+                "display-name": "Clownfish",
+                "length-max": 18,
+                "length-min": 10,
+                "icon": {
+                    "id": "minecraft:tropical_fish",
+                    "durability": 2
+                }
+            },
+            "BlackDrum": {
+                "display-name": "Black Drum",
+                "length-max": 180,
+                "length-min": 100,
+                "icon": {
+                    "id": "minecraft:cod"
+                }
+            },
+            "Tuna": {
+                "display-name": "Tuna",
+                "length-max": 180,
+                "length-min": 130,
+                "icon": {
+                    "id": "minecraft:cod"
+                }
+            },
+            "Salmon": {
+                "display-name": "Salmon",
+                "length-max": 130,
+                "length-min": 100,
+                "icon": {
+                    "id": "minecraft:salmon",
+                    "durability": 1
+                }
+            },
+            "SeaTurtle": {
+                "display-name": "Sea Turtle",
+                "length-max": 130,
+                "length-min": 90,
+                "icon": {
+                    "id": "minecraft:cod"
+                }
+            }
+        },
+        "rare": {
+            "SeaBream": {
+                "display-name": "Sea Bream",
+                "length-max": 70,
+                "length-min": 50,
+                "icon": {
+                    "id": "minecraft:cod"
+                }
+            },
+            "Squid": {
+                "commands": [
+                    "minecraft:effect @p minecraft:blindness 5 1",
+                    "tellraw @p [\"\",{\"text\":\"[MoreFish]\",\"color\":\"aqua\"},{\"text\":\" The squid gifted you some darkness!\",\"color\":\"none\"}]"
+                ],
+                "length-max": 50,
+                "display-name": "Squid",
+                "icon": {
+                    "id": "minecraft:ink_sac"
+                },
+                "length-min": 30
+            },
+            "Jellyfish": {
+                "commands": [
+                    "minecraft:effect @p minecraft:poison 3 1",
+                    "tellraw @p [\"\",{\"text\":\"[MoreFish]\",\"color\":\"aqua\"},{\"text\":\" The jellyfish made you feel very bad!\",\"color\":\"none\"}]"
+                ],
+                "length-max": 40,
+                "display-name": "Jellyfish",
+                "icon": {
+                    "id": "minecraft:cod"
+                },
+                "length-min": 20
+            },
+            "SeaBass": {
+                "display-name": "Sea Bass",
+                "length-max": 100,
+                "length-min": 60,
+                "icon": {
+                    "id": "minecraft:cod"
+                }
+            },
+            "Flatfish": {
+                "display-name": "Flatfish",
+                "length-max": 75,
+                "length-min": 40,
+                "icon": {
+                    "id": "minecraft:cod"
+                }
+            }
+        },
+        "common": {
+            "Anchovy": {
+                "display-name": "Anchovy",
+                "length-max": 13,
+                "length-min": 7,
+                "icon": {
+                    "id": "minecraft:cod"
+                }
+            },
+            "Croaker": {
+                "display-name": "Croaker",
+                "length-max": 15,
+                "length-min": 12,
+                "icon": {
+                    "id": "minecraft:cod"
+                }
+            },
+            "Crab": {
+                "display-name": "Crab",
+                "length-max": 15,
+                "length-min": 10,
+                "icon": {
+                    "id": "minecraft:cod"
+                }
+            },
+            "Mackerel": {
+                "display-name": "Mackerel",
+                "length-max": 30,
+                "length-min": 15,
+                "icon": {
+                    "id": "minecraft:cod"
+                }
+            },
+            "Herring": {
+                "display-name": "Herring",
+                "length-max": 30,
+                "length-min": 20,
+                "icon": {
+                    "id": "minecraft:cod"
+                }
+            },
+            "Shrimp": {
+                "display-name": "Shrimp",
+                "length-max": 8,
+                "length-min": 3,
+                "icon": {
+                    "id": "minecraft:cod"
+                }
+            }
+        },
+        "legendary": {
+            "BlueShark": {
+                "food-effects": {
+                    "commands": [
+                        "minecraft:effect @p minecraft:strength 120 1"
+                    ]
+                },
+                "display-name": "Blue Shark",
+                "length-max": 240,
+                "length-min": 160,
+                "icon": {
+                    "lore": [
+                        "&7&oThe Toughest Fish",
+                        "&7Get &9Strength I (2:00)&7 when you eat it."
+                    ],
+                    "id": "minecraft:cod"
+                }
+            },
+            "PygmyWhale": {
+                "food-effects": {
+                    "saturation": 14.4,
+                    "points": 20,
+                    "commands": [
+                        "minecraft:effect @p minecraft:regeneration 2 127"
+                    ]
+                },
+                "display-name": "Pygmy Whale",
+                "length-max": 650,
+                "length-min": 600,
+                "icon": {
+                    "lore": [
+                        "&7&oThe Biggest Fish",
+                        "&7Get &9full health and hunger&7",
+                        "when you eat it."
+                    ],
+                    "id": "minecraft:cod"
+                }
+            }
+        }
+    }
+}

@@ -23,10 +23,12 @@ import me.elsiff.morefish.hooker.VaultHooker;
 import me.elsiff.morefish.shop.FishShop;
 import me.elsiff.morefish.shop.FishShopSignListener;
 import net.kyori.adventure.text.Component;
-import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import static me.elsiff.morefish.configuration.Lang.PREFIX;
+import static net.kyori.adventure.text.Component.text;
 
 public final class MoreFish extends JavaPlugin {
 
@@ -58,9 +60,9 @@ public final class MoreFish extends JavaPlugin {
     public void applyConfig() {
         getServer().getOnlinePlayers().forEach(player -> {
             Component title = player.getOpenInventory().title();
-            if (title.equals(Component.text(Lang.SHOP_GUI_TITLE)) || title.equals(Component.text("Set Sale Filter(s)"))) {
+            if (title.equals(Lang.SHOP_GUI_TITLE) || title.equals(text("Set Sale Filter(s)"))) {
                 player.closeInventory();
-                player.sendMessage(ChatColor.AQUA + "[MoreFish]" + ChatColor.RESET + " The config is being updated. To prevent issues, the window has been closed.");
+                player.sendMessage(Lang.join(PREFIX, text(" The config is being updated. To prevent issues, the window has been closed.")));
             }
         });
 

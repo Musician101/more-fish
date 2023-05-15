@@ -1,6 +1,7 @@
 package me.elsiff.morefish.fishing.condition;
 
 import com.gmail.nossr50.mcMMO;
+import com.google.gson.JsonObject;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -12,7 +13,6 @@ import me.elsiff.morefish.fishing.condition.TimeCondition.TimeState;
 import me.elsiff.morefish.util.NumberUtils.Range;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Biome;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -21,11 +21,11 @@ import org.bukkit.potion.PotionEffectType;
 public interface FishCondition {
 
     @Nonnull
-    static List<FishCondition> loadFrom(@Nonnull ConfigurationSection section, @Nonnull String path) {
-        if (section.contains(path)) {
-            ConfigurationSection conditions = section.getConfigurationSection(path);
-            return conditions.getKeys(false).stream().map(key -> {
-                String[] args = conditions.getString(key).split("\\|");
+    static List<FishCondition> loadFrom(@Nonnull JsonObject jsonObject, @Nonnull String path) {
+        if (jsonObject.has(path)) {
+            JsonObject conditions = jsonObject.getAsJsonObject(path);
+            return conditions.keySet().stream().map(key -> {
+                String[] args = conditions.getAsJsonObject(key).getAsString().split("\\|");
                 return switch (key) {
                     case "biome" ->
                             new BiomeCondition(Stream.of(args).map(String::toUpperCase).map(Biome::valueOf).collect(Collectors.toSet()));
@@ -44,7 +44,7 @@ public interface FishCondition {
                     case "thundering" -> new ThunderingCondition(Boolean.parseBoolean(args[0]));
                     default -> throw new IllegalStateException("There's no fish condition whose id is " + key);
                 };
-            }).collect(Collectors.toList());
+            }).toList();
         }
 
         return List.of();
