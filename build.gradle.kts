@@ -21,7 +21,7 @@ repositories {
 }
 
 dependencies {
-    compileOnlyApi("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT")
+    compileOnlyApi("com.comphenix.protocol:ProtocolLib:5.0.0")
     compileOnlyApi("com.github.MilkBowl:VaultAPI:1.7.1")
     compileOnlyApi("io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT")
     compileOnlyApi(files("lib/mcMMO.jar"))
