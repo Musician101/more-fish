@@ -31,7 +31,7 @@
             "durability": 3
         }
     },
-    "Megaladon": {
+    "Megalodon": {
         "commands": [
             "minecraft:effect give @p minecraft:regeneration 2 127",
             "mcmmo:addxp @p Fishing 5000"
@@ -41,7 +41,7 @@
             "saturation": 14.4,
             "points": 20
         },
-        "display-name": "Megaladon",
+        "display-name": "Megalodon",
         "length-min": 1500,
         "icon": {
             "lore": [
