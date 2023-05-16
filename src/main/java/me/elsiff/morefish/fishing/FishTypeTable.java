@@ -94,10 +94,12 @@ public final class FishTypeTable {
     public void load() {
         map.clear();
         MoreFish plugin = MoreFish.instance();
+        File fishDir = new File(plugin.getDataFolder(), "fish");
+        fishDir.mkdirs();
         String fishFile = "fish.json";
         try {
-            plugin.saveResource(fishFile, false);
-            FileReader reader = new FileReader(new File(plugin.getDataFolder(), fishFile));
+            plugin.saveResource("fish/" + fishFile, false);
+            FileReader reader = new FileReader(new File(fishDir, fishFile));
             fish = GSON.fromJson(reader, JsonObject.class);
             JsonObject raritiesConfig = fish.getAsJsonObject("rarity-list");
             if (raritiesConfig != null) {
@@ -137,45 +139,60 @@ public final class FishTypeTable {
                     List<FishCondition> conditions = FishCondition.loadFrom(json, "conditions");
                     return new FishRarity(key, displayName, isDefault, chance, color, catchHandlers, conditions, announcement, skipItemFormat, noDisplay, firework, additionalPrice);
                 }).filter(Objects::nonNull).toList();
-                JsonObject fishList = fish.getAsJsonObject("fish-list");
-                if (fishList != null) {
-                    fishList.keySet().forEach(rarityName -> {
-                        if (!fishList.has(rarityName)) {
-                            return;
-                        }
+                rarities.forEach(fishRarity -> {
+                    String fishRarityFile = fishRarity.name() + ".json";
+                    try {
+                        plugin.saveResource("fish/" + fishRarityFile, false);
+                    }
+                    catch (IllegalArgumentException e) {
+                        plugin.getLogger().warning("Could not find fish/" + fishRarityFile + " in plugin jar. This message can be ignored if the rarity is not in fish.json");
+                    }
 
-                        JsonObject groupByRarity = fishList.getAsJsonObject(rarityName);
-                        FishRarity rarity = rarities.stream().filter(fishRarity -> rarityName.equals(fishRarity.name())).findFirst().orElseThrow(() -> new IllegalStateException("Rarity " + rarityName + " doesn't exist."));
-                        List<FishType> fishTypes = groupByRarity.keySet().stream().map(name -> {
-                            JsonObject json = groupByRarity.getAsJsonObject(name);
-                            List<CatchHandler> catchHandlers = new ArrayList<>(rarity.catchHandlers());
-                            if (json.has("commands")) {
-                                catchHandlers.add(new CatchCommandExecutor(getStringList(json.getAsJsonArray("commands"))));
-                            }
-                            else if (getOrDefaultFalse(json, "firework")) {
-                                catchHandlers.add(new CatchFireworkSpawner());
+                    try {
+                        JsonObject fishList = GSON.fromJson(new FileReader(new File(fishDir, fishRarityFile)), JsonObject.class);
+                        fishList.keySet().forEach(rarityName -> {
+                            if (!fishList.has(rarityName)) {
+                                return;
                             }
 
-                            String displayName = json.get("display-name").getAsString();
-                            if (displayName == null) {
-                                throw new IllegalArgumentException("display-name is missing from fish-list." + rarityName + "." + name + ".");
-                            }
+                            List<FishType> fishTypes = fishList.keySet().stream().map(name -> {
+                                JsonObject json = fishList.getAsJsonObject(name);
+                                List<CatchHandler> catchHandlers = new ArrayList<>(fishRarity.catchHandlers());
+                                if (json.has("commands")) {
+                                    catchHandlers.add(new CatchCommandExecutor(getStringList(json.getAsJsonArray("commands"))));
+                                }
+                                else if (getOrDefaultFalse(json, "firework")) {
+                                    catchHandlers.add(new CatchFireworkSpawner());
+                                }
 
-                            double minLength = json.get("length-min").getAsDouble();
-                            double maxLength = json.get("length-max").getAsDouble();
-                            ItemStack itemStack = loadItemStack(name, json.getAsJsonObject("icon"), "fish-list." + rarityName + "." + name);
-                            PlayerAnnouncement announcement = PlayerAnnouncement.fromConfigOrDefault(json, "catch-announce", rarity.catchAnnouncement());
-                            List<FishCondition> conditions = Stream.concat(FishCondition.loadFrom(json, "conditions").stream(), rarity.conditions().stream()).toList();
-                            boolean skipItemFormat = getOrDefault(json, "skip-item-format", rarity.hasNotFishItemFormat());
-                            boolean noDisplay = getOrDefault(json,"no-display", rarity.noDisplay());
-                            boolean firework = getOrDefault(json, "firework", rarity.hasCatchFirework());
-                            double additionalPrice = rarity.additionalPrice() + getOrDefaultZero(json, "additional-price");
-                            return new FishType(name, rarity, displayName, minLength, maxLength, itemStack, catchHandlers, announcement, conditions, skipItemFormat, noDisplay, firework, additionalPrice);
-                        }).toList();
-                        map.put(rarity, fishTypes);
-                    });
-                }
+                                String displayName = json.get("display-name").getAsString();
+                                if (displayName == null) {
+                                    throw new IllegalArgumentException("display-name is missing from fish-list." + rarityName + "." + name + ".");
+                                }
+
+                                double minLength = json.get("length-min").getAsDouble();
+                                double maxLength = json.get("length-max").getAsDouble();
+                                ItemStack itemStack = loadItemStack(name, json.getAsJsonObject("icon"), "fish-list." + rarityName + "." + name);
+                                PlayerAnnouncement announcement = PlayerAnnouncement.fromConfigOrDefault(json, "catch-announce", fishRarity.catchAnnouncement());
+                                List<FishCondition> conditions = Stream.concat(FishCondition.loadFrom(json, "conditions").stream(), fishRarity.conditions().stream()).toList();
+                                boolean skipItemFormat = getOrDefault(json, "skip-item-format", fishRarity.hasNotFishItemFormat());
+                                boolean noDisplay = getOrDefault(json,"no-display", fishRarity.noDisplay());
+                                boolean firework = getOrDefault(json, "firework", fishRarity.hasCatchFirework());
+                                double additionalPrice = fishRarity.additionalPrice() + getOrDefaultZero(json, "additional-price");
+                                return new FishType(name, fishRarity, displayName, minLength, maxLength, itemStack, catchHandlers, announcement, conditions, skipItemFormat, noDisplay, firework, additionalPrice);
+                            }).toList();
+                            map.put(fishRarity, fishTypes);
+                        });
+
+                        reader.close();
+                    }
+                    catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
             }
+
+            reader.close();
         }
         catch (IOException e) {
             plugin.getLogger().severe("Failed to load " + fishFile);

@@ -1,0 +1,112 @@
+{
+    "Breadfish": {
+        "display-name": "Breadfish",
+        "length-max": 30,
+        "length-min": 10,
+        "icon": {
+            "lore": [
+                {
+                    "text": "Tell me have you seen",
+                    "color": "gray"
+                },
+                {
+                    "text": "the marvellous breadfish",
+                    "color": "gray"
+                }
+            ],
+            "id": "minecraft:bread"
+        }
+    },
+    "SpongeBob": {
+        "skip-item-format": true,
+        "display-name": "Nice Cook Of The Krusty Krab",
+        "length-max": 16,
+        "length-min": 16,
+        "icon": {
+            "id": "minecraft:sponge"
+        }
+    },
+    "FishingRod": {
+        "skip-item-format": true,
+        "display-name": "Fishing Rod That Someone Dropped Hitting 'Q' By Mistake",
+        "length-max": 16,
+        "length-min": 16,
+        "icon": {
+            "id": "minecraft:fishing_rod",
+            "durability": 30
+        }
+    },
+    "WoodenAxe": {
+        "display-name": "Admin's Wooden Axe",
+        "length-max": 16,
+        "length-min": 16,
+        "icon": {
+            "lore": [
+                {
+                    "color": "gray",
+                    "text": "//cut"
+                }
+            ],
+            "id": "minecraft:wooden_axe"
+        }
+    },
+    "Magikarp": {
+        "display-name": "Magikarp",
+        "length-max": 35,
+        "length-min": 25,
+        "icon": {
+            "lore": [
+                {
+                    "text": "Magikarp used Splash!",
+                    "color": "gray"
+                }
+            ],
+            "id": "minecraft:cod"
+        }
+    },
+    "Pie": {
+        "skip-item-format": true,
+        "display-name": "Pie",
+        "length-max": 3.14,
+        "length-min": 3.14,
+        "icon": {
+            "id": "minecraft:pumpkin_pie"
+        }
+    },
+    "BaggedMilk": {
+        "commands": [
+            "tellraw @p [\"\",{\"text\":\"[MoreFish] \",\"color\":\"aqua\"},{\"text\":\"Return this to your local Merzetti.\",\"color\":\"none\"}]"
+        ],
+        "length-max": 20,
+        "display-name": "Bagged Milk",
+        "length-min": 20,
+        "icon": {
+            "id": "minecraft:milk_bucket"
+        }
+    },
+    "Mallard": {
+        "display-name": "Mallard",
+        "length-max": 18,
+        "length-min": 18,
+        "icon": {
+            "lore": [
+                {
+                    "text": "Hate to break it to you this is not a fish"
+                }
+            ],
+            "id": "minecraft:feather"
+        }
+    },
+    "StinkyFish": {
+        "commands": [
+            "minecraft:effect give @p minecraft:nausea 5 1",
+            "tellraw @p [\"\",{\"text\":\"[MoreFish]\",\"color\":\"aqua\"},{\"text\":\"Aw Barf! That is one stinky fish!\",\"color\":\"none\"}]"
+        ],
+        "length-max": 1,
+        "display-name": "Stinky Fish",
+        "length-min": 1,
+        "icon": {
+            "id": "minecraft:cod"
+        }
+    }
+}

@@ -1,0 +1,127 @@
+{
+    "Kraken": {
+        "commands": [
+            "minecraft:effect give @p minecraft:regeneration 2 127",
+            "mcmmo:addxp @p Fishing 5000"
+        ],
+        "length-max": 2200,
+        "food-effects": {
+            "saturation": 14.4,
+            "points": 20
+        },
+        "display-name": "Kraken",
+        "length-min": 1500,
+        "icon": {
+            "lore": [
+                {
+                    "color": "dark_purple",
+                    "italic": true,
+                    "text": "RELEASE ME!"
+                },
+                {
+                    "color": "blue",
+                    "text": "Get full health and hunger"
+                },
+                {
+                    "color": "blue",
+                    "text": "when you eat it."
+                }
+            ],
+            "id": "minecraft:tropical_fish",
+            "durability": 3
+        }
+    },
+    "Megaladon": {
+        "commands": [
+            "minecraft:effect give @p minecraft:regeneration 2 127",
+            "mcmmo:addxp @p Fishing 5000"
+        ],
+        "length-max": 2200,
+        "food-effects": {
+            "saturation": 14.4,
+            "points": 20
+        },
+        "display-name": "Megaladon",
+        "length-min": 1500,
+        "icon": {
+            "lore": [
+                {
+                    "color": "dark_purple",
+                    "italic": true,
+                    "text": "Hey there big fella"
+                },
+                {
+                    "color": "blue",
+                    "text": "Get full health and hunger"
+                },
+                {
+                    "color": "blue",
+                    "text": "when you eat it."
+                }
+            ],
+            "id": "minecraft:tropical_fish"
+        }
+    },
+    "MobyDick": {
+        "commands": [
+            "minecraft:effect give @p minecraft:regeneration 2 127",
+            "mcmmo:addxp @p Fishing 5000"
+        ],
+        "length-max": 2000,
+        "food-effects": {
+            "saturation": 14.4,
+            "points": 20
+        },
+        "display-name": "Moby Dick",
+        "length-min": 1500,
+        "icon": {
+            "lore": [
+                {
+                    "color": "dark_purple",
+                    "italic": true,
+                    "text": "Call me Ishmael."
+                },
+                {
+                    "color": "blue",
+                    "text": "Get full health and hunger"
+                },
+                {
+                    "color": "blue",
+                    "text": "when you eat it."
+                }
+            ],
+            "id": "minecraft:tropical_fish"
+        }
+    },
+    "LochNess": {
+        "commands": [
+            "minecraft:effect give @p minecraft:regeneration 2 127",
+            "mcmmo:addxp @p Fishing 5000"
+        ],
+        "length-max": 2000,
+        "food-effects": {
+            "saturation": 14.4,
+            "points": 20
+        },
+        "display-name": "Loch Ness",
+        "length-min": 1500,
+        "icon": {
+            "lore": [
+                {
+                    "color": "dark_purple",
+                    "italic": true,
+                    "text": "That'll be about tree fiddy"
+                },
+                {
+                    "color": "blue",
+                    "text": "Get full health and hunger"
+                },
+                {
+                    "color": "blue",
+                    "text": "when you eat it."
+                }
+            ],
+            "id": "minecraft:tropical_fish"
+        }
+    }
+}
