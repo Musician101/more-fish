@@ -54,6 +54,12 @@ public interface MFCommands {
         ItemStack itemStack = createItemStack(fishType.generateFish(), length, player);
         itemStack.setAmount(amount);
         player.getWorld().dropItem(player.getLocation(), itemStack);
+        CommandSender sender = context.getSource();
+        if (!(sender instanceof Player p && p.getUniqueId().equals(player.getUniqueId()))) {
+            context.getSource().sendMessage(Lang.PREFIX + fishType.displayName() + " given to " + player.getName() + ".");
+        }
+
+        player.sendMessage(Lang.PREFIX + "You just received a " + fishType.displayName() + ".");
         return 1;
     }
 
