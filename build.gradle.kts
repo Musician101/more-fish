@@ -23,7 +23,7 @@ repositories {
 dependencies {
     compileOnlyApi("com.comphenix.protocol:ProtocolLib:5.0.0")
     compileOnlyApi("com.github.MilkBowl:VaultAPI:1.7.1")
-    compileOnlyApi("io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT")
+    compileOnlyApi("dev.folia:folia-api:1.19.4-R0.1-SNAPSHOT")
     compileOnlyApi(files("lib/mcMMO.jar"))
 
     api("com.github.musician101.musigui:paper:1.2.1") {

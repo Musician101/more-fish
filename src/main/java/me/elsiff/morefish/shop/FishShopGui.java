@@ -111,7 +111,7 @@ public final class FishShopGui extends AbstractFishShopGUI {
     }
 
     private void updateButtons() {
-        Bukkit.getScheduler().scheduleSyncDelayedTask(MoreFish.instance(), () -> {
+        Bukkit.getGlobalRegionScheduler().runDelayed(MoreFish.instance(), task -> {
             List<ItemStack> fish = fishBags.getFish(player, page);
             IntStream.range(0, 45).forEach(i -> {
                 removeButton(i);
@@ -151,7 +151,7 @@ public final class FishShopGui extends AbstractFishShopGUI {
     }
 
     private void updatePriceIcon(double price) {
-        Bukkit.getScheduler().scheduleSyncDelayedTask(MoreFish.instance(), () -> {
+        Bukkit.getGlobalRegionScheduler().runDelayed(MoreFish.instance(), task -> {
             Component name = Lang.replace(text("Sell for $%price%"), Map.of("%price%", String.valueOf(price)));
             setButton(49, customName(new ItemStack(Material.EMERALD), name), ClickType.LEFT, p -> {
                 List<ItemStack> filteredFish = getFilteredFish();
@@ -176,7 +176,7 @@ public final class FishShopGui extends AbstractFishShopGUI {
                     p.sendMessage(Lang.replace(Lang.SHOP_SOLD, Map.of("%price%", totalPrice)));
                 }
             });
-        });
+        }, 1);
     }
 
     private void updateUpgradeIcon(int userMaxAllowedPages) {

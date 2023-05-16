@@ -71,7 +71,7 @@ public class FishShopFilterGui extends AbstractFishShopGUI {
                 selectedRarities.add(fishRarity);
             }
 
-            Bukkit.getScheduler().scheduleSyncDelayedTask(MoreFish.instance(), () -> updateIcon(slot, fishRarity), 2);
+            Bukkit.getGlobalRegionScheduler().runDelayed(MoreFish.instance(), task -> updateIcon(slot, fishRarity), 2);
         });
     }
 }

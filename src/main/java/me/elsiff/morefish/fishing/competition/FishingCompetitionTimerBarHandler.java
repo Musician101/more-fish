@@ -1,9 +1,11 @@
 package me.elsiff.morefish.fishing.competition;
 
+import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.configuration.Lang;
+import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -13,8 +15,6 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 public final class FishingCompetitionTimerBarHandler {
 
@@ -26,7 +26,7 @@ public final class FishingCompetitionTimerBarHandler {
         return new NamespacedKey(getPlugin(), "fishing-competition-timer-bar");
     }
     private FishingCompetitionTimerBarHandler.TimerBarDisplayer barDisplayer;
-    private BukkitTask barUpdatingTask;
+    private ScheduledTask barUpdatingTask;
     private BossBar timerBar;
 
     public void disableTimer() {
@@ -37,16 +37,16 @@ public final class FishingCompetitionTimerBarHandler {
         timerBar.removeAll();
         HandlerList.unregisterAll(barDisplayer);
         barDisplayer = null;
-        getPlugin().getServer().removeBossBar(getTimerBarKey());
+        Bukkit.removeBossBar(getTimerBarKey());
         timerBar = null;
     }
 
     public void enableTimer(long duration) {
         BarColor barColor = BarColor.valueOf(getPlugin().getConfig().getString("messages.contest-bar-color", "blue").toUpperCase());
-        timerBar = getPlugin().getServer().createBossBar(getTimerBarKey(), "", barColor, BarStyle.SEGMENTED_10);
-        getPlugin().getServer().getOnlinePlayers().forEach(timerBar::addPlayer);
-        barUpdatingTask = new TimerBarUpdater(duration).runTaskTimer(getPlugin(), 0, 20L);
-        getPlugin().getServer().getPluginManager().registerEvents(barDisplayer = new TimerBarDisplayer(), getPlugin());
+        timerBar = Bukkit.createBossBar(getTimerBarKey(), "", barColor, BarStyle.SEGMENTED_10);
+        Bukkit.getOnlinePlayers().forEach(timerBar::addPlayer);
+        barUpdatingTask = Bukkit.getGlobalRegionScheduler().runAtFixedRate(getPlugin(), task -> new TimerBarUpdater(duration).run(), 1, 20);
+        Bukkit.getPluginManager().registerEvents(barDisplayer = new TimerBarDisplayer(), getPlugin());
     }
 
     public boolean getHasTimerEnabled() {
@@ -70,7 +70,7 @@ public final class FishingCompetitionTimerBarHandler {
         }
     }
 
-    private final class TimerBarUpdater extends BukkitRunnable {
+    private final class TimerBarUpdater implements Runnable {
 
         private final long duration;
         private long remainingSeconds;

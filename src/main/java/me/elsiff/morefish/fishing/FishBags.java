@@ -98,7 +98,7 @@ public class FishBags implements Listener {
             return;
         }
 
-        Bukkit.getScheduler().scheduleSyncDelayedTask(MoreFish.instance(), () -> player.sendMessage(Component.text("[MF] CONTRABAND DETECTED IN YOUR FISH BAG. CLICK THIS MESSAGE TO RETRIEVE IT NOW.").color(NamedTextColor.RED).clickEvent(ClickEvent.runCommand("/mf contraband"))));
+        Bukkit.getGlobalRegionScheduler().runDelayed(MoreFish.instance(), task -> player.sendMessage(Component.text("[MF] CONTRABAND DETECTED IN YOUR FISH BAG. CLICK THIS MESSAGE TO RETRIEVE IT NOW.").color(NamedTextColor.RED).clickEvent(ClickEvent.runCommand("/mf contraband"))), 1);
     }
 
     public void save() {
