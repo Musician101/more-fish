@@ -1,10 +1,11 @@
 package me.elsiff.morefish.item;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import me.elsiff.morefish.MoreFish;
@@ -12,9 +13,8 @@ import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.Fish;
 import me.elsiff.morefish.fishing.FishType;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.NamespacedKey;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -34,8 +34,9 @@ public interface FishItemStackConverter {
         ItemMeta itemMeta = itemStack.getItemMeta();
         if (!fish.type().hasNotFishItemFormat()) {
             Map<String, Object> replacement = getFormatReplacementMap(fish, length, catcher);
-            itemMeta.displayName(LegacyComponentSerializer.legacy('&').deserialize(Lang.replace(getFormatConfig().map(cs -> cs.getString("display-name")).orElse("null"), replacement, catcher)));
-            List<Component> lore = Lang.replace(getFormatConfig().map(cs -> cs.getStringList("lore")).orElse(List.of()), replacement, catcher).stream().map(content -> LegacyComponentSerializer.legacy('&').deserialize(content)).collect(Collectors.toList());
+            GsonComponentSerializer gson = GsonComponentSerializer.gson();
+            itemMeta.displayName(gson.deserialize(Lang.replace(getFormatConfig().map(cs -> cs.get("display-name").toString()).orElse("null"), replacement, catcher)));
+            List<Component> lore = Lang.replace(getFormatConfig().map(json -> json.getAsJsonArray("lore").asList().stream().map(JsonElement::toString).toList()).orElse(List.of()), replacement, catcher).stream().map(gson::deserialize).toList();
             List<Component> oldLore = itemMeta.lore();
             if (oldLore != null) {
                 lore.addAll(oldLore.stream().map(component -> {
@@ -73,7 +74,7 @@ public interface FishItemStackConverter {
         return new NamespacedKey(getPlugin(), "fishType");
     }
 
-    private static Optional<ConfigurationSection> getFormatConfig() {
+    private static Optional<JsonObject> getFormatConfig() {
         return getPlugin().getFishTypeTable().getItemFormat();
     }
 

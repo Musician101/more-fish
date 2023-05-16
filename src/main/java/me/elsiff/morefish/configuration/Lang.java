@@ -15,6 +15,7 @@ import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.format.Style;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import static net.kyori.adventure.text.Component.text;
@@ -49,7 +50,7 @@ public interface Lang {
     Component SHOP_GUI_TITLE = text("Put your fish to sell");
     Component SHOP_NO_FISH = join(PREFIX, text("There's no fish to sell. Please put them on the slots."));
     Component SHOP_SOLD = join(PREFIX, text("You sold fish for "), text("$%price%", GREEN), text("."));
-    Component TIMER_BOSS_BAR = join(text("Fishing Contest ", Style.style(AQUA, BOLD)), text("[%time% left]"));
+    String TIMER_BOSS_BAR = ChatColor.AQUA + "" + ChatColor.BOLD + "Fishing Contest " + ChatColor.RESET + "[%time% left]";
     Component TIME_FORMAT_MINUTES = text("m");
     Component TIME_FORMAT_SECONDS = text("s");
     Component TOP_LIST = join(PREFIX, text("%ordinal%. ", YELLOW), text(": %player%, %length%cm %fish%", DARK_GRAY));

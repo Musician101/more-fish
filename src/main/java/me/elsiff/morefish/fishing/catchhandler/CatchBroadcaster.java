@@ -4,12 +4,13 @@ import javax.annotation.Nonnull;
 import me.elsiff.morefish.announcement.NoAnnouncement;
 import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.Fish;
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 
 public final class CatchBroadcaster extends AbstractBroadcaster {
 
     @Nonnull
-    public String getCatchMessageFormat() {
+    public Component getCatchMessageFormat() {
         return Lang.CATCH_FISH;
     }
 

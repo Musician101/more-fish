@@ -7,6 +7,7 @@ import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.Fish;
 import me.elsiff.morefish.fishing.FishType;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -22,7 +23,7 @@ public abstract class AbstractBroadcaster implements CatchHandler {
     }
 
     @Nonnull
-    protected abstract String getCatchMessageFormat();
+    protected abstract Component getCatchMessageFormat();
 
     public void handle(@Nonnull Player catcher, @Nonnull Fish fish) {
         if (meetBroadcastCondition(catcher, fish)) {
@@ -31,8 +32,8 @@ public abstract class AbstractBroadcaster implements CatchHandler {
                 receivers.removeIf(player -> player.getInventory().getItemInMainHand().getType() != Material.FISHING_ROD);
             }
 
-            String format = getCatchMessageFormat();
-            String msg = Lang.replace(format, Map.of("%player%", catcher.getName(), "%length%", fish.length(), "%rarity%", fish.type().rarity().displayName().toUpperCase(), "%rarity_color%", fish.type().rarity().color(), "%fish%", fish.type().name(), "%fish_with_rarity%", fishNameWithRarity(fish.type())), catcher);
+            Component format = getCatchMessageFormat();
+            Component msg = Lang.replace(format, Map.of("%player%", catcher.getName(), "%length%", fish.length(), "%rarity%", fish.type().rarity().displayName().toUpperCase(), "%rarity_color%", fish.type().rarity().color(), "%fish%", fish.type().name(), "%fish_with_rarity%", fishNameWithRarity(fish.type())), catcher);
             receivers.forEach(player -> player.sendMessage(msg));
         }
     }

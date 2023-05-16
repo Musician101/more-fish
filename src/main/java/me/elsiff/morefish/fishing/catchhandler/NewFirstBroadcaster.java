@@ -5,12 +5,13 @@ import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.Fish;
 import me.elsiff.morefish.fishing.competition.FishingCompetition;
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 
 public final class NewFirstBroadcaster extends AbstractBroadcaster {
 
     @Nonnull
-    public String getCatchMessageFormat() {
+    public Component getCatchMessageFormat() {
         return Lang.GET_1ST;
     }
 

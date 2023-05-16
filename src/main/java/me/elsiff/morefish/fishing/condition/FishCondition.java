@@ -25,7 +25,7 @@ public interface FishCondition {
         if (jsonObject.has(path)) {
             JsonObject conditions = jsonObject.getAsJsonObject(path);
             return conditions.keySet().stream().map(key -> {
-                String[] args = conditions.getAsJsonObject(key).getAsString().split("\\|");
+                String[] args = conditions.get(key).getAsString().split("\\|");
                 return switch (key) {
                     case "biome" ->
                             new BiomeCondition(Stream.of(args).map(String::toUpperCase).map(Biome::valueOf).collect(Collectors.toSet()));

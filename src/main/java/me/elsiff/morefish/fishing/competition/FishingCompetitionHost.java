@@ -8,7 +8,6 @@ import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.configuration.Config;
 import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.util.NumberUtils;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
@@ -43,7 +42,7 @@ public final class FishingCompetitionHost {
 
         boolean broadcast = getMsgConfig().getBoolean("broadcast-stop");
         if (broadcast) {
-            getPlugin().getServer().broadcast(Component.text(Lang.CONTEST_STOP));
+            getPlugin().getServer().broadcast(Lang.CONTEST_STOP);
         }
 
         if (!suspend) {
@@ -116,7 +115,7 @@ public final class FishingCompetitionHost {
     public void openCompetition() {
         getCompetition().enable();
         if (getMsgConfig().getBoolean("broadcast-start")) {
-            getPlugin().getServer().broadcast(Component.text(Lang.CONTEST_START));
+            getPlugin().getServer().broadcast(Lang.CONTEST_START);
         }
 
     }
@@ -131,8 +130,8 @@ public final class FishingCompetitionHost {
         }
 
         if (getMsgConfig().getBoolean("broadcast-start")) {
-            server.broadcast(Component.text(Lang.CONTEST_START));
-            server.broadcast(Component.text(Lang.replace(Lang.CONTEST_START_TIMER, Map.of("%time%", Lang.time(duration)))));
+            server.broadcast(Lang.CONTEST_START);
+            server.broadcast(Lang.replace(Lang.CONTEST_START_TIMER, Map.of("%time%", Lang.time(duration))));
         }
     }
 

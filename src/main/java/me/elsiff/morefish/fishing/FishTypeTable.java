@@ -204,8 +204,10 @@ public final class FishTypeTable {
         int amount = json.has("amount") ? json.get("amount").getAsInt() : 1;
         ItemStack itemStack = new ItemStack(material, amount);
         ItemMeta itemMeta = itemStack.getItemMeta();
-        List<Component> lore = StreamSupport.stream(json.getAsJsonArray("lore").spliterator(), false).map(content -> GsonComponentSerializer.gson().deserialize(content.toString())).toList();
-        itemMeta.lore(lore);
+        if (json.has("lore")) {
+            List<Component> lore = StreamSupport.stream(json.getAsJsonArray("lore").spliterator(), false).map(content -> GsonComponentSerializer.gson().deserialize(content.toString())).toList();
+            itemMeta.lore(lore);
+        }
         if (json.has("enchantments")) {
             StreamSupport.stream(json.getAsJsonArray("enchantments").spliterator(), false).map(JsonElement::getAsString).map(string -> string.split("\\|")).forEach(tokens -> {
                 Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(tokens[0]));

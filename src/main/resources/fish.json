@@ -72,7 +72,6 @@
     "fish-list": {
         "junk": {
             "Breadfish": {
-                "skip-item-format": false,
                 "display-name": "Breadfish",
                 "length-max": 30,
                 "length-min": 10,
@@ -110,7 +109,6 @@
                 }
             },
             "WoodenAxe": {
-                "skip-item-format": false,
                 "display-name": "Admin's Wooden Axe",
                 "length-max": 16,
                 "length-min": 16,
@@ -125,7 +123,6 @@
                 }
             },
             "Magikarp": {
-                "skip-item-format": false,
                 "display-name": "Magikarp",
                 "length-max": 35,
                 "length-min": 25,
@@ -149,7 +146,6 @@
                 }
             },
             "BaggedMilk": {
-                "skip-item-format": false,
                 "commands": [
                     "tellraw @p [\"\",{\"text\":\"[MoreFish] \",\"color\":\"aqua\"},{\"text\":\"Return this to your local Merzetti.\",\"color\":\"none\"}]"
                 ],
@@ -161,7 +157,6 @@
                 }
             },
             "Mallard": {
-                "skip-item-format": false,
                 "display-name": "Mallard",
                 "length-max": 18,
                 "length-min": 18,
@@ -175,7 +170,6 @@
                 }
             },
             "StinkyFish": {
-                "skip-item-format": false,
                 "commands": [
                     "minecraft:effect give @p minecraft:nausea 5 1",
                     "tellraw @p [\"\",{\"text\":\"[MoreFish]\",\"color\":\"aqua\"},{\"text\":\"Aw Barf! That is one stinky fish!\",\"color\":\"none\"}]"
@@ -190,7 +184,6 @@
         },
         "rare": {
             "Humuhumunukunukuapua": {
-                "skip-item-format": false,
                 "display-name": "Humuhumunukunukuapua",
                 "length-max": 80,
                 "length-min": 40,
@@ -207,7 +200,6 @@
                 }
             },
             "BigPuffyBoi": {
-                "skip-item-format": false,
                 "display-name": "Big Puffy Boi",
                 "length-max": 43,
                 "length-min": 15,
@@ -224,7 +216,6 @@
                 }
             },
             "SeaBass": {
-                "skip-item-format": false,
                 "display-name": "Sea Bass",
                 "length-max": 100,
                 "length-min": 60,
@@ -233,7 +224,6 @@
                 }
             },
             "Squid": {
-                "skip-item-format": false,
                 "commands": [
                     "minecraft:effect give @p minecraft:blindness 5 1",
                     "tellraw @p [\"\",{\"text\":\"[MoreFish]\",\"color\":\"aqua\"},{\"text\":\" The squid gifted you some darkness!\",\"color\":\"none\"}]"
@@ -246,7 +236,6 @@
                 }
             },
             "Slaughterfish": {
-                "skip-item-format": false,
                 "display-name": "Slaughterfish",
                 "length-max": 50,
                 "length-min": 30,
@@ -275,7 +264,6 @@
                 "length-min": 20
             },
             "Flatfish": {
-                "skip-item-format": false,
                 "display-name": "Flatfish",
                 "length-max": 75,
                 "length-min": 40,
@@ -284,7 +272,6 @@
                 }
             },
             "SeaBream": {
-                "skip-item-format": false,
                 "display-name": "Sea Bream",
                 "length-max": 70,
                 "length-min": 50,
@@ -293,7 +280,6 @@
                 }
             },
             "FishPerson644": {
-                "skip-item-format": false,
                 "display-name": "FishPerson644",
                 "length-max": 100,
                 "length-min": 80,
@@ -310,7 +296,6 @@
                 }
             },
             "CrushTheTurtle": {
-                "skip-item-format": false,
                 "display-name": "Crush the Turtle",
                 "length-max": 110,
                 "length-min": 70,
@@ -326,7 +311,6 @@
                 }
             },
             "Jellyfish": {
-                "skip-item-format": false,
                 "commands": [
                     "minecraft:effect give @p minecraft:poison 3 1",
                     "tellraw @p [\"\",{\"text\":\"[MoreFish]\",\"color\":\"aqua\"},{\"text\":\" The jellyfish made you feel very bad!\",\"color\":\"none\"}]"
@@ -341,7 +325,6 @@
         },
         "common": {
             "RarePepe": {
-                "skip-item-format": false,
                 "display-name": "Rare Pepe",
                 "length-max": 20,
                 "length-min": 4,
@@ -365,7 +348,6 @@
                 }
             },
             "Chub": {
-                "skip-item-format": false,
                 "display-name": "Chub",
                 "length-max": 15,
                 "length-min": 5,
@@ -413,7 +395,6 @@
                 }
             },
             "MudCrab": {
-                "skip-item-format": false,
                 "display-name": "Mud Crab",
                 "length-max": 15,
                 "length-min": 10,
@@ -429,7 +410,6 @@
                 }
             },
             "GooberFish": {
-                "skip-item-format": false,
                 "display-name": "GooberFish",
                 "length-max": 18,
                 "length-min": 7,
@@ -455,7 +435,6 @@
         },
         "legendary": {
             "BlueShark": {
-                "skip-item-format": false,
                 "length-max": 240,
                 "food-effects": {
                     "commands": [
@@ -491,7 +470,6 @@
                 }
             },
             "PygmyWhale": {
-                "skip-item-format": false,
                 "length-max": 650,
                 "food-effects": {
                     "saturation": 14.4,
@@ -535,26 +513,24 @@
                 ],
                 "length-max": 700,
                 "durability": 1,
-                "skip-item-format": false,
-                "lore": [
-                    {
-                        "color": "dark_purple",
-                        "italic": true,
-                        "text": "I can't believe it's Magikarp!"
-                    },
-                    {
-                        "color": "blue",
-                        "text": "You feel strong just being near it"
-                    }
-                ],
                 "display-name": "Gyarados",
                 "length-min": 600,
                 "icon": {
+                    "lore": [
+                        {
+                            "color": "dark_purple",
+                            "italic": true,
+                            "text": "I can't believe it's Magikarp!"
+                        },
+                        {
+                            "color": "blue",
+                            "text": "You feel strong just being near it"
+                        }
+                    ],
                     "id": "minecraft:salmon"
                 }
             },
             "EccoTheDolphin": {
-                "skip-item-format": false,
                 "commands": [
                     "minecraft:effect give @p minecraft:health_boost 120 4",
                     "mcmmo:addxp @p Fishing 1000"
@@ -604,25 +580,24 @@
                     "saturation": 14.4,
                     "points": 20
                 },
-                "skip-item-format": false,
-                "lore": [
-                    {
-                        "color": "dark_purple",
-                        "italic": true,
-                        "text": "RELEASE ME!"
-                    },
-                    {
-                        "color": "blue",
-                        "text": "Get full health and hunger"
-                    },
-                    {
-                        "color": "blue",
-                        "text": "when you eat it."
-                    }
-                ],
                 "display-name": "Kraken",
                 "length-min": 1500,
                 "icon": {
+                    "lore": [
+                        {
+                            "color": "dark_purple",
+                            "italic": true,
+                            "text": "RELEASE ME!"
+                        },
+                        {
+                            "color": "blue",
+                            "text": "Get full health and hunger"
+                        },
+                        {
+                            "color": "blue",
+                            "text": "when you eat it."
+                        }
+                    ],
                     "id": "minecraft:tropical_fish",
                     "durability": 3
                 }
@@ -637,25 +612,24 @@
                     "saturation": 14.4,
                     "points": 20
                 },
-                "skip-item-format": false,
-                "lore": [
-                    {
-                        "color": "dark_purple",
-                        "italic": true,
-                        "text": "Hey there big fella"
-                    },
-                    {
-                        "color": "blue",
-                        "text": "Get full health and hunger"
-                    },
-                    {
-                        "color": "blue",
-                        "text": "when you eat it."
-                    }
-                ],
                 "display-name": "Megaladon",
                 "length-min": 1500,
                 "icon": {
+                    "lore": [
+                        {
+                            "color": "dark_purple",
+                            "italic": true,
+                            "text": "Hey there big fella"
+                        },
+                        {
+                            "color": "blue",
+                            "text": "Get full health and hunger"
+                        },
+                        {
+                            "color": "blue",
+                            "text": "when you eat it."
+                        }
+                    ],
                     "id": "minecraft:tropical_fish"
                 }
             },
@@ -669,25 +643,24 @@
                     "saturation": 14.4,
                     "points": 20
                 },
-                "skip-item-format": false,
-                "lore": [
-                    {
-                        "color": "dark_purple",
-                        "italic": true,
-                        "text": "Call me Ishmael."
-                    },
-                    {
-                        "color": "blue",
-                        "text": "Get full health and hunger"
-                    },
-                    {
-                        "color": "blue",
-                        "text": "when you eat it."
-                    }
-                ],
                 "display-name": "Moby Dick",
                 "length-min": 1500,
                 "icon": {
+                    "lore": [
+                        {
+                            "color": "dark_purple",
+                            "italic": true,
+                            "text": "Call me Ishmael."
+                        },
+                        {
+                            "color": "blue",
+                            "text": "Get full health and hunger"
+                        },
+                        {
+                            "color": "blue",
+                            "text": "when you eat it."
+                        }
+                    ],
                     "id": "minecraft:tropical_fish"
                 }
             },
@@ -701,32 +674,30 @@
                     "saturation": 14.4,
                     "points": 20
                 },
-                "skip-item-format": false,
-                "lore": [
-                    {
-                        "color": "dark_purple",
-                        "italic": true,
-                        "text": "That'll be about tree fiddy"
-                    },
-                    {
-                        "color": "blue",
-                        "text": "Get full health and hunger"
-                    },
-                    {
-                        "color": "blue",
-                        "text": "when you eat it."
-                    }
-                ],
                 "display-name": "Loch Ness",
                 "length-min": 1500,
                 "icon": {
+                    "lore": [
+                        {
+                            "color": "dark_purple",
+                            "italic": true,
+                            "text": "That'll be about tree fiddy"
+                        },
+                        {
+                            "color": "blue",
+                            "text": "Get full health and hunger"
+                        },
+                        {
+                            "color": "blue",
+                            "text": "when you eat it."
+                        }
+                    ],
                     "id": "minecraft:tropical_fish"
                 }
             }
         },
         "epic": {
             "Pufferfish": {
-                "skip-item-format": false,
                 "display-name": "Pufferfish",
                 "length-max": 30,
                 "length-min": 20,
@@ -736,7 +707,6 @@
                 }
             },
             "Ecdysiast": {
-                "skip-item-format": false,
                 "display-name": "Ecdysiast",
                 "length-max": 169,
                 "length-min": 124,
@@ -753,7 +723,6 @@
                 }
             },
             "FinDiesel": {
-                "skip-item-format": false,
                 "display-name": "Fin Diesel",
                 "length-max": 190,
                 "length-min": 110,
@@ -769,7 +738,6 @@
                 }
             },
             "HammaFish": {
-                "skip-item-format": false,
                 "display-name": "Hamma Fish",
                 "length-max": 190,
                 "length-min": 150,
@@ -786,7 +754,6 @@
                 }
             },
             "Salmon": {
-                "skip-item-format": false,
                 "display-name": "Salmon",
                 "length-max": 130,
                 "length-min": 100,
@@ -796,7 +763,6 @@
                 }
             },
             "SeaTurtle": {
-                "skip-item-format": false,
                 "display-name": "Sea Turtle",
                 "length-max": 130,
                 "length-min": 90,
@@ -805,7 +771,6 @@
                 }
             },
             "Clownfish": {
-                "skip-item-format": false,
                 "display-name": "Clownfish",
                 "length-max": 18,
                 "length-min": 10,
@@ -815,7 +780,6 @@
                 }
             },
             "BlackDrum": {
-                "skip-item-format": false,
                 "display-name": "Black Drum",
                 "length-max": 180,
                 "length-min": 100,
@@ -824,7 +788,6 @@
                 }
             },
             "Tuna": {
-                "skip-item-format": false,
                 "display-name": "Tuna",
                 "length-max": 180,
                 "length-min": 130,
