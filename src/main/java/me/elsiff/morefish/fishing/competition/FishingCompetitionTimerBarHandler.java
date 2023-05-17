@@ -3,11 +3,12 @@ package me.elsiff.morefish.fishing.competition;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import me.elsiff.morefish.configuration.Lang;
+import net.kyori.adventure.bossbar.BossBar;
+import net.kyori.adventure.bossbar.BossBar.Color;
+import net.kyori.adventure.bossbar.BossBar.Overlay;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
-import org.bukkit.boss.BarColor;
-import org.bukkit.boss.BarStyle;
-import org.bukkit.boss.BossBar;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -27,9 +28,9 @@ public final class FishingCompetitionTimerBarHandler {
     public void disableTimer() {
         barUpdatingTask.cancel();
         barUpdatingTask = null;
-        timerBar.setTitle(timerBarTitle(0));
-        timerBar.setProgress(0D);
-        timerBar.removeAll();
+        timerBar.name(timerBarTitle(0));
+        timerBar.progress(0);
+        Bukkit.getOnlinePlayers().forEach(player -> player.hideBossBar(timerBar));
         HandlerList.unregisterAll(barDisplayer);
         barDisplayer = null;
         Bukkit.removeBossBar(getTimerBarKey());
@@ -37,9 +38,9 @@ public final class FishingCompetitionTimerBarHandler {
     }
 
     public void enableTimer(long duration) {
-        BarColor barColor = BarColor.valueOf(getPlugin().getConfig().getString("messages.contest-bar-color", "blue").toUpperCase());
-        timerBar = Bukkit.createBossBar(getTimerBarKey(), "", barColor, BarStyle.SEGMENTED_10);
-        Bukkit.getOnlinePlayers().forEach(timerBar::addPlayer);
+        Color barColor = Color.NAMES.valueOr(getPlugin().getConfig().getString("messages.contest-bar-color", "blue"), Color.BLUE);
+        timerBar = BossBar.bossBar(Lang.TIMER_BOSS_BAR, 100, barColor, Overlay.NOTCHED_10);
+        Bukkit.getOnlinePlayers().forEach(player -> player.hideBossBar(timerBar));
         barUpdatingTask = new TimerBarUpdater(duration).runTaskTimer(getPlugin(), 0, 20L);
         Bukkit.getPluginManager().registerEvents(barDisplayer = new TimerBarDisplayer(), getPlugin());
     }
@@ -52,7 +53,7 @@ public final class FishingCompetitionTimerBarHandler {
         return new NamespacedKey(getPlugin(), "fishing-competition-timer-bar");
     }
 
-    private String timerBarTitle(long remainingSeconds) {
+    private Component timerBarTitle(long remainingSeconds) {
         return Lang.replace(Lang.TIMER_BOSS_BAR, Map.of("%time%", Lang.time(remainingSeconds)));
     }
 
@@ -60,12 +61,12 @@ public final class FishingCompetitionTimerBarHandler {
 
         @EventHandler
         public void onPlayerJoin(@Nonnull PlayerJoinEvent event) {
-            timerBar.addPlayer(event.getPlayer());
+            event.getPlayer().showBossBar(timerBar);
         }
 
         @EventHandler
         public void onPlayerQuit(@Nonnull PlayerQuitEvent event) {
-            timerBar.removePlayer(event.getPlayer());
+            event.getPlayer().showBossBar(timerBar);
         }
     }
 
@@ -81,8 +82,8 @@ public final class FishingCompetitionTimerBarHandler {
 
         public void run() {
             remainingSeconds--;
-            timerBar.setTitle(timerBarTitle(remainingSeconds));
-            timerBar.setProgress((double) remainingSeconds / duration);
+            timerBar.name(timerBarTitle(remainingSeconds));
+            timerBar.progress((float) remainingSeconds / duration);
         }
     }
 }

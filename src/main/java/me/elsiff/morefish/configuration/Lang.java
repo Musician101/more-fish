@@ -16,7 +16,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
@@ -49,7 +48,7 @@ public interface Lang {
     Component SHOP_GUI_TITLE = text("Put your fish to sell");
     Component SHOP_NO_FISH = join(PREFIX, text("There's no fish to sell. Please put them on the slots."));
     Component SHOP_SOLD = join(PREFIX, text("You sold fish for "), text("$%price%", GREEN), text("."));
-    String TIMER_BOSS_BAR = ChatColor.AQUA + "" + ChatColor.BOLD + "Fishing Contest " + ChatColor.RESET + "[%time% left]";
+    Component TIMER_BOSS_BAR = join(text("Fishing Contest ", Style.style(AQUA, BOLD)), text("[%time% left]"));
     String TIME_FORMAT_MINUTES = "m";
     String TIME_FORMAT_SECONDS = "s";
     Component TOP_LIST = join(PREFIX, text("%ordinal%. ", YELLOW), text(": %player%, %length%cm %fish%", DARK_GRAY));
