@@ -3,13 +3,14 @@ package me.elsiff.morefish.fishing.catchhandler;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Nonnull;
-import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.Fish;
 import me.elsiff.morefish.fishing.FishType;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+
+import static me.elsiff.morefish.MoreFish.getPlugin;
 
 public abstract class AbstractBroadcaster implements CatchHandler {
 
@@ -28,7 +29,7 @@ public abstract class AbstractBroadcaster implements CatchHandler {
     public void handle(@Nonnull Player catcher, @Nonnull Fish fish) {
         if (meetBroadcastCondition(catcher, fish)) {
             List<Player> receivers = fish.type().catchAnnouncement().receiversOf(catcher);
-            if (MoreFish.instance().getConfig().getBoolean("messages.only-announce-fishing-rod")) {
+            if (getPlugin().getConfig().getBoolean("messages.only-announce-fishing-rod")) {
                 receivers.removeIf(player -> player.getInventory().getItemInMainHand().getType() != Material.FISHING_ROD);
             }
 

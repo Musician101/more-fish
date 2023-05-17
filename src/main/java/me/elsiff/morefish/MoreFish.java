@@ -1,7 +1,6 @@
 package me.elsiff.morefish;
 
 import java.time.LocalTime;
-import java.util.Arrays;
 import java.util.List;
 import javax.annotation.Nonnull;
 import me.elsiff.morefish.command.MFCommands;
@@ -10,10 +9,6 @@ import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.FishBags;
 import me.elsiff.morefish.fishing.FishTypeTable;
 import me.elsiff.morefish.fishing.FishingListener;
-import me.elsiff.morefish.fishing.catchhandler.CatchBroadcaster;
-import me.elsiff.morefish.fishing.catchhandler.CatchHandler;
-import me.elsiff.morefish.fishing.catchhandler.CompetitionRecordAdder;
-import me.elsiff.morefish.fishing.catchhandler.NewFirstBroadcaster;
 import me.elsiff.morefish.fishing.competition.FishingCompetition;
 import me.elsiff.morefish.fishing.competition.FishingCompetitionAutoRunner;
 import me.elsiff.morefish.fishing.competition.FishingCompetitionHost;
@@ -45,15 +40,13 @@ public final class MoreFish extends JavaPlugin {
     @Nonnull
     private final FishTypeTable fishTypeTable = new FishTypeTable();
     @Nonnull
-    private final List<CatchHandler> globalCatchHandlers = Arrays.asList(new CatchBroadcaster(), new NewFirstBroadcaster(), new CompetitionRecordAdder());
-    @Nonnull
     private final McmmoHooker mcmmo = new McmmoHooker();
     @Nonnull
     private final ProtocolLibHooker protocolLib = new ProtocolLibHooker();
     @Nonnull
     private final VaultHooker vault = new VaultHooker();
 
-    public static MoreFish instance() {
+    public static MoreFish getPlugin() {
         return getPlugin(MoreFish.class);
     }
 
@@ -104,11 +97,6 @@ public final class MoreFish extends JavaPlugin {
     @Nonnull
     public FishTypeTable getFishTypeTable() {
         return fishTypeTable;
-    }
-
-    @Nonnull
-    public List<CatchHandler> getGlobalCatchHandlers() {
-        return globalCatchHandlers;
     }
 
     @Nonnull

@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.IntStream;
 import javax.annotation.Nonnull;
-import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.fishing.FishRarity;
 import me.elsiff.morefish.fishing.FishTypeTable;
 import net.kyori.adventure.text.Component;
@@ -20,6 +19,7 @@ import org.bukkit.inventory.ItemStack;
 
 import static io.musician101.musigui.paper.chest.PaperIconUtil.customName;
 import static io.musician101.musigui.paper.chest.PaperIconUtil.setLore;
+import static me.elsiff.morefish.MoreFish.getPlugin;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
@@ -40,7 +40,7 @@ public class FishShopFilterGui extends AbstractFishShopGUI {
 
     private void updateButtons(int page) {
         List<FishRarity> fishRarities = new ArrayList<>();
-        FishTypeTable fishTypeTable = MoreFish.instance().getFishTypeTable();
+        FishTypeTable fishTypeTable = getPlugin().getFishTypeTable();
         fishTypeTable.getDefaultRarity().ifPresent(fishRarities::add);
         fishTypeTable.getRarities().stream().filter(rarity -> rarity.additionalPrice() >= 0 && !rarity.isDefault()).sorted(Comparator.reverseOrder()).forEach(fishRarities::add);
         IntStream.range(0, 45).forEach(x -> {
@@ -71,7 +71,7 @@ public class FishShopFilterGui extends AbstractFishShopGUI {
                 selectedRarities.add(fishRarity);
             }
 
-            Bukkit.getScheduler().scheduleSyncDelayedTask(MoreFish.instance(), () -> updateIcon(slot, fishRarity), 2);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), () -> updateIcon(slot, fishRarity), 2);
         });
     }
 }

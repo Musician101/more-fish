@@ -8,7 +8,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.fishing.competition.FishingCompetition;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
@@ -20,6 +19,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import static me.elsiff.morefish.MoreFish.getPlugin;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
 import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
@@ -64,7 +64,7 @@ public interface Lang {
     }
 
     private static FishingCompetition getCompetition() {
-        return MoreFish.instance().getCompetition();
+        return getPlugin().getCompetition();
     }
 
     static Component join(ComponentLike... components) {

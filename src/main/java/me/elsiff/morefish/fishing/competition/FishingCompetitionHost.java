@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import javax.annotation.Nonnull;
-import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.configuration.Config;
 import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.util.NumberUtils;
@@ -15,6 +14,8 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
+
+import static me.elsiff.morefish.MoreFish.getPlugin;
 
 public final class FishingCompetitionHost {
 
@@ -75,11 +76,6 @@ public final class FishingCompetitionHost {
 
     private ConfigurationSection getMsgConfig() {
         return getConfig().getConfigurationSection("messages");
-    }
-
-    @Nonnull
-    private MoreFish getPlugin() {
-        return MoreFish.instance();
     }
 
     @Nonnull

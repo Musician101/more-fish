@@ -2,7 +2,6 @@ package me.elsiff.morefish.fishing.competition;
 
 import java.util.List;
 import java.util.stream.IntStream;
-import me.elsiff.morefish.MoreFish;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -11,6 +10,8 @@ import org.bukkit.scoreboard.Criteria;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
+
+import static me.elsiff.morefish.MoreFish.getPlugin;
 
 public class MFScoreboard {
 
@@ -39,7 +40,7 @@ public class MFScoreboard {
         }
 
         this.leaderboard = scoreboard.registerNewObjective("leaderboard", Criteria.DUMMY, Component.text("Top 5 Fishers (mm)", NamedTextColor.AQUA));
-        List<Record> records = MoreFish.instance().getCompetition().getRanking();
+        List<Record> records = getPlugin().getCompetition().getRanking();
         IntStream.range(0, Math.min(5, records.size())).forEach(i -> {
             Record record = records.get(i);
             leaderboard.getScore(Bukkit.getOfflinePlayer(record.fisher())).setScore((int) (record.fish().length() * 100));

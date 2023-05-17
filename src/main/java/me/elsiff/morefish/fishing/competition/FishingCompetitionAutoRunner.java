@@ -3,11 +3,12 @@ package me.elsiff.morefish.fishing.competition;
 import java.time.LocalTime;
 import java.util.Collection;
 import javax.annotation.Nonnull;
-import me.elsiff.morefish.MoreFish;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+
+import static me.elsiff.morefish.MoreFish.getPlugin;
 
 public final class FishingCompetitionAutoRunner {
 
@@ -34,10 +35,6 @@ public final class FishingCompetitionAutoRunner {
 
     private FishingCompetitionHost getCompetitionHost() {
         return getPlugin().getCompetitionHost();
-    }
-
-    private MoreFish getPlugin() {
-        return MoreFish.instance();
     }
 
     public boolean isEnabled() {

@@ -10,9 +10,10 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 import javax.annotation.Nonnull;
-import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.fishing.FishType;
 import org.bukkit.command.CommandSender;
+
+import static me.elsiff.morefish.MoreFish.getPlugin;
 
 public class FishTypeArgument implements ArgumentType<FishType> {
 
@@ -22,7 +23,7 @@ public class FishTypeArgument implements ArgumentType<FishType> {
     }
 
     private Stream<FishType> fishes() {
-        return MoreFish.instance().getFishTypeTable().getTypes().stream();
+        return getPlugin().getFishTypeTable().getTypes().stream();
     }
 
     @Override

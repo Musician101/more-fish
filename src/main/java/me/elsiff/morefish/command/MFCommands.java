@@ -6,7 +6,6 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import io.papermc.paper.plugin.configuration.PluginMeta;
 import java.util.Map;
-import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.FishBag;
 import me.elsiff.morefish.fishing.FishType;
@@ -24,6 +23,7 @@ import org.bukkit.inventory.ItemStack;
 import static io.musician101.bukkitier.Bukkitier.argument;
 import static io.musician101.bukkitier.Bukkitier.literal;
 import static io.musician101.bukkitier.Bukkitier.registerCommand;
+import static me.elsiff.morefish.MoreFish.getPlugin;
 import static me.elsiff.morefish.configuration.Lang.join;
 import static me.elsiff.morefish.item.FishItemStackConverter.createItemStack;
 import static net.kyori.adventure.text.Component.text;
@@ -122,10 +122,6 @@ public interface MFCommands {
         return getPlugin().getFishShop();
     }
 
-    private static MoreFish getPlugin() {
-        return MoreFish.instance();
-    }
-
     private static LiteralArgumentBuilder<CommandSender> give() {
         return literal("give").requires(sender -> sender.hasPermission("morefish.admin")).then(argument("player", new PlayerArgumentType()).then(argument("fish", new FishTypeArgument()).executes(context -> {
             FishType fishType = FishTypeArgument.get(context);
@@ -222,7 +218,7 @@ public interface MFCommands {
     }
 
     private static int shop(CommandSender sender, Player guiUser) {
-        if (!getFishShop().getEnabled() || !MoreFish.instance().getVault().hasEconomy()) {
+        if (!getFishShop().getEnabled() || !getPlugin().getVault().hasEconomy()) {
             sender.sendMessage(Lang.SHOP_DISABLED);
         }
         else {

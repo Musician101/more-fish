@@ -6,16 +6,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
-import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.announcement.PlayerAnnouncement;
 import me.elsiff.morefish.fishing.competition.Prize;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
+import static me.elsiff.morefish.MoreFish.getPlugin;
+
 public interface Config {
 
     private static FileConfiguration getConfig() {
-        return MoreFish.instance().getConfig();
+        return getPlugin().getConfig();
     }
 
     @Nonnull

@@ -2,7 +2,6 @@ package me.elsiff.morefish.fishing.competition;
 
 import java.util.Map;
 import javax.annotation.Nonnull;
-import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.configuration.Lang;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -16,6 +15,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+
+import static me.elsiff.morefish.MoreFish.getPlugin;
 
 public final class FishingCompetitionTimerBarHandler {
 
@@ -45,10 +46,6 @@ public final class FishingCompetitionTimerBarHandler {
 
     public boolean getHasTimerEnabled() {
         return this.timerBar != null;
-    }
-
-    private MoreFish getPlugin() {
-        return MoreFish.instance();
     }
 
     private NamespacedKey getTimerBarKey() {

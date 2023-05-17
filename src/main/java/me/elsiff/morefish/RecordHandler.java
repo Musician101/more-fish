@@ -2,6 +2,7 @@ package me.elsiff.morefish;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
@@ -16,6 +17,8 @@ import me.elsiff.morefish.fishing.competition.Record;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import static me.elsiff.morefish.MoreFish.getPlugin;
+
 public final class RecordHandler {
 
     private final File file;
@@ -23,17 +26,14 @@ public final class RecordHandler {
     private final YamlConfiguration yaml;
 
     public RecordHandler() {
-        MoreFish plugin = MoreFish.instance();
-        this.fishTypeTable = plugin.getFishTypeTable();
-        Path path = plugin.getDataFolder().toPath().resolve("records");
+        this.fishTypeTable = getPlugin().getFishTypeTable();
+        Path path = getPlugin().getDataFolder().toPath().resolve("records");
         file = path.toFile();
-        if (!file.exists()) {
-            try {
-                file.createNewFile();
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            Files.createFile(path);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
         }
 
         this.yaml = YamlConfiguration.loadConfiguration(this.file);

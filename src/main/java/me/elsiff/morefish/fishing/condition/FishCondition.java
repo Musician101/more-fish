@@ -7,7 +7,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Nonnull;
-import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.fishing.competition.FishingCompetition;
 import me.elsiff.morefish.fishing.condition.TimeCondition.TimeState;
 import me.elsiff.morefish.util.NumberUtils.Range;
@@ -17,6 +16,8 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
+
+import static me.elsiff.morefish.MoreFish.getPlugin;
 
 public interface FishCondition {
 
@@ -34,7 +35,7 @@ public interface FishCondition {
                             new EnchantmentCondition(Optional.ofNullable(Enchantment.getByKey(NamespacedKey.fromString(args[0]))).orElse(Enchantment.ARROW_DAMAGE), Integer.parseInt(args[1]));
                     case "level" -> new XpLevelCondition(Integer.parseInt(args[0]));
                     case "mcmmo-skill" ->
-                            new McmmoSkillCondition(MoreFish.instance().getMcmmo(), mcMMO.p.getSkillTools().matchSkill(args[0]), Integer.parseInt(args[1]));
+                            new McmmoSkillCondition(getPlugin().getMcmmo(), mcMMO.p.getSkillTools().matchSkill(args[0]), Integer.parseInt(args[1]));
                     case "potion-effect" ->
                             new PotionEffectCondition(Optional.ofNullable(PotionEffectType.getByKey(NamespacedKey.fromString(args[0]))).orElse(PotionEffectType.BLINDNESS), Integer.parseInt(args[1]));
                     case "raining" -> new RainingCondition(Boolean.parseBoolean(args[0]));

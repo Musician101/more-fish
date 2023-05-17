@@ -10,7 +10,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.Fish;
 import me.elsiff.morefish.fishing.FishType;
@@ -22,6 +21,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+
+import static me.elsiff.morefish.MoreFish.getPlugin;
 
 public interface FishItemStackConverter {
 
@@ -84,10 +85,6 @@ public interface FishItemStackConverter {
         return Map.of("%player%", catcher.getName(), "%rarity%", fish.type().rarity().name().toUpperCase(), "%rarity_color%", fish.type().rarity().color().toString(), "%length%", length, "%fish%", fish.type().displayName());
     }
 
-    private static MoreFish getPlugin() {
-        return MoreFish.instance();
-    }
-
     static boolean isFish(@Nullable ItemStack itemStack) {
         if (itemStack == null) {
             return false;
@@ -114,7 +111,7 @@ public interface FishItemStackConverter {
         }
 
         String typeName = tags.get(fishTypeKey(), PersistentDataType.STRING);
-        FishType type = MoreFish.instance().getFishTypeTable().getTypes().stream().filter(it -> it.name().equals(typeName)).findFirst().orElseThrow(() -> new IllegalStateException("Fish type doesn't exist"));
+        FishType type = getPlugin().getFishTypeTable().getTypes().stream().filter(it -> it.name().equals(typeName)).findFirst().orElseThrow(() -> new IllegalStateException("Fish type doesn't exist"));
         Double length = tags.get(fishLengthKey(), PersistentDataType.DOUBLE);
         return new Fish(type, length == null ? 0 : length);
     }

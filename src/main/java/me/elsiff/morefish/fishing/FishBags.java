@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import javax.annotation.Nonnull;
-import me.elsiff.morefish.MoreFish;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -24,6 +23,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
+
+import static me.elsiff.morefish.MoreFish.getPlugin;
 
 public class FishBags implements Listener {
 
@@ -63,8 +64,7 @@ public class FishBags implements Listener {
     }
 
     public void load() {
-        File bagsFolder = new File(MoreFish.instance().getDataFolder(), "fish_bags");
-        bagsFolder.mkdirs();
+        File bagsFolder = getPlugin().getDataFolder().toPath().resolve("fish_bags").toFile();
         File[] files = bagsFolder.listFiles();
         if (files != null) {
             Stream.of(files).filter(file -> file.getName().endsWith(".yml")).forEach(file -> {
@@ -98,14 +98,13 @@ public class FishBags implements Listener {
             return;
         }
 
-        Bukkit.getScheduler().scheduleSyncDelayedTask(MoreFish.instance(), () -> player.sendMessage(Component.text("[MF] CONTRABAND DETECTED IN YOUR FISH BAG. CLICK THIS MESSAGE TO RETRIEVE IT NOW.").color(NamedTextColor.RED).clickEvent(ClickEvent.runCommand("/mf contraband"))));
+        Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), () -> player.sendMessage(Component.text("[MF] CONTRABAND DETECTED IN YOUR FISH BAG. CLICK THIS MESSAGE TO RETRIEVE IT NOW.").color(NamedTextColor.RED).clickEvent(ClickEvent.runCommand("/mf contraband"))));
     }
 
     public void save() {
         bags.forEach(fishBag -> {
             YamlConfiguration yaml = new YamlConfiguration();
-            File bagsFolder = new File(MoreFish.instance().getDataFolder(), "fish_bags");
-            bagsFolder.mkdirs();
+            File bagsFolder = getPlugin().getDataFolder().toPath().resolve("fish_bags").toFile();
             UUID uuid = fishBag.getUUID();
             int maxAllowedPages = fishBag.getMaxAllowedPages();
             yaml.set("max_allowed_pages", maxAllowedPages);

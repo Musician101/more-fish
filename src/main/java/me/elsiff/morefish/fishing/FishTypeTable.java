@@ -7,8 +7,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import javax.annotation.Nonnull;
-import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.announcement.PlayerAnnouncement;
 import me.elsiff.morefish.configuration.Config;
 import me.elsiff.morefish.configuration.Lang;
@@ -45,6 +44,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+
+import static me.elsiff.morefish.MoreFish.getPlugin;
 
 public final class FishTypeTable {
 
@@ -97,14 +98,11 @@ public final class FishTypeTable {
 
     public void load() {
         map.clear();
-        MoreFish plugin = MoreFish.instance();
-        File fishDir = new File(plugin.getDataFolder(), "fish");
-        fishDir.mkdirs();
+        File fishDir = getPlugin().getDataFolder().toPath().resolve("fish").toFile();
         String fishFile = "fish.json";
         try {
-            plugin.saveResource("fish/" + fishFile, false);
-            FileReader reader = new FileReader(new File(fishDir, fishFile));
-            fish = GSON.fromJson(reader, JsonObject.class);
+            getPlugin().saveResource("fish/" + fishFile, false);
+            fish = GSON.fromJson(Files.readString(new File(fishDir, fishFile).toPath()), JsonObject.class);
             JsonObject raritiesConfig = fish.getAsJsonObject("rarity-list");
             if (raritiesConfig != null) {
                 List<FishRarity> rarities = raritiesConfig.keySet().stream().map(key -> {
@@ -140,14 +138,14 @@ public final class FishTypeTable {
                 rarities.forEach(fishRarity -> {
                     String fishRarityFile = fishRarity.name() + ".json";
                     try {
-                        plugin.saveResource("fish/" + fishRarityFile, false);
+                        getPlugin().saveResource("fish/" + fishRarityFile, false);
                     }
                     catch (IllegalArgumentException e) {
-                        plugin.getLogger().warning("Could not find fish/" + fishRarityFile + " in plugin jar. This message can be ignored if the rarity is not in fish.json");
+                        getPlugin().getLogger().warning("Could not find fish/" + fishRarityFile + " in plugin jar. This message can be ignored if the rarity is not in fish.json");
                     }
 
                     try {
-                        JsonObject fishList = GSON.fromJson(new FileReader(new File(fishDir, fishRarityFile)), JsonObject.class);
+                        JsonObject fishList = GSON.fromJson(Files.readString(new File(fishDir, fishRarityFile).toPath()), JsonObject.class);
                         fishList.keySet().forEach(rarityName -> {
                             if (!fishList.has(rarityName)) {
                                 return;
@@ -181,19 +179,15 @@ public final class FishTypeTable {
                             }).toList();
                             map.put(fishRarity, fishTypes);
                         });
-
-                        reader.close();
                     }
                     catch (IOException e) {
                         throw new RuntimeException(e);
                     }
                 });
             }
-
-            reader.close();
         }
         catch (IOException e) {
-            plugin.getLogger().severe("Failed to load " + fishFile);
+            getPlugin().getLogger().severe("Failed to load " + fishFile);
         }
     }
 

@@ -2,7 +2,6 @@ package me.elsiff.morefish.shop;
 
 import java.util.List;
 import javax.annotation.Nonnull;
-import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.configuration.Lang;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -16,14 +15,12 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import static me.elsiff.morefish.MoreFish.getPlugin;
+
 public record FishShopSignListener() implements Listener {
 
     private FileConfiguration getConfig() {
         return getPlugin().getConfig();
-    }
-
-    private MoreFish getPlugin() {
-        return MoreFish.instance();
     }
 
     private Component getShopSignCreation() {
