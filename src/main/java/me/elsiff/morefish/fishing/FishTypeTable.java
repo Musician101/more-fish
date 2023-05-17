@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.announcement.PlayerAnnouncement;
 import me.elsiff.morefish.configuration.Config;
+import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.catchhandler.CatchCommandExecutor;
 import me.elsiff.morefish.fishing.catchhandler.CatchFireworkSpawner;
 import me.elsiff.morefish.fishing.catchhandler.CatchHandler;
@@ -32,7 +33,6 @@ import me.elsiff.morefish.hooker.PluginHooker;
 import me.elsiff.morefish.hooker.ProtocolLibHooker;
 import me.elsiff.morefish.hooker.SkullNbtHandler;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.Bukkit;
@@ -124,13 +124,7 @@ public final class FishTypeTable {
 
                     boolean isDefault = getOrDefaultFalse(json, "default");
                     double chance = getOrDefaultZero(json, "chance") / 100D;
-                    TextColor color = Optional.ofNullable(json.get("color").getAsString()).map(s -> {
-                        if (s.startsWith("#")) {
-                            return TextColor.fromHexString(s);
-                        }
-
-                        return NamedTextColor.NAMES.value(s);
-                    }).orElse(NamedTextColor.WHITE);
+                    TextColor color = Lang.getColor(json.get("color").getAsString());
                     PlayerAnnouncement announcement = PlayerAnnouncement.fromConfigOrDefault(json, "catch-announce", Config.getDefaultCatchAnnouncement());
                     boolean skipItemFormat = getOrDefaultFalse(json, "skip-item-format");
                     boolean noDisplay = getOrDefaultFalse(json, "no-display");

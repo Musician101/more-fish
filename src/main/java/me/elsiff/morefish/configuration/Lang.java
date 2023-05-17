@@ -13,7 +13,9 @@ import me.elsiff.morefish.fishing.competition.FishingCompetition;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.JoinConfiguration;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -22,6 +24,7 @@ import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
 import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
+import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
 import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
 import static net.kyori.adventure.text.format.TextDecoration.BOLD;
 
@@ -32,7 +35,7 @@ public interface Lang {
     }
 
     Component PREFIX = text("[MoreFish] ", AQUA);
-    Component CATCH_FISH = join(PREFIX, text("%player%", YELLOW), text(" caught %rarity_color%%length%cm "), text("%fish_with_rarity%", Style.style(BOLD)));
+    Component CATCH_FISH = join(PREFIX, text("%player%", YELLOW), text(" caught "), text("%rarity_color%%length%cm "), text("%rarity_color%%fish_with_rarity%", Style.style(BOLD)));
     Component GET_1ST = join(PREFIX, text("%player%", YELLOW),  text(" is now the new 1st!"));
     Component NO_FISHING_ALLOWED = join(PREFIX, text("You can't fish unless the contest is ongoing."));
     Component CONTEST_START = join(PREFIX, text("The fishing contest has started!"));
@@ -51,8 +54,8 @@ public interface Lang {
     Component SHOP_NO_FISH = join(PREFIX, text("There's no fish to sell. Please put them on the slots."));
     Component SHOP_SOLD = join(PREFIX, text("You sold fish for "), text("$%price%", GREEN), text("."));
     String TIMER_BOSS_BAR = ChatColor.AQUA + "" + ChatColor.BOLD + "Fishing Contest " + ChatColor.RESET + "[%time% left]";
-    Component TIME_FORMAT_MINUTES = text("m");
-    Component TIME_FORMAT_SECONDS = text("s");
+    String TIME_FORMAT_MINUTES = "m";
+    String TIME_FORMAT_SECONDS = "s";
     Component TOP_LIST = join(PREFIX, text("%ordinal%. ", YELLOW), text(": %player%, %length%cm %fish%", DARK_GRAY));
     Component TOP_MINE = join(PREFIX, text("You're %ordinal%: %length%cm %fish%"));
     Component TOP_MINE_NO_RECORD = join(PREFIX, text("You didn't get any record."));
@@ -63,11 +66,24 @@ public interface Lang {
     }
 
     @Nonnull
+    static TextColor getColor(@Nonnull String string) {
+        TextColor color = TextColor.fromHexString(string);
+        return color == null ?  NamedTextColor.NAMES.valueOr(string, WHITE) : WHITE;
+    }
+
+    @Nonnull
     static Component replace(@Nonnull Component component, @Nonnull Map<String, Object> replacements, @Nullable Player player) {
         for (Entry<String, Object> replacement : replacements.entrySet()) {
+            String key = replacement.getKey();
+            Object value = replacement.getValue();
             component = component.replaceText(builder -> {
-                builder.matchLiteral(replacement.getKey());
-                builder.replacement(replacement.getValue().toString());
+                builder.matchLiteral(key);
+                if (key.equals("%rarity_color%")) {
+                    builder.replacement(b -> b.content(b.content().replace("%rarity_color%", "")).color(getColor(value.toString())));
+                }
+                else {
+                    builder.replacement(value.toString());
+                }
             });
         }
 

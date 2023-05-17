@@ -60,7 +60,7 @@ public class FishShopFilterGui extends AbstractFishShopGUI {
     }
 
     private void updateIcon(int slot, FishRarity fishRarity) {
-        Component name = text(fishRarity.color() + fishRarity.displayName());
+        Component name = text(fishRarity.displayName(), fishRarity.color());
         Component lore = selectedRarities.contains(fishRarity) ? text("Selected.", GREEN) : text("Not selected.", RED);
         ItemStack itemStack = setLore(customName(new ItemStack(Material.COD), name), lore);
         setButton(slot, itemStack, ClickType.LEFT, p -> {
