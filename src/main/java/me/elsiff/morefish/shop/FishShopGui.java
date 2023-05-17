@@ -152,7 +152,7 @@ public final class FishShopGui extends AbstractFishShopGUI {
 
     private void updatePriceIcon(double price) {
         Bukkit.getScheduler().scheduleSyncDelayedTask(MoreFish.instance(), () -> {
-            Component name = Lang.replace(text("Sell for $%price%"), Map.of("%price%", String.valueOf(price)));
+            Component name = Lang.replace(text("Sell for $%price%", GREEN), Map.of("%price%", String.valueOf(price)));
             setButton(49, customName(new ItemStack(Material.EMERALD), name), ClickType.LEFT, p -> {
                 List<ItemStack> filteredFish = getFilteredFish();
                 if (filteredFish.isEmpty()) {
