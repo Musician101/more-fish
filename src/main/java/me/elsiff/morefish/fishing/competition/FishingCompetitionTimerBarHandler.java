@@ -4,6 +4,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.configuration.Lang;
+import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -18,13 +19,6 @@ import org.bukkit.scheduler.BukkitTask;
 
 public final class FishingCompetitionTimerBarHandler {
 
-    private MoreFish getPlugin() {
-        return MoreFish.instance();
-    }
-
-    private NamespacedKey getTimerBarKey() {
-        return new NamespacedKey(getPlugin(), "fishing-competition-timer-bar");
-    }
     private FishingCompetitionTimerBarHandler.TimerBarDisplayer barDisplayer;
     private BukkitTask barUpdatingTask;
     private BossBar timerBar;
@@ -37,20 +31,28 @@ public final class FishingCompetitionTimerBarHandler {
         timerBar.removeAll();
         HandlerList.unregisterAll(barDisplayer);
         barDisplayer = null;
-        getPlugin().getServer().removeBossBar(getTimerBarKey());
+        Bukkit.removeBossBar(getTimerBarKey());
         timerBar = null;
     }
 
     public void enableTimer(long duration) {
         BarColor barColor = BarColor.valueOf(getPlugin().getConfig().getString("messages.contest-bar-color", "blue").toUpperCase());
-        timerBar = getPlugin().getServer().createBossBar(getTimerBarKey(), "", barColor, BarStyle.SEGMENTED_10);
-        getPlugin().getServer().getOnlinePlayers().forEach(timerBar::addPlayer);
+        timerBar = Bukkit.createBossBar(getTimerBarKey(), "", barColor, BarStyle.SEGMENTED_10);
+        Bukkit.getOnlinePlayers().forEach(timerBar::addPlayer);
         barUpdatingTask = new TimerBarUpdater(duration).runTaskTimer(getPlugin(), 0, 20L);
-        getPlugin().getServer().getPluginManager().registerEvents(barDisplayer = new TimerBarDisplayer(), getPlugin());
+        Bukkit.getPluginManager().registerEvents(barDisplayer = new TimerBarDisplayer(), getPlugin());
     }
 
     public boolean getHasTimerEnabled() {
         return this.timerBar != null;
+    }
+
+    private MoreFish getPlugin() {
+        return MoreFish.instance();
+    }
+
+    private NamespacedKey getTimerBarKey() {
+        return new NamespacedKey(getPlugin(), "fishing-competition-timer-bar");
     }
 
     private String timerBarTitle(long remainingSeconds) {

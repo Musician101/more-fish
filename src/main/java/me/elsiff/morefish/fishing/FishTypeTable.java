@@ -49,8 +49,8 @@ import org.bukkit.inventory.meta.SkullMeta;
 public final class FishTypeTable {
 
     private static final Gson GSON = new Gson();
-    private JsonObject fish = new JsonObject();
     private final BiMap<FishRarity, List<FishType>> map = HashBiMap.create();
+    private JsonObject fish = new JsonObject();
 
     @Nonnull
     public Optional<FishRarity> getDefaultRarity() {
@@ -69,18 +69,8 @@ public final class FishTypeTable {
         return Optional.ofNullable(fish.getAsJsonObject("item-format"));
     }
 
-    @Nonnull
-    public Set<FishRarity> getRarities() {
-        return map.keySet();
-    }
-
-    @Nonnull
-    public List<FishType> getTypes() {
-        return map.values().stream().flatMap(List::stream).toList();
-    }
-
-    private List<String> getStringList(JsonArray json) {
-        return json.asList().stream().map(JsonElement::getAsString).toList();
+    private boolean getOrDefault(JsonObject json, String key, boolean def) {
+        return json.has(key) ? json.get(key).getAsBoolean() : def;
     }
 
     private boolean getOrDefaultFalse(JsonObject json, String key) {
@@ -89,6 +79,20 @@ public final class FishTypeTable {
 
     private double getOrDefaultZero(JsonObject json, String key) {
         return json.has(key) ? json.get(key).getAsDouble() : 0D;
+    }
+
+    @Nonnull
+    public Set<FishRarity> getRarities() {
+        return map.keySet();
+    }
+
+    private List<String> getStringList(JsonArray json) {
+        return json.asList().stream().map(JsonElement::getAsString).toList();
+    }
+
+    @Nonnull
+    public List<FishType> getTypes() {
+        return map.values().stream().flatMap(List::stream).toList();
     }
 
     public void load() {
@@ -170,7 +174,7 @@ public final class FishTypeTable {
                                 PlayerAnnouncement announcement = PlayerAnnouncement.fromConfigOrDefault(json, "catch-announce", fishRarity.catchAnnouncement());
                                 List<FishCondition> conditions = Stream.concat(FishCondition.loadFrom(json, "conditions").stream(), fishRarity.conditions().stream()).toList();
                                 boolean skipItemFormat = getOrDefault(json, "skip-item-format", fishRarity.hasNotFishItemFormat());
-                                boolean noDisplay = getOrDefault(json,"no-display", fishRarity.noDisplay());
+                                boolean noDisplay = getOrDefault(json, "no-display", fishRarity.noDisplay());
                                 boolean firework = getOrDefault(json, "firework", fishRarity.hasCatchFirework());
                                 double additionalPrice = fishRarity.additionalPrice() + getOrDefaultZero(json, "additional-price");
                                 return new FishType(name, fishRarity, displayName, minLength, maxLength, itemStack, catchHandlers, announcement, conditions, skipItemFormat, noDisplay, firework, additionalPrice);
@@ -191,10 +195,6 @@ public final class FishTypeTable {
         catch (IOException e) {
             plugin.getLogger().severe("Failed to load " + fishFile);
         }
-    }
-
-    private boolean getOrDefault(JsonObject json, String key, boolean def) {
-        return json.has(key) ? json.get(key).getAsBoolean() : def;
     }
 
     private ItemStack loadItemStack(String name, JsonObject json, String path) {

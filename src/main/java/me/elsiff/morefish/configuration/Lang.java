@@ -30,13 +30,9 @@ import static net.kyori.adventure.text.format.TextDecoration.BOLD;
 
 public interface Lang {
 
-    static Component join(ComponentLike... components) {
-        return Component.join(JoinConfiguration.noSeparators(), components);
-    }
-
     Component PREFIX = text("[MoreFish] ", AQUA);
     Component CATCH_FISH = join(PREFIX, text("%player%", YELLOW), text(" caught "), text("%rarity_color%%length%cm "), text("%rarity_color%%fish_with_rarity%", Style.style(BOLD)));
-    Component GET_1ST = join(PREFIX, text("%player%", YELLOW),  text(" is now the new 1st!"));
+    Component GET_1ST = join(PREFIX, text("%player%", YELLOW), text(" is now the new 1st!"));
     Component NO_FISHING_ALLOWED = join(PREFIX, text("You can't fish unless the contest is ongoing."));
     Component CONTEST_START = join(PREFIX, text("The fishing contest has started!"));
     Component CONTEST_START_TIMER = join(PREFIX, text("This contest will end in %time%."));
@@ -61,14 +57,18 @@ public interface Lang {
     Component TOP_MINE_NO_RECORD = join(PREFIX, text("You didn't get any record."));
     Component TOP_NO_RECORD = join(PREFIX, text("Nobody made any record yet."));
 
+    @Nonnull
+    static TextColor getColor(@Nonnull String string) {
+        TextColor color = TextColor.fromHexString(string);
+        return color == null ? NamedTextColor.NAMES.valueOr(string, WHITE) : WHITE;
+    }
+
     private static FishingCompetition getCompetition() {
         return MoreFish.instance().getCompetition();
     }
 
-    @Nonnull
-    static TextColor getColor(@Nonnull String string) {
-        TextColor color = TextColor.fromHexString(string);
-        return color == null ?  NamedTextColor.NAMES.valueOr(string, WHITE) : WHITE;
+    static Component join(ComponentLike... components) {
+        return Component.join(JoinConfiguration.noSeparators(), components);
     }
 
     @Nonnull

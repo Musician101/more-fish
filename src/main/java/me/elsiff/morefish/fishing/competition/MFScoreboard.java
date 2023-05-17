@@ -14,8 +14,8 @@ import org.bukkit.scoreboard.Scoreboard;
 
 public class MFScoreboard {
 
-    private Scoreboard scoreboard;
     private Objective leaderboard;
+    private Scoreboard scoreboard;
 
     public void addPlayer(Player player) {
         if (scoreboard == null) {

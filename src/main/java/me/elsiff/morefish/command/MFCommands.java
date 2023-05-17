@@ -35,41 +35,6 @@ import static net.kyori.adventure.text.format.TextDecoration.BOLD;
 
 public interface MFCommands {
 
-    private static LiteralArgumentBuilder<CommandSender> give() {
-        return literal("give").requires(sender -> sender.hasPermission("morefish.admin")).then(argument("player", new PlayerArgumentType()).then(argument("fish", new FishTypeArgument()).executes(context -> {
-            FishType fishType = FishTypeArgument.get(context);
-            return giveFish(context, fishType);
-        }).then(argument("length", new FishLengthArgument()).executes(context -> {
-            FishType fishType = FishTypeArgument.get(context);
-            return giveFish(context, fishType, FishLengthArgument.get(context, fishType));
-        }).then(argument("amount", IntegerArgumentType.integer(1)).executes(context -> {
-            FishType fishType = FishTypeArgument.get(context);
-            return giveFish(context, fishType, FishLengthArgument.get(context, fishType), IntegerArgumentType.getInteger(context, "amount"));
-        })))));
-    }
-
-    private static int giveFish(CommandContext<CommandSender> context, FishType fishType) {
-        return giveFish(context, fishType, fishType.lengthMin());
-    }
-
-    private static int giveFish(CommandContext<CommandSender> context, FishType fishType, double length) {
-        return giveFish(context, fishType, length, 1);
-    }
-
-    private static int giveFish(CommandContext<CommandSender> context, FishType fishType, double length, int amount) {
-        Player player = context.getArgument("player", Player.class);
-        ItemStack itemStack = createItemStack(fishType.generateFish(), length, player);
-        itemStack.setAmount(amount);
-        player.getWorld().dropItem(player.getLocation(), itemStack);
-        CommandSender sender = context.getSource();
-        if (!(sender instanceof Player p && p.getUniqueId().equals(player.getUniqueId()))) {
-            context.getSource().sendMessage(join(Lang.PREFIX, text(fishType.displayName() + " given to " + player.getName() + ".")));
-        }
-
-        player.sendMessage(join(Lang.PREFIX, text("You just received a " + fishType.displayName() + ".")));
-        return 1;
-    }
-
     private static LiteralArgumentBuilder<CommandSender> begin(String name) {
         return literal(name).requires(sender -> sender.hasPermission("morefish.admin")).executes(context -> {
             CommandSender sender = context.getSource();
@@ -161,6 +126,41 @@ public interface MFCommands {
         return MoreFish.instance();
     }
 
+    private static LiteralArgumentBuilder<CommandSender> give() {
+        return literal("give").requires(sender -> sender.hasPermission("morefish.admin")).then(argument("player", new PlayerArgumentType()).then(argument("fish", new FishTypeArgument()).executes(context -> {
+            FishType fishType = FishTypeArgument.get(context);
+            return giveFish(context, fishType);
+        }).then(argument("length", new FishLengthArgument()).executes(context -> {
+            FishType fishType = FishTypeArgument.get(context);
+            return giveFish(context, fishType, FishLengthArgument.get(context, fishType));
+        }).then(argument("amount", IntegerArgumentType.integer(1)).executes(context -> {
+            FishType fishType = FishTypeArgument.get(context);
+            return giveFish(context, fishType, FishLengthArgument.get(context, fishType), IntegerArgumentType.getInteger(context, "amount"));
+        })))));
+    }
+
+    private static int giveFish(CommandContext<CommandSender> context, FishType fishType) {
+        return giveFish(context, fishType, fishType.lengthMin());
+    }
+
+    private static int giveFish(CommandContext<CommandSender> context, FishType fishType, double length) {
+        return giveFish(context, fishType, length, 1);
+    }
+
+    private static int giveFish(CommandContext<CommandSender> context, FishType fishType, double length, int amount) {
+        Player player = context.getArgument("player", Player.class);
+        ItemStack itemStack = createItemStack(fishType.generateFish(), length, player);
+        itemStack.setAmount(amount);
+        player.getWorld().dropItem(player.getLocation(), itemStack);
+        CommandSender sender = context.getSource();
+        if (!(sender instanceof Player p && p.getUniqueId().equals(player.getUniqueId()))) {
+            context.getSource().sendMessage(join(Lang.PREFIX, text(fishType.displayName() + " given to " + player.getName() + ".")));
+        }
+
+        player.sendMessage(join(Lang.PREFIX, text("You just received a " + fishType.displayName() + ".")));
+        return 1;
+    }
+
     private static LiteralArgumentBuilder<CommandSender> help() {
         return literal("help").executes(MFCommands::help);
     }
@@ -171,7 +171,7 @@ public interface MFCommands {
         PluginMeta pluginInfo = getPlugin().getPluginMeta();
         String pluginName = pluginInfo.getName();
         Component prefix = text("[" + pluginName + "] ", AQUA);
-        sender.sendMessage(join(prefix, text("> ===== ", DARK_AQUA), text(pluginName + ' ', style(AQUA, BOLD)),  text('v' + pluginInfo.getVersion(), AQUA), text(" ===== <", DARK_AQUA)));
+        sender.sendMessage(join(prefix, text("> ===== ", DARK_AQUA), text(pluginName + ' ', style(AQUA, BOLD)), text('v' + pluginInfo.getVersion(), AQUA), text(" ===== <", DARK_AQUA)));
         Component label = join(prefix, text("/mf"));
         sender.sendMessage(join(label, text(" help")));
 

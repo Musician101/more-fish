@@ -10,7 +10,6 @@ import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.util.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -19,10 +18,6 @@ import org.bukkit.scheduler.BukkitTask;
 
 public final class FishingCompetitionHost {
 
-    @Nonnull
-    private MoreFish getPlugin() {
-        return MoreFish.instance();
-    }
     @Nonnull
     private final FishingCompetitionTimerBarHandler timerBarHandler = new FishingCompetitionTimerBarHandler();
     private BukkitTask timerTask;
@@ -42,7 +37,7 @@ public final class FishingCompetitionHost {
 
         boolean broadcast = getMsgConfig().getBoolean("broadcast-stop");
         if (broadcast) {
-            getPlugin().getServer().broadcast(Lang.CONTEST_STOP);
+            Bukkit.broadcast(Lang.CONTEST_STOP);
         }
 
         if (!suspend) {
@@ -59,7 +54,7 @@ public final class FishingCompetitionHost {
             }
 
             if (broadcast && getMsgConfig().getBoolean("show-top-on-ending")) {
-                getPlugin().getServer().getOnlinePlayers().forEach(this::informAboutRanking);
+                Bukkit.getOnlinePlayers().forEach(this::informAboutRanking);
             }
         }
 
@@ -80,6 +75,11 @@ public final class FishingCompetitionHost {
 
     private ConfigurationSection getMsgConfig() {
         return getConfig().getConfigurationSection("messages");
+    }
+
+    @Nonnull
+    private MoreFish getPlugin() {
+        return MoreFish.instance();
     }
 
     @Nonnull
@@ -115,7 +115,7 @@ public final class FishingCompetitionHost {
     public void openCompetition() {
         getCompetition().enable();
         if (getMsgConfig().getBoolean("broadcast-start")) {
-            getPlugin().getServer().broadcast(Lang.CONTEST_START);
+            Bukkit.broadcast(Lang.CONTEST_START);
         }
 
     }
@@ -123,15 +123,14 @@ public final class FishingCompetitionHost {
     public void openCompetitionFor(long tick) {
         long duration = tick / (long) 20;
         getCompetition().enable();
-        Server server = getPlugin().getServer();
-        timerTask = server.getScheduler().runTaskLater(getPlugin(), (Runnable) this::closeCompetition, tick);
+        timerTask = Bukkit.getScheduler().runTaskLater(getPlugin(), (Runnable) this::closeCompetition, tick);
         if (getConfig().getBoolean("general.use-boss-bar")) {
             timerBarHandler.enableTimer(duration);
         }
 
         if (getMsgConfig().getBoolean("broadcast-start")) {
-            server.broadcast(Lang.CONTEST_START);
-            server.broadcast(Lang.replace(Lang.CONTEST_START_TIMER, Map.of("%time%", Lang.time(duration))));
+            Bukkit.broadcast(Lang.CONTEST_START);
+            Bukkit.broadcast(Lang.replace(Lang.CONTEST_START_TIMER, Map.of("%time%", Lang.time(duration))));
         }
     }
 

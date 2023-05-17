@@ -33,6 +33,12 @@ import static net.kyori.adventure.text.Component.text;
 public final class MoreFish extends JavaPlugin {
 
     @Nonnull
+    private final FishingCompetitionAutoRunner autoRunner = new FishingCompetitionAutoRunner();
+    @Nonnull
+    private final FishingCompetition competition = new FishingCompetition();
+    @Nonnull
+    private final FishingCompetitionHost competitionHost = new FishingCompetitionHost();
+    @Nonnull
     private final FishBags fishBags = new FishBags();
     @Nonnull
     private final FishShop fishShop = new FishShop();
@@ -46,12 +52,6 @@ public final class MoreFish extends JavaPlugin {
     private final ProtocolLibHooker protocolLib = new ProtocolLibHooker();
     @Nonnull
     private final VaultHooker vault = new VaultHooker();
-    @Nonnull
-    private final FishingCompetitionAutoRunner autoRunner = new FishingCompetitionAutoRunner();
-    @Nonnull
-    private final FishingCompetition competition = new FishingCompetition();
-    @Nonnull
-    private final FishingCompetitionHost competitionHost = new FishingCompetitionHost();
 
     public static MoreFish instance() {
         return getPlugin(MoreFish.class);

@@ -24,15 +24,15 @@ public class FishLengthArgument implements ArgumentType<Double> {
     }
 
     @Override
-    public Double parse(StringReader reader) throws CommandSyntaxException {
-        return reader.readDouble();
-    }
-
-    @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
         FishType fishType = context.getArgument("fish", FishType.class);
         builder.suggest(String.valueOf(fishType.lengthMin()), () -> "Minimum length.");
         builder.suggest(String.valueOf(fishType.lengthMax()), () -> "Maximum length.");
         return builder.buildFuture();
+    }
+
+    @Override
+    public Double parse(StringReader reader) throws CommandSyntaxException {
+        return reader.readDouble();
     }
 }

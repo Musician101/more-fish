@@ -4,6 +4,7 @@ import java.time.LocalTime;
 import java.util.Collection;
 import javax.annotation.Nonnull;
 import me.elsiff.morefish.MoreFish;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -11,13 +12,6 @@ import org.bukkit.scheduler.BukkitTask;
 public final class FishingCompetitionAutoRunner {
 
     private static final long HALF_MINUTE = 600L;
-
-    private MoreFish getPlugin() {
-        return MoreFish.instance();
-    }
-    private FishingCompetitionHost getCompetitionHost() {
-        return getPlugin().getCompetitionHost();
-    }
     private Collection<LocalTime> scheduledTimes;
     private BukkitTask timeCheckingTask;
 
@@ -38,6 +32,14 @@ public final class FishingCompetitionAutoRunner {
         timeCheckingTask = new TimeChecker(this::tryOpenCompetition).runTaskTimer(getPlugin(), 0, HALF_MINUTE);
     }
 
+    private FishingCompetitionHost getCompetitionHost() {
+        return getPlugin().getCompetitionHost();
+    }
+
+    private MoreFish getPlugin() {
+        return MoreFish.instance();
+    }
+
     public boolean isEnabled() {
         return this.timeCheckingTask != null;
     }
@@ -49,7 +51,7 @@ public final class FishingCompetitionAutoRunner {
     private void tryOpenCompetition() {
         FileConfiguration config = getPlugin().getConfig();
         int requiredPlayers = config.getInt("auto-running.required-players");
-        if (getCompetitionHost().getCompetition().isDisabled() && getPlugin().getServer().getOnlinePlayers().size() >= requiredPlayers) {
+        if (getCompetitionHost().getCompetition().isDisabled() && Bukkit.getOnlinePlayers().size() >= requiredPlayers) {
             long duration = config.getLong("auto-running.timer") * 20L;
             getCompetitionHost().openCompetitionFor(duration);
         }

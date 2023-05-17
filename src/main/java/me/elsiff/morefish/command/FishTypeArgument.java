@@ -21,12 +21,6 @@ public class FishTypeArgument implements ArgumentType<FishType> {
         return context.getArgument("fish", FishType.class);
     }
 
-    @Override
-    public FishType parse(StringReader reader) throws CommandSyntaxException {
-        String name = reader.readString();
-        return fishes().filter(f -> f.name().equals(name)).findFirst().orElseThrow(() -> new SimpleCommandExceptionType(() -> name + " is not a valid fish.").createWithContext(reader));
-    }
-
     private Stream<FishType> fishes() {
         return MoreFish.instance().getFishTypeTable().getTypes().stream();
     }
@@ -35,5 +29,11 @@ public class FishTypeArgument implements ArgumentType<FishType> {
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
         fishes().map(FishType::name).filter(name -> name.startsWith(builder.getRemaining())).forEach(builder::suggest);
         return builder.buildFuture();
+    }
+
+    @Override
+    public FishType parse(StringReader reader) throws CommandSyntaxException {
+        String name = reader.readString();
+        return fishes().filter(f -> f.name().equals(name)).findFirst().orElseThrow(() -> new SimpleCommandExceptionType(() -> name + " is not a valid fish.").createWithContext(reader));
     }
 }
