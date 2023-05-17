@@ -47,7 +47,7 @@ tasks {
         dependencies {
             include(dependency(":common"))
             include(dependency("com.github.musician101:"))
-            include(dependency("com.github.musician101.musigui:spigot:"))
+            include(dependency("com.github.musician101.musigui:paper:"))
         }
 
         archiveClassifier.set("")
