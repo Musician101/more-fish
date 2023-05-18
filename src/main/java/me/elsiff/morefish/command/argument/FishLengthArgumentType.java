@@ -12,7 +12,7 @@ import javax.annotation.Nonnull;
 import me.elsiff.morefish.fishing.FishType;
 import org.bukkit.command.CommandSender;
 
-public class FishLengthArgument implements ArgumentType<Double> {
+public class FishLengthArgumentType implements ArgumentType<Double> {
 
     public static double get(@Nonnull CommandContext<CommandSender> context, @Nonnull FishType fishType) throws CommandSyntaxException {
         double length = context.getArgument("length", Double.class);

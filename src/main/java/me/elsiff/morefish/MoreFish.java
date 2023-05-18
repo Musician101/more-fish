@@ -3,7 +3,7 @@ package me.elsiff.morefish;
 import java.time.LocalTime;
 import java.util.List;
 import javax.annotation.Nonnull;
-import me.elsiff.morefish.command.MFCommands;
+import me.elsiff.morefish.command.MFMain;
 import me.elsiff.morefish.configuration.Config;
 import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.FishBags;
@@ -22,6 +22,7 @@ import org.bukkit.Server;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import static io.musician101.bukkitier.Bukkitier.registerCommand;
 import static me.elsiff.morefish.configuration.Lang.PREFIX;
 import static net.kyori.adventure.text.Component.text;
 
@@ -131,7 +132,7 @@ public final class MoreFish extends JavaPlugin {
         pm.registerEvents(new FishingListener(), this);
         pm.registerEvents(new FishShopSignListener(), this);
         pm.registerEvents(fishBags, this);
-        MFCommands.registerCommands();
+        registerCommand(getPlugin(), new MFMain());
         getLogger().info("Plugin has been enabled.");
         if (getConfig().getBoolean("general.auto-start")) {
             competitionHost.openCompetition();

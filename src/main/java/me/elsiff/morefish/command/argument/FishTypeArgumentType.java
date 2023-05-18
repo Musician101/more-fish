@@ -15,7 +15,7 @@ import org.bukkit.command.CommandSender;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
 
-public class FishTypeArgument implements ArgumentType<FishType> {
+public class FishTypeArgumentType implements ArgumentType<FishType> {
 
     @Nonnull
     public static FishType get(@Nonnull CommandContext<CommandSender> context) {

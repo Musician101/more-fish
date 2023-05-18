@@ -30,7 +30,7 @@ dependencies {
         exclude("com.google.code.findbugs")
         exclude("io.papermc.paper")
     }
-    api("com.github.musician101:bukkitier:1.2.2") {
+    api("com.github.musician101:bukkitier:1.3.0") {
         exclude("org.spigotmc")
     }
 }
