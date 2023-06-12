@@ -16,6 +16,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
+import static me.elsiff.morefish.configuration.Lang.PREFIX;
+import static me.elsiff.morefish.configuration.Lang.join;
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
+import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
 
 public final class FishingCompetitionHost {
 
@@ -85,23 +90,23 @@ public final class FishingCompetitionHost {
 
     public void informAboutRanking(@Nonnull CommandSender receiver) {
         if (getCompetition().getRanking().isEmpty()) {
-            receiver.sendMessage(Lang.TOP_NO_RECORD);
+            receiver.sendMessage(join(PREFIX, text("Nobody made any record yet.")));
         }
         else {
             int topSize = getMsgConfig().getInt("top-number", 1);
             List<Record> top = getCompetition().top(topSize);
             top.forEach(record -> {
                 int number = top.indexOf(record) + 1;
-                receiver.sendMessage(Lang.replace(Lang.TOP_LIST, topReplacementOf(number, record)));
+                receiver.sendMessage(Lang.replace(join(PREFIX, text("%ordinal%. ", YELLOW), text(": %player%, %length%cm %fish%", DARK_GRAY)), topReplacementOf(number, record)));
             });
 
             if (receiver instanceof Player) {
                 if (!getCompetition().containsContestant(((Player) receiver).getUniqueId())) {
-                    receiver.sendMessage(Lang.TOP_MINE_NO_RECORD);
+                    receiver.sendMessage(join(PREFIX, text("You didn't catch any fish.")));
                 }
                 else {
                     Entry<Integer, Record> entry = getCompetition().rankedRecordOf((OfflinePlayer) receiver);
-                    receiver.sendMessage(Lang.replace(Lang.TOP_MINE, topReplacementOf(entry.getKey() + 1, entry.getValue())));
+                    receiver.sendMessage(Lang.replace(join(PREFIX, text("You're %ordinal%: %length%cm %fish%")), topReplacementOf(entry.getKey() + 1, entry.getValue())));
                 }
             }
         }

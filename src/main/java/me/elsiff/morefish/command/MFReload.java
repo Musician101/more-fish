@@ -3,10 +3,12 @@ package me.elsiff.morefish.command;
 import com.mojang.brigadier.context.CommandContext;
 import io.musician101.bukkitier.command.LiteralCommand;
 import javax.annotation.Nonnull;
-import me.elsiff.morefish.configuration.Lang;
 import org.bukkit.command.CommandSender;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
+import static me.elsiff.morefish.configuration.Lang.PREFIX;
+import static me.elsiff.morefish.configuration.Lang.join;
+import static net.kyori.adventure.text.Component.text;
 
 public class MFReload extends MFCommand implements LiteralCommand {
 
@@ -26,11 +28,11 @@ public class MFReload extends MFCommand implements LiteralCommand {
         CommandSender sender = context.getSource();
         try {
             getPlugin().applyConfig();
-            sender.sendMessage(Lang.RELOAD_CONFIG);
+            sender.sendMessage(join(PREFIX, text("Reloaded the config successfully.")));
         }
         catch (Exception e) {
             e.printStackTrace();
-            sender.sendMessage(Lang.FAILED_TO_RELOAD);
+            sender.sendMessage(join(PREFIX, text("Failed to reload: Please check your console.")));
         }
 
         return 1;

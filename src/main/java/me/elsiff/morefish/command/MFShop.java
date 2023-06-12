@@ -13,6 +13,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
+import static me.elsiff.morefish.configuration.Lang.PREFIX;
+import static me.elsiff.morefish.configuration.Lang.join;
+import static net.kyori.adventure.text.Component.text;
 
 public class MFShop extends MFCommand implements LiteralCommand {
 
@@ -58,7 +61,7 @@ public class MFShop extends MFCommand implements LiteralCommand {
         else {
             new FishShopGui(guiUser, 1);
             if (!guiUser.getUniqueId().equals(((Player) sender).getUniqueId())) {
-                sender.sendMessage(Lang.replace(Lang.FORCED_PLAYER_TO_SHOP, Map.of("%s", guiUser.getName())));
+                sender.sendMessage(Lang.replace(join(PREFIX, text("Forced %s to open Shop GUI.")), Map.of("%s", guiUser.getName())));
             }
         }
 

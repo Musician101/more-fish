@@ -30,8 +30,13 @@ dependencies {
         exclude("com.google.code.findbugs")
         exclude("io.papermc.paper")
     }
-    api("com.github.musician101:bukkitier:1.3.0") {
+    api("com.github.Musician101:Bukkitier:1.3.2") {
+        exclude("com.google.code.findbugs")
         exclude("org.spigotmc")
+    }
+    api("com.github.Musician101:MusiBoard:1.0.0") {
+        exclude("io.papermc.paper")
+        exclude("com.github.Musician101")
     }
 }
 

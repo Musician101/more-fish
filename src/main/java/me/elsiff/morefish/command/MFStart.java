@@ -10,9 +10,16 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import me.elsiff.morefish.configuration.Lang;
+import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 
+import static me.elsiff.morefish.configuration.Lang.PREFIX;
+import static me.elsiff.morefish.configuration.Lang.join;
+import static net.kyori.adventure.text.Component.text;
+
 class MFStart extends MFCommand implements LiteralCommand {
+
+    private static final Component ALREADY_ONGOING = join(PREFIX, text("The contest is already ongoing."));
 
     @Override
     public int execute(@Nonnull CommandContext<CommandSender> context) {
@@ -24,7 +31,7 @@ class MFStart extends MFCommand implements LiteralCommand {
             }
         }
         else {
-            sender.sendMessage(Lang.ALREADY_ONGOING);
+            sender.sendMessage(ALREADY_ONGOING);
         }
 
         return 1;
@@ -72,7 +79,7 @@ class MFStart extends MFCommand implements LiteralCommand {
                 }
             }
             else {
-                sender.sendMessage(Lang.ALREADY_ONGOING);
+                sender.sendMessage(ALREADY_ONGOING);
             }
 
             return 1;

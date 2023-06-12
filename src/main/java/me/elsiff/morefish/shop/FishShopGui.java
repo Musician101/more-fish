@@ -157,7 +157,7 @@ public final class FishShopGui extends AbstractFishShopGUI {
             setButton(49, customName(new ItemStack(Material.EMERALD), name), ClickType.LEFT, p -> {
                 List<ItemStack> filteredFish = getFilteredFish();
                 if (filteredFish.isEmpty()) {
-                    p.sendMessage(Lang.SHOP_NO_FISH);
+                    p.sendMessage(join(PREFIX, text("There's no fish to sell. Please put them on the slots.")));
                 }
                 else {
                     double totalPrice = getTotalPrice();
@@ -174,7 +174,7 @@ public final class FishShopGui extends AbstractFishShopGUI {
                     getEconomy().depositPlayer(player, fishList.stream().mapToDouble(shop::priceOf).sum());
                     fishBags.update(player, inventory.getContents(), page);
                     updatePriceIcon(totalPrice);
-                    p.sendMessage(Lang.replace(Lang.SHOP_SOLD, Map.of("%price%", totalPrice)));
+                    p.sendMessage(Lang.replace(join(PREFIX, text("You sold fish for "), text("$%price%", GREEN), text(".")), Map.of("%price%", totalPrice)));
                 }
             });
         });

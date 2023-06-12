@@ -3,8 +3,11 @@ package me.elsiff.morefish.command;
 import com.mojang.brigadier.context.CommandContext;
 import io.musician101.bukkitier.command.LiteralCommand;
 import javax.annotation.Nonnull;
-import me.elsiff.morefish.configuration.Lang;
 import org.bukkit.command.CommandSender;
+
+import static me.elsiff.morefish.configuration.Lang.PREFIX;
+import static me.elsiff.morefish.configuration.Lang.join;
+import static net.kyori.adventure.text.Component.text;
 
 class MFClear extends MFCommand implements LiteralCommand {
 
@@ -23,7 +26,7 @@ class MFClear extends MFCommand implements LiteralCommand {
     public int execute(@Nonnull CommandContext<CommandSender> context) {
         CommandSender sender = context.getSource();
         getCompetition().clearRecords();
-        sender.sendMessage(Lang.CLEAR_RECORDS);
+        sender.sendMessage(join(PREFIX, text("The records has been cleared successfully.")));
         return 1;
     }
 }

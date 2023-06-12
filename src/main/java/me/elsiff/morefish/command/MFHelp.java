@@ -48,6 +48,7 @@ class MFHelp extends MFCommand implements LiteralCommand {
         }
 
         sender.sendMessage(join(label, text(" contraband")));
+        sender.sendMessage(join(label, text("scoreboard")));
         sender.sendMessage(join(label, text(" top")));
         return 1;
     }

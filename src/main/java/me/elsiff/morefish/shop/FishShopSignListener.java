@@ -16,6 +16,9 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
+import static me.elsiff.morefish.configuration.Lang.PREFIX;
+import static me.elsiff.morefish.configuration.Lang.join;
+import static net.kyori.adventure.text.Component.text;
 
 public record FishShopSignListener() implements Listener {
 
@@ -54,11 +57,11 @@ public record FishShopSignListener() implements Listener {
             Player player = event.getPlayer();
             if (event.getPlayer().hasPermission("morefish.admin")) {
                 event.line(0, getShopSignTitle());
-                player.sendMessage(Lang.CREATED_SIGN_SHOP);
+                player.sendMessage(join(PREFIX, text("You've created the Fish Shop!")));
                 return;
             }
 
-            player.sendMessage(Lang.NO_PERMISSION);
+            player.sendMessage(join(PREFIX, text("You don't have the permission.")));
         }
     }
 }

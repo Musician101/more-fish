@@ -7,24 +7,25 @@ import java.util.UUID;
 import javax.annotation.Nonnull;
 import me.elsiff.morefish.RecordHandler;
 import me.elsiff.morefish.fishing.Fish;
+import me.elsiff.morefish.hooker.MusiBoardHooker;
 import org.bukkit.OfflinePlayer;
+
+import static me.elsiff.morefish.MoreFish.getPlugin;
 
 public final class FishingCompetition {
 
-    @Nonnull
-    private final MFScoreboard scoreboard = new MFScoreboard();
     @Nonnull
     private FishingCompetition.State state = State.DISABLED;
 
     private void checkStateDisabled() {
         if (state != State.DISABLED) {
-            throw new IllegalStateException("Fishing competition hasn't disabled");
+            throw new IllegalStateException("Fishing competition isn't disabled");
         }
     }
 
     private void checkStateEnabled() {
         if (state != State.ENABLED) {
-            throw new IllegalStateException("Fishing competition hasn't enabled");
+            throw new IllegalStateException("Fishing competition isn't enabled");
         }
     }
 
@@ -36,9 +37,13 @@ public final class FishingCompetition {
         return getRanking().stream().anyMatch(record -> contestant.equals(record.fisher()));
     }
 
+    private MusiBoardHooker getMusiBoard() {
+        return getPlugin().getMusiBoard();
+    }
+
     public void disable() {
         this.checkStateEnabled();
-        scoreboard.clear();
+        getMusiBoard().clear();
         this.state = FishingCompetition.State.DISABLED;
     }
 
@@ -54,11 +59,6 @@ public final class FishingCompetition {
 
     private RecordHandler getRecords() {
         return new RecordHandler();
-    }
-
-    @Nonnull
-    public MFScoreboard getScoreboard() {
-        return scoreboard;
     }
 
     @Nonnull
@@ -86,7 +86,7 @@ public final class FishingCompetition {
             getRecords().insert(record);
         }
 
-        scoreboard.update();
+        getMusiBoard().update();
     }
 
     public int rankNumberOf(@Nonnull Record record) {
