@@ -6,11 +6,11 @@ import io.musician101.bukkitier.command.Command;
 import io.musician101.bukkitier.command.LiteralCommand;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.Nonnull;
 import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.shop.FishShopGui;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
 import static me.elsiff.morefish.configuration.Lang.PREFIX;
@@ -19,39 +19,26 @@ import static net.kyori.adventure.text.Component.text;
 
 public class MFShop extends MFCommand implements LiteralCommand {
 
-    @Nonnull
-    @Override
-    public String name() {
-        return "shop";
-    }
-
-    @Nonnull
+    @NotNull
     @Override
     public List<Command<? extends ArgumentBuilder<CommandSender, ?>>> arguments() {
         return List.of(new MFPlayer());
     }
 
     @Override
-    public boolean canUse(@Nonnull CommandSender sender) {
+    public boolean canUse(@NotNull CommandSender sender) {
         return sender.hasPermission("morefish.shop");
     }
 
     @Override
-    public int execute(@Nonnull CommandContext<CommandSender> context) {
+    public int execute(@NotNull CommandContext<CommandSender> context) {
         return shop(context.getSource(), (Player) context.getSource());
     }
 
-    class MFPlayer extends AbstractMFPlayer {
-
-        @Override
-        public int execute(@Nonnull CommandContext<CommandSender> context) {
-            return shop(context.getSource(), context.getArgument("player", Player.class));
-        }
-
-        @Override
-        public boolean canUse(@Nonnull CommandSender sender) {
-            return testAdmin(sender);
-        }
+    @NotNull
+    @Override
+    public String name() {
+        return "shop";
     }
 
     int shop(CommandSender sender, Player guiUser) {
@@ -66,5 +53,18 @@ public class MFShop extends MFCommand implements LiteralCommand {
         }
 
         return 1;
+    }
+
+    class MFPlayer extends AbstractMFPlayer {
+
+        @Override
+        public boolean canUse(@NotNull CommandSender sender) {
+            return testAdmin(sender);
+        }
+
+        @Override
+        public int execute(@NotNull CommandContext<CommandSender> context) {
+            return shop(context.getSource(), context.getArgument("player", Player.class));
+        }
     }
 }

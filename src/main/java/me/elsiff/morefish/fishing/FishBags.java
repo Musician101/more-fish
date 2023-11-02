@@ -11,7 +11,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-import javax.annotation.Nonnull;
+import me.elsiff.morefish.MoreFish;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -23,15 +23,16 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
 
 public class FishBags implements Listener {
 
-    @Nonnull
+    @NotNull
     private final List<FishBag> bags = new ArrayList<>();
 
-    public boolean addFish(@Nonnull Player player, @Nonnull ItemStack itemStack) {
+    public boolean addFish(@NotNull Player player, @NotNull ItemStack itemStack) {
         FishBag fishBag = getFishBag(player);
         for (int i = 1; i < getMaxAllowedPages(player) + 1; i++) {
             if (fishBag.addFish(i, itemStack)) {
@@ -42,13 +43,13 @@ public class FishBags implements Listener {
         return false;
     }
 
-    @Nonnull
-    public List<ItemStack> getFish(@Nonnull Player player, int page) {
+    @NotNull
+    public List<ItemStack> getFish(@NotNull Player player, int page) {
         return getFishBag(player).getFish(page);
     }
 
-    @Nonnull
-    public FishBag getFishBag(@Nonnull Player player) {
+    @NotNull
+    public FishBag getFishBag(@NotNull Player player) {
         Optional<FishBag> fishBag = bags.stream().filter(fb -> fb.getUUID().equals(player.getUniqueId())).findFirst();
         if (fishBag.isPresent()) {
             return fishBag.get();
@@ -59,7 +60,7 @@ public class FishBags implements Listener {
         return fb;
     }
 
-    public int getMaxAllowedPages(@Nonnull Player player) {
+    public int getMaxAllowedPages(@NotNull Player player) {
         return getFishBag(player).getMaxAllowedPages();
     }
 
@@ -90,7 +91,7 @@ public class FishBags implements Listener {
     }
 
     @EventHandler
-    public void onJoin(@Nonnull PlayerJoinEvent event) {
+    public void onJoin(@NotNull PlayerJoinEvent event) {
         Player player = event.getPlayer();
         FishBag fishBag = getFishBag(player);
         List<ItemStack> contraband = fishBag.getContraband();
@@ -117,12 +118,12 @@ public class FishBags implements Listener {
                 yaml.save(new File(bagsFolder, uuid + ".yml"));
             }
             catch (IOException e) {
-                e.printStackTrace();
+                MoreFish.getPlugin().getSLF4JLogger().error("An error occurred while saving fish bag for " + uuid + ".", e);
             }
         });
     }
 
-    public void setMaxAllowedPages(@Nonnull Player player, int maxAllowedPages) {
+    public void setMaxAllowedPages(@NotNull Player player, int maxAllowedPages) {
         FishBag fishBag = getFishBag(player);
         if (!bags.contains(fishBag)) {
             bags.add(fishBag);
@@ -131,7 +132,7 @@ public class FishBags implements Listener {
         fishBag.setMaxAllowedPages(maxAllowedPages);
     }
 
-    public void update(@Nonnull Player player, ItemStack[] contents, int page) {
+    public void update(@NotNull Player player, ItemStack[] contents, int page) {
         FishBag fishBag = getFishBag(player);
         if (!bags.contains(fishBag)) {
             bags.add(fishBag);

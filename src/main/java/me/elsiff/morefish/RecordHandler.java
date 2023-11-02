@@ -9,13 +9,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import javax.annotation.Nonnull;
 import me.elsiff.morefish.fishing.Fish;
 import me.elsiff.morefish.fishing.FishType;
 import me.elsiff.morefish.fishing.FishTypeTable;
 import me.elsiff.morefish.fishing.competition.Record;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.NotNull;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
 
@@ -33,13 +33,13 @@ public final class RecordHandler {
             Files.createFile(path);
         }
         catch (IOException e) {
-            e.printStackTrace();
+            MoreFish.getPlugin().getSLF4JLogger().error("An error occurred while saving records.", e);
         }
 
         this.yaml = YamlConfiguration.loadConfiguration(this.file);
     }
 
-    @Nonnull
+    @NotNull
     public List<Record> all() {
         return yaml.getKeys(false).stream().map(yaml::getConfigurationSection).filter(Objects::nonNull).map(section -> {
             UUID id = UUID.fromString(section.getName());
@@ -57,11 +57,11 @@ public final class RecordHandler {
             yaml.save(file);
         }
         catch (IOException e) {
-            e.printStackTrace();
+            MoreFish.getPlugin().getSLF4JLogger().error("An error occurred while saving records.", e);
         }
     }
 
-    public void insert(@Nonnull Record record) {
+    public void insert(@NotNull Record record) {
         String id = record.fisher().toString();
         if (yaml.contains(id)) {
             throw new IllegalArgumentException("Record must not exist in the ranking");
@@ -72,7 +72,7 @@ public final class RecordHandler {
             yaml.save(file);
         }
         catch (IOException e) {
-            e.printStackTrace();
+            MoreFish.getPlugin().getSLF4JLogger().error("An error occurred while saving records.", e);
         }
     }
 
@@ -81,12 +81,12 @@ public final class RecordHandler {
         section.set("fish-length", record.fish().length());
     }
 
-    @Nonnull
+    @NotNull
     public List<Record> top(int size) {
         return all().subList(0, Math.min(size, all().size()));
     }
 
-    public void update(@Nonnull Record record) {
+    public void update(@NotNull Record record) {
         String id = record.fisher().toString();
         ConfigurationSection cs = yaml.getConfigurationSection(id);
         if (!yaml.contains(id) || cs == null) {
@@ -98,7 +98,7 @@ public final class RecordHandler {
             yaml.save(file);
         }
         catch (IOException e) {
-            e.printStackTrace();
+            MoreFish.getPlugin().getSLF4JLogger().error("An error occurred while saving records.", e);
         }
     }
 }

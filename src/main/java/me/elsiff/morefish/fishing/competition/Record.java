@@ -1,12 +1,12 @@
 package me.elsiff.morefish.fishing.competition;
 
 import java.util.UUID;
-import javax.annotation.Nonnull;
 import me.elsiff.morefish.fishing.Fish;
+import org.jetbrains.annotations.NotNull;
 
-public record Record(@Nonnull UUID fisher, @Nonnull Fish fish) implements Comparable<Record> {
+public record Record(@NotNull UUID fisher, @NotNull Fish fish) implements Comparable<Record> {
 
-    public int compareTo(@Nonnull Record other) {
+    public int compareTo(@NotNull Record other) {
         return Double.compare(fish.length(), other.fish.length());
     }
 }

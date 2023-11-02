@@ -8,13 +8,13 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import java.util.concurrent.CompletableFuture;
-import javax.annotation.Nonnull;
 import me.elsiff.morefish.fishing.FishType;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 public class FishLengthArgumentType implements ArgumentType<Double> {
 
-    public static double get(@Nonnull CommandContext<CommandSender> context, @Nonnull FishType fishType) throws CommandSyntaxException {
+    public static double get(@NotNull CommandContext<CommandSender> context, @NotNull FishType fishType) throws CommandSyntaxException {
         double length = context.getArgument("length", Double.class);
         if (fishType.lengthMin() <= length && length <= fishType.lengthMax()) {
             return length;

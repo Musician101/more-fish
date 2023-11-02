@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.Fish;
 import me.elsiff.morefish.fishing.FishType;
@@ -20,18 +18,20 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
 
 public interface FishItemStackConverter {
 
-    @Nonnull
-    static ItemStack createItemStack(@Nonnull Fish fish, @Nonnull Player catcher) {
+    @NotNull
+    static ItemStack createItemStack(@NotNull Fish fish, @NotNull Player catcher) {
         return createItemStack(fish, fish.length(), catcher);
     }
 
-    @Nonnull
-    static ItemStack createItemStack(@Nonnull Fish fish, double length, @Nonnull Player catcher) {
+    @NotNull
+    static ItemStack createItemStack(@NotNull Fish fish, double length, @NotNull Player catcher) {
         ItemStack itemStack = fish.type().icon().clone();
         ItemMeta itemMeta = itemStack.getItemMeta();
         if (!fish.type().hasNotFishItemFormat()) {
@@ -63,8 +63,8 @@ public interface FishItemStackConverter {
         return itemStack;
     }
 
-    @Nonnull
-    static Fish fish(@Nonnull ItemStack itemStack) {
+    @NotNull
+    static Fish fish(@NotNull ItemStack itemStack) {
         return read(itemStack.getItemMeta());
     }
 
@@ -98,8 +98,8 @@ public interface FishItemStackConverter {
         return tags.has(fishTypeKey(), PersistentDataType.STRING) && tags.has(fishLengthKey(), PersistentDataType.DOUBLE);
     }
 
-    @Nonnull
-    private static Fish read(@Nonnull ItemMeta itemMeta) {
+    @NotNull
+    private static Fish read(@NotNull ItemMeta itemMeta) {
         PersistentDataContainer tags = itemMeta.getPersistentDataContainer();
         if (!tags.has(fishTypeKey(), PersistentDataType.STRING)) {
             throw new IllegalArgumentException("Item meta must have fish type tag");

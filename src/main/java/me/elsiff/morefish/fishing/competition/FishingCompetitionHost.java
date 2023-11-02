@@ -3,7 +3,6 @@ package me.elsiff.morefish.fishing.competition;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import javax.annotation.Nonnull;
 import me.elsiff.morefish.configuration.Config;
 import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.util.NumberUtils;
@@ -14,6 +13,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.NotNull;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
 import static me.elsiff.morefish.configuration.Lang.PREFIX;
@@ -24,7 +24,7 @@ import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
 
 public final class FishingCompetitionHost {
 
-    @Nonnull
+    @NotNull
     private final FishingCompetitionTimerBarHandler timerBarHandler = new FishingCompetitionTimerBarHandler();
     private BukkitTask timerTask;
 
@@ -69,12 +69,12 @@ public final class FishingCompetitionHost {
         }
     }
 
-    @Nonnull
+    @NotNull
     public FishingCompetition getCompetition() {
         return getPlugin().getCompetition();
     }
 
-    @Nonnull
+    @NotNull
     private FileConfiguration getConfig() {
         return getPlugin().getConfig();
     }
@@ -83,12 +83,12 @@ public final class FishingCompetitionHost {
         return getConfig().getConfigurationSection("messages");
     }
 
-    @Nonnull
+    @NotNull
     private Map<Integer, Prize> getPrizes() {
         return Config.getPrizes();
     }
 
-    public void informAboutRanking(@Nonnull CommandSender receiver) {
+    public void informAboutRanking(@NotNull CommandSender receiver) {
         if (getCompetition().getRanking().isEmpty()) {
             receiver.sendMessage(join(PREFIX, text("Nobody made any record yet.")));
         }

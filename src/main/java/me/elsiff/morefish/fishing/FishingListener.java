@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
-import javax.annotation.Nonnull;
 import me.elsiff.morefish.fishing.catchhandler.CatchBroadcaster;
 import me.elsiff.morefish.fishing.catchhandler.CatchHandler;
 import me.elsiff.morefish.fishing.catchhandler.CompetitionRecordAdder;
@@ -24,6 +23,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerFishEvent.State;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
 import static me.elsiff.morefish.configuration.Lang.PREFIX;
@@ -68,7 +68,7 @@ public final class FishingListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onPlayerFish(@Nonnull PlayerFishEvent event) {
+    public void onPlayerFish(@NotNull PlayerFishEvent event) {
         if (event.getState() == State.CAUGHT_FISH && event.getCaught() instanceof Item) {
             if (competition.isDisabled()) {
                 if (getConfig().getBoolean("general.no-fishing-unless-contest")) {

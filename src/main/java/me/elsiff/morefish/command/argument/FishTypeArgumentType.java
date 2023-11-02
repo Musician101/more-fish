@@ -9,16 +9,16 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
-import javax.annotation.Nonnull;
 import me.elsiff.morefish.fishing.FishType;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
 
 public class FishTypeArgumentType implements ArgumentType<FishType> {
 
-    @Nonnull
-    public static FishType get(@Nonnull CommandContext<CommandSender> context) {
+    @NotNull
+    public static FishType get(@NotNull CommandContext<CommandSender> context) {
         return context.getArgument("fish", FishType.class);
     }
 

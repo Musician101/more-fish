@@ -3,9 +3,9 @@ package me.elsiff.morefish.command;
 import com.mojang.brigadier.context.CommandContext;
 import io.musician101.bukkitier.command.LiteralCommand;
 import io.papermc.paper.plugin.configuration.PluginMeta;
-import javax.annotation.Nonnull;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
 import static me.elsiff.morefish.configuration.Lang.join;
@@ -17,15 +17,9 @@ import static net.kyori.adventure.text.format.TextDecoration.BOLD;
 
 class MFHelp extends MFCommand implements LiteralCommand {
 
-    @Nonnull
-    @Override
-    public String name() {
-        return "help";
-    }
-
     @SuppressWarnings("UnstableApiUsage")
     @Override
-    public int execute(@Nonnull CommandContext<CommandSender> context) {
+    public int execute(@NotNull CommandContext<CommandSender> context) {
         CommandSender sender = context.getSource();
         PluginMeta pluginInfo = getPlugin().getPluginMeta();
         String pluginName = pluginInfo.getName();
@@ -51,5 +45,11 @@ class MFHelp extends MFCommand implements LiteralCommand {
         sender.sendMessage(join(label, text("scoreboard")));
         sender.sendMessage(join(label, text(" top")));
         return 1;
+    }
+
+    @NotNull
+    @Override
+    public String name() {
+        return "help";
     }
 }

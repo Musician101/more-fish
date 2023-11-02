@@ -2,19 +2,19 @@ package me.elsiff.morefish.command;
 
 import com.mojang.brigadier.arguments.ArgumentType;
 import io.musician101.bukkitier.command.ArgumentCommand;
-import javax.annotation.Nonnull;
 import me.elsiff.morefish.command.argument.PlayerArgumentType;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractMFPlayer extends MFCommand implements ArgumentCommand<Player> {
 
-    @Nonnull
+    @NotNull
     @Override
     public String name() {
         return "player";
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public ArgumentType<Player> type() {
         return new PlayerArgumentType();

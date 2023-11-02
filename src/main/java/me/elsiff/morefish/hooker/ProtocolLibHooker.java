@@ -1,8 +1,8 @@
 package me.elsiff.morefish.hooker;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import me.elsiff.morefish.MoreFish;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class ProtocolLibHooker implements PluginHooker {
 
@@ -10,7 +10,7 @@ public final class ProtocolLibHooker implements PluginHooker {
     public SkullNbtHandler skullNbtHandler;
     private boolean hasHooked;
 
-    @Nonnull
+    @NotNull
     public String getPluginName() {
         return "ProtocolLib";
     }
@@ -19,7 +19,7 @@ public final class ProtocolLibHooker implements PluginHooker {
         return this.hasHooked;
     }
 
-    public void hook(@Nonnull MoreFish plugin) {
+    public void hook(@NotNull MoreFish plugin) {
         PluginHooker.checkEnabled(this, plugin.getServer().getPluginManager());
         skullNbtHandler = new SkullNbtHandler();
         hasHooked = true;

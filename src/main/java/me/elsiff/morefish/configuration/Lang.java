@@ -4,8 +4,6 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import me.elsiff.morefish.fishing.competition.FishingCompetition;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
@@ -15,6 +13,8 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
 import static net.kyori.adventure.text.Component.text;
@@ -32,8 +32,8 @@ public interface Lang {
     Component SHOP_DISABLED = join(PREFIX, text("Fish Shop is disabled now."));
     Component SHOP_GUI_TITLE = text("Put your fish to sell");
 
-    @Nonnull
-    static TextColor getColor(@Nonnull String string) {
+    @NotNull
+    static TextColor getColor(@NotNull String string) {
         TextColor color = TextColor.fromHexString(string);
         return color == null ? NamedTextColor.NAMES.valueOr(string, WHITE) : WHITE;
     }
@@ -46,8 +46,8 @@ public interface Lang {
         return textOfChildren(components);
     }
 
-    @Nonnull
-    static Component replace(@Nonnull Component component, @Nonnull Map<String, Object> replacements, @Nullable Player player) {
+    @NotNull
+    static Component replace(@NotNull Component component, @NotNull Map<String, Object> replacements, @Nullable Player player) {
         List<TextReplacementConfig> replacementConfigs = replacements.entrySet().stream().map(e -> {
             String key = e.getKey();
             String value = e.getValue().toString();
@@ -66,13 +66,13 @@ public interface Lang {
         return component;
     }
 
-    @Nonnull
-    static Component replace(@Nonnull Component component, @Nonnull Map<String, Object> replacements) {
+    @NotNull
+    static Component replace(@NotNull Component component, @NotNull Map<String, Object> replacements) {
         return replace(component, replacements, null);
     }
 
-    @Nonnull
-    static List<Component> replace(@Nonnull List<Component> components, @Nonnull Map<String, Object> replacements, @Nullable Player player) {
+    @NotNull
+    static List<Component> replace(@NotNull List<Component> components, @NotNull Map<String, Object> replacements, @Nullable Player player) {
         return components.stream().map(c -> replace(c, replacements, player)).toList();
     }
 
@@ -128,7 +128,7 @@ public interface Lang {
         }).build();
     }
 
-    @Nonnull
+    @NotNull
     static String time(long second) {
         StringBuilder builder = new StringBuilder();
         Duration duration = Duration.ofSeconds(second);

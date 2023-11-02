@@ -1,7 +1,7 @@
 package me.elsiff.morefish.fishing;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
-public record Fish(@Nonnull FishType type, double length) {
+public record Fish(@NotNull FishType type, double length) {
 
 }

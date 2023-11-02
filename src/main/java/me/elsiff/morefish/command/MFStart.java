@@ -8,10 +8,10 @@ import io.musician101.bukkitier.command.Command;
 import io.musician101.bukkitier.command.LiteralCommand;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.Nonnull;
 import me.elsiff.morefish.configuration.Lang;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 import static me.elsiff.morefish.configuration.Lang.PREFIX;
 import static me.elsiff.morefish.configuration.Lang.join;
@@ -21,8 +21,19 @@ class MFStart extends MFCommand implements LiteralCommand {
 
     private static final Component ALREADY_ONGOING = join(PREFIX, text("The contest is already ongoing."));
 
+    @NotNull
     @Override
-    public int execute(@Nonnull CommandContext<CommandSender> context) {
+    public List<Command<? extends ArgumentBuilder<CommandSender, ?>>> arguments() {
+        return List.of(new MFSeconds());
+    }
+
+    @Override
+    public boolean canUse(@NotNull CommandSender sender) {
+        return testAdmin(sender);
+    }
+
+    @Override
+    public int execute(@NotNull CommandContext<CommandSender> context) {
         CommandSender sender = context.getSource();
         if (getCompetition().isDisabled()) {
             getCompetitionHost().openCompetitionFor(getConfig().getInt("auto-running.timer") * 20L);
@@ -37,39 +48,16 @@ class MFStart extends MFCommand implements LiteralCommand {
         return 1;
     }
 
-    @Nonnull
-    @Override
-    public List<Command<? extends ArgumentBuilder<CommandSender, ?>>> arguments() {
-        return List.of(new MFSeconds());
-    }
-
-    @Nonnull
+    @NotNull
     @Override
     public String name() {
         return "start";
     }
 
-    @Override
-    public boolean canUse(@Nonnull CommandSender sender) {
-        return testAdmin(sender);
-    }
-
     static class MFSeconds extends MFCommand implements ArgumentCommand<Long> {
 
-        @Nonnull
         @Override
-        public LongArgumentType type() {
-            return LongArgumentType.longArg(0);
-        }
-
-        @Nonnull
-        @Override
-        public String name() {
-            return "seconds";
-        }
-
-        @Override
-        public int execute(@Nonnull CommandContext<CommandSender> context) {
+        public int execute(@NotNull CommandContext<CommandSender> context) {
             CommandSender sender = context.getSource();
             if (getCompetition().isDisabled()) {
                 long runningTime = context.getArgument("seconds", Long.class);
@@ -83,6 +71,18 @@ class MFStart extends MFCommand implements LiteralCommand {
             }
 
             return 1;
+        }
+
+        @NotNull
+        @Override
+        public String name() {
+            return "seconds";
+        }
+
+        @NotNull
+        @Override
+        public LongArgumentType type() {
+            return LongArgumentType.longArg(0);
         }
     }
 }

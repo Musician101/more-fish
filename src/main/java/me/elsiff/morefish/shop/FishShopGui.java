@@ -9,7 +9,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import javax.annotation.Nonnull;
 import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.Fish;
@@ -29,6 +28,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import static io.musician101.musigui.paper.chest.PaperIconUtil.customName;
 import static io.musician101.musigui.paper.chest.PaperIconUtil.setLore;
@@ -42,13 +42,13 @@ import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 
 public final class FishShopGui extends AbstractFishShopGUI {
 
-    @Nonnull
+    @NotNull
     private final FishBags fishBags;
-    @Nonnull
+    @NotNull
     private final List<FishRarity> selectedRarities;
     private int page;
 
-    public FishShopGui(@Nonnull Player user, int page) {
+    public FishShopGui(@NotNull Player user, int page) {
         super(Lang.SHOP_GUI_TITLE, user);
         this.page = page;
         this.selectedRarities = FishShopFilterGui.FILTERS.getOrDefault(user.getUniqueId(), new ArrayList<>());

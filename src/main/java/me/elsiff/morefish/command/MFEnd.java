@@ -2,25 +2,19 @@ package me.elsiff.morefish.command;
 
 import com.mojang.brigadier.context.CommandContext;
 import io.musician101.bukkitier.command.LiteralCommand;
-import javax.annotation.Nonnull;
 import me.elsiff.morefish.configuration.Lang;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 class MFEnd extends MFCommand implements LiteralCommand {
 
-    @Nonnull
     @Override
-    public String name() {
-        return "end";
-    }
-
-    @Override
-    public boolean canUse(@Nonnull CommandSender sender) {
+    public boolean canUse(@NotNull CommandSender sender) {
         return testAdmin(sender);
     }
 
     @Override
-    public int execute(@Nonnull CommandContext<CommandSender> context) {
+    public int execute(@NotNull CommandContext<CommandSender> context) {
         CommandSender sender = context.getSource();
         if (getCompetition().isEnabled()) {
             getCompetitionHost().closeCompetition();
@@ -33,5 +27,11 @@ class MFEnd extends MFCommand implements LiteralCommand {
         }
 
         return 1;
+    }
+
+    @NotNull
+    @Override
+    public String name() {
+        return "end";
     }
 }

@@ -2,11 +2,11 @@ package me.elsiff.morefish.fishing.competition;
 
 import java.time.LocalTime;
 import java.util.Collection;
-import javax.annotation.Nonnull;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.NotNull;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
 
@@ -41,7 +41,7 @@ public final class FishingCompetitionAutoRunner {
         return this.timeCheckingTask != null;
     }
 
-    public void setScheduledTimes(@Nonnull Collection<LocalTime> scheduledTimes) {
+    public void setScheduledTimes(@NotNull Collection<LocalTime> scheduledTimes) {
         this.scheduledTimes = scheduledTimes;
     }
 
@@ -59,7 +59,7 @@ public final class FishingCompetitionAutoRunner {
 
         private final Runnable work;
 
-        TimeChecker(@Nonnull Runnable work) {
+        TimeChecker(@NotNull Runnable work) {
             super();
             this.work = work;
         }

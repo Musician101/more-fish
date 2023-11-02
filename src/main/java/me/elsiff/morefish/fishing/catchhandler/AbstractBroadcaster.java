@@ -2,13 +2,13 @@ package me.elsiff.morefish.fishing.catchhandler;
 
 import java.util.List;
 import java.util.Map;
-import javax.annotation.Nonnull;
 import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.Fish;
 import me.elsiff.morefish.fishing.FishType;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
 
@@ -23,10 +23,10 @@ public abstract class AbstractBroadcaster implements CatchHandler {
         return fishType.rarity().displayName().toUpperCase() + " " + s;
     }
 
-    @Nonnull
+    @NotNull
     protected abstract Component getCatchMessageFormat();
 
-    public void handle(@Nonnull Player catcher, @Nonnull Fish fish) {
+    public void handle(@NotNull Player catcher, @NotNull Fish fish) {
         if (meetBroadcastCondition(catcher, fish)) {
             List<Player> receivers = fish.type().catchAnnouncement().receiversOf(catcher);
             if (getPlugin().getConfig().getBoolean("messages.only-announce-fishing-rod")) {
@@ -39,5 +39,5 @@ public abstract class AbstractBroadcaster implements CatchHandler {
         }
     }
 
-    protected abstract boolean meetBroadcastCondition(@Nonnull Player var1, @Nonnull Fish var2);
+    protected abstract boolean meetBroadcastCondition(@NotNull Player var1, @NotNull Fish var2);
 }

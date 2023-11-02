@@ -5,7 +5,7 @@ authors:
 website: https://elsiff.me, musician101.github.io
 version: ${version}
 main: me.elsiff.morefish.MoreFish
-api-version: '1.19'
+api-version: '1.20'
 softdepend: [ Citizens, mcMMO, MusiBoard, PlaceholderAPI, ProtocolLib, Vault, WorldGuard ]
 commands:
   morefish:

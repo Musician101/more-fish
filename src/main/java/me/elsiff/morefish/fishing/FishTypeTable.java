@@ -19,7 +19,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-import javax.annotation.Nonnull;
 import me.elsiff.morefish.announcement.PlayerAnnouncement;
 import me.elsiff.morefish.configuration.Config;
 import me.elsiff.morefish.configuration.Lang;
@@ -44,6 +43,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.jetbrains.annotations.NotNull;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
 
@@ -53,7 +53,7 @@ public final class FishTypeTable {
     private final BiMap<FishRarity, List<FishType>> map = HashBiMap.create();
     private JsonObject fish = new JsonObject();
 
-    @Nonnull
+    @NotNull
     public Optional<FishRarity> getDefaultRarity() {
         Set<FishRarity> defaultRarities = getRarities().stream().filter(FishRarity::isDefault).collect(Collectors.toSet());
         if (defaultRarities.size() <= 1) {
@@ -65,7 +65,7 @@ public final class FishTypeTable {
         return Optional.empty();
     }
 
-    @Nonnull
+    @NotNull
     public Optional<JsonObject> getItemFormat() {
         return Optional.ofNullable(fish.getAsJsonObject("item-format"));
     }
@@ -82,7 +82,7 @@ public final class FishTypeTable {
         return json.has(key) ? json.get(key).getAsDouble() : 0D;
     }
 
-    @Nonnull
+    @NotNull
     public Set<FishRarity> getRarities() {
         return map.keySet();
     }
@@ -91,7 +91,7 @@ public final class FishTypeTable {
         return json.asList().stream().map(JsonElement::getAsString).toList();
     }
 
-    @Nonnull
+    @NotNull
     public List<FishType> getTypes() {
         return map.values().stream().flatMap(List::stream).toList();
     }
@@ -248,7 +248,7 @@ public final class FishTypeTable {
         return itemStack;
     }
 
-    @Nonnull
+    @NotNull
     public FishRarity pickRandomRarity() {
         double probabilitySum = getRarities().stream().filter(rarity -> !rarity.isDefault()).mapToDouble(FishRarity::probability).sum();
         if (probabilitySum >= 1.0) {
@@ -270,13 +270,13 @@ public final class FishTypeTable {
         return getDefaultRarity().orElseThrow(() -> new IllegalStateException("Default rarity doesn't exist"));
     }
 
-    @Nonnull
-    public FishType pickRandomType(@Nonnull Item caught, @Nonnull Player fisher, @Nonnull FishingCompetition competition) {
+    @NotNull
+    public FishType pickRandomType(@NotNull Item caught, @NotNull Player fisher, @NotNull FishingCompetition competition) {
         return pickRandomType(caught, fisher, competition, pickRandomRarity());
     }
 
-    @Nonnull
-    public FishType pickRandomType(@Nonnull Item caught, @Nonnull Player fisher, @Nonnull FishingCompetition competition, @Nonnull FishRarity rarity) {
+    @NotNull
+    public FishType pickRandomType(@NotNull Item caught, @NotNull Player fisher, @NotNull FishingCompetition competition, @NotNull FishRarity rarity) {
         if (!map.containsKey(rarity)) {
             throw new IllegalStateException("Rarity must be contained in the table");
         }

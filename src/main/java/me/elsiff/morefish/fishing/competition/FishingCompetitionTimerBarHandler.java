@@ -1,7 +1,6 @@
 package me.elsiff.morefish.fishing.competition;
 
 import java.util.Map;
-import javax.annotation.Nonnull;
 import me.elsiff.morefish.configuration.Lang;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.bossbar.BossBar.Color;
@@ -17,6 +16,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.NotNull;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
 import static me.elsiff.morefish.configuration.Lang.join;
@@ -65,12 +65,12 @@ public final class FishingCompetitionTimerBarHandler {
     private final class TimerBarDisplayer implements Listener {
 
         @EventHandler
-        public void onPlayerJoin(@Nonnull PlayerJoinEvent event) {
+        public void onPlayerJoin(@NotNull PlayerJoinEvent event) {
             event.getPlayer().showBossBar(timerBar);
         }
 
         @EventHandler
-        public void onPlayerQuit(@Nonnull PlayerQuitEvent event) {
+        public void onPlayerQuit(@NotNull PlayerQuitEvent event) {
             event.getPlayer().showBossBar(timerBar);
         }
     }

@@ -1,6 +1,6 @@
 package me.elsiff.morefish.util;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class NumberUtils {
 
@@ -8,7 +8,7 @@ public class NumberUtils {
 
     }
 
-    @Nonnull
+    @NotNull
     public static String ordinalOf(int number) {
         String suffix;
         switch (number % 10) {

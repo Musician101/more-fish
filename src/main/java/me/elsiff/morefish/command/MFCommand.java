@@ -10,10 +10,6 @@ import static me.elsiff.morefish.MoreFish.getPlugin;
 
 public class MFCommand {
 
-    protected boolean testAdmin(CommandSender sender) {
-        return sender.hasPermission("morefish.admin");
-    }
-
     protected FishingCompetition getCompetition() {
         return getPlugin().getCompetition();
     }
@@ -28,5 +24,9 @@ public class MFCommand {
 
     protected FishShop getFishShop() {
         return getPlugin().getFishShop();
+    }
+
+    protected boolean testAdmin(CommandSender sender) {
+        return sender.hasPermission("morefish.admin");
     }
 }

@@ -2,7 +2,6 @@ package me.elsiff.morefish;
 
 import java.time.LocalTime;
 import java.util.List;
-import javax.annotation.Nonnull;
 import me.elsiff.morefish.command.MFMain;
 import me.elsiff.morefish.configuration.Config;
 import me.elsiff.morefish.configuration.Lang;
@@ -22,6 +21,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Server;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import static io.musician101.bukkitier.Bukkitier.registerCommand;
 import static me.elsiff.morefish.configuration.Lang.PREFIX;
@@ -29,26 +29,26 @@ import static net.kyori.adventure.text.Component.text;
 
 public final class MoreFish extends JavaPlugin {
 
-    @Nonnull
+    @NotNull
     private final FishingCompetitionAutoRunner autoRunner = new FishingCompetitionAutoRunner();
-    @Nonnull
+    @NotNull
     private final FishingCompetition competition = new FishingCompetition();
-    @Nonnull
+    @NotNull
     private final FishingCompetitionHost competitionHost = new FishingCompetitionHost();
-    @Nonnull
+    @NotNull
     private final FishBags fishBags = new FishBags();
-    @Nonnull
+    @NotNull
     private final FishShop fishShop = new FishShop();
-    @Nonnull
+    @NotNull
     private final FishTypeTable fishTypeTable = new FishTypeTable();
-    @Nonnull
+    @NotNull
     private final McmmoHooker mcmmo = new McmmoHooker();
-    @Nonnull
-    private final ProtocolLibHooker protocolLib = new ProtocolLibHooker();
-    @Nonnull
-    private final VaultHooker vault = new VaultHooker();
-    @Nonnull
+    @NotNull
     private final MusiBoardHooker musiBoard = new MusiBoardHooker();
+    @NotNull
+    private final ProtocolLibHooker protocolLib = new ProtocolLibHooker();
+    @NotNull
+    private final VaultHooker vault = new VaultHooker();
 
     public static MoreFish getPlugin() {
         return getPlugin(MoreFish.class);
@@ -78,42 +78,42 @@ public final class MoreFish extends JavaPlugin {
         }
     }
 
-    @Nonnull
+    @NotNull
     public FishingCompetition getCompetition() {
         return competition;
     }
 
-    @Nonnull
+    @NotNull
     public FishingCompetitionHost getCompetitionHost() {
         return competitionHost;
     }
 
-    @Nonnull
+    @NotNull
     public FishBags getFishBags() {
         return fishBags;
     }
 
-    @Nonnull
+    @NotNull
     public FishShop getFishShop() {
         return fishShop;
     }
 
-    @Nonnull
+    @NotNull
     public FishTypeTable getFishTypeTable() {
         return fishTypeTable;
     }
 
-    @Nonnull
+    @NotNull
     public McmmoHooker getMcmmo() {
         return mcmmo;
     }
 
-    @Nonnull
+    @NotNull
     public MusiBoardHooker getMusiBoard() {
         return musiBoard;
     }
 
-    @Nonnull
+    @NotNull
     public VaultHooker getVault() {
         return vault;
     }
