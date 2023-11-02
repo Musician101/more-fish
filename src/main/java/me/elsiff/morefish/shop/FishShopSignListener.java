@@ -37,7 +37,7 @@ public record FishShopSignListener() implements Listener {
         if (event.getCause() != Cause.INTERACT) {
             return;
         }
-        
+
         if (event.getSign().getSide(event.getSide()).line(0).equals(getShopSignTitle())) {
             if (getConfig().getBoolean("fish-shop.enable")) {
                 new FishShopGui(event.getPlayer(), 1);

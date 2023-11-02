@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "me.elsiff"
-version = "4.2.1"
+version = "4.2.0"
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(17))
