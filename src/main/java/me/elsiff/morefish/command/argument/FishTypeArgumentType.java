@@ -1,4 +1,4 @@
-package me.elsiff.morefish.command;
+package me.elsiff.morefish.command.argument;
 
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
@@ -9,31 +9,32 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
-import javax.annotation.Nonnull;
-import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.fishing.FishType;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
-public class FishTypeArgument implements ArgumentType<FishType> {
+import static me.elsiff.morefish.MoreFish.getPlugin;
 
-    @Nonnull
-    public static FishType get(@Nonnull CommandContext<CommandSender> context) {
+public class FishTypeArgumentType implements ArgumentType<FishType> {
+
+    @NotNull
+    public static FishType get(@NotNull CommandContext<CommandSender> context) {
         return context.getArgument("fish", FishType.class);
     }
 
-    @Override
-    public FishType parse(StringReader reader) throws CommandSyntaxException {
-        String name = reader.readString();
-        return fishes().filter(f -> f.name().equals(name)).findFirst().orElseThrow(() -> new SimpleCommandExceptionType(() -> name + " is not a valid fish.").createWithContext(reader));
-    }
-
     private Stream<FishType> fishes() {
-        return MoreFish.instance().getFishTypeTable().getTypes().stream();
+        return getPlugin().getFishTypeTable().getTypes().stream();
     }
 
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
         fishes().map(FishType::name).filter(name -> name.startsWith(builder.getRemaining())).forEach(builder::suggest);
         return builder.buildFuture();
+    }
+
+    @Override
+    public FishType parse(StringReader reader) throws CommandSyntaxException {
+        String name = reader.readString();
+        return fishes().filter(f -> f.name().equals(name)).findFirst().orElseThrow(() -> new SimpleCommandExceptionType(() -> name + " is not a valid fish.").createWithContext(reader));
     }
 }

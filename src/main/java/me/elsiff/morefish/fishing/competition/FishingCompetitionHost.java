@@ -4,8 +4,6 @@ import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import javax.annotation.Nonnull;
-import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.configuration.Config;
 import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.util.NumberUtils;
@@ -15,14 +13,22 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+<<<<<<< HEAD
+=======
+import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.NotNull;
+
+import static me.elsiff.morefish.MoreFish.getPlugin;
+import static me.elsiff.morefish.configuration.Lang.PREFIX;
+import static me.elsiff.morefish.configuration.Lang.join;
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
+import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
+>>>>>>> origin/upcoming
 
 public final class FishingCompetitionHost {
 
-    @Nonnull
-    private MoreFish getPlugin() {
-        return MoreFish.instance();
-    }
-    @Nonnull
+    @NotNull
     private final FishingCompetitionTimerBarHandler timerBarHandler = new FishingCompetitionTimerBarHandler();
     private ScheduledTask timerTask;
 
@@ -67,12 +73,12 @@ public final class FishingCompetitionHost {
         }
     }
 
-    @Nonnull
+    @NotNull
     public FishingCompetition getCompetition() {
         return getPlugin().getCompetition();
     }
 
-    @Nonnull
+    @NotNull
     private FileConfiguration getConfig() {
         return getPlugin().getConfig();
     }
@@ -81,30 +87,30 @@ public final class FishingCompetitionHost {
         return getConfig().getConfigurationSection("messages");
     }
 
-    @Nonnull
+    @NotNull
     private Map<Integer, Prize> getPrizes() {
         return Config.getPrizes();
     }
 
-    public void informAboutRanking(@Nonnull CommandSender receiver) {
+    public void informAboutRanking(@NotNull CommandSender receiver) {
         if (getCompetition().getRanking().isEmpty()) {
-            receiver.sendMessage(Lang.TOP_NO_RECORD);
+            receiver.sendMessage(join(PREFIX, text("Nobody made any record yet.")));
         }
         else {
             int topSize = getMsgConfig().getInt("top-number", 1);
             List<Record> top = getCompetition().top(topSize);
             top.forEach(record -> {
                 int number = top.indexOf(record) + 1;
-                receiver.sendMessage(Lang.replace(Lang.TOP_LIST, topReplacementOf(number, record)));
+                receiver.sendMessage(Lang.replace(join(PREFIX, text("%ordinal%. ", YELLOW), text(": %player%, %length%cm %fish%", DARK_GRAY)), topReplacementOf(number, record)));
             });
 
             if (receiver instanceof Player) {
                 if (!getCompetition().containsContestant(((Player) receiver).getUniqueId())) {
-                    receiver.sendMessage(Lang.TOP_MINE_NO_RECORD);
+                    receiver.sendMessage(join(PREFIX, text("You didn't catch any fish.")));
                 }
                 else {
                     Entry<Integer, Record> entry = getCompetition().rankedRecordOf((OfflinePlayer) receiver);
-                    receiver.sendMessage(Lang.replace(Lang.TOP_MINE, topReplacementOf(entry.getKey() + 1, entry.getValue())));
+                    receiver.sendMessage(Lang.replace(join(PREFIX, text("You're %ordinal%: %length%cm %fish%")), topReplacementOf(entry.getKey() + 1, entry.getValue())));
                 }
             }
         }
@@ -122,7 +128,11 @@ public final class FishingCompetitionHost {
     public void openCompetitionFor(long tick) {
         long duration = tick / (long) 20;
         getCompetition().enable();
+<<<<<<< HEAD
         timerTask = Bukkit.getGlobalRegionScheduler().runDelayed(getPlugin(), task -> closeCompetition(), tick);
+=======
+        timerTask = Bukkit.getScheduler().runTaskLater(getPlugin(), (Runnable) this::closeCompetition, tick);
+>>>>>>> origin/upcoming
         if (getConfig().getBoolean("general.use-boss-bar")) {
             timerBarHandler.enableTimer(duration);
         }

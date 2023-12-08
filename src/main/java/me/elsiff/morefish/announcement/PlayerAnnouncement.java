@@ -2,14 +2,14 @@ package me.elsiff.morefish.announcement;
 
 import com.google.gson.JsonObject;
 import java.util.List;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface PlayerAnnouncement {
 
-    @Nonnull
-    static PlayerAnnouncement fromConfigOrDefault(@Nullable JsonObject json, @Nonnull String path, @Nonnull PlayerAnnouncement def) {
+    @NotNull
+    static PlayerAnnouncement fromConfigOrDefault(@Nullable JsonObject json, @NotNull String path, @NotNull PlayerAnnouncement def) {
         if (json == null || !json.has(path)) {
             return def;
         }
@@ -17,7 +17,7 @@ public interface PlayerAnnouncement {
         return fromValue(json.getAsJsonPrimitive(path).getAsDouble());
     }
 
-    @Nonnull
+    @NotNull
     static PlayerAnnouncement fromValue(double d) {
         return switch ((int) d) {
             case -2 -> PlayerAnnouncement.ofEmpty();
@@ -27,17 +27,17 @@ public interface PlayerAnnouncement {
         };
     }
 
-    @Nonnull
+    @NotNull
     static PlayerAnnouncement ofBaseOnly() {
         return new BaseOnlyAnnouncement();
     }
 
-    @Nonnull
+    @NotNull
     static PlayerAnnouncement ofEmpty() {
         return new NoAnnouncement();
     }
 
-    @Nonnull
+    @NotNull
     static PlayerAnnouncement ofRanged(double radius) {
         if (radius <= 0) {
             throw new IllegalArgumentException("Radius must not be negative");
@@ -46,11 +46,10 @@ public interface PlayerAnnouncement {
         return new RangedAnnouncement(radius);
     }
 
-    @Nonnull
+    @NotNull
     static PlayerAnnouncement ofServerBroadcast() {
         return new ServerAnnouncement();
     }
 
-    @Nonnull
-    List<Player> receiversOf(@Nonnull Player var1);
+    @NotNull List<Player> receiversOf(@NotNull Player var1);
 }

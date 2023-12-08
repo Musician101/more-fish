@@ -5,13 +5,13 @@ import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 import com.comphenix.protocol.wrappers.nbt.NbtFactory;
 import com.comphenix.protocol.wrappers.nbt.NbtList;
 import java.util.UUID;
-import javax.annotation.Nonnull;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public final class SkullNbtHandler {
 
-    @Nonnull
-    public ItemStack writeTexture(@Nonnull ItemStack itemStack, @Nonnull String textureValue) {
+    @NotNull
+    public ItemStack writeTexture(@NotNull ItemStack itemStack, @NotNull String textureValue) {
         ItemStack editingStack = MinecraftReflection.getBukkitItemStack(itemStack);
         if (MinecraftReflection.isCraftItemStack(itemStack)) {
             editingStack = itemStack;

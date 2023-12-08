@@ -21,17 +21,26 @@ repositories {
 }
 
 dependencies {
-    compileOnlyApi("com.comphenix.protocol:ProtocolLib:5.0.0")
+    compileOnlyApi("com.comphenix.protocol:ProtocolLib:5.1.0")
     compileOnlyApi("com.github.MilkBowl:VaultAPI:1.7.1")
+<<<<<<< HEAD
     compileOnlyApi("dev.folia:folia-api:1.19.4-R0.1-SNAPSHOT")
+=======
+    compileOnlyApi("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
+>>>>>>> origin/upcoming
     compileOnlyApi(files("lib/mcMMO.jar"))
 
-    api("com.github.musician101.musigui:paper:1.2.1") {
-        exclude("com.google.code.findbugs")
+    api("com.github.musician101.musigui:paper:1.2.2") {
         exclude("io.papermc.paper")
     }
-    api("com.github.musician101:bukkitier:1.2.2") {
+    api("com.github.Musician101:Bukkitier:1.3.3") {
         exclude("org.spigotmc")
+    }
+    //TODO temp to fix package names
+    //api("com.github.Musician101:MusiBoard:1.0.1") {
+    api("com.github.Musician101:MusiBoard:master-SNAPSHOT") {
+        exclude("io.papermc.paper")
+        exclude("com.github.Musician101")
     }
 }
 
@@ -46,8 +55,8 @@ tasks {
     shadowJar {
         dependencies {
             include(dependency(":common"))
-            include(dependency("com.github.musician101:"))
-            include(dependency("com.github.musician101.musigui:spigot:"))
+            include(dependency("com.github.Musician101:"))
+            include(dependency("com.github.musician101.musigui:"))
         }
 
         archiveClassifier.set("")

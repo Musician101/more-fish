@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.IntStream;
-import javax.annotation.Nonnull;
-import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.fishing.FishRarity;
 import me.elsiff.morefish.fishing.FishTypeTable;
 import net.kyori.adventure.text.Component;
@@ -17,9 +15,11 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import static io.musician101.musigui.paper.chest.PaperIconUtil.customName;
 import static io.musician101.musigui.paper.chest.PaperIconUtil.setLore;
+import static me.elsiff.morefish.MoreFish.getPlugin;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
@@ -28,10 +28,10 @@ public class FishShopFilterGui extends AbstractFishShopGUI {
 
     public static final Map<UUID, List<FishRarity>> FILTERS = new HashMap<>();
 
-    @Nonnull
+    @NotNull
     private final List<FishRarity> selectedRarities;
 
-    public FishShopFilterGui(int page, @Nonnull Player user) {
+    public FishShopFilterGui(int page, @NotNull Player user) {
         super(text("Set Sale Filter(s)"), user);
         this.selectedRarities = FILTERS.getOrDefault(user.getUniqueId(), new ArrayList<>());
         updateButtons(page);
@@ -40,7 +40,7 @@ public class FishShopFilterGui extends AbstractFishShopGUI {
 
     private void updateButtons(int page) {
         List<FishRarity> fishRarities = new ArrayList<>();
-        FishTypeTable fishTypeTable = MoreFish.instance().getFishTypeTable();
+        FishTypeTable fishTypeTable = getPlugin().getFishTypeTable();
         fishTypeTable.getDefaultRarity().ifPresent(fishRarities::add);
         fishTypeTable.getRarities().stream().filter(rarity -> rarity.additionalPrice() >= 0 && !rarity.isDefault()).sorted(Comparator.reverseOrder()).forEach(fishRarities::add);
         IntStream.range(0, 45).forEach(x -> {
@@ -60,7 +60,7 @@ public class FishShopFilterGui extends AbstractFishShopGUI {
     }
 
     private void updateIcon(int slot, FishRarity fishRarity) {
-        Component name = text(fishRarity.color() + fishRarity.displayName());
+        Component name = text(fishRarity.displayName(), fishRarity.color());
         Component lore = selectedRarities.contains(fishRarity) ? text("Selected.", GREEN) : text("Not selected.", RED);
         ItemStack itemStack = setLore(customName(new ItemStack(Material.COD), name), lore);
         setButton(slot, itemStack, ClickType.LEFT, p -> {
@@ -71,7 +71,11 @@ public class FishShopFilterGui extends AbstractFishShopGUI {
                 selectedRarities.add(fishRarity);
             }
 
+<<<<<<< HEAD
             Bukkit.getGlobalRegionScheduler().runDelayed(MoreFish.instance(), task -> updateIcon(slot, fishRarity), 2);
+=======
+            Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), () -> updateIcon(slot, fishRarity), 2);
+>>>>>>> origin/upcoming
         });
     }
 }

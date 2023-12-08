@@ -1,15 +1,15 @@
 package me.elsiff.morefish.fishing.competition;
 
 import java.util.List;
-import javax.annotation.Nonnull;
 import me.elsiff.morefish.util.NumberUtils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
-public record Prize(@Nonnull List<String> commands) {
+public record Prize(@NotNull List<String> commands) {
 
-    public void giveTo(@Nonnull OfflinePlayer player, int rankNumber, @Nonnull Plugin plugin) {
+    public void giveTo(@NotNull OfflinePlayer player, int rankNumber, @NotNull Plugin plugin) {
         if (!player.isOnline()) {
             plugin.getLogger().warning(NumberUtils.ordinalOf(rankNumber) + " fisher " + player.getName() + " isn't online! Contest prizes may not be sent.");
             return;

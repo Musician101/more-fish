@@ -1,4 +1,4 @@
-package me.elsiff.morefish.command;
+package me.elsiff.morefish.command.argument;
 
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;

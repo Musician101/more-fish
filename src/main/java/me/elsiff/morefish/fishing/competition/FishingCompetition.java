@@ -4,27 +4,28 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.UUID;
-import javax.annotation.Nonnull;
 import me.elsiff.morefish.RecordHandler;
 import me.elsiff.morefish.fishing.Fish;
+import me.elsiff.morefish.hooker.MusiBoardHooker;
 import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.NotNull;
+
+import static me.elsiff.morefish.MoreFish.getPlugin;
 
 public final class FishingCompetition {
 
-    @Nonnull
-    private final MFScoreboard scoreboard = new MFScoreboard();
-    @Nonnull
+    @NotNull
     private FishingCompetition.State state = State.DISABLED;
 
     private void checkStateDisabled() {
         if (state != State.DISABLED) {
-            throw new IllegalStateException("Fishing competition hasn't disabled");
+            throw new IllegalStateException("Fishing competition isn't disabled");
         }
     }
 
     private void checkStateEnabled() {
         if (state != State.ENABLED) {
-            throw new IllegalStateException("Fishing competition hasn't enabled");
+            throw new IllegalStateException("Fishing competition isn't enabled");
         }
     }
 
@@ -32,13 +33,13 @@ public final class FishingCompetition {
         getRecords().clear();
     }
 
-    public boolean containsContestant(@Nonnull UUID contestant) {
+    public boolean containsContestant(@NotNull UUID contestant) {
         return getRanking().stream().anyMatch(record -> contestant.equals(record.fisher()));
     }
 
     public void disable() {
         this.checkStateEnabled();
-        scoreboard.clear();
+        getMusiBoard().clear();
         this.state = FishingCompetition.State.DISABLED;
     }
 
@@ -47,7 +48,11 @@ public final class FishingCompetition {
         this.state = FishingCompetition.State.ENABLED;
     }
 
-    @Nonnull
+    private MusiBoardHooker getMusiBoard() {
+        return getPlugin().getMusiBoard();
+    }
+
+    @NotNull
     public List<Record> getRanking() {
         return this.getRecords().all();
     }
@@ -56,12 +61,7 @@ public final class FishingCompetition {
         return new RecordHandler();
     }
 
-    @Nonnull
-    public MFScoreboard getScoreboard() {
-        return scoreboard;
-    }
-
-    @Nonnull
+    @NotNull
     public FishingCompetition.State getState() {
         return this.state;
     }
@@ -74,7 +74,7 @@ public final class FishingCompetition {
         return this.state == FishingCompetition.State.ENABLED;
     }
 
-    public void putRecord(@Nonnull Record record) {
+    public void putRecord(@NotNull Record record) {
         checkStateEnabled();
         if (containsContestant(record.fisher())) {
             Record oldRecord = recordOf(record.fisher());
@@ -86,15 +86,15 @@ public final class FishingCompetition {
             getRecords().insert(record);
         }
 
-        scoreboard.update();
+        getMusiBoard().update();
     }
 
-    public int rankNumberOf(@Nonnull Record record) {
+    public int rankNumberOf(@NotNull Record record) {
         return getRanking().indexOf(record) + 1;
     }
 
-    @Nonnull
-    public Entry<Integer, Record> rankedRecordOf(@Nonnull OfflinePlayer contestant) {
+    @NotNull
+    public Entry<Integer, Record> rankedRecordOf(@NotNull OfflinePlayer contestant) {
         List<Record> records = getRanking();
         int place = 0;
         for (Record record : records) {
@@ -108,12 +108,12 @@ public final class FishingCompetition {
         throw new IllegalStateException("Record not found");
     }
 
-    @Nonnull
-    public Record recordOf(@Nonnull UUID contestant) {
+    @NotNull
+    public Record recordOf(@NotNull UUID contestant) {
         return getRanking().stream().filter(record -> contestant.equals(record.fisher())).findFirst().orElseThrow(() -> new IllegalStateException("Record not found"));
     }
 
-    @Nonnull
+    @NotNull
     public Record recordOf(int rankNumber) {
         if (rankNumber >= 1 && rankNumber <= getRanking().size()) {
             return getRanking().get(rankNumber - 1);
@@ -122,12 +122,12 @@ public final class FishingCompetition {
         throw new IllegalArgumentException("Rank number is out of records size.");
     }
 
-    @Nonnull
+    @NotNull
     public List<Record> top(int size) {
         return getRecords().top(size);
     }
 
-    public boolean willBeNewFirst(@Nonnull OfflinePlayer catcher, @Nonnull Fish fish) {
+    public boolean willBeNewFirst(@NotNull OfflinePlayer catcher, @NotNull Fish fish) {
         if (!getRanking().isEmpty()) {
             Record record = getRanking().get(0);
             return fish.length() > record.fish().length() && !record.fisher().equals(catcher.getUniqueId());

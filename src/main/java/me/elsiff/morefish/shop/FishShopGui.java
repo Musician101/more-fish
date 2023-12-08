@@ -9,7 +9,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import javax.annotation.Nonnull;
 import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.Fish;
@@ -29,9 +28,11 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import static io.musician101.musigui.paper.chest.PaperIconUtil.customName;
 import static io.musician101.musigui.paper.chest.PaperIconUtil.setLore;
+import static me.elsiff.morefish.MoreFish.getPlugin;
 import static me.elsiff.morefish.configuration.Lang.PREFIX;
 import static me.elsiff.morefish.configuration.Lang.join;
 import static me.elsiff.morefish.item.FishItemStackConverter.fish;
@@ -41,17 +42,17 @@ import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 
 public final class FishShopGui extends AbstractFishShopGUI {
 
-    @Nonnull
+    @NotNull
     private final FishBags fishBags;
-    @Nonnull
+    @NotNull
     private final List<FishRarity> selectedRarities;
     private int page;
 
-    public FishShopGui(@Nonnull Player user, int page) {
+    public FishShopGui(@NotNull Player user, int page) {
         super(Lang.SHOP_GUI_TITLE, user);
         this.page = page;
         this.selectedRarities = FishShopFilterGui.FILTERS.getOrDefault(user.getUniqueId(), new ArrayList<>());
-        this.fishBags = MoreFish.instance().getFishBags();
+        this.fishBags = getPlugin().getFishBags();
         updateButtons();
         IntStream.of(46, 48, 50, 52).forEach(this::glassPaneButton);
         setButton(47, customName(new ItemStack(Material.CHEST), text("Set Sale Filter(s)")), ClickType.LEFT, p -> new FishShopFilterGui(1, p));
@@ -63,11 +64,11 @@ public final class FishShopGui extends AbstractFishShopGUI {
             throw new IllegalStateException("Vault must be hooked for fish shop feature");
         }
 
-        if (!vault.hasEconomy()) {
-            throw new IllegalStateException("Vault doesn't have economy plugin");
+        if (vault.hasEconomy()) {
+            return vault.getEconomy().orElseThrow(() -> new IllegalStateException("Economy must be enabled"));
         }
 
-        return vault.getEconomy().orElseThrow(() -> new IllegalStateException("Economy must be enabled"));
+        throw new IllegalStateException("Vault doesn't have economy plugin");
     }
 
     private List<ItemStack> getFilteredFish() {
@@ -95,7 +96,7 @@ public final class FishShopGui extends AbstractFishShopGUI {
     @Override
     protected void handleExtraClose(InventoryCloseEvent event) {
         Player player = (Player) event.getPlayer();
-        FishBags fishBags = MoreFish.instance().getFishBags();
+        FishBags fishBags = getPlugin().getFishBags();
         if (fishBags.getMaxAllowedPages(player) > 0) {
             fishBags.update(player, inventory.getContents(), page);
             return;
@@ -111,7 +112,11 @@ public final class FishShopGui extends AbstractFishShopGUI {
     }
 
     private void updateButtons() {
+<<<<<<< HEAD
         Bukkit.getGlobalRegionScheduler().runDelayed(MoreFish.instance(), task -> {
+=======
+        Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), () -> {
+>>>>>>> origin/upcoming
             List<ItemStack> fish = fishBags.getFish(player, page);
             IntStream.range(0, 45).forEach(i -> {
                 removeButton(i);
@@ -151,12 +156,17 @@ public final class FishShopGui extends AbstractFishShopGUI {
     }
 
     private void updatePriceIcon(double price) {
+<<<<<<< HEAD
         Bukkit.getGlobalRegionScheduler().runDelayed(MoreFish.instance(), task -> {
             Component name = Lang.replace(text("Sell for $%price%"), Map.of("%price%", String.valueOf(price)));
+=======
+        Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), () -> {
+            Component name = Lang.replace(text("Sell for $%price%", GREEN), Map.of("%price%", String.valueOf(price)));
+>>>>>>> origin/upcoming
             setButton(49, customName(new ItemStack(Material.EMERALD), name), ClickType.LEFT, p -> {
                 List<ItemStack> filteredFish = getFilteredFish();
                 if (filteredFish.isEmpty()) {
-                    p.sendMessage(Lang.SHOP_NO_FISH);
+                    p.sendMessage(join(PREFIX, text("There's no fish to sell. Please put them on the slots.")));
                 }
                 else {
                     double totalPrice = getTotalPrice();
@@ -173,7 +183,7 @@ public final class FishShopGui extends AbstractFishShopGUI {
                     getEconomy().depositPlayer(player, fishList.stream().mapToDouble(shop::priceOf).sum());
                     fishBags.update(player, inventory.getContents(), page);
                     updatePriceIcon(totalPrice);
-                    p.sendMessage(Lang.replace(Lang.SHOP_SOLD, Map.of("%price%", totalPrice)));
+                    p.sendMessage(Lang.replace(join(PREFIX, text("You sold fish for "), text("$%price%", GREEN), text(".")), Map.of("%price%", totalPrice)));
                 }
             });
         }, 1);
@@ -197,7 +207,7 @@ public final class FishShopGui extends AbstractFishShopGUI {
             Component lore = text(upgrade.getKey() + " page(s) for $" + upgrade.getValue(), GREEN);
             ItemStack icon = setLore(customName(new ItemStack(Material.GOLD_INGOT), text("Bag Upgrades")), lore);
             setButton(51, icon, ClickType.LEFT, p -> {
-                MoreFish plugin = MoreFish.instance();
+                MoreFish plugin = getPlugin();
                 if (plugin.getVault().getEconomy().filter(economy -> economy.withdrawPlayer(p, upgrade.getValue()).type == ResponseType.SUCCESS).isPresent()) {
                     plugin.getFishBags().setMaxAllowedPages(p, upgrade.getKey());
                     updateUpgradeIcon(upgrade.getKey());

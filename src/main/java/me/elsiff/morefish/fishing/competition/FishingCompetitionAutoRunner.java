@@ -3,21 +3,24 @@ package me.elsiff.morefish.fishing.competition;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import java.time.LocalTime;
 import java.util.Collection;
+<<<<<<< HEAD
 import javax.annotation.Nonnull;
 import me.elsiff.morefish.MoreFish;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
+=======
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.NotNull;
+
+import static me.elsiff.morefish.MoreFish.getPlugin;
+>>>>>>> origin/upcoming
 
 public final class FishingCompetitionAutoRunner {
 
     private static final long HALF_MINUTE = 600L;
-
-    private MoreFish getPlugin() {
-        return MoreFish.instance();
-    }
-    private FishingCompetitionHost getCompetitionHost() {
-        return getPlugin().getCompetitionHost();
-    }
     private Collection<LocalTime> scheduledTimes;
     private ScheduledTask timeCheckingTask;
 
@@ -38,11 +41,15 @@ public final class FishingCompetitionAutoRunner {
         timeCheckingTask = Bukkit.getGlobalRegionScheduler().runAtFixedRate(getPlugin(), task -> new TimeChecker(this::tryOpenCompetition).run(), 1, HALF_MINUTE);
     }
 
+    private FishingCompetitionHost getCompetitionHost() {
+        return getPlugin().getCompetitionHost();
+    }
+
     public boolean isEnabled() {
         return this.timeCheckingTask != null;
     }
 
-    public void setScheduledTimes(@Nonnull Collection<LocalTime> scheduledTimes) {
+    public void setScheduledTimes(@NotNull Collection<LocalTime> scheduledTimes) {
         this.scheduledTimes = scheduledTimes;
     }
 
@@ -60,7 +67,12 @@ public final class FishingCompetitionAutoRunner {
 
         private final Runnable work;
 
+<<<<<<< HEAD
         TimeChecker(@Nonnull Runnable work) {
+=======
+        TimeChecker(@NotNull Runnable work) {
+            super();
+>>>>>>> origin/upcoming
             this.work = work;
         }
 
