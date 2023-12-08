@@ -71,7 +71,7 @@ public final class FishingCompetitionTimerBarHandler {
 
         @EventHandler
         public void onPlayerQuit(@NotNull PlayerQuitEvent event) {
-            event.getPlayer().showBossBar(timerBar);
+            event.getPlayer().hideBossBar(timerBar);
         }
     }
 

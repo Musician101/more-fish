@@ -229,7 +229,7 @@ public final class FishTypeTable {
         }
 
         if (json.has("skull-uuid") && itemMeta instanceof SkullMeta) {
-            ((SkullMeta) itemMeta).setOwningPlayer(Bukkit.getOfflinePlayer(UUID.fromString("skull-uuid")));
+            ((SkullMeta) itemMeta).setOwningPlayer(Bukkit.getOfflinePlayer(UUID.fromString(json.get("skull-uuid").getAsString())));
         }
 
         itemStack.setItemMeta(itemMeta);

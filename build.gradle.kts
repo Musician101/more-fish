@@ -51,7 +51,7 @@ tasks {
     shadowJar {
         dependencies {
             include(dependency(":common"))
-            include(dependency("com.github.Musician101:"))
+            include(dependency("com.github.Musician101:Bukkitier:"))
             include(dependency("com.github.musician101.musigui:"))
         }
 
@@ -66,5 +66,3 @@ tasks {
         into("server/plugins")
     }
 }
-
-
