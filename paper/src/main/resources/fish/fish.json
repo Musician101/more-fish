@@ -1,0 +1,72 @@
+{
+    "item-format": {
+        "lore": [
+            {
+                "text": "%length%cm",
+                "color": "gray"
+            },
+            {
+                "text": "Caught by %player%",
+                "color": "gray"
+            }
+        ],
+        "display-name": {
+            "text": "%rarity_color%%fish%"
+        }
+    },
+    "rarity-list": {
+        "junk": {
+            "color": "gray",
+            "display-name": "JUNK",
+            "chance": 1,
+            "no-display": true,
+            "additional-price": -999999
+        },
+        "rare": {
+            "color": "dark_blue",
+            "display-name": "RARE",
+            "conditions": {
+                "mcmmo-skill": "Fishing|25"
+            },
+            "chance": 22,
+            "additional-price": 3.0
+        },
+        "common": {
+            "announcement": 0,
+            "no-display": true,
+            "default": true,
+            "display-name": "COMMON",
+            "color": "reset",
+            "additional-price": 0.0
+        },
+        "legendary": {
+            "chance": 0.7,
+            "firework": true,
+            "color": "gold",
+            "display-name": "LEGENDARY",
+            "conditions": {
+                "mcmmo-skill": "Fishing|100"
+            },
+            "additional-price": 5.0
+        },
+        "mythic": {
+            "chance": 0.03,
+            "firework": true,
+            "color": "light_purple",
+            "display-name": "MYTHIC",
+            "conditions": {
+                "mcmmo-skill": "Fishing|200"
+            },
+            "additional-price": 6.0
+        },
+        "epic": {
+            "color": "dark_purple",
+            "display-name": "EPIC",
+            "conditions": {
+                "mcmmo-skill": "Fishing|50"
+            },
+            "chance": 6.5,
+            "additional-price": 4.0
+        }
+    }
+}

@@ -124,3 +124,5 @@ common/build/
 forge/build/
 logs/
 sponge/build/
+paper/build/
+paper/lib/

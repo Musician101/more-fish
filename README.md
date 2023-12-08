@@ -12,7 +12,7 @@ If it's not enough to you, feel free to add your own fish by editing configurati
 
 #### Legendary Fish:
 
-There're 4 default rarity levels: Common, Rare, Epic, Legendary.  
+There are 4 default rarity levels: Common, Rare, Epic, Legendary.  
 Try to get legendary fish through just 1% chance and prove that you're a mastered angler!
 
 #### Message with the length of fish:
