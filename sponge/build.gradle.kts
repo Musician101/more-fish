@@ -8,6 +8,8 @@ plugins {
 dependencies {
     api(project(":common"))
     api("com.github.musician101.musigui:sponge:1.2.2")
+    //TODO temp dependency due to new project
+    api("io.musician101:spongecmd:1.0-SNAPSHOT")
 }
 
 sponge {

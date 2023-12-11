@@ -1,6 +1,7 @@
 package me.elsiff.morefish.sponge;
 
 import com.google.inject.Inject;
+import io.musician101.spongecmd.CMDExecutor;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
@@ -29,7 +30,7 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.command.Command;
+import org.spongepowered.api.command.Command.Parameterized;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.data.DataRegistration;
 import org.spongepowered.api.data.Key;
@@ -213,12 +214,13 @@ public final class SpongeMoreFish implements MoreFish<SpongeFishBags, SpongeFish
             autoRunner.disable();
         }
 
+        Sponge.eventManager().unregisterListeners(pluginContainer);
         getLogger().info("Plugin has been disabled.");
     }
 
     @Listener
-    public void registerCommands(RegisterCommandEvent<Command> event) {
-        MFMain.registerCommand(event);
+    public void registerCommands(RegisterCommandEvent<Parameterized> event) {
+        CMDExecutor.register(event, pluginContainer, new MFMain());
     }
 
     @Listener

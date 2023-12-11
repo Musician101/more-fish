@@ -1,7 +1,9 @@
 package me.elsiff.morefish.sponge.command;
 
 import me.elsiff.morefish.sponge.fishing.SpongeFishBag;
+import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
+import org.spongepowered.api.command.CommandCause;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.entity.EntityTypes;
@@ -11,13 +13,19 @@ import org.spongepowered.api.world.server.ServerWorld;
 
 import static me.elsiff.morefish.sponge.SpongeMoreFish.getPlugin;
 import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 
 class MFContraband extends MFCommand {
 
     @Override
-    public boolean canUse(@NotNull CommandContext context) {
-        return context.cause() instanceof ServerPlayer;
+    public boolean canUse(@NotNull CommandCause cause) {
+        return cause instanceof ServerPlayer;
+    }
+
+    @Override
+    public @NotNull Component description(CommandCause cause) {
+        return text("Have any contraband items in your Fish Bags returned to you.", GRAY);
     }
 
     @Override
@@ -39,5 +47,10 @@ class MFContraband extends MFCommand {
     @Override
     public String getName() {
         return "contraband";
+    }
+
+    @Override
+    public @NotNull Component usage(CommandCause cause) {
+        return text("/mf contraband");
     }
 }

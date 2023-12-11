@@ -1,13 +1,19 @@
 package me.elsiff.morefish.sponge.command;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
 import me.elsiff.morefish.sponge.command.argument.FishLengthParser;
 import me.elsiff.morefish.sponge.command.argument.FishTypeArgumentType;
 import me.elsiff.morefish.sponge.fishing.SpongeFishType;
+import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
+import org.spongepowered.api.command.CommandCause;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.Parameter;
+import org.spongepowered.api.command.parameter.Parameter.Value;
 import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.Item;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
@@ -18,6 +24,7 @@ import static me.elsiff.morefish.common.configuration.Lang.PREFIX;
 import static me.elsiff.morefish.sponge.configuration.SpongeLang.join;
 import static me.elsiff.morefish.sponge.item.FishItemStackConverter.createItemStack;
 import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static org.spongepowered.api.command.parameter.Parameter.key;
 
@@ -29,12 +36,12 @@ public class MFGive extends MFCommand {
     private static final Parameter.Value<ServerPlayer> PLAYER = Parameter.playerOrTarget().key("player").build();
 
     @Override
-    public boolean canUse(@NotNull CommandContext context) {
-        return testAdmin(context);
+    public @NotNull Component description(CommandCause cause) {
+        return text("Give a player a fish.", GRAY);
     }
 
     @Override
-    public CommandResult execute(CommandContext context) {
+    public CommandResult execute(@Nonnull CommandContext context) {
         return context.one(PLAYER).flatMap(player -> context.one(FISH_TYPE).map(fishType -> {
             double length = context.one(LENGTH).orElse(fishType.lengthMin());
             if (fishType.lengthMin() <= length && length <= fishType.lengthMax()) {
@@ -66,5 +73,15 @@ public class MFGive extends MFCommand {
     @Override
     public @NotNull List<Parameter> getParameters() {
         return List.of(PLAYER, FISH_TYPE, LENGTH, AMOUNT);
+    }
+
+    @Override
+    public @NotNull Optional<String> getPermission() {
+        return Optional.of("morefish.admin");
+    }
+
+    @Override
+    public @NotNull Component usage(CommandCause cause) {
+        return text("/mf give " + getParameters().stream().map(Value.class::cast).map(v -> v.usage(cause)).collect(Collectors.joining(" ")));
     }
 }

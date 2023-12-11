@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Optional;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
+import org.spongepowered.api.command.CommandCause;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.Parameter;
@@ -14,6 +15,7 @@ import static me.elsiff.morefish.sponge.configuration.SpongeLang.PREFIX;
 import static me.elsiff.morefish.sponge.configuration.SpongeLang.join;
 import static me.elsiff.morefish.sponge.configuration.SpongeLang.lang;
 import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 
 class MFStart extends MFCommand {
 
@@ -21,8 +23,8 @@ class MFStart extends MFCommand {
     private final Parameter.Value<Integer> seconds = Parameter.rangedInteger(0, Integer.MAX_VALUE).key("seconds").build();
 
     @Override
-    public boolean canUse(@NotNull CommandContext context) {
-        return testAdmin(context);
+    public @NotNull Component description(CommandCause cause) {
+        return text("Manually start a competition.", GRAY);
     }
 
     @Override
@@ -51,5 +53,15 @@ class MFStart extends MFCommand {
     @Override
     public String getName() {
         return "start";
+    }
+
+    @Override
+    public @NotNull Optional<String> getPermission() {
+        return Optional.of("morefish.admin");
+    }
+
+    @Override
+    public @NotNull Component usage(CommandCause cause) {
+        return text("/mf start " + seconds.usage(cause));
     }
 }

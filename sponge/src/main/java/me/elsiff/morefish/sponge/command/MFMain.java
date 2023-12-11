@@ -1,23 +1,26 @@
 package me.elsiff.morefish.sponge.command;
 
+import io.musician101.spongecmd.CMDExecutor;
+import io.musician101.spongecmd.help.HelpMainCMD;
 import java.util.List;
-import me.elsiff.morefish.sponge.SpongeMoreFish;
 import org.jetbrains.annotations.NotNull;
-import org.spongepowered.api.command.Command;
-import org.spongepowered.api.event.lifecycle.RegisterCommandEvent;
-import org.spongepowered.plugin.PluginContainer;
 
-public class MFMain extends MFHelp {
+import static me.elsiff.morefish.sponge.SpongeMoreFish.getPlugin;
 
-    public static void registerCommand(RegisterCommandEvent<Command> event) {
-        PluginContainer pluginContainer = SpongeMoreFish.getPlugin().getPluginContainer();
-        MFMain mfMain = new MFMain();
-        event.register(pluginContainer, mfMain.toCommand(), mfMain.getName());
+public class MFMain extends HelpMainCMD {
+
+    public MFMain() {
+        super(getPlugin().getPluginContainer());
     }
 
     @Override
-    public @NotNull List<MFCommand> getChildren() {
-        return List.of(new MFClear(), new MFContraband(), new MFEnd(), new MFGive(), new MFHelp(), new MFReload(), new MFSBCommand(), new MFStart(), new MFShop(), new MFSuspend(), new MFTop());
+    public List<String> getAliases() {
+        return List.of("mf");
+    }
+
+    @Override
+    public @NotNull List<CMDExecutor> getChildren() {
+        return List.of(new MFClear(), new MFContraband(), new MFEnd(), new MFGive(), new MFHelp(this), new MFReload(), new MFSBCommand(), new MFStart(), new MFShop(), new MFSuspend(), new MFTop());
     }
 
     @NotNull

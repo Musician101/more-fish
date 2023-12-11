@@ -3,7 +3,9 @@ package me.elsiff.morefish.sponge.command;
 import java.util.List;
 import java.util.Map;
 import me.elsiff.morefish.sponge.shop.FishShopGui;
+import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
+import org.spongepowered.api.command.CommandCause;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.Parameter;
@@ -15,11 +17,17 @@ import static me.elsiff.morefish.sponge.configuration.SpongeLang.PREFIX;
 import static me.elsiff.morefish.sponge.configuration.SpongeLang.join;
 import static me.elsiff.morefish.sponge.configuration.SpongeLang.lang;
 import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
 public class MFShop extends MFCommand {
 
-    private final Parameter.Value<ServerPlayer> player = Parameter.player().key("player").optional().build();
+    private final Parameter.Value<ServerPlayer> player = Parameter.player().key("player").requiredPermission("morefish.admin").usage(k -> " <player>").optional().build();
+
+    @Override
+    public @NotNull Component description(CommandCause cause) {
+        return text(cause.hasPermission("morefish.admin") ? "View or force a player to view the fish shop." : "View the fish shop.", GRAY);
+    }
 
     @Override
     public CommandResult execute(@NotNull CommandContext context) {
@@ -30,8 +38,8 @@ public class MFShop extends MFCommand {
 
             return shop(context, player);
         }).orElseGet(() -> {
-            if (context.cause() instanceof ServerPlayer p) {
-                return shop(context, p);
+            if (context.hasPermission("morefish.shop")) {
+                return shop(context, (ServerPlayer) context.cause());
             }
 
             return CommandResult.error(join(PREFIX, text("Permission denied.", RED)));
@@ -61,5 +69,10 @@ public class MFShop extends MFCommand {
         }
 
         return CommandResult.success();
+    }
+
+    @Override
+    public @NotNull Component usage(CommandCause cause) {
+        return text("/mf shop" + player.usage(cause));
     }
 }
