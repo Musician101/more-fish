@@ -14,7 +14,7 @@ dependencies {
 
 sponge {
     apiVersion("10.0.0")
-    plugin("serversaturday") {
+    plugin("morefish") {
         loader {
             name(PluginLoaders.JAVA_PLAIN)
             version("1.0")

@@ -3,7 +3,7 @@ package me.elsiff.morefish.sponge.fishing.competition;
 import java.util.List;
 import java.util.UUID;
 import me.elsiff.morefish.common.fishing.competition.Prize;
-import me.elsiff.morefish.sponge.util.NumberUtils;
+import me.elsiff.morefish.common.util.NumberUtils;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.exception.CommandException;
