@@ -1,7 +1,7 @@
 plugins {
     java
     `java-library`
-    id("com.github.johnrengelman.shadow")
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = "me.elsiff"
@@ -23,11 +23,8 @@ repositories {
 dependencies {
     compileOnlyApi("com.comphenix.protocol:ProtocolLib:5.1.0")
     compileOnlyApi("com.github.MilkBowl:VaultAPI:1.7.1")
-<<<<<<< HEAD
-    compileOnlyApi("dev.folia:folia-api:1.19.4-R0.1-SNAPSHOT")
-=======
-    compileOnlyApi("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
->>>>>>> origin/upcoming
+    compileOnlyApi("dev.folia:folia-api:1.20.2-R0.1-SNAPSHOT")
+    //compileOnlyApi("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
     compileOnlyApi(files("lib/mcMMO.jar"))
 
     api("com.github.musician101.musigui:paper:1.2.2") {

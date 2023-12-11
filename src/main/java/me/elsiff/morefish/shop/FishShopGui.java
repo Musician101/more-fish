@@ -112,11 +112,7 @@ public final class FishShopGui extends AbstractFishShopGUI {
     }
 
     private void updateButtons() {
-<<<<<<< HEAD
-        Bukkit.getGlobalRegionScheduler().runDelayed(MoreFish.instance(), task -> {
-=======
-        Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), () -> {
->>>>>>> origin/upcoming
+        Bukkit.getGlobalRegionScheduler().runDelayed(MoreFish.getPlugin(), task -> {
             List<ItemStack> fish = fishBags.getFish(player, page);
             IntStream.range(0, 45).forEach(i -> {
                 removeButton(i);
@@ -156,13 +152,9 @@ public final class FishShopGui extends AbstractFishShopGUI {
     }
 
     private void updatePriceIcon(double price) {
-<<<<<<< HEAD
-        Bukkit.getGlobalRegionScheduler().runDelayed(MoreFish.instance(), task -> {
+
+        Bukkit.getGlobalRegionScheduler().runDelayed(MoreFish.getPlugin(), task -> {
             Component name = Lang.replace(text("Sell for $%price%"), Map.of("%price%", String.valueOf(price)));
-=======
-        Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), () -> {
-            Component name = Lang.replace(text("Sell for $%price%", GREEN), Map.of("%price%", String.valueOf(price)));
->>>>>>> origin/upcoming
             setButton(49, customName(new ItemStack(Material.EMERALD), name), ClickType.LEFT, p -> {
                 List<ItemStack> filteredFish = getFilteredFish();
                 if (filteredFish.isEmpty()) {

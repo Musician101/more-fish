@@ -7,13 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-<<<<<<< HEAD
-import java.util.stream.Collectors;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import me.elsiff.morefish.MoreFish;
-=======
->>>>>>> origin/upcoming
 import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.Fish;
 import me.elsiff.morefish.fishing.FishType;
@@ -44,13 +37,8 @@ public interface FishItemStackConverter {
         if (!fish.type().hasNotFishItemFormat()) {
             Map<String, Object> replacement = getFormatReplacementMap(fish, length, catcher);
             GsonComponentSerializer gson = GsonComponentSerializer.gson();
-<<<<<<< HEAD
-            itemMeta.displayName(gson.deserialize(Lang.replace(getFormatConfig().map(cs -> cs.get("display-name").toString()).orElse("null"), replacement, catcher)));
-            List<Component> lore = Lang.replace(getFormatConfig().map(json -> json.getAsJsonArray("lore").asList().stream().map(JsonElement::toString).toList()).orElse(List.of()), replacement, catcher).stream().map(gson::deserialize).collect(Collectors.toList());
-=======
             itemMeta.displayName(Lang.replace(gson.deserialize(getFormatConfig().map(cs -> cs.get("display-name").toString()).orElse("null")), replacement, catcher));
             List<Component> lore = Lang.replace(getFormatConfig().map(json -> json.getAsJsonArray("lore").asList().stream().map(JsonElement::toString).map(gson::deserialize).toList()).orElse(new ArrayList<>()), replacement, catcher);
->>>>>>> origin/upcoming
             List<Component> oldLore = itemMeta.lore();
             if (oldLore != null) {
                 lore.addAll(oldLore.stream().map(component -> {

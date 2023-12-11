@@ -13,9 +13,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-<<<<<<< HEAD
-=======
-import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
@@ -24,7 +21,7 @@ import static me.elsiff.morefish.configuration.Lang.join;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
->>>>>>> origin/upcoming
+
 
 public final class FishingCompetitionHost {
 
@@ -128,11 +125,7 @@ public final class FishingCompetitionHost {
     public void openCompetitionFor(long tick) {
         long duration = tick / (long) 20;
         getCompetition().enable();
-<<<<<<< HEAD
         timerTask = Bukkit.getGlobalRegionScheduler().runDelayed(getPlugin(), task -> closeCompetition(), tick);
-=======
-        timerTask = Bukkit.getScheduler().runTaskLater(getPlugin(), (Runnable) this::closeCompetition, tick);
->>>>>>> origin/upcoming
         if (getConfig().getBoolean("general.use-boss-bar")) {
             timerBarHandler.enableTimer(duration);
         }

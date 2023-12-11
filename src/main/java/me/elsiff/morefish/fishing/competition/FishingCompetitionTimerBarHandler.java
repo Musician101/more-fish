@@ -3,14 +3,11 @@ package me.elsiff.morefish.fishing.competition;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import java.util.Map;
 import me.elsiff.morefish.configuration.Lang;
-<<<<<<< HEAD
-=======
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.bossbar.BossBar.Color;
 import net.kyori.adventure.bossbar.BossBar.Overlay;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
->>>>>>> origin/upcoming
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.EventHandler;
@@ -18,10 +15,6 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-<<<<<<< HEAD
-=======
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
@@ -29,7 +22,7 @@ import static me.elsiff.morefish.configuration.Lang.join;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
 import static net.kyori.adventure.text.format.TextDecoration.BOLD;
->>>>>>> origin/upcoming
+
 
 public final class FishingCompetitionTimerBarHandler {
 
@@ -50,17 +43,10 @@ public final class FishingCompetitionTimerBarHandler {
     }
 
     public void enableTimer(long duration) {
-<<<<<<< HEAD
-        BarColor barColor = BarColor.valueOf(getPlugin().getConfig().getString("messages.contest-bar-color", "blue").toUpperCase());
-        timerBar = Bukkit.createBossBar(getTimerBarKey(), "", barColor, BarStyle.SEGMENTED_10);
-        Bukkit.getOnlinePlayers().forEach(timerBar::addPlayer);
         barUpdatingTask = Bukkit.getGlobalRegionScheduler().runAtFixedRate(getPlugin(), task -> new TimerBarUpdater(duration).run(), 1, 20);
-=======
         Color barColor = Color.NAMES.valueOr(getPlugin().getConfig().getString("messages.contest-bar-color", "blue"), Color.BLUE);
         timerBar = BossBar.bossBar(timerBarTitle(duration), 100, barColor, Overlay.NOTCHED_10);
-        Bukkit.getOnlinePlayers().forEach(player -> player.hideBossBar(timerBar));
-        barUpdatingTask = new TimerBarUpdater(duration).runTaskTimer(getPlugin(), 0, 20L);
->>>>>>> origin/upcoming
+        Bukkit.getOnlinePlayers().forEach(player -> player.showBossBar(timerBar));
         Bukkit.getPluginManager().registerEvents(barDisplayer = new TimerBarDisplayer(), getPlugin());
     }
 

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.IntStream;
+import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.fishing.FishRarity;
 import me.elsiff.morefish.fishing.FishTypeTable;
 import net.kyori.adventure.text.Component;
@@ -71,11 +72,8 @@ public class FishShopFilterGui extends AbstractFishShopGUI {
                 selectedRarities.add(fishRarity);
             }
 
-<<<<<<< HEAD
-            Bukkit.getGlobalRegionScheduler().runDelayed(MoreFish.instance(), task -> updateIcon(slot, fishRarity), 2);
-=======
-            Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), () -> updateIcon(slot, fishRarity), 2);
->>>>>>> origin/upcoming
+
+            Bukkit.getGlobalRegionScheduler().runDelayed(MoreFish.getPlugin(), task -> updateIcon(slot, fishRarity), 2);
         });
     }
 }
