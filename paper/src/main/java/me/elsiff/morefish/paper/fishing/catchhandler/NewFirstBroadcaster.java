@@ -1,8 +1,8 @@
 package me.elsiff.morefish.paper.fishing.catchhandler;
 
 import me.elsiff.morefish.common.configuration.Lang;
-import me.elsiff.morefish.paper.fishing.competition.PaperFishingCompetition;
 import me.elsiff.morefish.paper.fishing.PaperFish;
+import me.elsiff.morefish.paper.fishing.competition.PaperFishingCompetition;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;

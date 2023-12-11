@@ -2,8 +2,8 @@ package me.elsiff.morefish.paper.fishing.catchhandler;
 
 import me.elsiff.morefish.common.fishing.catchhandler.CatchHandler;
 import me.elsiff.morefish.common.fishing.competition.FishRecord;
-import me.elsiff.morefish.paper.fishing.competition.PaperFishingCompetition;
 import me.elsiff.morefish.paper.fishing.PaperFish;
+import me.elsiff.morefish.paper.fishing.competition.PaperFishingCompetition;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 

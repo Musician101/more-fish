@@ -20,7 +20,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import static me.elsiff.morefish.common.configuration.Lang.PREFIX;
-import static me.elsiff.morefish.paper.item.FishItemStackConverter.createItemStack;
 import static net.kyori.adventure.text.Component.text;
 
 class MFGive extends MFCommand implements LiteralCommand {

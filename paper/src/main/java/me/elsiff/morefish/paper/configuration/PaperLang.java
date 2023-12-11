@@ -1,8 +1,8 @@
 package me.elsiff.morefish.paper.configuration;
 
 import me.elsiff.morefish.common.configuration.Lang;
-import me.elsiff.morefish.paper.fishing.competition.PaperFishingCompetition;
 import me.elsiff.morefish.paper.fishing.PaperFish;
+import me.elsiff.morefish.paper.fishing.competition.PaperFishingCompetition;
 import org.bukkit.Bukkit;
 
 import static me.elsiff.morefish.paper.PaperMoreFish.getPlugin;
