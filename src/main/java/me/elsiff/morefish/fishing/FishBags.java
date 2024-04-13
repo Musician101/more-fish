@@ -29,8 +29,7 @@ import static me.elsiff.morefish.MoreFish.getPlugin;
 
 public class FishBags implements Listener {
 
-    @NotNull
-    private final List<FishBag> bags = new ArrayList<>();
+    @NotNull private final List<FishBag> bags = new ArrayList<>();
 
     public boolean addFish(@NotNull Player player, @NotNull ItemStack itemStack) {
         FishBag fishBag = getFishBag(player);
@@ -102,6 +101,7 @@ public class FishBags implements Listener {
         Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), () -> player.sendMessage(Component.text("[MF] CONTRABAND DETECTED IN YOUR FISH BAG. CLICK THIS MESSAGE TO RETRIEVE IT NOW.").color(NamedTextColor.RED).clickEvent(ClickEvent.runCommand("/mf contraband"))));
     }
 
+    @SuppressWarnings("StringConcatenationArgumentToLogCall")
     public void save() {
         bags.forEach(fishBag -> {
             YamlConfiguration yaml = new YamlConfiguration();

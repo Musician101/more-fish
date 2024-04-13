@@ -1,53 +1,69 @@
-#
-# MoreFish Configuration by elsiff
-#
-# Wiki: https://github.com/elsiff/MoreFish/wiki
-#
-
 general:
-  auto-start: false
-  use-boss-bar: true
-  only-for-contest: false
-  no-fishing-unless-contest: false
+  #The list of worlds where players can't participate the contest.
+  # Example for using this:
+  # contest-disabled-worlds:
+  #   - 'world_nether'
+  #   - 'world_the_end'
   contest-disabled-worlds: [ ]
-  replace-only-fish: false
+  #Keeps a record of all-time best catches for each user.
+  #You must type '/mf clear alltime' to clear all-time records.
   save-records: false
 
+# Configures prizes which will be given to rank owners when fishing contest ends.
+# The type of this property is similar to a map. Keys infer range of rank numbers, and Values are lists of commands to be sent for prizing.
+# Example:
+# contest-prizes:
+#  1:
+#    - "say @p is 1st"
+#  2~3:
+#    - "say @p is 2nd~3rd"
+#  4~:
+#    - "say @p is 4th~"
 contest-prizes: { }
 
 auto-running:
+  # Toggles auto-running feature. Using it, fishing contest starts periodically with predetermined timer.
   enable: false
+  #The minimum amount of players required to start contest.
   required-players: 5
+  # Time limit of the contest measured in seconds.
   timer: 300
+  # The list of times when contest will start automatically.
+  # These times are local to the server location.
   # HH:mm (H: 0-23, m: 0-59)
   start-time:
-    - "09:00"
-    - "11:30"
+    - "00:00"
+    - "02:00"
+    - "04:00"
+    - "06:00"
+    - "08:00"
+    - "10:00"
+    - "12:00"
     - "14:00"
+    - "16:00"
     - "18:00"
-    - "21:00"
+    - "20:00"
+    - "22:00"
 
+# Sets the maximum amount of bags and how many each bag will cost.
+# Example
+# fish-bag-upgrades:
+#   1: 1000
+#   2: 2000
 fish-bag-upgrades:
   1: 1000
 
 fish-shop:
+  # Enables the Fish Shop feature.
   enable: false
+  # The multiplier to be used for calculating prices of fish.
+  # (Price = (Length × Multiplier) + Additional Price From Rarity)
   multiplier: 0.1
-  round-decimal-points: true
-  sign:
-    title: "&b&l[FishShop]"
-    creation: "[FishShop]"
 
-# -- Announcement Value --
-# '-1' means server broadcast
-# '0' is only for the catcher
-# Positive number means the block radius of announcing messages
 messages:
-  announce-catch: -1
-  announce-new-1st: -1
-  only-announce-fishing-rod: false
-  broadcast-start: true
-  broadcast-stop: true
-  show-top-on-ending: true
+  # The color of boss bar for contest.
+  # For color list, visit https://hub.spigotmc.org/javadocs/spigot/org/bukkit/boss/BarColor.html
   contest-bar-color: 'blue'
+  # The number of top records that would be displayed in the ranking.
+  # When it's set to '5', '/morefish top' command will show the ranking by 5th record.
   top-number: 3

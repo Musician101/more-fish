@@ -26,7 +26,9 @@
             "color": "dark_blue",
             "display-name": "RARE",
             "conditions": {
-                "mcmmo-skill": "Fishing|25"
+                "mcmmo-skills": {
+                    "Fishing": 25
+                }
             },
             "chance": 22,
             "additional-price": 3.0
@@ -45,7 +47,9 @@
             "color": "gold",
             "display-name": "LEGENDARY",
             "conditions": {
-                "mcmmo-skill": "Fishing|100"
+                "mcmmo-skills": {
+                    "Fishing": 100
+                }
             },
             "additional-price": 5.0
         },
@@ -55,7 +59,9 @@
             "color": "light_purple",
             "display-name": "MYTHIC",
             "conditions": {
-                "mcmmo-skill": "Fishing|200"
+                "mcmmo-skills": {
+                    "Fishing": 200
+                }
             },
             "additional-price": 6.0
         },
@@ -63,7 +69,9 @@
             "color": "dark_purple",
             "display-name": "EPIC",
             "conditions": {
-                "mcmmo-skill": "Fishing|50"
+                "mcmmo-skills": {
+                    "Fishing": 50
+                }
             },
             "chance": 6.5,
             "additional-price": 4.0

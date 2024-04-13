@@ -5,7 +5,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import me.elsiff.morefish.announcement.PlayerAnnouncement;
 import me.elsiff.morefish.fishing.competition.Prize;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -17,17 +16,6 @@ public interface Config {
 
     private static FileConfiguration getConfig() {
         return getPlugin().getConfig();
-    }
-
-    @NotNull
-    static PlayerAnnouncement getDefaultCatchAnnouncement() {
-        ConfigurationSection cs = getConfig().getConfigurationSection("messages");
-        double configuredValue = -1;
-        if (cs != null) {
-            configuredValue = cs.getDouble("announce-catch", -1);
-        }
-
-        return PlayerAnnouncement.fromValue(configuredValue);
     }
 
     @NotNull

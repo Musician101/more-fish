@@ -1,7 +1,6 @@
 package me.elsiff.morefish.command;
 
 import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.musician101.bukkitier.command.LiteralCommand;
 import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.hooker.MusiBoardHooker;
@@ -27,7 +26,7 @@ public class MFSBCommand extends MFCommand implements LiteralCommand {
     }
 
     @Override
-    public int execute(@NotNull CommandContext<CommandSender> context) throws CommandSyntaxException {
+    public int execute(@NotNull CommandContext<CommandSender> context) {
         Player player = (Player) context.getSource();
         if (getCompetition().isEnabled()) {
             MusiBoardHooker musiBoard = getPlugin().getMusiBoard();

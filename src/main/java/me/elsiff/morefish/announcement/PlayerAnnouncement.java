@@ -51,5 +51,6 @@ public interface PlayerAnnouncement {
         return new ServerAnnouncement();
     }
 
-    @NotNull List<Player> receiversOf(@NotNull Player var1);
+    @NotNull
+    List<Player> receiversOf(@NotNull Player var1);
 }

@@ -42,10 +42,8 @@ import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 
 public final class FishShopGui extends AbstractFishShopGUI {
 
-    @NotNull
-    private final FishBags fishBags;
-    @NotNull
-    private final List<FishRarity> selectedRarities;
+    @NotNull private final FishBags fishBags;
+    @NotNull private final List<FishRarity> selectedRarities;
     private int page;
 
     public FishShopGui(@NotNull Player user, int page) {

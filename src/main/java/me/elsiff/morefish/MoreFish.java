@@ -1,7 +1,5 @@
 package me.elsiff.morefish;
 
-import java.time.LocalTime;
-import java.util.List;
 import me.elsiff.morefish.command.MFMain;
 import me.elsiff.morefish.configuration.Config;
 import me.elsiff.morefish.configuration.Lang;
@@ -16,12 +14,14 @@ import me.elsiff.morefish.hooker.MusiBoardHooker;
 import me.elsiff.morefish.hooker.ProtocolLibHooker;
 import me.elsiff.morefish.hooker.VaultHooker;
 import me.elsiff.morefish.shop.FishShop;
-import me.elsiff.morefish.shop.FishShopSignListener;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Server;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+
+import java.time.LocalTime;
+import java.util.List;
 
 import static io.musician101.bukkitier.Bukkitier.registerCommand;
 import static me.elsiff.morefish.configuration.Lang.PREFIX;
@@ -29,6 +29,8 @@ import static net.kyori.adventure.text.Component.text;
 
 public final class MoreFish extends JavaPlugin {
 
+    @NotNull
+    private final RecordHandler allTimeRecords = new RecordHandler();
     @NotNull
     private final FishingCompetitionAutoRunner autoRunner = new FishingCompetitionAutoRunner();
     @NotNull
@@ -79,6 +81,11 @@ public final class MoreFish extends JavaPlugin {
     }
 
     @NotNull
+    public RecordHandler getAllTimeRecords() {
+        return allTimeRecords;
+    }
+
+    @NotNull
     public FishingCompetition getCompetition() {
         return competition;
     }
@@ -120,7 +127,9 @@ public final class MoreFish extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        competitionHost.closeCompetition();
         fishBags.save();
+        allTimeRecords.save();
         if (autoRunner.isEnabled()) {
             autoRunner.disable();
         }
@@ -136,15 +145,12 @@ public final class MoreFish extends JavaPlugin {
         musiBoard.hookIfEnabled(this);
         fishBags.load();
         applyConfig();
+        allTimeRecords.load();
         Server server = getServer();
         PluginManager pm = server.getPluginManager();
         pm.registerEvents(new FishingListener(), this);
-        pm.registerEvents(new FishShopSignListener(), this);
         pm.registerEvents(fishBags, this);
         registerCommand(getPlugin(), new MFMain());
         getLogger().info("Plugin has been enabled.");
-        if (getConfig().getBoolean("general.auto-start")) {
-            competitionHost.openCompetition();
-        }
     }
 }

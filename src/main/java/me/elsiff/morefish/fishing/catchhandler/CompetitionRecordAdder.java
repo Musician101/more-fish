@@ -15,6 +15,5 @@ public record CompetitionRecordAdder() implements CatchHandler {
         if (competition.isEnabled()) {
             competition.putRecord(new Record(catcher.getUniqueId(), fish));
         }
-
     }
 }

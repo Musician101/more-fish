@@ -14,8 +14,9 @@ import static me.elsiff.morefish.MoreFish.getPlugin;
 
 public final class FishingCompetition {
 
-    @NotNull
-    private FishingCompetition.State state = State.DISABLED;
+    private final RecordHandler records = new RecordHandler();
+
+    @NotNull private FishingCompetition.State state = State.DISABLED;
 
     private void checkStateDisabled() {
         if (state != State.DISABLED) {
@@ -30,7 +31,7 @@ public final class FishingCompetition {
     }
 
     public void clearRecords() {
-        getRecords().clear();
+        records.clear();
     }
 
     public boolean containsContestant(@NotNull UUID contestant) {
@@ -54,11 +55,11 @@ public final class FishingCompetition {
 
     @NotNull
     public List<Record> getRanking() {
-        return this.getRecords().all();
+        return records.all();
     }
 
-    private RecordHandler getRecords() {
-        return new RecordHandler();
+    public List<Record> getRecords() {
+        return records.all();
     }
 
     @NotNull
@@ -76,16 +77,7 @@ public final class FishingCompetition {
 
     public void putRecord(@NotNull Record record) {
         checkStateEnabled();
-        if (containsContestant(record.fisher())) {
-            Record oldRecord = recordOf(record.fisher());
-            if (record.fish().length() > oldRecord.fish().length()) {
-                getRecords().update(record);
-            }
-        }
-        else {
-            getRecords().insert(record);
-        }
-
+        records.add(record);
         getMusiBoard().update();
     }
 
@@ -124,7 +116,7 @@ public final class FishingCompetition {
 
     @NotNull
     public List<Record> top(int size) {
-        return getRecords().top(size);
+        return records.top(size);
     }
 
     public boolean willBeNewFirst(@NotNull OfflinePlayer catcher, @NotNull Fish fish) {

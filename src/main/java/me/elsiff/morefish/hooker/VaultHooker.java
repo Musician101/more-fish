@@ -9,8 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 public final class VaultHooker implements PluginHooker {
 
-    @Nullable
-    private Economy economy;
+    @Nullable private Economy economy;
     private boolean hasHooked;
 
     @NotNull

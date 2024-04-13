@@ -11,7 +11,7 @@ public class MFMain extends MFHelp {
     @NotNull
     @Override
     public List<Command<? extends ArgumentBuilder<CommandSender, ?>>> arguments() {
-        return List.of(new MFClear(), new MFContraband(), new MFEnd(), new MFGive(), new MFHelp(), new MFReload(), new MFSBCommand(), new MFStart(), new MFShop(), new MFSuspend(), new MFTop());
+        return List.of(new MFAllTime(), new MFClear(), new MFContraband(), new MFEnd(), new MFGive(), new MFHelp(), new MFReload(), new MFSBCommand(), new MFStart(), new MFShop(), new MFSuspend(), new MFTop());
     }
 
     @NotNull

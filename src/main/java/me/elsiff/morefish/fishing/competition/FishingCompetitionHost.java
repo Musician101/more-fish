@@ -24,8 +24,7 @@ import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
 
 public final class FishingCompetitionHost {
 
-    @NotNull
-    private final FishingCompetitionTimerBarHandler timerBarHandler = new FishingCompetitionTimerBarHandler();
+    @NotNull private final FishingCompetitionTimerBarHandler timerBarHandler = new FishingCompetitionTimerBarHandler();
     private BukkitTask timerTask;
 
     public void closeCompetition() {
@@ -41,11 +40,7 @@ public final class FishingCompetitionHost {
             }
         }
 
-        boolean broadcast = getMsgConfig().getBoolean("broadcast-stop");
-        if (broadcast) {
-            Bukkit.broadcast(Lang.CONTEST_STOP);
-        }
-
+        Bukkit.broadcast(Lang.CONTEST_STOP);
         if (!suspend) {
             if (!getPrizes().isEmpty()) {
                 List<Record> ranking = getCompetition().getRanking();
@@ -59,14 +54,14 @@ public final class FishingCompetitionHost {
                 }
             }
 
-            if (broadcast && getMsgConfig().getBoolean("show-top-on-ending")) {
-                Bukkit.getOnlinePlayers().forEach(this::informAboutRanking);
-            }
+            Bukkit.getOnlinePlayers().forEach(this::informAboutRanking);
         }
 
-        if (!getConfig().getBoolean("general.save-records")) {
-            getCompetition().clearRecords();
+        if (getConfig().getBoolean("general.save-records")) {
+            getPlugin().getAllTimeRecords().add(getCompetition().getRecords());
         }
+
+        getCompetition().clearRecords();
     }
 
     @NotNull
@@ -90,7 +85,7 @@ public final class FishingCompetitionHost {
 
     public void informAboutRanking(@NotNull CommandSender receiver) {
         if (getCompetition().getRanking().isEmpty()) {
-            receiver.sendMessage(join(PREFIX, text("Nobody made any record yet.")));
+            receiver.sendMessage(join(PREFIX, text("Nobody has caught anything yet.")));
         }
         else {
             int topSize = getMsgConfig().getInt("top-number", 1);
@@ -110,29 +105,15 @@ public final class FishingCompetitionHost {
                 }
             }
         }
-
-    }
-
-    public void openCompetition() {
-        getCompetition().enable();
-        if (getMsgConfig().getBoolean("broadcast-start")) {
-            Bukkit.broadcast(Lang.CONTEST_START);
-        }
-
     }
 
     public void openCompetitionFor(long tick) {
         long duration = tick / (long) 20;
         getCompetition().enable();
         timerTask = Bukkit.getScheduler().runTaskLater(getPlugin(), (Runnable) this::closeCompetition, tick);
-        if (getConfig().getBoolean("general.use-boss-bar")) {
-            timerBarHandler.enableTimer(duration);
-        }
-
-        if (getMsgConfig().getBoolean("broadcast-start")) {
-            Bukkit.broadcast(Lang.CONTEST_START);
-            Bukkit.broadcast(Lang.replace(Lang.CONTEST_START_TIMER, Map.of("%time%", Lang.time(duration))));
-        }
+        timerBarHandler.enableTimer(duration);
+        Bukkit.broadcast(Lang.CONTEST_START);
+        Bukkit.broadcast(Lang.replace(Lang.CONTEST_START_TIMER, Map.of("%time%", Lang.time(duration))));
     }
 
     private Map<String, Object> topReplacementOf(int number, Record record) {

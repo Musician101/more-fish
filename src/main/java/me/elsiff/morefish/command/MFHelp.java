@@ -29,20 +29,18 @@ class MFHelp extends MFCommand implements LiteralCommand {
         sender.sendMessage(join(label, text(" help")));
 
         if (testAdmin(sender)) {
-            sender.sendMessage(join(label, text(" begin [runningTime(sec)]")));
-            sender.sendMessage(join(label, text(" suspend")));
+            sender.sendMessage(join(label, text(" clear [alltime|current]")));
             sender.sendMessage(join(label, text(" end")));
             sender.sendMessage(join(label, text(" give <player> <fish> [length] [amount]")));
-            sender.sendMessage(join(label, text(" clear")));
+            sender.sendMessage(join(label, text(" start [runningTime(sec)]")));
+            sender.sendMessage(join(label, text(" suspend")));
             sender.sendMessage(join(label, text(" reload")));
         }
 
-        if (sender.hasPermission("morefish.shop") || testAdmin(sender)) {
-            sender.sendMessage(join(label, text(" shop"), text((testAdmin(sender) ? " [player]" : ""))));
-        }
-
+        sender.sendMessage(join(label, text(" alltime")));
         sender.sendMessage(join(label, text(" contraband")));
-        sender.sendMessage(join(label, text("scoreboard")));
+        sender.sendMessage(join(label, text(" scoreboard")));
+        sender.sendMessage(join(label, text(" shop"), text((testAdmin(sender) ? " [player]" : ""))));
         sender.sendMessage(join(label, text(" top")));
         return 1;
     }

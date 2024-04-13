@@ -18,9 +18,7 @@ public class MFSuspend extends MFCommand implements LiteralCommand {
         CommandSender sender = context.getSource();
         if (!getCompetition().isDisabled()) {
             getCompetitionHost().closeCompetition(true);
-            if (!getConfig().getBoolean("messages.broadcast-stop", false)) {
-                sender.sendMessage(Lang.CONTEST_STOP);
-            }
+            sender.sendMessage(Lang.CONTEST_STOP);
         }
         else {
             sender.sendMessage(Lang.ALREADY_STOPPED);

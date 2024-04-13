@@ -16,17 +16,12 @@ public record FishShop() {
         return getShopConfig().getDouble("multiplier");
     }
 
-    private boolean getRoundDecimalPoints() {
-        return getShopConfig().getBoolean("round-decimal-points");
-    }
-
     private ConfigurationSection getShopConfig() {
         return getPlugin().getConfig().getConfigurationSection("fish-shop");
     }
 
     public double priceOf(@NotNull Fish fish) {
         double rarityPrice = fish.type().additionalPrice();
-        double price = this.getPriceMultiplier() * fish.length() + rarityPrice;
-        return getRoundDecimalPoints() ? Math.floor(price) : price;
+        return this.getPriceMultiplier() * fish.length() + rarityPrice;
     }
 }

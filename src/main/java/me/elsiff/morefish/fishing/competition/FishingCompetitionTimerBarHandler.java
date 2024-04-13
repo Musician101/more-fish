@@ -44,7 +44,7 @@ public final class FishingCompetitionTimerBarHandler {
 
     public void enableTimer(long duration) {
         Color barColor = Color.NAMES.valueOr(getPlugin().getConfig().getString("messages.contest-bar-color", "blue"), Color.BLUE);
-        timerBar = BossBar.bossBar(timerBarTitle(duration), 100, barColor, Overlay.NOTCHED_10);
+        timerBar = BossBar.bossBar(timerBarTitle(duration), 1, barColor, Overlay.NOTCHED_10);
         Bukkit.getOnlinePlayers().forEach(player -> player.hideBossBar(timerBar));
         barUpdatingTask = new TimerBarUpdater(duration).runTaskTimer(getPlugin(), 0, 20L);
         Bukkit.getPluginManager().registerEvents(barDisplayer = new TimerBarDisplayer(), getPlugin());

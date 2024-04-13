@@ -28,8 +28,7 @@ public class FishShopFilterGui extends AbstractFishShopGUI {
 
     public static final Map<UUID, List<FishRarity>> FILTERS = new HashMap<>();
 
-    @NotNull
-    private final List<FishRarity> selectedRarities;
+    @NotNull private final List<FishRarity> selectedRarities;
 
     public FishShopFilterGui(int page, @NotNull Player user) {
         super(text("Set Sale Filter(s)"), user);

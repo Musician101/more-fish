@@ -13,8 +13,7 @@ import org.jetbrains.annotations.NotNull;
 public class FishBag {
 
     private final Map<Integer, List<ItemStack>> pages = new HashMap<>();
-    @NotNull
-    private final UUID uuid;
+    @NotNull private final UUID uuid;
     private int maxAllowedPages = 0;
 
     public FishBag(@NotNull UUID uuid) {

@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import me.elsiff.morefish.announcement.PlayerAnnouncement;
-import me.elsiff.morefish.configuration.Config;
 import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.catchhandler.CatchCommandExecutor;
 import me.elsiff.morefish.fishing.catchhandler.CatchFireworkSpawner;
@@ -36,11 +35,13 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
@@ -127,7 +128,7 @@ public final class FishTypeTable {
                     boolean isDefault = getOrDefaultFalse(json, "default");
                     double chance = getOrDefaultZero(json, "chance") / 100D;
                     TextColor color = Lang.getColor(json.get("color").getAsString());
-                    PlayerAnnouncement announcement = PlayerAnnouncement.fromConfigOrDefault(json, "catch-announce", Config.getDefaultCatchAnnouncement());
+                    PlayerAnnouncement announcement = PlayerAnnouncement.fromConfigOrDefault(json, "catch-announce", PlayerAnnouncement.ofServerBroadcast());
                     boolean skipItemFormat = getOrDefaultFalse(json, "skip-item-format");
                     boolean noDisplay = getOrDefaultFalse(json, "no-display");
                     boolean firework = getOrDefaultFalse(json, "firework");
@@ -215,10 +216,16 @@ public final class FishTypeTable {
         }
         if (json.has("enchantments")) {
             StreamSupport.stream(json.getAsJsonArray("enchantments").spliterator(), false).map(JsonElement::getAsString).map(string -> string.split("\\|")).forEach(tokens -> {
-                Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(tokens[0]));
-                if (enchantment != null) {
+                NamespacedKey key = tokens[0].contains(":") ? NamespacedKey.fromString(tokens[0]) : NamespacedKey.minecraft(tokens[0]);
+                Enchantment enchantment;
+                if (key != null && (enchantment = Registry.ENCHANTMENT.get(key)) != null) {
                     int level = Integer.parseInt(tokens[1]);
-                    itemMeta.addEnchant(enchantment, level, true);
+                    if (itemMeta instanceof EnchantmentStorageMeta esm) {
+                        esm.addStoredEnchant(enchantment, level, true);
+                    }
+                    else {
+                        itemMeta.addEnchant(enchantment, level, true);
+                    }
                 }
             });
         }
@@ -281,7 +288,7 @@ public final class FishTypeTable {
             throw new IllegalStateException("Rarity must be contained in the table");
         }
 
-        List<FishType> types = map.get(rarity).stream().filter(type -> type.conditions().stream().allMatch(condition -> condition.check(caught, fisher, competition))).toList();
+        List<FishType> types = map.get(rarity).stream().filter(type -> type.conditions().stream().allMatch(condition -> condition.check(caught, fisher))).toList();
         if (types.isEmpty()) {
             return pickRandomType(caught, fisher, competition);
         }

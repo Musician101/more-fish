@@ -37,9 +37,7 @@ class MFStart extends MFCommand implements LiteralCommand {
         CommandSender sender = context.getSource();
         if (getCompetition().isDisabled()) {
             getCompetitionHost().openCompetitionFor(getConfig().getInt("auto-running.timer") * 20L);
-            if (!getConfig().getBoolean("messages.broadcast-start", false)) {
-                sender.sendMessage(Lang.CONTEST_START);
-            }
+            sender.sendMessage(Lang.CONTEST_START);
         }
         else {
             sender.sendMessage(ALREADY_ONGOING);
@@ -62,9 +60,7 @@ class MFStart extends MFCommand implements LiteralCommand {
             if (getCompetition().isDisabled()) {
                 long runningTime = context.getArgument("seconds", Long.class);
                 getCompetitionHost().openCompetitionFor(runningTime * 20L);
-                if (!getConfig().getBoolean("messages.broadcast-start", false)) {
-                    sender.sendMessage(Lang.replace(Lang.CONTEST_START_TIMER, Map.of("%time%", Lang.time(runningTime))));
-                }
+                sender.sendMessage(Lang.replace(Lang.CONTEST_START_TIMER, Map.of("%time%", Lang.time(runningTime))));
             }
             else {
                 sender.sendMessage(ALREADY_ONGOING);
