@@ -1,9 +1,5 @@
 package me.elsiff.morefish.configuration;
 
-import java.time.Duration;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import me.elsiff.morefish.fishing.competition.FishingCompetition;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
@@ -15,6 +11,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.time.Duration;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
 import static net.kyori.adventure.text.Component.text;
@@ -100,7 +101,7 @@ public interface Lang {
             int number = Integer.parseInt(match.replace("%top_fish_", "").replaceAll("%", ""));
             return b.build().replaceText(b2 -> {
                 b2.matchLiteral(match);
-                b2.replacement(getCompetition().getRanking().size() >= number ? getCompetition().recordOf(number).fish().type().name() : "none");
+                b2.replacement(getCompetition().getRecords().size() >= number ? getCompetition().recordOf(number).getFishName() : "none");
             });
         }).build();
     }
@@ -111,7 +112,7 @@ public interface Lang {
             int number = Integer.parseInt(match.replace("%top_fish_length_", "").replaceAll("%", ""));
             return b.build().replaceText(b2 -> {
                 b2.matchLiteral(match);
-                b2.replacement(getCompetition().getRanking().size() >= number ? String.valueOf(getCompetition().recordOf(number).fish().length()) : "0.0");
+                b2.replacement(getCompetition().getRecords().size() >= number ? String.valueOf(getCompetition().recordOf(number).getLength()) : "0.0");
             });
         }).build();
     }
@@ -123,7 +124,7 @@ public interface Lang {
             return b.build().replaceText(b2 -> {
                 b2.matchLiteral(match);
                 String name = Bukkit.getOfflinePlayer(getCompetition().recordOf(number).fisher()).getName();
-                b2.replacement(getCompetition().getRanking().size() >= number ? (name != null ? name : "null") : "no one");
+                b2.replacement(getCompetition().getRecords().size() >= number ? (name != null ? name : "null") : "no one");
             });
         }).build();
     }

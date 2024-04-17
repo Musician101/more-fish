@@ -1,11 +1,12 @@
 package me.elsiff.morefish.fishing.competition;
 
-import java.util.List;
 import me.elsiff.morefish.util.NumberUtils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public record Prize(@NotNull List<String> commands) {
 

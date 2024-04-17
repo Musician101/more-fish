@@ -1,11 +1,12 @@
 package me.elsiff.morefish.fishing.condition;
 
-import java.util.Collection;
 import org.bukkit.Location;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
 
 public record BiomeCondition(@NotNull Collection<Biome> biomes) implements FishCondition {
 

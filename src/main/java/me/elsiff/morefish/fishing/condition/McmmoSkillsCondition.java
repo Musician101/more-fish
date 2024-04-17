@@ -1,12 +1,13 @@
 package me.elsiff.morefish.fishing.condition;
 
 import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
-import java.util.Map;
 import me.elsiff.morefish.hooker.McmmoHooker;
 import me.elsiff.morefish.hooker.PluginHooker;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
 

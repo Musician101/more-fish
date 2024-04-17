@@ -1,12 +1,13 @@
 package me.elsiff.morefish.fishing.competition;
 
-import java.time.LocalTime;
-import java.util.Collection;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
+
+import java.time.LocalTime;
+import java.util.Collection;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
 

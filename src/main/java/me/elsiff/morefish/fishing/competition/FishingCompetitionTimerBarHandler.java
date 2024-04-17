@@ -1,6 +1,5 @@
 package me.elsiff.morefish.fishing.competition;
 
-import java.util.Map;
 import me.elsiff.morefish.configuration.Lang;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.bossbar.BossBar.Color;
@@ -17,6 +16,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
 import static me.elsiff.morefish.configuration.Lang.join;

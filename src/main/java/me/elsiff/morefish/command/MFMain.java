@@ -2,16 +2,17 @@ package me.elsiff.morefish.command;
 
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import io.musician101.bukkitier.command.Command;
-import java.util.List;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class MFMain extends MFHelp {
 
     @NotNull
     @Override
     public List<Command<? extends ArgumentBuilder<CommandSender, ?>>> arguments() {
-        return List.of(new MFAllTime(), new MFClear(), new MFContraband(), new MFEnd(), new MFGive(), new MFHelp(), new MFReload(), new MFSBCommand(), new MFStart(), new MFShop(), new MFSuspend(), new MFTop());
+        return List.of(new MFClear(), new MFContraband(), new MFEnd(), new MFFLCommand(), new MFGive(), new MFHelp(), new MFReload(), new MFSBCommand(), new MFStart(), new MFShop(), new MFSuspend(), new MFTop());
     }
 
     @NotNull

@@ -1,11 +1,12 @@
 package me.elsiff.morefish.fishing.condition;
 
-import java.util.Map;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
 
 public record PotionEffectCondition(@NotNull Map<PotionEffectType, Integer> potionEffects) implements FishCondition {
 

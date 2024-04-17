@@ -1,11 +1,12 @@
 package me.elsiff.morefish.fishing.condition;
 
-import java.util.Optional;
-import java.util.stream.Stream;
 import me.elsiff.morefish.util.NumberUtils.Range;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Optional;
+import java.util.stream.Stream;
 
 public record TimeCondition(@NotNull TimeState state) implements FishCondition {
 
@@ -18,7 +19,8 @@ public record TimeCondition(@NotNull TimeState state) implements FishCondition {
         DAY(new Range<>(1000L, 13000L)),
         NIGHT(new Range<>(0L, 1000L), new Range<>(13000L, 24000L));
 
-        @NotNull private final Range<Long>[] range;
+        @NotNull
+        private final Range<Long>[] range;
 
         @SafeVarargs
         TimeState(@NotNull Range<Long>... range) {

@@ -1,9 +1,10 @@
 package me.elsiff.morefish.announcement;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public final class ServerAnnouncement implements PlayerAnnouncement {
 

@@ -6,12 +6,13 @@ import com.mojang.brigadier.context.CommandContext;
 import io.musician101.bukkitier.command.ArgumentCommand;
 import io.musician101.bukkitier.command.Command;
 import io.musician101.bukkitier.command.LiteralCommand;
-import java.util.List;
-import java.util.Map;
 import me.elsiff.morefish.configuration.Lang;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+import java.util.Map;
 
 import static me.elsiff.morefish.configuration.Lang.PREFIX;
 import static me.elsiff.morefish.configuration.Lang.join;

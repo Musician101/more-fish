@@ -1,14 +1,5 @@
 package me.elsiff.morefish.shop;
 
-import java.util.AbstractMap.SimpleEntry;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.Fish;
@@ -30,6 +21,16 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.AbstractMap.SimpleEntry;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 import static io.musician101.musigui.paper.chest.PaperIconUtil.customName;
 import static io.musician101.musigui.paper.chest.PaperIconUtil.setLore;
 import static me.elsiff.morefish.MoreFish.getPlugin;
@@ -42,8 +43,10 @@ import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 
 public final class FishShopGui extends AbstractFishShopGUI {
 
-    @NotNull private final FishBags fishBags;
-    @NotNull private final List<FishRarity> selectedRarities;
+    @NotNull
+    private final FishBags fishBags;
+    @NotNull
+    private final List<FishRarity> selectedRarities;
     private int page;
 
     public FishShopGui(@NotNull Player user, int page) {

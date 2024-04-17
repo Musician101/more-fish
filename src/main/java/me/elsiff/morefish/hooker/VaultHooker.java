@@ -1,15 +1,17 @@
 package me.elsiff.morefish.hooker;
 
-import java.util.Optional;
 import me.elsiff.morefish.MoreFish;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
+
 public final class VaultHooker implements PluginHooker {
 
-    @Nullable private Economy economy;
+    @Nullable
+    private Economy economy;
     private boolean hasHooked;
 
     @NotNull

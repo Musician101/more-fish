@@ -8,7 +8,6 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.musician101.bukkitier.command.ArgumentCommand;
 import io.musician101.bukkitier.command.Command;
 import io.musician101.bukkitier.command.LiteralCommand;
-import java.util.List;
 import me.elsiff.morefish.command.argument.FishLengthArgumentType;
 import me.elsiff.morefish.command.argument.FishTypeArgumentType;
 import me.elsiff.morefish.configuration.Lang;
@@ -17,6 +16,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 import static me.elsiff.morefish.configuration.Lang.join;
 import static me.elsiff.morefish.item.FishItemStackConverter.createItemStack;

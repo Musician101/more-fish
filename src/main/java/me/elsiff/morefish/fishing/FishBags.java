@@ -1,16 +1,5 @@
 package me.elsiff.morefish.fishing;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 import me.elsiff.morefish.MoreFish;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -25,11 +14,24 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
 import static me.elsiff.morefish.MoreFish.getPlugin;
 
 public class FishBags implements Listener {
 
-    @NotNull private final List<FishBag> bags = new ArrayList<>();
+    @NotNull
+    private final List<FishBag> bags = new ArrayList<>();
 
     public boolean addFish(@NotNull Player player, @NotNull ItemStack itemStack) {
         FishBag fishBag = getFishBag(player);

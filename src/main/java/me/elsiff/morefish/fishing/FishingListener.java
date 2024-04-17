@@ -1,10 +1,5 @@
 package me.elsiff.morefish.fishing;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
 import me.elsiff.morefish.fishing.catchhandler.CatchBroadcaster;
 import me.elsiff.morefish.fishing.catchhandler.CatchHandler;
 import me.elsiff.morefish.fishing.catchhandler.CompetitionRecordAdder;
@@ -22,6 +17,12 @@ import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerFishEvent.State;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
 import static me.elsiff.morefish.item.FishItemStackConverter.createItemStack;

@@ -1,8 +1,8 @@
 package me.elsiff.morefish.command;
 
-import me.elsiff.morefish.RecordHandler;
 import me.elsiff.morefish.fishing.competition.FishingCompetition;
 import me.elsiff.morefish.fishing.competition.FishingCompetitionHost;
+import me.elsiff.morefish.fishing.fishrecords.FishingLogs;
 import me.elsiff.morefish.shop.FishShop;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -11,8 +11,8 @@ import static me.elsiff.morefish.MoreFish.getPlugin;
 
 public class MFCommand {
 
-    protected RecordHandler getAllTimeRecords() {
-        return getPlugin().getAllTimeRecords();
+    protected FishingLogs getFishingLogs() {
+        return getPlugin().getFishingLogs();
     }
 
     protected FishingCompetition getCompetition() {

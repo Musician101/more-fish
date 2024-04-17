@@ -4,13 +4,14 @@ import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import io.musician101.bukkitier.command.Command;
 import io.musician101.bukkitier.command.LiteralCommand;
-import java.util.List;
-import java.util.Map;
 import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.shop.FishShopGui;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+import java.util.Map;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
 import static me.elsiff.morefish.configuration.Lang.PREFIX;

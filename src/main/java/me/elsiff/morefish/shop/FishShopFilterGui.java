@@ -1,12 +1,5 @@
 package me.elsiff.morefish.shop;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.IntStream;
 import me.elsiff.morefish.fishing.FishRarity;
 import me.elsiff.morefish.fishing.FishTypeTable;
 import net.kyori.adventure.text.Component;
@@ -16,6 +9,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.IntStream;
 
 import static io.musician101.musigui.paper.chest.PaperIconUtil.customName;
 import static io.musician101.musigui.paper.chest.PaperIconUtil.setLore;
@@ -28,7 +29,8 @@ public class FishShopFilterGui extends AbstractFishShopGUI {
 
     public static final Map<UUID, List<FishRarity>> FILTERS = new HashMap<>();
 
-    @NotNull private final List<FishRarity> selectedRarities;
+    @NotNull
+    private final List<FishRarity> selectedRarities;
 
     public FishShopFilterGui(int page, @NotNull Player user) {
         super(text("Set Sale Filter(s)"), user);

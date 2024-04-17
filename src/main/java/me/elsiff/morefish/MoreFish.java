@@ -9,6 +9,7 @@ import me.elsiff.morefish.fishing.FishingListener;
 import me.elsiff.morefish.fishing.competition.FishingCompetition;
 import me.elsiff.morefish.fishing.competition.FishingCompetitionAutoRunner;
 import me.elsiff.morefish.fishing.competition.FishingCompetitionHost;
+import me.elsiff.morefish.fishing.fishrecords.FishingLogs;
 import me.elsiff.morefish.hooker.McmmoHooker;
 import me.elsiff.morefish.hooker.MusiBoardHooker;
 import me.elsiff.morefish.hooker.ProtocolLibHooker;
@@ -30,7 +31,7 @@ import static net.kyori.adventure.text.Component.text;
 public final class MoreFish extends JavaPlugin {
 
     @NotNull
-    private final RecordHandler allTimeRecords = new RecordHandler();
+    private final FishingLogs fishingLogs = new FishingLogs();
     @NotNull
     private final FishingCompetitionAutoRunner autoRunner = new FishingCompetitionAutoRunner();
     @NotNull
@@ -81,8 +82,8 @@ public final class MoreFish extends JavaPlugin {
     }
 
     @NotNull
-    public RecordHandler getAllTimeRecords() {
-        return allTimeRecords;
+    public FishingLogs getFishingLogs() {
+        return fishingLogs;
     }
 
     @NotNull
@@ -129,7 +130,7 @@ public final class MoreFish extends JavaPlugin {
     public void onDisable() {
         competitionHost.closeCompetition();
         fishBags.save();
-        allTimeRecords.save();
+        fishingLogs.save();
         if (autoRunner.isEnabled()) {
             autoRunner.disable();
         }
@@ -145,7 +146,7 @@ public final class MoreFish extends JavaPlugin {
         musiBoard.hookIfEnabled(this);
         fishBags.load();
         applyConfig();
-        allTimeRecords.load();
+        fishingLogs.load();
         Server server = getServer();
         PluginManager pm = server.getPluginManager();
         pm.registerEvents(new FishingListener(), this);

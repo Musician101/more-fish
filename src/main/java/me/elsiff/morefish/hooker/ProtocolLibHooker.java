@@ -6,7 +6,8 @@ import org.jetbrains.annotations.Nullable;
 
 public final class ProtocolLibHooker implements PluginHooker {
 
-    @Nullable public SkullNbtHandler skullNbtHandler;
+    @Nullable
+    public SkullNbtHandler skullNbtHandler;
     private boolean hasHooked;
 
     @NotNull

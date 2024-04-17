@@ -6,12 +6,15 @@ import com.mojang.brigadier.context.CommandContext;
 import io.musician101.bukkitier.command.ArgumentCommand;
 import io.musician101.bukkitier.command.Command;
 import io.musician101.bukkitier.command.LiteralCommand;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import me.elsiff.morefish.command.argument.RecordsArgumentType;
+import me.elsiff.morefish.command.argument.FishRecordsTypeArgumentType;
+import me.elsiff.morefish.command.argument.FishRecordsTypeArgumentType.FishRecordsType;
+import me.elsiff.morefish.command.argument.UUIDArgumentType;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+import java.util.UUID;
 
 import static me.elsiff.morefish.configuration.Lang.PREFIX;
 import static me.elsiff.morefish.configuration.Lang.join;
@@ -33,7 +36,7 @@ public class MFClear extends MFCommand implements LiteralCommand {
     @Override
     public int execute(@NotNull CommandContext<CommandSender> context) {
         CommandSender sender = context.getSource();
-        getCompetition().clearRecords();
+        getCompetition().clear();
         sender.sendMessage(join(PREFIX, text("The records has been cleared successfully.")));
         return 1;
     }
@@ -44,27 +47,18 @@ public class MFClear extends MFCommand implements LiteralCommand {
         return "clear";
     }
 
-    public enum RecordsType {
-        ALLTIME,
-        CURRENT;
-
-        public static Optional<RecordsType> get(@NotNull String name) {
-            return Arrays.stream(values()).filter(r -> name.equals(r.toString().toLowerCase())).findFirst();
-        }
-    }
-
-    static class RecordsArgument extends MFCommand implements ArgumentCommand<RecordsType> {
+    public static class RecordsArgument extends MFCommand implements ArgumentCommand<FishRecordsType> {
 
         @Override
         public int execute(@NotNull CommandContext<CommandSender> context) {
             CommandSender sender = context.getSource();
-            RecordsType recordsType = context.getArgument(name(), RecordsType.class);
-            if (recordsType == RecordsType.CURRENT) {
-                getCompetition().clearRecords();
+            FishRecordsType recordsType = context.getArgument(name(), FishRecordsType.class);
+            if (recordsType == FishRecordsType.COMPETITION) {
+                getCompetition().clear();
                 sender.sendMessage(join(PREFIX, text("The records has been cleared successfully.")));
             }
-            else if (recordsType == RecordsType.ALLTIME) {
-                getAllTimeRecords().clear();
+            else if (recordsType == FishRecordsType.ALLTIME) {
+                getFishingLogs().clear();
                 sender.sendMessage(join(PREFIX, text("The all time records have been cleared successfully.")));
             }
 
@@ -79,8 +73,50 @@ public class MFClear extends MFCommand implements LiteralCommand {
 
         @NotNull
         @Override
-        public ArgumentType<RecordsType> type() {
-            return new RecordsArgumentType();
+        public ArgumentType<FishRecordsType> type() {
+            return new FishRecordsTypeArgumentType();
+        }
+
+        @Override
+        public @NotNull List<Command<? extends ArgumentBuilder<CommandSender, ?>>> arguments() {
+            return List.of(new FishRecordHolderArgument());
+        }
+    }
+
+    static class FishRecordHolderArgument extends MFCommand implements ArgumentCommand<UUID> {
+
+        @Override
+        public int execute(@NotNull CommandContext<CommandSender> context) {
+            CommandSender sender = context.getSource();
+            FishRecordsType recordsType = context.getArgument(name(), FishRecordsType.class);
+            UUID uuid = context.getArgument(name(), UUID.class);
+            String name = Bukkit.getOfflinePlayer(uuid).getName();
+            if (name == null) {
+                name = uuid.toString();
+            }
+
+            if (recordsType == FishRecordsType.COMPETITION) {
+                getCompetition().clearRecordHolder(uuid);
+                sender.sendMessage(join(PREFIX, text("The records for " + name + " has been cleared successfully.")));
+            }
+            else if (recordsType == FishRecordsType.ALLTIME) {
+                getFishingLogs().clearRecordHolder(uuid);
+                sender.sendMessage(join(PREFIX, text("The all time records for" + name + " have been cleared successfully.")));
+            }
+
+            return 1;
+        }
+
+        @NotNull
+        @Override
+        public String name() {
+            return "fisher";
+        }
+
+        @NotNull
+        @Override
+        public ArgumentType<UUID> type() {
+            return new UUIDArgumentType();
         }
     }
 }

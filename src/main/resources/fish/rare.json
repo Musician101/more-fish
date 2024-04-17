@@ -1,141 +1,141 @@
 {
-    "Humuhumunukunukuapua": {
-        "display-name": "Humuhumunukunukuapua",
-        "length-max": 80,
-        "length-min": 40,
-        "icon": {
-            "lore": [
-                {
-                    "color": "dark_purple",
-                    "italic": true,
-                    "text": "Yes I'm real"
-                }
-            ],
-            "id": "minecraft:cod",
-            "durability": 1
+  "Humuhumunukunukuapua": {
+    "display-name": "Humuhumunukunukuapua",
+    "length-max": 80,
+    "length-min": 40,
+    "icon": {
+      "lore": [
+        {
+          "color": "dark_purple",
+          "italic": true,
+          "text": "Yes I'm real"
         }
-    },
-    "BigPuffyBoi": {
-        "display-name": "Big Puffy Boi",
-        "length-max": 43,
-        "length-min": 15,
-        "icon": {
-            "lore": [
-                {
-                    "color": "dark_purple",
-                    "italic": true,
-                    "text": "Do not squeeze"
-                }
-            ],
-            "id": "minecraft:pufferfish",
-            "durability": 3
-        }
-    },
-    "SeaBass": {
-        "display-name": "Sea Bass",
-        "length-max": 100,
-        "length-min": 60,
-        "icon": {
-            "id": "minecraft:cod"
-        }
-    },
-    "Squid": {
-        "commands": [
-            "minecraft:effect give @p minecraft:blindness 5 1",
-            "tellraw @p [\"\",{\"text\":\"[MoreFish]\",\"color\":\"aqua\"},{\"text\":\" The squid gifted you some darkness!\",\"color\":\"none\"}]"
-        ],
-        "length-max": 50,
-        "display-name": "Squid",
-        "length-min": 30,
-        "icon": {
-            "id": "minecraft:ink_sac"
-        }
-    },
-    "Slaughterfish": {
-        "display-name": "Slaughterfish",
-        "length-max": 50,
-        "length-min": 30,
-        "icon": {
-            "lore": [
-                {
-                    "color": "dark_purple",
-                    "italic": true,
-                    "text": "You cannot fast travel, you are in combat"
-                }
-            ],
-            "id": "minecraft:cod",
-            "durability": 1
-        }
-    },
-    "Goldie": {
-        "commands": [
-            "mcmmo:addxp @p Fishing 1000",
-            "tellraw @p [\"\",{\"text\":\"[MoreFish]\",\"color\":\"aqua\"},{\"text\":\" You have found Goldie!\",\"color\":\"none\"}]"
-        ],
-        "length-max": 140,
-        "display-name": "Goldie",
-        "icon": {
-            "id": "minecraft:pufferfish"
-        },
-        "length-min": 20
-    },
-    "Flatfish": {
-        "display-name": "Flatfish",
-        "length-max": 75,
-        "length-min": 40,
-        "icon": {
-            "id": "minecraft:cod"
-        }
-    },
-    "SeaBream": {
-        "display-name": "Sea Bream",
-        "length-max": 70,
-        "length-min": 50,
-        "icon": {
-            "id": "minecraft:cod"
-        }
-    },
-    "FishPerson644": {
-        "display-name": "FishPerson644",
-        "length-max": 100,
-        "length-min": 80,
-        "icon": {
-            "lore": [
-                {
-                    "color": "dark_purple",
-                    "italic": true,
-                    "text": "Claimed to be a genius among fish"
-                }
-            ],
-            "id": "minecraft:cod",
-            "durability": 1
-        }
-    },
-    "CrushTheTurtle": {
-        "display-name": "Crush the Turtle",
-        "length-max": 110,
-        "length-min": 70,
-        "icon": {
-            "lore": [
-                {
-                    "color": "dark_purple",
-                    "italic": true,
-                    "text": "Suh Dude"
-                }
-            ],
-            "id": "minecraft:turtle_spawn_egg"
-        }
-    },
-    "Jellyfish": {
-        "commands": [
-            "minecraft:effect give @p minecraft:poison 3 1",
-            "tellraw @p [\"\",{\"text\":\"[MoreFish]\",\"color\":\"aqua\"},{\"text\":\" The jellyfish made you feel very bad!\",\"color\":\"none\"}]"
-        ],
-        "length-max": 40,
-        "display-name": "Jellyfish",
-        "length-min": 20,
-        "icon": {
-            "id": "minecraft:cod"
-        }
+      ],
+      "id": "minecraft:cod",
+      "durability": 1
     }
+  },
+  "BigPuffyBoi": {
+    "display-name": "Big Puffy Boi",
+    "length-max": 43,
+    "length-min": 15,
+    "icon": {
+      "lore": [
+        {
+          "color": "dark_purple",
+          "italic": true,
+          "text": "Do not squeeze"
+        }
+      ],
+      "id": "minecraft:pufferfish",
+      "durability": 3
+    }
+  },
+  "SeaBass": {
+    "display-name": "Sea Bass",
+    "length-max": 100,
+    "length-min": 60,
+    "icon": {
+      "id": "minecraft:cod"
+    }
+  },
+  "Squid": {
+    "commands": [
+      "minecraft:effect give @p minecraft:blindness 5 1",
+      "tellraw @p [\"\",{\"text\":\"[MoreFish]\",\"color\":\"aqua\"},{\"text\":\" The squid gifted you some darkness!\",\"color\":\"none\"}]"
+    ],
+    "length-max": 50,
+    "display-name": "Squid",
+    "length-min": 30,
+    "icon": {
+      "id": "minecraft:ink_sac"
+    }
+  },
+  "Slaughterfish": {
+    "display-name": "Slaughterfish",
+    "length-max": 50,
+    "length-min": 30,
+    "icon": {
+      "lore": [
+        {
+          "color": "dark_purple",
+          "italic": true,
+          "text": "You cannot fast travel, you are in combat"
+        }
+      ],
+      "id": "minecraft:cod",
+      "durability": 1
+    }
+  },
+  "Goldie": {
+    "commands": [
+      "mcmmo:addxp @p Fishing 1000",
+      "tellraw @p [\"\",{\"text\":\"[MoreFish]\",\"color\":\"aqua\"},{\"text\":\" You have found Goldie!\",\"color\":\"none\"}]"
+    ],
+    "length-max": 140,
+    "display-name": "Goldie",
+    "icon": {
+      "id": "minecraft:pufferfish"
+    },
+    "length-min": 20
+  },
+  "Flatfish": {
+    "display-name": "Flatfish",
+    "length-max": 75,
+    "length-min": 40,
+    "icon": {
+      "id": "minecraft:cod"
+    }
+  },
+  "SeaBream": {
+    "display-name": "Sea Bream",
+    "length-max": 70,
+    "length-min": 50,
+    "icon": {
+      "id": "minecraft:cod"
+    }
+  },
+  "FishPerson644": {
+    "display-name": "FishPerson644",
+    "length-max": 100,
+    "length-min": 80,
+    "icon": {
+      "lore": [
+        {
+          "color": "dark_purple",
+          "italic": true,
+          "text": "Claimed to be a genius among fish"
+        }
+      ],
+      "id": "minecraft:cod",
+      "durability": 1
+    }
+  },
+  "CrushTheTurtle": {
+    "display-name": "Crush the Turtle",
+    "length-max": 110,
+    "length-min": 70,
+    "icon": {
+      "lore": [
+        {
+          "color": "dark_purple",
+          "italic": true,
+          "text": "Suh Dude"
+        }
+      ],
+      "id": "minecraft:turtle_spawn_egg"
+    }
+  },
+  "Jellyfish": {
+    "commands": [
+      "minecraft:effect give @p minecraft:poison 3 1",
+      "tellraw @p [\"\",{\"text\":\"[MoreFish]\",\"color\":\"aqua\"},{\"text\":\" The jellyfish made you feel very bad!\",\"color\":\"none\"}]"
+    ],
+    "length-max": 40,
+    "display-name": "Jellyfish",
+    "length-min": 20,
+    "icon": {
+      "id": "minecraft:cod"
+    }
+  }
 }

@@ -1,136 +1,136 @@
 {
-    "BlueShark": {
-        "length-max": 240,
-        "food-effects": {
-            "commands": [
-                "minecraft:effect give @p minecraft:strength 120 1",
-                "mcmmo:addxp @p Fishing 1000"
-            ]
+  "BlueShark": {
+    "length-max": 240,
+    "food-effects": {
+      "commands": [
+        "minecraft:effect give @p minecraft:strength 120 1",
+        "mcmmo:addxp @p Fishing 1000"
+      ]
+    },
+    "display-name": "Blue Shark",
+    "length-min": 160,
+    "icon": {
+      "lore": [
+        {
+          "color": "gray",
+          "italic": true,
+          "text": "The Toughest Fish"
         },
-        "display-name": "Blue Shark",
-        "length-min": 160,
-        "icon": {
-            "lore": [
-                {
-                    "color": "gray",
-                    "italic": true,
-                    "text": "The Toughest Fish"
-                },
-                [
-                    {
-                        "color": "gray",
-                        "text": "Get "
-                    },
-                    {
-                        "color": "blue",
-                        "text": "Strength I (2:00)"
-                    },
-                    {
-                        "color": "gray",
-                        "text": " when you eat it."
-                    }
-                ]
-            ],
-            "id": "minecraft:salmon"
-        }
-    },
-    "PygmyWhale": {
-        "length-max": 650,
-        "food-effects": {
-            "saturation": 14.4,
-            "points": 20,
-            "commands": [
-                "minecraft:effect give @p minecraft:regeneration 2 127",
-                "mcmmo:addxp @p Fishing 1000"
-            ]
-        },
-        "display-name": "Pygmy Whale",
-        "length-min": 600,
-        "icon": {
-            "lore": [
-                {
-                    "color": "gray",
-                    "italic": true,
-                    "text": "The Biggest Fish"
-                },
-                [
-                    {
-                        "color": "gray",
-                        "text": "Get "
-                    },
-                    {
-                        "color": "blue",
-                        "text": "full health and hunger"
-                    }
-                ],
-                {
-                    "color": "gray",
-                    "text": "when you eat it."
-                }
-            ],
-            "id": "minecraft:salmon"
-        }
-    },
-    "Gyarados": {
-        "commands": [
-            "minecraft:effect give @p minecraft:strength 120 2",
-            "mcmmo:addxp @p Fishing 1000"
-        ],
-        "length-max": 700,
-        "durability": 1,
-        "display-name": "Gyarados",
-        "length-min": 600,
-        "icon": {
-            "lore": [
-                {
-                    "color": "dark_purple",
-                    "italic": true,
-                    "text": "I can't believe it's Magikarp!"
-                },
-                {
-                    "color": "blue",
-                    "text": "You feel strong just being near it"
-                }
-            ],
-            "id": "minecraft:salmon"
-        }
-    },
-    "EccoTheDolphin": {
-        "commands": [
-            "minecraft:effect give @p minecraft:health_boost 120 4",
-            "mcmmo:addxp @p Fishing 1000"
-        ],
-        "length-max": 250,
-        "display-name": "Ecco the Dolphin",
-        "length-min": 180,
-        "icon": {
-            "lore": [
-                {
-                    "color": "dark_purple",
-                    "italic": true,
-                    "text": "Ecco the Dolphin is an action-adventure game"
-                },
-                {
-                    "color": "dark_purple",
-                    "italic": true,
-                    "text": "originally developed by Ed Annunziata and Novotrade"
-                },
-                {
-                    "color": "dark_purple",
-                    "italic": true,
-                    "text": "International for the Mega Drive and published"
-                },
-                {
-                    "color": "dark_purple",
-                    "italic": true,
-                    "text": "by Sega in 1992"
-                },
-                {
-                    "color": "blue",
-                    "text": "Boosts your metabolism"
-                }
-            ],
-            "id": "minecraft:salmon"
-        }
+        [
+          {
+            "color": "gray",
+            "text": "Get "
+          },
+          {
+            "color": "blue",
+            "text": "Strength I (2:00)"
+          },
+          {
+            "color": "gray",
+            "text": " when you eat it."
+          }
+        ]
+      ],
+      "id": "minecraft:salmon"
     }
+  },
+  "PygmyWhale": {
+    "length-max": 650,
+    "food-effects": {
+      "saturation": 14.4,
+      "points": 20,
+      "commands": [
+        "minecraft:effect give @p minecraft:regeneration 2 127",
+        "mcmmo:addxp @p Fishing 1000"
+      ]
+    },
+    "display-name": "Pygmy Whale",
+    "length-min": 600,
+    "icon": {
+      "lore": [
+        {
+          "color": "gray",
+          "italic": true,
+          "text": "The Biggest Fish"
+        },
+        [
+          {
+            "color": "gray",
+            "text": "Get "
+          },
+          {
+            "color": "blue",
+            "text": "full health and hunger"
+          }
+        ],
+        {
+          "color": "gray",
+          "text": "when you eat it."
+        }
+      ],
+      "id": "minecraft:salmon"
+    }
+  },
+  "Gyarados": {
+    "commands": [
+      "minecraft:effect give @p minecraft:strength 120 2",
+      "mcmmo:addxp @p Fishing 1000"
+    ],
+    "length-max": 700,
+    "durability": 1,
+    "display-name": "Gyarados",
+    "length-min": 600,
+    "icon": {
+      "lore": [
+        {
+          "color": "dark_purple",
+          "italic": true,
+          "text": "I can't believe it's Magikarp!"
+        },
+        {
+          "color": "blue",
+          "text": "You feel strong just being near it"
+        }
+      ],
+      "id": "minecraft:salmon"
+    }
+  },
+  "EccoTheDolphin": {
+    "commands": [
+      "minecraft:effect give @p minecraft:health_boost 120 4",
+      "mcmmo:addxp @p Fishing 1000"
+    ],
+    "length-max": 250,
+    "display-name": "Ecco the Dolphin",
+    "length-min": 180,
+    "icon": {
+      "lore": [
+        {
+          "color": "dark_purple",
+          "italic": true,
+          "text": "Ecco the Dolphin is an action-adventure game"
+        },
+        {
+          "color": "dark_purple",
+          "italic": true,
+          "text": "originally developed by Ed Annunziata and Novotrade"
+        },
+        {
+          "color": "dark_purple",
+          "italic": true,
+          "text": "International for the Mega Drive and published"
+        },
+        {
+          "color": "dark_purple",
+          "italic": true,
+          "text": "by Sega in 1992"
+        },
+        {
+          "color": "blue",
+          "text": "Boosts your metabolism"
+        }
+      ],
+      "id": "minecraft:salmon"
+    }
+  }
 }

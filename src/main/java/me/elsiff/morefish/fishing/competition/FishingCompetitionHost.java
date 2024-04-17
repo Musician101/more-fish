@@ -1,10 +1,9 @@
 package me.elsiff.morefish.fishing.competition;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import me.elsiff.morefish.command.argument.SortArgumentType.SortType;
 import me.elsiff.morefish.configuration.Config;
 import me.elsiff.morefish.configuration.Lang;
+import me.elsiff.morefish.fishing.fishrecords.FishRecord;
 import me.elsiff.morefish.util.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -15,6 +14,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import static me.elsiff.morefish.MoreFish.getPlugin;
 import static me.elsiff.morefish.configuration.Lang.PREFIX;
 import static me.elsiff.morefish.configuration.Lang.join;
@@ -24,7 +27,8 @@ import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
 
 public final class FishingCompetitionHost {
 
-    @NotNull private final FishingCompetitionTimerBarHandler timerBarHandler = new FishingCompetitionTimerBarHandler();
+    @NotNull
+    private final FishingCompetitionTimerBarHandler timerBarHandler = new FishingCompetitionTimerBarHandler();
     private BukkitTask timerTask;
 
     public void closeCompetition() {
@@ -43,11 +47,12 @@ public final class FishingCompetitionHost {
         Bukkit.broadcast(Lang.CONTEST_STOP);
         if (!suspend) {
             if (!getPrizes().isEmpty()) {
-                List<Record> ranking = getCompetition().getRanking();
+                List<FishRecord> ranking = getCompetition().getRecords();
+                ranking.sort(SortType.LENGTH.sorter());
                 if (!ranking.isEmpty()) {
                     getPrizes().forEach((place, prize) -> {
                         if (ranking.size() > place) {
-                            Record record = ranking.get(place);
+                            FishRecord record = ranking.get(place);
                             prize.giveTo(Bukkit.getOfflinePlayer(record.fisher()), getCompetition().rankNumberOf(record), getPlugin());
                         }
                     });
@@ -58,10 +63,10 @@ public final class FishingCompetitionHost {
         }
 
         if (getConfig().getBoolean("general.save-records")) {
-            getPlugin().getAllTimeRecords().add(getCompetition().getRecords());
+            getCompetition().getRecords().forEach(r -> getPlugin().getFishingLogs().add(r));
         }
 
-        getCompetition().clearRecords();
+        getCompetition().clear();
     }
 
     @NotNull
@@ -84,12 +89,12 @@ public final class FishingCompetitionHost {
     }
 
     public void informAboutRanking(@NotNull CommandSender receiver) {
-        if (getCompetition().getRanking().isEmpty()) {
+        if (getCompetition().getRecords().isEmpty()) {
             receiver.sendMessage(join(PREFIX, text("Nobody has caught anything yet.")));
         }
         else {
             int topSize = getMsgConfig().getInt("top-number", 1);
-            List<Record> top = getCompetition().top(topSize);
+            List<FishRecord> top = getCompetition().top(topSize);
             top.forEach(record -> {
                 int number = top.indexOf(record) + 1;
                 receiver.sendMessage(Lang.replace(join(PREFIX, text("%ordinal%. ", YELLOW), text(": %player%, %length%cm %fish%", DARK_GRAY)), topReplacementOf(number, record)));
@@ -100,7 +105,7 @@ public final class FishingCompetitionHost {
                     receiver.sendMessage(join(PREFIX, text("You didn't catch any fish.")));
                 }
                 else {
-                    Entry<Integer, Record> entry = getCompetition().rankedRecordOf((OfflinePlayer) receiver);
+                    Entry<Integer, FishRecord> entry = getCompetition().rankedRecordOf((OfflinePlayer) receiver);
                     receiver.sendMessage(Lang.replace(join(PREFIX, text("You're %ordinal%: %length%cm %fish%")), topReplacementOf(entry.getKey() + 1, entry.getValue())));
                 }
             }
@@ -116,8 +121,8 @@ public final class FishingCompetitionHost {
         Bukkit.broadcast(Lang.replace(Lang.CONTEST_START_TIMER, Map.of("%time%", Lang.time(duration))));
     }
 
-    private Map<String, Object> topReplacementOf(int number, Record record) {
+    private Map<String, Object> topReplacementOf(int number, FishRecord record) {
         String player = Bukkit.getOfflinePlayer(record.fisher()).getName();
-        return Map.of("%ordinal%", NumberUtils.ordinalOf(number), "%number%", String.valueOf(number), "%player%", player == null ? "null" : player, "%length%", String.valueOf(record.fish().length()), "%fish%", record.fish().type().name());
+        return Map.of("%ordinal%", NumberUtils.ordinalOf(number), "%number%", String.valueOf(number), "%player%", player == null ? "null" : player, "%length%", String.valueOf(record.getLength()), "%fish%", record.getFishName());
     }
 }

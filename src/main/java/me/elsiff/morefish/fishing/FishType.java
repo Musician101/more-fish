@@ -1,18 +1,19 @@
 package me.elsiff.morefish.fishing;
 
-import java.util.List;
-import java.util.Random;
 import me.elsiff.morefish.announcement.PlayerAnnouncement;
 import me.elsiff.morefish.fishing.catchhandler.CatchHandler;
 import me.elsiff.morefish.fishing.condition.FishCondition;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+import java.util.Random;
+
 public record FishType(@NotNull String name, @NotNull FishRarity rarity, @NotNull String displayName, double lengthMin,
                        double lengthMax, @NotNull ItemStack icon, @NotNull List<CatchHandler> catchHandlers,
                        @NotNull PlayerAnnouncement catchAnnouncement, @NotNull List<FishCondition> conditions,
                        boolean hasNotFishItemFormat, boolean noDisplay, boolean hasCatchFirework,
-                       double additionalPrice) {
+                       double additionalPrice) implements Comparable<FishType> {
 
     private double clamp(double value, double min, double max) {
         double var7 = Math.min(value, max);
@@ -33,5 +34,10 @@ public record FishType(@NotNull String name, @NotNull FishRarity rarity, @NotNul
         double rawLength = lengthMin + new Random().nextDouble() * (lengthMax - lengthMin);
         double length = clamp(floorToTwoDecimalPlaces(rawLength), lengthMin, lengthMax);
         return new Fish(this, length);
+    }
+
+    @Override
+    public int compareTo(@NotNull FishType o) {
+        return name.compareTo(o.name);
     }
 }

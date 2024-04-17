@@ -3,14 +3,6 @@ package me.elsiff.morefish.fishing.condition;
 import com.gmail.nossr50.mcMMO;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import java.util.AbstractMap.SimpleEntry;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 import me.elsiff.morefish.fishing.condition.TimeCondition.TimeState;
 import me.elsiff.morefish.util.NumberUtils.Range;
 import org.bukkit.Keyed;
@@ -20,6 +12,15 @@ import org.bukkit.block.Biome;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.AbstractMap.SimpleEntry;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
 

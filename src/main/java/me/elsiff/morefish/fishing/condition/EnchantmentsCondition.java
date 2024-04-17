@@ -1,12 +1,13 @@
 package me.elsiff.morefish.fishing.condition;
 
-import java.util.Map;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
 
 public record EnchantmentsCondition(@NotNull Map<Enchantment, Integer> enchantments) implements FishCondition {
 
