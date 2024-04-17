@@ -29,19 +29,19 @@ class MFHelp extends MFCommand implements LiteralCommand {
         sender.sendMessage(join(label, text(" help")));
 
         if (testAdmin(sender)) {
-            sender.sendMessage(join(label, text(" clear [alltime|competition] [player]")));
+            sender.sendMessage(join(label, text(" clear [alltime|competition] [<player>]")));
             sender.sendMessage(join(label, text(" end")));
-            sender.sendMessage(join(label, text(" give <player> <fish> [length] [amount]")));
-            sender.sendMessage(join(label, text(" start [runningTime(sec)]")));
+            sender.sendMessage(join(label, text(" give <player> <fish> [<length>] [<amount>]")));
+            sender.sendMessage(join(label, text(" start [<seconds)>]")));
             sender.sendMessage(join(label, text(" suspend")));
             sender.sendMessage(join(label, text(" reload")));
         }
 
         sender.sendMessage(join(label, text(" contraband")));
-        sender.sendMessage(join(label, text(" fishinglogs [sort]")));
+        sender.sendMessage(join(label, text(" fishinglogs [<page>] [<sort>]")));
         sender.sendMessage(join(label, text(" scoreboard")));
-        sender.sendMessage(join(label, text(" shop"), text((testAdmin(sender) ? " [player]" : ""))));
-        sender.sendMessage(join(label, text(" top [alltime [sort]|competition]")));
+        sender.sendMessage(join(label, text(" shop"), text((testAdmin(sender) ? " [<player>]" : ""))));
+        sender.sendMessage(join(label, text(" top [alltime [<sort>]|competition]")));
         return 1;
     }
 
