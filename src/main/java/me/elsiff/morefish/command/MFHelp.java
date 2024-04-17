@@ -29,7 +29,7 @@ class MFHelp extends MFCommand implements LiteralCommand {
         sender.sendMessage(join(label, text(" help")));
 
         if (testAdmin(sender)) {
-            sender.sendMessage(join(label, text(" clear [alltime|current]")));
+            sender.sendMessage(join(label, text(" clear [alltime|competition] [player]")));
             sender.sendMessage(join(label, text(" end")));
             sender.sendMessage(join(label, text(" give <player> <fish> [length] [amount]")));
             sender.sendMessage(join(label, text(" start [runningTime(sec)]")));
@@ -37,11 +37,11 @@ class MFHelp extends MFCommand implements LiteralCommand {
             sender.sendMessage(join(label, text(" reload")));
         }
 
-        sender.sendMessage(join(label, text(" alltime")));
         sender.sendMessage(join(label, text(" contraband")));
+        sender.sendMessage(join(label, text(" fishinglogs [sort]")));
         sender.sendMessage(join(label, text(" scoreboard")));
         sender.sendMessage(join(label, text(" shop"), text((testAdmin(sender) ? " [player]" : ""))));
-        sender.sendMessage(join(label, text(" top")));
+        sender.sendMessage(join(label, text(" top [alltime [sort]|competition]")));
         return 1;
     }
 

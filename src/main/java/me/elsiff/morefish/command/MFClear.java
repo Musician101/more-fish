@@ -110,7 +110,7 @@ public class MFClear extends MFCommand implements LiteralCommand {
         @NotNull
         @Override
         public String name() {
-            return "fisher";
+            return "player";
         }
 
         @NotNull
