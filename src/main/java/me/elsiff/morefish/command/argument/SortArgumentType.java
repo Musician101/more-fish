@@ -33,7 +33,7 @@ public class SortArgumentType implements ArgumentType<SortType> {
         NAME,
         RARITY,
         TIMESTAMP,
-        UUID;
+        PLAYER;
 
         @NotNull
         public Comparator<FishRecord> sorter() {
@@ -42,7 +42,7 @@ public class SortArgumentType implements ArgumentType<SortType> {
                 case NAME -> Comparator.comparing(FishRecord::getFishName);
                 case RARITY -> Comparator.comparingDouble(FishRecord::getRarityProbability).reversed();
                 case TIMESTAMP -> Comparator.comparingLong(FishRecord::timestamp);
-                case UUID -> Comparator.comparing(FishRecord::fisher);
+                case PLAYER -> Comparator.comparing(FishRecord::fisher);
             };
         }
     }
