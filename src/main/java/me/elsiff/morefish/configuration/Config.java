@@ -5,9 +5,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
 
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -27,11 +24,5 @@ public interface Config {
         }
 
         return cs.getKeys(false).stream().collect(Collectors.toMap(key -> Integer.parseInt(key) - 1, key -> new Prize(cs.getStringList(key))));
-    }
-
-    @NotNull
-    static List<LocalTime> getScheduledTimes() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-        return getConfig().getStringList("auto-running.start-time").stream().map(string -> LocalTime.parse(string, formatter)).toList();
     }
 }

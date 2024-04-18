@@ -28,6 +28,10 @@ auto-running:
   required-players: 5
   # Time limit of the contest measured in seconds.
   timer: 300
+  # How long before competitions should players be reminded.
+  # HH:mm (H: 0-23, m: 0-59)
+  reminder-timings:
+    - "00:01"
   # The list of times when contest will start automatically.
   # These times are local to the server location.
   # HH:mm (H: 0-23, m: 0-59)

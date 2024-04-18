@@ -1,7 +1,6 @@
 package me.elsiff.morefish;
 
 import me.elsiff.morefish.command.MFMain;
-import me.elsiff.morefish.configuration.Config;
 import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.FishBags;
 import me.elsiff.morefish.fishing.FishTypeTable;
@@ -20,9 +19,6 @@ import org.bukkit.Server;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-
-import java.time.LocalTime;
-import java.util.List;
 
 import static io.musician101.bukkitier.Bukkitier.registerCommand;
 import static me.elsiff.morefish.configuration.Lang.PREFIX;
@@ -75,8 +71,6 @@ public final class MoreFish extends JavaPlugin {
         }
 
         if (getConfig().getBoolean("auto-running.enable")) {
-            List<LocalTime> scheduledTimes = Config.getScheduledTimes();
-            autoRunner.setScheduledTimes(scheduledTimes);
             autoRunner.enable();
         }
     }
