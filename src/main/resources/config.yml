@@ -15,10 +15,10 @@ general:
 # contest-prizes:
 #  1:
 #    - "say @p is 1st"
-#  2~3:
-#    - "say @p is 2nd~3rd"
-#  4~:
-#    - "say @p is 4th~"
+#  2:
+#    - "say @p is 2nd"
+#  3:
+#    - "say @p is 3rd~"
 contest-prizes: { }
 
 auto-running:
