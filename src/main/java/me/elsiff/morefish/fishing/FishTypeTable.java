@@ -11,7 +11,6 @@ import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.catchhandler.CatchCommandExecutor;
 import me.elsiff.morefish.fishing.catchhandler.CatchFireworkSpawner;
 import me.elsiff.morefish.fishing.catchhandler.CatchHandler;
-import me.elsiff.morefish.fishing.competition.FishingCompetition;
 import me.elsiff.morefish.fishing.condition.FishCondition;
 import me.elsiff.morefish.hooker.PluginHooker;
 import me.elsiff.morefish.hooker.ProtocolLibHooker;
@@ -37,13 +36,16 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -126,6 +128,15 @@ public final class FishTypeTable {
                         throw new IllegalArgumentException("display-name is missing from rarity-list." + key + ".");
                     }
 
+                    JsonObject losJson = fish.getAsJsonObject("luck-of-the-sea");
+                    Map<Integer, Double> luckOfTheSeaChances = new HashMap<>();
+                    if (losJson.has("luck-of-the-sea")) {
+                        luckOfTheSeaChances = losJson.entrySet().stream().collect(Collectors.toMap(e -> Integer.parseInt(e.getKey()), e -> e.getValue().getAsDouble()));
+                        if (json.has("luck-of-the-sea")) {
+                            luckOfTheSeaChances = json.getAsJsonObject("luck-of-the-sea").entrySet().stream().collect(Collectors.toMap(e -> Integer.parseInt(e.getKey()), e -> e.getValue().getAsDouble()));
+                        }
+                    }
+
                     boolean isDefault = getOrDefaultFalse(json, "default");
                     double chance = getOrDefaultZero(json, "chance") / 100D;
                     TextColor color = Lang.getColor(json.get("color").getAsString());
@@ -135,7 +146,7 @@ public final class FishTypeTable {
                     boolean firework = getOrDefaultFalse(json, "firework");
                     double additionalPrice = getOrDefaultZero(json, "additional-price");
                     List<FishCondition> conditions = FishCondition.loadFrom(json, "conditions");
-                    return new FishRarity(key, displayName, isDefault, chance, color, catchHandlers, conditions, announcement, skipItemFormat, noDisplay, firework, additionalPrice);
+                    return new FishRarity(key, displayName, isDefault, chance, color, catchHandlers, conditions, announcement, luckOfTheSeaChances, skipItemFormat, noDisplay, firework, additionalPrice);
                 }).filter(Objects::nonNull).toList();
                 rarities.forEach(fishRarity -> {
                     String fishRarityFile = fishRarity.name() + ".json";
@@ -168,6 +179,11 @@ public final class FishTypeTable {
                                     throw new IllegalArgumentException("display-name is missing from fish-list." + rarityName + "." + name + ".");
                                 }
 
+                                Map<Integer, Double> luckOfTheSeaChances = new HashMap<>(fishRarity.luckOfTheSeaChances());
+                                if (json.has("luck-of-the-sea")) {
+                                    luckOfTheSeaChances = json.getAsJsonObject("luck-of-the-sea").entrySet().stream().collect(Collectors.toMap(e -> Integer.parseInt(e.getKey()), e -> e.getValue().getAsDouble()));
+                                }
+
                                 double minLength = json.get("length-min").getAsDouble();
                                 double maxLength = json.get("length-max").getAsDouble();
                                 ItemStack itemStack = loadItemStack(name, json.getAsJsonObject("icon"), "fish-list." + rarityName + "." + name);
@@ -177,7 +193,7 @@ public final class FishTypeTable {
                                 boolean noDisplay = getOrDefault(json, "no-display", fishRarity.noDisplay());
                                 boolean firework = getOrDefault(json, "firework", fishRarity.hasCatchFirework());
                                 double additionalPrice = fishRarity.additionalPrice() + getOrDefaultZero(json, "additional-price");
-                                return new FishType(name, fishRarity, displayName, minLength, maxLength, itemStack, catchHandlers, announcement, conditions, skipItemFormat, noDisplay, firework, additionalPrice);
+                                return new FishType(name, fishRarity, displayName, minLength, maxLength, itemStack, catchHandlers, announcement, conditions, luckOfTheSeaChances, skipItemFormat, noDisplay, firework, additionalPrice);
                             }).toList();
                             map.put(fishRarity, fishTypes);
                         });
@@ -264,7 +280,7 @@ public final class FishTypeTable {
         }
 
         Set<FishRarity> rarities = getRarities();
-        double randomVal = new Random().nextDouble();
+        double randomVal = random.nextDouble();
         double chanceSum = 0.0;
         for (FishRarity rarity : rarities) {
             if (!rarity.isDefault()) {
@@ -279,21 +295,37 @@ public final class FishTypeTable {
     }
 
     @NotNull
-    public FishType pickRandomType(@NotNull Item caught, @NotNull Player fisher, @NotNull FishingCompetition competition) {
-        return pickRandomType(caught, fisher, competition, pickRandomRarity());
+    public List<FishType> pickRandomTypes(@NotNull Item caught, @NotNull Player fisher) {
+        List<FishType> fish = new ArrayList<>();
+        fish.add(pickRandomType(caught, fisher));
+        ItemStack fishingRod = fisher.getInventory().getItemInMainHand();
+        int los = fishingRod.getEnchantmentLevel(Enchantment.LUCK);
+        IntStream.range(1, los + 1).mapToObj(i -> pickRandomType(caught, fisher, true, i)).forEach(fish::add);
+        return fish;
     }
 
     @NotNull
-    public FishType pickRandomType(@NotNull Item caught, @NotNull Player fisher, @NotNull FishingCompetition competition, @NotNull FishRarity rarity) {
+    public FishType pickRandomType(@NotNull Item caught, @NotNull Player fisher) {
+        return pickRandomType(caught, fisher, false, 0);
+    }
+
+    private final Random random = new Random();
+
+    @NotNull
+    public FishType pickRandomType(@NotNull Item caught, @NotNull Player fisher, boolean luckOfTheSea, int fishNumber) {
+        FishRarity rarity = pickRandomRarity();
         if (!map.containsKey(rarity)) {
             throw new IllegalStateException("Rarity must be contained in the table");
         }
 
-        List<FishType> types = map.get(rarity).stream().filter(type -> type.conditions().stream().allMatch(condition -> condition.check(caught, fisher))).toList();
+        List<FishType> types = map.get(rarity).stream().filter(type -> {
+            boolean losFlag = luckOfTheSea && random.nextDouble() <= type.luckOfTheSeaChances().get(fishNumber);
+            return losFlag && type.conditions().stream().allMatch(condition -> condition.check(caught, fisher));
+        }).toList();
         if (types.isEmpty()) {
-            return pickRandomType(caught, fisher, competition);
+            return pickRandomType(caught, fisher);
         }
 
-        return types.get(new Random().nextInt(types.size()));
+        return types.get(random.nextInt(types.size()));
     }
 }

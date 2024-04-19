@@ -15,7 +15,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerFishEvent.State;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -55,16 +54,13 @@ public final class FishingListener implements Listener {
                 Player player = event.getPlayer();
                 getPlugin().getMusiBoard().addToLeaderboard(player);
                 Item caught = (Item) event.getCaught();
-                Fish fish = fishTypeTable.pickRandomType(caught, player, competition).generateFish();
-                catchHandlersOf(event, fish).forEach(handler -> handler.handle(player, fish));
-                FishBags fishBags = getPlugin().getFishBags();
-                ItemStack itemStack = createItemStack(fish, player);
-                if (fishBags.addFish(player, itemStack)) {
-                    caught.remove();
-                    return;
-                }
-
-                caught.setItemStack(itemStack);
+                List<Fish> fishes = fishTypeTable.pickRandomTypes(caught, player).stream().map(FishType::generateFish).toList();
+                fishes.forEach(fish -> catchHandlersOf(event, fish).forEach(handler -> handler.handle(player, fish)));
+                fishes.stream().map(fish -> createItemStack(fish, player)).filter(item -> getPlugin().getFishBags().addFish(player, item)).forEach(item -> {
+                    World world = caught.getWorld();
+                    world.dropItem(caught.getLocation(), item);
+                });
+                caught.remove();
             }
         }
     }

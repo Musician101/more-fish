@@ -7,11 +7,13 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public record FishType(@NotNull String name, @NotNull FishRarity rarity, @NotNull String displayName, double lengthMin,
                        double lengthMax, @NotNull ItemStack icon, @NotNull List<CatchHandler> catchHandlers,
                        @NotNull PlayerAnnouncement catchAnnouncement, @NotNull List<FishCondition> conditions,
+                       @NotNull Map<Integer, Double> luckOfTheSeaChances,
                        boolean hasNotFishItemFormat, boolean noDisplay, boolean hasCatchFirework,
                        double additionalPrice) implements Comparable<FishType> {
 
