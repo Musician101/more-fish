@@ -18,7 +18,6 @@ import org.bukkit.event.player.PlayerFishEvent.State;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -32,7 +31,7 @@ public final class FishingListener implements Listener {
     private final FishTypeTable fishTypeTable = getPlugin().getFishTypeTable();
 
     private Collection<CatchHandler> catchHandlersOf(PlayerFishEvent event, Fish fish) {
-        List<CatchHandler> catchHandlers = new ArrayList<>(Arrays.asList(new CatchBroadcaster(), new NewFirstBroadcaster(), new CompetitionRecordAdder()));
+        List<CatchHandler> catchHandlers = new ArrayList<>(List.of(new CatchBroadcaster(), new NewFirstBroadcaster(), new CompetitionRecordAdder()));
         catchHandlers.addAll(fish.type().catchHandlers());
         List<World> contestDisabledWorlds = getConfig().getStringList("general.contest-disabled-worlds").stream().map(Bukkit::getWorld).filter(Objects::nonNull).toList();
         Player player = event.getPlayer();
