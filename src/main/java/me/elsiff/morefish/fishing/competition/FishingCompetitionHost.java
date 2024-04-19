@@ -1,7 +1,6 @@
 package me.elsiff.morefish.fishing.competition;
 
 import me.elsiff.morefish.command.argument.SortArgumentType.SortType;
-import me.elsiff.morefish.configuration.Config;
 import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.fishrecords.FishRecord;
 import me.elsiff.morefish.util.NumberUtils;
@@ -17,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
 import static me.elsiff.morefish.configuration.Lang.PREFIX;
@@ -85,7 +85,12 @@ public final class FishingCompetitionHost {
 
     @NotNull
     private Map<Integer, Prize> getPrizes() {
-        return Config.getPrizes();
+        ConfigurationSection cs = getConfig().getConfigurationSection("contest-prizes");
+        if (cs == null) {
+            return Map.of();
+        }
+
+        return cs.getKeys(false).stream().collect(Collectors.toMap(key -> Integer.parseInt(key) - 1, key -> new Prize(cs.getStringList(key))));
     }
 
     public void informAboutRanking(@NotNull CommandSender receiver) {
