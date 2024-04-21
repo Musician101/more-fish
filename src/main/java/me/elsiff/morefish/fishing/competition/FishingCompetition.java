@@ -2,7 +2,7 @@ package me.elsiff.morefish.fishing.competition;
 
 import me.elsiff.morefish.fishing.Fish;
 import me.elsiff.morefish.fishing.fishrecords.FishRecord;
-import me.elsiff.morefish.fishing.fishrecords.FishingRecordKeeper;
+import me.elsiff.morefish.fishing.fishrecords.FishRecordKeeper;
 import me.elsiff.morefish.hooker.MusiBoardHooker;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +15,7 @@ import java.util.UUID;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
 
-public final class FishingCompetition extends FishingRecordKeeper {
+public final class FishingCompetition extends FishRecordKeeper {
 
     @NotNull
     private FishingCompetition.State state = State.DISABLED;

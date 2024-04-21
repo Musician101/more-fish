@@ -14,7 +14,7 @@ import java.util.UUID;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
 
-public final class FishingLogs extends FishingRecordKeeper {
+public final class FishingLogs extends FishRecordKeeper {
 
     public void load() {
         try {
