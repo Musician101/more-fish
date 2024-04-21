@@ -82,16 +82,18 @@ public class MusiBoardHooker implements PluginHooker {
     }
 
     public void update() {
-        if (leaderboard != null && scoreboard.getObjective("leaderboard") != null) {
-            leaderboard.unregister();
-        }
+        if (hasHooked) {
+            if (leaderboard != null && scoreboard.getObjective("leaderboard") != null) {
+                leaderboard.unregister();
+            }
 
-        leaderboard = scoreboard.registerNewObjective("leaderboard", Criteria.DUMMY, text("Top 5 Fishers (mm)", AQUA));
-        leaderboard.setDisplaySlot(DisplaySlot.SIDEBAR);
-        List<FishRecord> records = getPlugin().getCompetition().getRecords();
-        IntStream.range(0, Math.min(5, records.size())).forEach(i -> {
-            FishRecord record = records.get(i);
-            leaderboard.getScore(Bukkit.getOfflinePlayer(record.fisher())).setScore((int) (record.getLength() * 100));
-        });
+            leaderboard = scoreboard.registerNewObjective("leaderboard", Criteria.DUMMY, text("Top 5 Fishers (mm)", AQUA));
+            leaderboard.setDisplaySlot(DisplaySlot.SIDEBAR);
+            List<FishRecord> records = getPlugin().getCompetition().getRecords();
+            IntStream.range(0, Math.min(5, records.size())).forEach(i -> {
+                FishRecord record = records.get(i);
+                leaderboard.getScore(Bukkit.getOfflinePlayer(record.fisher())).setScore((int) (record.getLength() * 100));
+            });
+        }
     }
 }
