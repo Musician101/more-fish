@@ -56,7 +56,8 @@ tasks {
         }
 
         archiveClassifier.set("")
-        relocate("io.musician101", "me.elsiff.morefish.lib.io.musician101")
+        relocate("io.musician101.bukkitier", "me.elsiff.morefish.lib.io.musician101.bukkitier")
+        relocate("io.musician101.musigui", "me.elsiff.morefish.lib.io.musician101.musigui")
         dependsOn("build")
     }
 
