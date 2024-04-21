@@ -37,11 +37,7 @@
     "length-min": 150,
     "icon": {
       "lore": [
-        {
-          "color": "dark_purple",
-          "italic": true,
-          "text": "I'm back in da house, hamma hamma hamma"
-        }
+        "<italic><dark_purple>I'm back in da house, hamma hamma hamma"
       ],
       "id": "minecraft:cod",
       "durability": 1
