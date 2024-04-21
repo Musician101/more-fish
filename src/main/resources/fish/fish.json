@@ -30,7 +30,7 @@
       "no-display": true,
       "default": true,
       "display-name": "COMMON",
-      "color": "reset",
+      "color": "white",
       "additional-price": 0.0
     },
     "legendary": {
