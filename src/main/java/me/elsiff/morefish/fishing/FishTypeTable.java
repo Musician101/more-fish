@@ -310,8 +310,21 @@ public final class FishTypeTable {
         }
 
         List<FishType> types = map.get(rarity).stream().filter(type -> {
-            boolean losFlag = luckOfTheSea && random.nextDouble() <= type.luckOfTheSeaChances().get(fishNumber);
-            return losFlag && type.conditions().stream().allMatch(condition -> condition.check(caught, fisher));
+            if (luckOfTheSea) {
+                Map<Integer, Double> losMap = type.luckOfTheSeaChances();
+                if (losMap.isEmpty()) {
+                    return false;
+                }
+
+                Double chance = losMap.get(fishNumber);
+                if (chance == null) {
+                    return false;
+                }
+
+                return random.nextDouble() <= chance && type.conditions().stream().allMatch(condition -> condition.check(caught, fisher));
+            }
+
+            return true;
         }).toList();
         if (types.isEmpty()) {
             return pickRandomType(caught, fisher);
