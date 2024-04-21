@@ -21,6 +21,8 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -76,10 +78,10 @@ public final class FishShopGui extends AbstractFishShopGUI {
     }
 
     private double getTotalPrice() {
-        return getFilteredFish().stream().mapToDouble(itemStack -> {
+        return BigDecimal.valueOf(getFilteredFish().stream().mapToDouble(itemStack -> {
             Fish fish = fish(itemStack);
             return shop.priceOf(fish) * itemStack.getAmount();
-        }).sum();
+        }).sum()).setScale(2, RoundingMode.DOWN).doubleValue();
     }
 
     @Override
@@ -89,7 +91,12 @@ public final class FishShopGui extends AbstractFishShopGUI {
             return;
         }
 
-        updatePriceIcon();
+        if (event.getClick() == ClickType.SHIFT_LEFT) {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), this::updatePriceIcon, 1L);
+        }
+        else {
+            updatePriceIcon();
+        }
         fishBags.update(player, inventory.getContents(), page);
     }
 
