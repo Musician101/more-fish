@@ -113,9 +113,5 @@ public final class FishingCompetitionAutoRunner {
         public boolean matchesReminderTimes(@NotNull LocalTime time) {
             return reminderTimes.containsKey(time);
         }
-
-        public Duration getRemainingTime(@NotNull LocalTime time) {
-            return reminderTimes.get(time);
-        }
     }
 }

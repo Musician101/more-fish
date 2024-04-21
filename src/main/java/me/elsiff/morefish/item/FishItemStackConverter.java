@@ -77,7 +77,7 @@ public interface FishItemStackConverter {
     }
 
     private static Map<String, Object> getFormatReplacementMap(Fish fish, double length, Player catcher) {
-        return Map.of("%player%", catcher.getName(), "%rarity%", fish.type().rarity().name().toUpperCase(), "%rarity_color%", fish.type().rarity().color().toString(), "%length%", length, "%fish%", fish.type().displayName());
+        return Map.of("%player%", catcher.getName(), "%rarity%", fish.type().rarity().name().toUpperCase(), "%rarity_color%", fish.type().rarity().color(), "%length%", length, "%fish%", fish.type().displayName());
     }
 
     static boolean isFish(@Nullable ItemStack itemStack) {

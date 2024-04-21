@@ -106,12 +106,12 @@ public final class FishingCompetitionHost {
             });
 
             if (receiver instanceof Player) {
-                if (!getCompetition().containsContestant(((Player) receiver).getUniqueId())) {
-                    receiver.sendMessage(join(PREFIX_COMPONENT, text("You didn't catch any fish.")));
-                }
-                else {
+                if (getCompetition().containsContestant(((Player) receiver).getUniqueId())) {
                     Entry<Integer, FishRecord> entry = getCompetition().rankedRecordOf((OfflinePlayer) receiver);
                     receiver.sendMessage(join(PREFIX_COMPONENT, replace("You're %ordinal%: %length%cm %fish%", topReplacementOf(entry.getKey() + 1, entry.getValue()))));
+                }
+                else {
+                    receiver.sendMessage(join(PREFIX_COMPONENT, text("You didn't catch any fish.")));
                 }
             }
         }

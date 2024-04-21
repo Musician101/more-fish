@@ -65,12 +65,12 @@ public class MFTop extends MFCommand implements LiteralCommand {
                 });
 
                 if (sender instanceof Player) {
-                    if (!getCompetition().containsContestant(((Player) sender).getUniqueId())) {
-                        sender.sendMessage(join(PREFIX_COMPONENT, text("You haven't caught any fish.")));
-                    }
-                    else {
+                    if (getCompetition().containsContestant(((Player) sender).getUniqueId())) {
                         Map.Entry<Integer, FishRecord> entry = getCompetition().rankedRecordOf((OfflinePlayer) sender);
                         sender.sendMessage(join(PREFIX_COMPONENT, replace("You're %ordinal%: %length%cm %fish%", topReplacementOf(entry.getKey() + 1, entry.getValue()))));
+                    }
+                    else {
+                        sender.sendMessage(join(PREFIX_COMPONENT, text("You haven't caught any fish.")));
                     }
                 }
             }

@@ -25,6 +25,7 @@ import static net.kyori.adventure.text.Component.text;
 
 class MFGive extends MFCommand implements LiteralCommand {
 
+    @SuppressWarnings("SameReturnValue")
     private static int giveFish(CommandContext<CommandSender> context, FishType fishType, double length, int amount) {
         Player player = context.getArgument("player", Player.class);
         ItemStack itemStack = createItemStack(fishType.generateFish(), length, player);
