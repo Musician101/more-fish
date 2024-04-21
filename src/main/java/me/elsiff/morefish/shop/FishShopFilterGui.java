@@ -24,6 +24,7 @@ import static me.elsiff.morefish.MoreFish.getPlugin;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
+import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
 
 public class FishShopFilterGui extends AbstractFishShopGUI {
 
@@ -61,7 +62,7 @@ public class FishShopFilterGui extends AbstractFishShopGUI {
     }
 
     private void updateIcon(int slot, FishRarity fishRarity) {
-        Component name = text(fishRarity.displayName(), fishRarity.color());
+        Component name = miniMessage().deserialize("<color:" + fishRarity.color() + ">" + fishRarity.displayName());
         Component lore = selectedRarities.contains(fishRarity) ? text("Selected.", GREEN) : text("Not selected.", RED);
         ItemStack itemStack = setLore(customName(new ItemStack(Material.COD), name), lore);
         setButton(slot, itemStack, ClickType.LEFT, p -> {

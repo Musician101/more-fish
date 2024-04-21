@@ -14,8 +14,8 @@ import java.util.List;
 import java.util.Map;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.configuration.Lang.PREFIX;
-import static me.elsiff.morefish.configuration.Lang.join;
+import static me.elsiff.morefish.text.Lang.PREFIX_COMPONENT;
+import static me.elsiff.morefish.text.Lang.join;
 import static net.kyori.adventure.text.Component.text;
 
 public final class FishingCompetitionAutoRunner {
@@ -66,7 +66,7 @@ public final class FishingCompetitionAutoRunner {
                         }
                     });
                     sb.append(", the next competition will begin!");
-                    Bukkit.broadcast(join(PREFIX, text(sb.toString())));
+                    Bukkit.broadcast(join(PREFIX_COMPONENT, text(sb.toString())));
                 }
                 else if (Bukkit.getOnlinePlayers().size() >= requiredPlayers) {
                     if (competitionTimes.stream().anyMatch(time -> time.matchesStartTime(currentTime)) && getCompetitionHost().getCompetition().isDisabled()) {

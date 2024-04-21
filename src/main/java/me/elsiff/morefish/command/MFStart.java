@@ -6,21 +6,21 @@ import com.mojang.brigadier.context.CommandContext;
 import io.musician101.bukkitier.command.ArgumentCommand;
 import io.musician101.bukkitier.command.Command;
 import io.musician101.bukkitier.command.LiteralCommand;
-import me.elsiff.morefish.configuration.Lang;
+import me.elsiff.morefish.text.Lang;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Map;
 
-import static me.elsiff.morefish.configuration.Lang.PREFIX;
-import static me.elsiff.morefish.configuration.Lang.join;
+import static me.elsiff.morefish.text.Lang.PREFIX_COMPONENT;
+import static me.elsiff.morefish.text.Lang.contestStartTimer;
+import static me.elsiff.morefish.text.Lang.join;
 import static net.kyori.adventure.text.Component.text;
 
 class MFStart extends MFCommand implements LiteralCommand {
 
-    private static final Component ALREADY_ONGOING = join(PREFIX, text("The contest is already ongoing."));
+    private static final Component ALREADY_ONGOING = join(PREFIX_COMPONENT, text("The contest is already ongoing."));
 
     @NotNull
     @Override
@@ -61,7 +61,7 @@ class MFStart extends MFCommand implements LiteralCommand {
             if (getCompetition().isDisabled()) {
                 long runningTime = context.getArgument("seconds", Long.class);
                 getCompetitionHost().openCompetitionFor(runningTime * 20L);
-                sender.sendMessage(Lang.replace(Lang.CONTEST_START_TIMER, Map.of("%time%", Lang.time(runningTime))));
+                sender.sendMessage(contestStartTimer(runningTime));
             }
             else {
                 sender.sendMessage(ALREADY_ONGOING);

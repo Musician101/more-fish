@@ -2,14 +2,14 @@ package me.elsiff.morefish.command;
 
 import com.mojang.brigadier.context.CommandContext;
 import io.musician101.bukkitier.command.LiteralCommand;
-import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.hooker.MusiBoardHooker;
+import me.elsiff.morefish.text.Lang;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.configuration.Lang.join;
+import static me.elsiff.morefish.text.Lang.join;
 import static net.kyori.adventure.text.Component.text;
 
 public class MFSBCommand extends MFCommand implements LiteralCommand {
@@ -32,15 +32,15 @@ public class MFSBCommand extends MFCommand implements LiteralCommand {
             MusiBoardHooker musiBoard = getPlugin().getMusiBoard();
             if (musiBoard.hasHooked()) {
                 getPlugin().getMusiBoard().swapScoreboards(player);
-                player.sendMessage(join(Lang.PREFIX, text("Scoreboard swapped.")));
+                player.sendMessage(join(Lang.PREFIX_COMPONENT, text("Scoreboard swapped.")));
                 return 1;
             }
 
-            player.sendMessage(join(Lang.PREFIX, text("Scoreboard support is not enabled.")));
+            player.sendMessage(join(Lang.PREFIX_COMPONENT, text("Scoreboard support is not enabled.")));
             return 1;
         }
 
-        player.sendMessage(join(Lang.PREFIX, text("There is no competition running.")));
+        player.sendMessage(join(Lang.PREFIX_COMPONENT, text("There is no competition running.")));
         return 1;
     }
 

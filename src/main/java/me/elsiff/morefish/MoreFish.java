@@ -1,7 +1,6 @@
 package me.elsiff.morefish;
 
 import me.elsiff.morefish.command.MFMain;
-import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.FishBags;
 import me.elsiff.morefish.fishing.FishTypeTable;
 import me.elsiff.morefish.fishing.FishingListener;
@@ -14,6 +13,7 @@ import me.elsiff.morefish.hooker.MusiBoardHooker;
 import me.elsiff.morefish.hooker.ProtocolLibHooker;
 import me.elsiff.morefish.hooker.VaultHooker;
 import me.elsiff.morefish.shop.FishShop;
+import me.elsiff.morefish.text.Lang;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Server;
 import org.bukkit.plugin.PluginManager;
@@ -21,7 +21,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import static io.musician101.bukkitier.Bukkitier.registerCommand;
-import static me.elsiff.morefish.configuration.Lang.PREFIX;
+import static me.elsiff.morefish.text.Lang.PREFIX_COMPONENT;
 import static net.kyori.adventure.text.Component.text;
 
 public final class MoreFish extends JavaPlugin {
@@ -58,7 +58,7 @@ public final class MoreFish extends JavaPlugin {
             Component title = player.getOpenInventory().title();
             if (title.equals(Lang.SHOP_GUI_TITLE) || title.equals(text("Set Sale Filter(s)"))) {
                 player.closeInventory();
-                player.sendMessage(Lang.join(PREFIX, text(" The config is being updated. To prevent issues, the window has been closed.")));
+                player.sendMessage(Lang.join(PREFIX_COMPONENT, text(" The config is being updated. To prevent issues, the window has been closed.")));
             }
         });
 

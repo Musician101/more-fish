@@ -4,18 +4,17 @@ import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import io.musician101.bukkitier.command.Command;
 import io.musician101.bukkitier.command.LiteralCommand;
-import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.shop.FishShopGui;
+import me.elsiff.morefish.text.Lang;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Map;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.configuration.Lang.PREFIX;
-import static me.elsiff.morefish.configuration.Lang.join;
+import static me.elsiff.morefish.text.Lang.PREFIX_COMPONENT;
+import static me.elsiff.morefish.text.Lang.join;
 import static net.kyori.adventure.text.Component.text;
 
 public class MFShop extends MFCommand implements LiteralCommand {
@@ -49,7 +48,7 @@ public class MFShop extends MFCommand implements LiteralCommand {
         else {
             new FishShopGui(guiUser, 1);
             if (!guiUser.getUniqueId().equals(((Player) sender).getUniqueId())) {
-                sender.sendMessage(Lang.replace(join(PREFIX, text("Forced %s to open Shop GUI.")), Map.of("%s", guiUser.getName())));
+                sender.sendMessage(join(PREFIX_COMPONENT, text("Forced " + guiUser.getName() + " to open Shop GUI.")));
             }
         }
 

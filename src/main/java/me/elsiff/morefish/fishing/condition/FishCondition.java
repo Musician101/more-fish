@@ -20,7 +20,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
 
@@ -34,7 +33,7 @@ public interface FishCondition {
                 JsonElement json = entry.getValue();
                 return switch (entry.getKey()) {
                     case "biome" -> {
-                        List<Biome> biomes = StreamSupport.stream(json.getAsJsonArray().spliterator(), false).map(s -> loadFromRegistry(Registry.BIOME, s.getAsString())).filter(Objects::nonNull).toList();
+                        List<Biome> biomes = json.getAsJsonArray().asList().stream().map(s -> loadFromRegistry(Registry.BIOME, s.getAsString())).filter(Objects::nonNull).toList();
                         yield new BiomeCondition(biomes);
                     }
                     case "enchantments" ->

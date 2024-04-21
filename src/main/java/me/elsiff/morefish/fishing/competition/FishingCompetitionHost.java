@@ -1,8 +1,8 @@
 package me.elsiff.morefish.fishing.competition;
 
 import me.elsiff.morefish.command.argument.SortArgumentType.SortType;
-import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.fishrecords.FishRecord;
+import me.elsiff.morefish.text.Lang;
 import me.elsiff.morefish.util.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -19,11 +19,11 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.configuration.Lang.PREFIX;
-import static me.elsiff.morefish.configuration.Lang.join;
+import static me.elsiff.morefish.text.Lang.PREFIX_COMPONENT;
+import static me.elsiff.morefish.text.Lang.contestStartTimer;
+import static me.elsiff.morefish.text.Lang.join;
+import static me.elsiff.morefish.text.Lang.replace;
 import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
-import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
 
 public final class FishingCompetitionHost {
 
@@ -95,23 +95,23 @@ public final class FishingCompetitionHost {
 
     public void informAboutRanking(@NotNull CommandSender receiver) {
         if (getCompetition().getRecords().isEmpty()) {
-            receiver.sendMessage(join(PREFIX, text("Nobody has caught anything yet.")));
+            receiver.sendMessage(join(PREFIX_COMPONENT, text("Nobody has caught anything yet.")));
         }
         else {
             int topSize = getMsgConfig().getInt("top-number", 1);
             List<FishRecord> top = getCompetition().top(topSize);
             top.forEach(record -> {
                 int number = top.indexOf(record) + 1;
-                receiver.sendMessage(Lang.replace(join(PREFIX, text("%ordinal%. ", YELLOW), text(": %player%, %length%cm %fish%", DARK_GRAY)), topReplacementOf(number, record)));
+                receiver.sendMessage(join(PREFIX_COMPONENT, replace("<yellow>%ordinal%. : <dark_gray>%player%, %length%cm %fish%", topReplacementOf(number, record))));
             });
 
             if (receiver instanceof Player) {
                 if (!getCompetition().containsContestant(((Player) receiver).getUniqueId())) {
-                    receiver.sendMessage(join(PREFIX, text("You didn't catch any fish.")));
+                    receiver.sendMessage(join(PREFIX_COMPONENT, text("You didn't catch any fish.")));
                 }
                 else {
                     Entry<Integer, FishRecord> entry = getCompetition().rankedRecordOf((OfflinePlayer) receiver);
-                    receiver.sendMessage(Lang.replace(join(PREFIX, text("You're %ordinal%: %length%cm %fish%")), topReplacementOf(entry.getKey() + 1, entry.getValue())));
+                    receiver.sendMessage(join(PREFIX_COMPONENT, replace("You're %ordinal%: %length%cm %fish%", topReplacementOf(entry.getKey() + 1, entry.getValue()))));
                 }
             }
         }
@@ -123,7 +123,7 @@ public final class FishingCompetitionHost {
         timerTask = Bukkit.getScheduler().runTaskLater(getPlugin(), (Runnable) this::closeCompetition, tick);
         timerBarHandler.enableTimer(duration);
         Bukkit.broadcast(Lang.CONTEST_START);
-        Bukkit.broadcast(Lang.replace(Lang.CONTEST_START_TIMER, Map.of("%time%", Lang.time(duration))));
+        Bukkit.broadcast(contestStartTimer(duration));
     }
 
     private Map<String, Object> topReplacementOf(int number, FishRecord record) {

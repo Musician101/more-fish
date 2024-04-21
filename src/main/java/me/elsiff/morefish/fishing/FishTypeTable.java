@@ -7,7 +7,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import me.elsiff.morefish.announcement.PlayerAnnouncement;
-import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.catchhandler.CatchCommandExecutor;
 import me.elsiff.morefish.fishing.catchhandler.CatchFireworkSpawner;
 import me.elsiff.morefish.fishing.catchhandler.CatchHandler;
@@ -16,8 +15,6 @@ import me.elsiff.morefish.hooker.PluginHooker;
 import me.elsiff.morefish.hooker.ProtocolLibHooker;
 import me.elsiff.morefish.hooker.SkullNbtHandler;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -47,14 +44,15 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
+import static me.elsiff.morefish.text.Lang.replace;
 
 public final class FishTypeTable {
 
     private static final Gson GSON = new Gson();
     private final BiMap<FishRarity, List<FishType>> map = HashBiMap.create();
+    private final Random random = new Random();
     private JsonObject fish = new JsonObject();
 
     @NotNull
@@ -139,7 +137,7 @@ public final class FishTypeTable {
 
                     boolean isDefault = getOrDefaultFalse(json, "default");
                     double chance = getOrDefaultZero(json, "chance") / 100D;
-                    TextColor color = Lang.getColor(json.get("color").getAsString());
+                    String color = json.get("color").getAsString();
                     PlayerAnnouncement announcement = PlayerAnnouncement.fromConfigOrDefault(json, "catch-announce", PlayerAnnouncement.ofServerBroadcast());
                     boolean skipItemFormat = getOrDefaultFalse(json, "skip-item-format");
                     boolean noDisplay = getOrDefaultFalse(json, "no-display");
@@ -228,11 +226,12 @@ public final class FishTypeTable {
         ItemStack itemStack = new ItemStack(material, amount);
         ItemMeta itemMeta = itemStack.getItemMeta();
         if (json.has("lore")) {
-            List<Component> lore = StreamSupport.stream(json.getAsJsonArray("lore").spliterator(), false).map(content -> GsonComponentSerializer.gson().deserialize(content.toString())).toList();
+            List<Component> lore = json.getAsJsonArray("lore").asList().stream().map(content -> replace(content.toString())).toList();
             itemMeta.lore(lore);
         }
+
         if (json.has("enchantments")) {
-            StreamSupport.stream(json.getAsJsonArray("enchantments").spliterator(), false).map(JsonElement::getAsString).map(string -> string.split("\\|")).forEach(tokens -> {
+            json.getAsJsonArray("enchantments").asList().stream().map(JsonElement::getAsString).map(string -> string.split("\\|")).forEach(tokens -> {
                 NamespacedKey key = tokens[0].contains(":") ? NamespacedKey.fromString(tokens[0]) : NamespacedKey.minecraft(tokens[0]);
                 Enchantment enchantment;
                 if (key != null && (enchantment = Registry.ENCHANTMENT.get(key)) != null) {
@@ -308,8 +307,6 @@ public final class FishTypeTable {
     public FishType pickRandomType(@NotNull Item caught, @NotNull Player fisher) {
         return pickRandomType(caught, fisher, false, 0);
     }
-
-    private final Random random = new Random();
 
     @NotNull
     public FishType pickRandomType(@NotNull Item caught, @NotNull Player fisher, boolean luckOfTheSea, int fishNumber) {

@@ -4,7 +4,6 @@ import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import io.musician101.bukkitier.command.Command;
 import io.musician101.bukkitier.command.LiteralCommand;
-import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.fishrecords.FishRecord;
 import me.elsiff.morefish.util.NumberUtils;
 import org.bukkit.Bukkit;
@@ -18,11 +17,10 @@ import java.util.List;
 import java.util.Map;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.configuration.Lang.PREFIX;
-import static me.elsiff.morefish.configuration.Lang.join;
+import static me.elsiff.morefish.text.Lang.PREFIX_COMPONENT;
+import static me.elsiff.morefish.text.Lang.join;
+import static me.elsiff.morefish.text.Lang.replace;
 import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
-import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
 
 public class MFTop extends MFCommand implements LiteralCommand {
 
@@ -51,7 +49,7 @@ public class MFTop extends MFCommand implements LiteralCommand {
         public int execute(@NotNull CommandContext<CommandSender> context) {
             CommandSender sender = context.getSource();
             if (getCompetition().getRecords().isEmpty()) {
-                sender.sendMessage(join(PREFIX, text("Nobody has caught anything yet.")));
+                sender.sendMessage(join(PREFIX_COMPONENT, text("Nobody has caught anything yet.")));
             }
             else {
                 int topSize = 1;
@@ -63,16 +61,16 @@ public class MFTop extends MFCommand implements LiteralCommand {
                 List<FishRecord> top = getFishingLogs().top(topSize);
                 top.forEach(record -> {
                     int number = top.indexOf(record) + 1;
-                    sender.sendMessage(Lang.replace(join(PREFIX, text("%ordinal%. ", YELLOW), text(": %player%, %length%cm %fish%", DARK_GRAY)), topReplacementOf(number, record)));
+                    sender.sendMessage(join(PREFIX_COMPONENT, replace("<yellow>%ordinal%. : <dark_gray>%player%, %length%cm %fish%", topReplacementOf(number, record))));
                 });
 
                 if (sender instanceof Player) {
                     if (!getCompetition().containsContestant(((Player) sender).getUniqueId())) {
-                        sender.sendMessage(join(PREFIX, text("You haven't caught any fish.")));
+                        sender.sendMessage(join(PREFIX_COMPONENT, text("You haven't caught any fish.")));
                     }
                     else {
                         Map.Entry<Integer, FishRecord> entry = getCompetition().rankedRecordOf((OfflinePlayer) sender);
-                        sender.sendMessage(Lang.replace(join(PREFIX, text("You're %ordinal%: %length%cm %fish%")), topReplacementOf(entry.getKey() + 1, entry.getValue())));
+                        sender.sendMessage(join(PREFIX_COMPONENT, replace("You're %ordinal%: %length%cm %fish%", topReplacementOf(entry.getKey() + 1, entry.getValue()))));
                     }
                 }
             }
@@ -104,7 +102,7 @@ public class MFTop extends MFCommand implements LiteralCommand {
         @NotNull
         @Override
         public String name() {
-            return "current";
+            return "competition";
         }
     }
 }

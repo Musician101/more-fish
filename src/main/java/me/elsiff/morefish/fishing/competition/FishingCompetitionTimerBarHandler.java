@@ -1,6 +1,5 @@
 package me.elsiff.morefish.fishing.competition;
 
-import me.elsiff.morefish.configuration.Lang;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.bossbar.BossBar.Color;
 import net.kyori.adventure.bossbar.BossBar.Overlay;
@@ -20,7 +19,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.configuration.Lang.join;
+import static me.elsiff.morefish.text.Lang.join;
+import static me.elsiff.morefish.text.Lang.replace;
+import static me.elsiff.morefish.text.Lang.time;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
 import static net.kyori.adventure.text.format.TextDecoration.BOLD;
@@ -60,7 +61,7 @@ public final class FishingCompetitionTimerBarHandler {
     }
 
     private Component timerBarTitle(long remainingSeconds) {
-        return Lang.replace(join(text("Fishing Contest ", Style.style(AQUA, BOLD)), text("[%time% left]")), Map.of("%time%", Lang.time(remainingSeconds)));
+        return join(text("Fishing Contest ", Style.style(AQUA, BOLD)), replace("[%time% left]", Map.of("%time%", time(remainingSeconds))));
     }
 
     private final class TimerBarDisplayer implements Listener {

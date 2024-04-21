@@ -5,11 +5,7 @@
     "length-min": 40,
     "icon": {
       "lore": [
-        {
-          "color": "dark_purple",
-          "italic": true,
-          "text": "Yes I'm real"
-        }
+        "<italic><dark_purple>Yes I'm real"
       ],
       "id": "minecraft:cod",
       "durability": 1
@@ -21,11 +17,7 @@
     "length-min": 15,
     "icon": {
       "lore": [
-        {
-          "color": "dark_purple",
-          "italic": true,
-          "text": "Do not squeeze"
-        }
+        "<italic><dark_purple>Do not squeeze"
       ],
       "id": "minecraft:pufferfish",
       "durability": 3
@@ -57,11 +49,7 @@
     "length-min": 30,
     "icon": {
       "lore": [
-        {
-          "color": "dark_purple",
-          "italic": true,
-          "text": "You cannot fast travel, you are in combat"
-        }
+        "<italic><dark_purple>You cannot fast travel, you are in combat"
       ],
       "id": "minecraft:cod",
       "durability": 1
@@ -101,11 +89,7 @@
     "length-min": 80,
     "icon": {
       "lore": [
-        {
-          "color": "dark_purple",
-          "italic": true,
-          "text": "Claimed to be a genius among fish"
-        }
+        "<italic><dark_purple>Claimed to be a genius among fish"
       ],
       "id": "minecraft:cod",
       "durability": 1
@@ -117,11 +101,7 @@
     "length-min": 70,
     "icon": {
       "lore": [
-        {
-          "color": "dark_purple",
-          "italic": true,
-          "text": "Suh Dude"
-        }
+        "<italic><dark_purple>Suh Dude"
       ],
       "id": "minecraft:turtle_spawn_egg"
     }

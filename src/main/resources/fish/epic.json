@@ -14,11 +14,7 @@
     "length-min": 124,
     "icon": {
       "lore": [
-        {
-          "color": "dark_purple",
-          "italic": true,
-          "text": "All great things come with a hidden meaning"
-        }
+        "<italic><dark_purple>All great things come with a hidden meaning"
       ],
       "id": "minecraft:cod",
       "durability": 2
@@ -30,11 +26,7 @@
     "length-min": 110,
     "icon": {
       "lore": [
-        {
-          "color": "dark_purple",
-          "italic": true,
-          "text": "I live my life a quarter fathom at a time"
-        }
+        "<italic><dark_purple>I live my life a quarter fathom at a time"
       ],
       "id": "minecraft:cod"
     }

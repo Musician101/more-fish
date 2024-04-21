@@ -5,14 +5,8 @@
     "length-min": 10,
     "icon": {
       "lore": [
-        {
-          "text": "Tell me have you seen",
-          "color": "gray"
-        },
-        {
-          "text": "the marvellous breadfish",
-          "color": "gray"
-        }
+        "<gray>Tell me have you seen",
+        "<gray>the marvellous breadfish"
       ],
       "id": "minecraft:bread"
     }
@@ -42,10 +36,7 @@
     "length-min": 16,
     "icon": {
       "lore": [
-        {
-          "color": "gray",
-          "text": "//cut"
-        }
+        "<gray>//cut"
       ],
       "id": "minecraft:wooden_axe"
     }
@@ -56,10 +47,7 @@
     "length-min": 25,
     "icon": {
       "lore": [
-        {
-          "text": "Magikarp used Splash!",
-          "color": "gray"
-        }
+        "<gray>Magikarp used Splash!"
       ],
       "id": "minecraft:cod"
     }
@@ -90,9 +78,8 @@
     "length-min": 18,
     "icon": {
       "lore": [
-        {
-          "text": "Hate to break it to you this is not a fish"
-        }
+        "Hate to break it to you,",
+        "but this is not a fish"
       ],
       "id": "minecraft:feather"
     }

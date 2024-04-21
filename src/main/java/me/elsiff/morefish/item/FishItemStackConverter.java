@@ -2,11 +2,11 @@ package me.elsiff.morefish.item;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.Fish;
 import me.elsiff.morefish.fishing.FishType;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -19,10 +19,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
+import static me.elsiff.morefish.text.Lang.replace;
 
 public interface FishItemStackConverter {
 
@@ -37,24 +37,19 @@ public interface FishItemStackConverter {
         ItemMeta itemMeta = itemStack.getItemMeta();
         if (!fish.type().hasNotFishItemFormat()) {
             Map<String, Object> replacement = getFormatReplacementMap(fish, length, catcher);
-            GsonComponentSerializer gson = GsonComponentSerializer.gson();
-            itemMeta.displayName(Lang.replace(gson.deserialize(getFormatConfig().map(cs -> cs.get("display-name").toString()).orElse("null")), replacement, catcher));
-            List<Component> lore = Lang.replace(getFormatConfig().map(json -> json.getAsJsonArray("lore").asList().stream().map(JsonElement::toString).map(gson::deserialize).toList()).orElse(new ArrayList<>()), replacement, catcher);
+            itemMeta.displayName(replace(getFormatConfig().map(cs -> cs.get("display-name").getAsString()).orElse("null"), replacement, catcher));
+            List<Component> lore = replace(getFormatConfig().map(json -> json.getAsJsonArray("lore").asList().stream().map(JsonElement::toString).toList()).orElse(new ArrayList<>()), replacement, catcher);
             List<Component> oldLore = itemMeta.lore();
             if (oldLore != null) {
-                lore.addAll(oldLore.stream().map(component -> {
-                    for (Entry<String, Object> entry : replacement.entrySet()) {
-                        component = component.replaceText(builder -> {
-                            builder.matchLiteral(entry.getKey());
-                            builder.replacement(entry.getValue().toString());
-                        });
-                    }
-
-                    return component;
+                lore.addAll(oldLore.stream().map(c -> {
+                    GsonComponentSerializer gson = GsonComponentSerializer.gson();
+                    Component component = replace(gson.serialize(c), replacement, catcher);
+                    String string = PlainTextComponentSerializer.plainText().serialize(component);
+                    return gson.deserialize(string);
                 }).toList());
             }
 
-            itemMeta.lore(Lang.replace(lore, replacement, catcher));
+            itemMeta.lore(lore);
         }
 
         PersistentDataContainer data = itemMeta.getPersistentDataContainer();

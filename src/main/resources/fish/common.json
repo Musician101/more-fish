@@ -5,11 +5,7 @@
     "length-min": 4,
     "icon": {
       "lore": [
-        {
-          "color": "dark_purple",
-          "italic": true,
-          "text": "FeelsBadMan"
-        }
+        "<italic><dark_purple>FeelsBadMan"
       ],
       "id": "minecraft:slime_ball"
     }
@@ -28,11 +24,7 @@
     "length-min": 5,
     "icon": {
       "lore": [
-        {
-          "color": "dark_purple",
-          "italic": true,
-          "text": "Wider than it is long"
-        }
+        "<italic><dark_purple>Wider than it is long"
       ],
       "id": "minecraft:cod"
     }
@@ -75,11 +67,7 @@
     "length-min": 10,
     "icon": {
       "lore": [
-        {
-          "color": "dark_purple",
-          "italic": true,
-          "text": "I am become Death, destroyer of worlds!"
-        }
+        "<italic><dark_purple>I am become Death, destroyer of worlds!"
       ],
       "id": "minecraft:cod"
     }
@@ -90,11 +78,7 @@
     "length-min": 7,
     "icon": {
       "lore": [
-        {
-          "color": "dark_purple",
-          "italic": true,
-          "text": "Just a goofy GooberFish!"
-        }
+        "<italic><dark_purple>Just a goofy GooberFish!"
       ],
       "id": "minecraft:cod"
     }

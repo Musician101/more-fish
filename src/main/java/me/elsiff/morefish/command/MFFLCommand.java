@@ -18,8 +18,8 @@ import java.util.Date;
 import java.util.List;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.configuration.Lang.PREFIX;
-import static me.elsiff.morefish.configuration.Lang.join;
+import static me.elsiff.morefish.text.Lang.PREFIX_COMPONENT;
+import static me.elsiff.morefish.text.Lang.join;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
@@ -41,14 +41,14 @@ public class MFFLCommand extends MFCommand implements LiteralCommand {
         int end = start + 8;
         List<FishRecord> records = getPlugin().getFishingLogs().getFisher(player.getUniqueId()).subList(start, end);
         if (records.isEmpty()) {
-            player.sendMessage(join(PREFIX, text("You have not caught any fish yet.")));
+            player.sendMessage(join(PREFIX_COMPONENT, text("You have not caught any fish yet.")));
             return;
         }
 
         records.sort(sortType.sorter());
         records.forEach(record -> {
             Date date = new Date(record.timestamp());
-            player.sendMessage(join(PREFIX, text(record.getLength() + "cm " + record.getFishName(), DARK_GRAY), text(" " + date, YELLOW)));
+            player.sendMessage(join(PREFIX_COMPONENT, text(record.getLength() + "cm " + record.getFishName(), DARK_GRAY), text(" " + date, YELLOW)));
         });
     }
 

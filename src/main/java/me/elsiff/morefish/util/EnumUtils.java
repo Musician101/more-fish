@@ -20,6 +20,16 @@ public interface EnumUtils {
     }
 
     @NotNull
+    static <E extends Enum<E>> E get(@NotNull String name, Class<E> clazz, E defaultValue) {
+        return get(e -> name.equalsIgnoreCase(e.toString()), clazz, defaultValue);
+    }
+
+    @NotNull
+    static <E extends Enum<E>> E get(@NotNull Predicate<E> filter, Class<E> clazz, E defaultValue) {
+        return values(clazz).flatMap(v -> Arrays.stream(v).filter(filter).findFirst()).orElse(defaultValue);
+    }
+
+    @NotNull
     static <E extends Enum<E>> Optional<E> get(@NotNull String name, Class<E> clazz) {
         return get(e -> name.equalsIgnoreCase(e.toString()), clazz);
     }

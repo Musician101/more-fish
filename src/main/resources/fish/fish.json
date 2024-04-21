@@ -1,18 +1,10 @@
 {
   "item-format": {
     "lore": [
-      {
-        "text": "%length%cm",
-        "color": "gray"
-      },
-      {
-        "text": "Caught by %player%",
-        "color": "gray"
-      }
+      "<gray>%length%cm",
+      "<gray>Caught by %player%"
     ],
-    "display-name": {
-      "text": "%rarity_color%%fish%"
-    }
+    "display-name": "<color:%rarity_color%>%fish%"
   },
   "rarity-list": {
     "junk": {

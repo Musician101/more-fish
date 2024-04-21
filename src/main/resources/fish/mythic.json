@@ -13,19 +13,9 @@
     "length-min": 1500,
     "icon": {
       "lore": [
-        {
-          "color": "dark_purple",
-          "italic": true,
-          "text": "RELEASE ME!"
-        },
-        {
-          "color": "blue",
-          "text": "Get full health and hunger"
-        },
-        {
-          "color": "blue",
-          "text": "when you eat it."
-        }
+        "<italic><dark_purple>RELEASE ME!",
+        "<blue>Get full health and hunger",
+        "<blue>when you eat it."
       ],
       "id": "minecraft:tropical_fish",
       "durability": 3
@@ -45,19 +35,9 @@
     "length-min": 1500,
     "icon": {
       "lore": [
-        {
-          "color": "dark_purple",
-          "italic": true,
-          "text": "Hey there big fella"
-        },
-        {
-          "color": "blue",
-          "text": "Get full health and hunger"
-        },
-        {
-          "color": "blue",
-          "text": "when you eat it."
-        }
+        "<italic><dark_purple>Hey there big fella",
+        "<blue>Get full health and hunger",
+        "<blue>when you eat it."
       ],
       "id": "minecraft:tropical_fish"
     }
@@ -76,19 +56,9 @@
     "length-min": 1500,
     "icon": {
       "lore": [
-        {
-          "color": "dark_purple",
-          "italic": true,
-          "text": "Call me Ishmael."
-        },
-        {
-          "color": "blue",
-          "text": "Get full health and hunger"
-        },
-        {
-          "color": "blue",
-          "text": "when you eat it."
-        }
+        "<italic><dark_purple>Call me Ishmael.",
+        "<blue>Get full health and hunger",
+        "<blue>when you eat it."
       ],
       "id": "minecraft:tropical_fish"
     }
@@ -107,19 +77,9 @@
     "length-min": 1500,
     "icon": {
       "lore": [
-        {
-          "color": "dark_purple",
-          "italic": true,
-          "text": "That'll be about tree fiddy"
-        },
-        {
-          "color": "blue",
-          "text": "Get full health and hunger"
-        },
-        {
-          "color": "blue",
-          "text": "when you eat it."
-        }
+        "<italic><dark_purple>That'll be about tree fiddy",
+        "<blue>Get full health and hunger",
+        "<blue>when you eat it."
       ],
       "id": "minecraft:tropical_fish"
     }
