@@ -6,7 +6,6 @@ import com.mojang.brigadier.context.CommandContext;
 import io.musician101.bukkitier.command.ArgumentCommand;
 import io.musician101.bukkitier.command.Command;
 import io.musician101.bukkitier.command.LiteralCommand;
-import me.elsiff.morefish.text.Lang;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import static me.elsiff.morefish.text.Lang.PREFIX_COMPONENT;
-import static me.elsiff.morefish.text.Lang.contestStartTimer;
 import static me.elsiff.morefish.text.Lang.join;
 import static net.kyori.adventure.text.Component.text;
 
@@ -38,7 +36,6 @@ class MFStart extends MFCommand implements LiteralCommand {
         CommandSender sender = context.getSource();
         if (getCompetition().isDisabled()) {
             getCompetitionHost().openCompetitionFor(getConfig().getInt("auto-running.timer") * 20L);
-            sender.sendMessage(Lang.CONTEST_START);
         }
         else {
             sender.sendMessage(ALREADY_ONGOING);
@@ -61,7 +58,6 @@ class MFStart extends MFCommand implements LiteralCommand {
             if (getCompetition().isDisabled()) {
                 long runningTime = context.getArgument("seconds", Long.class);
                 getCompetitionHost().openCompetitionFor(runningTime * 20L);
-                sender.sendMessage(contestStartTimer(runningTime));
             }
             else {
                 sender.sendMessage(ALREADY_ONGOING);
