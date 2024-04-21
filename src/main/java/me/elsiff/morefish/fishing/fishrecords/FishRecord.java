@@ -24,7 +24,7 @@ public final class FishRecord implements Comparable<FishRecord> {
         this.length = fish.length();
         FishType type = fish.type();
         FishRarity rarity = type.rarity();
-        this.fishName = type.name();
+        this.fishName = type.displayName();
         this.rarityName = rarity.name();
         this.rarityProbability = rarity.probability();
         this.timestamp = timestamp;
