@@ -67,8 +67,17 @@ public final class FishingCompetition extends FishRecordKeeper {
     @Override
     public void add(@NotNull FishRecord record) {
         checkStateEnabled();
-        getRecord(record.fisher()).filter(r -> record.getLength() >= r.getLength()).ifPresent(records::remove);
-        records.add(record);
+        Optional<FishRecord> optional = getRecord(record.fisher());
+        if (optional.isPresent()) {
+            optional.filter(r -> record.getLength() >= r.getLength()).ifPresent(r -> {
+                records.remove(optional.get());
+                records.add(record);
+            });
+        }
+        else {
+            records.add(record);
+        }
+
         getMusiBoard().update();
     }
 
