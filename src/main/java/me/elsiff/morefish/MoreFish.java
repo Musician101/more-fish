@@ -122,7 +122,10 @@ public final class MoreFish extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        competitionHost.closeCompetition();
+        if (competition.isEnabled()) {
+            competitionHost.closeCompetition();
+        }
+
         fishBags.save();
         fishingLogs.save();
         if (autoRunner.isEnabled()) {
