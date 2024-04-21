@@ -128,7 +128,7 @@ public final class FishTypeTable {
 
                     JsonObject losJson = fish.getAsJsonObject("luck-of-the-sea");
                     Map<Integer, Double> luckOfTheSeaChances = new HashMap<>();
-                    if (losJson.has("luck-of-the-sea")) {
+                    if (fish.has("luck-of-the-sea")) {
                         luckOfTheSeaChances = losJson.entrySet().stream().collect(Collectors.toMap(e -> Integer.parseInt(e.getKey()), e -> e.getValue().getAsDouble()));
                         if (json.has("luck-of-the-sea")) {
                             luckOfTheSeaChances = json.getAsJsonObject("luck-of-the-sea").entrySet().stream().collect(Collectors.toMap(e -> Integer.parseInt(e.getKey()), e -> e.getValue().getAsDouble()));
