@@ -1,6 +1,5 @@
 package me.elsiff.morefish.item;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import me.elsiff.morefish.fishing.Fish;
 import me.elsiff.morefish.fishing.FishType;
@@ -36,17 +35,17 @@ public interface FishItemStackConverter {
         ItemStack itemStack = fish.type().icon().clone();
         ItemMeta itemMeta = itemStack.getItemMeta();
         if (!fish.type().hasNotFishItemFormat()) {
+            GsonComponentSerializer gson = GsonComponentSerializer.gson();
+            PlainTextComponentSerializer plain = PlainTextComponentSerializer.plainText();
             Map<String, Object> replacement = getFormatReplacementMap(fish, length, catcher);
             itemMeta.displayName(replace(getFormatConfig().map(cs -> cs.get("display-name").getAsString()).orElse("null"), replacement, catcher));
-            List<Component> lore = replace(getFormatConfig().map(json -> json.getAsJsonArray("lore").asList().stream().map(JsonElement::toString).toList()).orElse(new ArrayList<>()), replacement, catcher);
+            List<Component> lore = replace(getFormatConfig().map(json -> json.getAsJsonArray("lore").asList().stream().map(j -> {
+                Component component = gson.deserializeFromTree(j);
+                return plain.serialize(component);
+            }).toList()).orElse(new ArrayList<>()), replacement, catcher);
             List<Component> oldLore = itemMeta.lore();
             if (oldLore != null) {
-                lore.addAll(oldLore.stream().map(c -> {
-                    GsonComponentSerializer gson = GsonComponentSerializer.gson();
-                    Component component = replace(gson.serialize(c), replacement, catcher);
-                    String string = PlainTextComponentSerializer.plainText().serialize(component);
-                    return gson.deserialize(string);
-                }).toList());
+                lore.addAll(oldLore.stream().map(c -> replace(plain.serialize(c), replacement, catcher)).toList());
             }
 
             itemMeta.lore(lore);

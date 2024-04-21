@@ -157,44 +157,38 @@ public final class FishTypeTable {
 
                     try {
                         JsonObject fishList = GSON.fromJson(Files.readString(new File(fishDir, fishRarityFile).toPath()), JsonObject.class);
-                        fishList.keySet().forEach(rarityName -> {
-                            if (!fishList.has(rarityName)) {
-                                return;
+                        List<FishType> fishTypes = fishList.keySet().stream().map(name -> {
+                            JsonObject json = fishList.getAsJsonObject(name);
+                            List<CatchHandler> catchHandlers = new ArrayList<>(fishRarity.catchHandlers());
+                            if (json.has("commands")) {
+                                catchHandlers.add(new CatchCommandExecutor(getStringList(json.getAsJsonArray("commands"))));
+                            }
+                            else if (getOrDefaultFalse(json, "firework")) {
+                                catchHandlers.add(new CatchFireworkSpawner());
                             }
 
-                            List<FishType> fishTypes = fishList.keySet().stream().map(name -> {
-                                JsonObject json = fishList.getAsJsonObject(name);
-                                List<CatchHandler> catchHandlers = new ArrayList<>(fishRarity.catchHandlers());
-                                if (json.has("commands")) {
-                                    catchHandlers.add(new CatchCommandExecutor(getStringList(json.getAsJsonArray("commands"))));
-                                }
-                                else if (getOrDefaultFalse(json, "firework")) {
-                                    catchHandlers.add(new CatchFireworkSpawner());
-                                }
+                            String displayName = json.get("display-name").getAsString();
+                            if (displayName == null) {
+                                throw new IllegalArgumentException("display-name is missing from fish-list." + fishRarity.name() + "." + name + ".");
+                            }
 
-                                String displayName = json.get("display-name").getAsString();
-                                if (displayName == null) {
-                                    throw new IllegalArgumentException("display-name is missing from fish-list." + rarityName + "." + name + ".");
-                                }
+                            Map<Integer, Double> luckOfTheSeaChances = new HashMap<>(fishRarity.luckOfTheSeaChances());
+                            if (json.has("luck-of-the-sea")) {
+                                luckOfTheSeaChances = json.getAsJsonObject("luck-of-the-sea").entrySet().stream().collect(Collectors.toMap(e -> Integer.parseInt(e.getKey()), e -> e.getValue().getAsDouble()));
+                            }
 
-                                Map<Integer, Double> luckOfTheSeaChances = new HashMap<>(fishRarity.luckOfTheSeaChances());
-                                if (json.has("luck-of-the-sea")) {
-                                    luckOfTheSeaChances = json.getAsJsonObject("luck-of-the-sea").entrySet().stream().collect(Collectors.toMap(e -> Integer.parseInt(e.getKey()), e -> e.getValue().getAsDouble()));
-                                }
-
-                                double minLength = json.get("length-min").getAsDouble();
-                                double maxLength = json.get("length-max").getAsDouble();
-                                ItemStack itemStack = loadItemStack(name, json.getAsJsonObject("icon"), "fish-list." + rarityName + "." + name);
-                                PlayerAnnouncement announcement = PlayerAnnouncement.fromConfigOrDefault(json, "catch-announce", fishRarity.catchAnnouncement());
-                                List<FishCondition> conditions = Stream.concat(FishCondition.loadFrom(json, "conditions").stream(), fishRarity.conditions().stream()).toList();
-                                boolean skipItemFormat = getOrDefault(json, "skip-item-format", fishRarity.hasNotFishItemFormat());
-                                boolean noDisplay = getOrDefault(json, "no-display", fishRarity.noDisplay());
-                                boolean firework = getOrDefault(json, "firework", fishRarity.hasCatchFirework());
-                                double additionalPrice = fishRarity.additionalPrice() + getOrDefaultZero(json, "additional-price");
-                                return new FishType(name, fishRarity, displayName, minLength, maxLength, itemStack, catchHandlers, announcement, conditions, luckOfTheSeaChances, skipItemFormat, noDisplay, firework, additionalPrice);
-                            }).toList();
-                            map.put(fishRarity, fishTypes);
-                        });
+                            double minLength = json.get("length-min").getAsDouble();
+                            double maxLength = json.get("length-max").getAsDouble();
+                            ItemStack itemStack = loadItemStack(name, json.getAsJsonObject("icon"), "fish-list." + fishRarity.name() + "." + name);
+                            PlayerAnnouncement announcement = PlayerAnnouncement.fromConfigOrDefault(json, "catch-announce", fishRarity.catchAnnouncement());
+                            List<FishCondition> conditions = Stream.concat(FishCondition.loadFrom(json, "conditions").stream(), fishRarity.conditions().stream()).toList();
+                            boolean skipItemFormat = getOrDefault(json, "skip-item-format", fishRarity.hasNotFishItemFormat());
+                            boolean noDisplay = getOrDefault(json, "no-display", fishRarity.noDisplay());
+                            boolean firework = getOrDefault(json, "firework", fishRarity.hasCatchFirework());
+                            double additionalPrice = fishRarity.additionalPrice() + getOrDefaultZero(json, "additional-price");
+                            return new FishType(name, fishRarity, displayName, minLength, maxLength, itemStack, catchHandlers, announcement, conditions, luckOfTheSeaChances, skipItemFormat, noDisplay, firework, additionalPrice);
+                        }).toList();
+                        map.put(fishRarity, fishTypes);
                     }
                     catch (IOException e) {
                         throw new RuntimeException(e);
@@ -226,7 +220,7 @@ public final class FishTypeTable {
         ItemStack itemStack = new ItemStack(material, amount);
         ItemMeta itemMeta = itemStack.getItemMeta();
         if (json.has("lore")) {
-            List<Component> lore = json.getAsJsonArray("lore").asList().stream().map(content -> replace(content.toString())).toList();
+            List<Component> lore = json.getAsJsonArray("lore").asList().stream().map(content -> replace(content.getAsString())).toList();
             itemMeta.lore(lore);
         }
 
