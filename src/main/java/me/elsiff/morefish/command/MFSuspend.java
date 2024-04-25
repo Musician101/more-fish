@@ -6,18 +6,32 @@ import me.elsiff.morefish.text.Lang;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
-public class MFSuspend extends MFCommand implements LiteralCommand {
+import static me.elsiff.morefish.MoreFish.getPlugin;
+
+public class MFSuspend implements LiteralCommand {
+
+    @NotNull
+    @Override
+    public String description(@NotNull CommandSender sender) {
+        return "Suspend the competition.";
+    }
+
+    @NotNull
+    @Override
+    public String usage(@NotNull CommandSender sender) {
+        return "/mf suspend";
+    }
 
     @Override
     public boolean canUse(@NotNull CommandSender sender) {
-        return testAdmin(sender);
+        return sender.hasPermission("morefish.admin");
     }
 
     @Override
     public int execute(@NotNull CommandContext<CommandSender> context) {
         CommandSender sender = context.getSource();
-        if (!getCompetition().isDisabled()) {
-            getCompetitionHost().closeCompetition(true);
+        if (!getPlugin().getCompetition().isDisabled()) {
+            getPlugin().getCompetitionHost().closeCompetition(true);
             sender.sendMessage(Lang.CONTEST_STOP);
         }
         else {

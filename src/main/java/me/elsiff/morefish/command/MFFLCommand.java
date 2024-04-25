@@ -24,7 +24,19 @@ import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
 
-public class MFFLCommand extends MFCommand implements LiteralCommand {
+class MFFLCommand implements LiteralCommand {
+
+    @NotNull
+    @Override
+    public String description(@NotNull CommandSender sender) {
+        return "Shows all the fish you've caught.";
+    }
+
+    @NotNull
+    @Override
+    public String usage(@NotNull CommandSender sender) {
+        return "/mf fishinglogs [<page> [<sort>]]";
+    }
 
     private static void showRecords(CommandContext<CommandSender> context) {
         Player player = (Player) context.getSource();
@@ -75,7 +87,7 @@ public class MFFLCommand extends MFCommand implements LiteralCommand {
         return "fishinglogs";
     }
 
-    static class PageArgument extends MFCommand implements ArgumentCommand<Integer> {
+    static class PageArgument implements ArgumentCommand<Integer> {
 
         @Override
         public int execute(@NotNull CommandContext<CommandSender> context) {
@@ -101,7 +113,7 @@ public class MFFLCommand extends MFCommand implements LiteralCommand {
         }
     }
 
-    static class SortArgument extends MFCommand implements ArgumentCommand<SortType> {
+    static class SortArgument implements ArgumentCommand<SortType> {
 
         @Override
         public int execute(@NotNull CommandContext<CommandSender> context) {

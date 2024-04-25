@@ -9,6 +9,8 @@ import io.musician101.bukkitier.command.LiteralCommand;
 import me.elsiff.morefish.command.argument.FishRecordsTypeArgumentType;
 import me.elsiff.morefish.command.argument.FishRecordsTypeArgumentType.FishRecordsType;
 import me.elsiff.morefish.command.argument.UUIDArgumentType;
+import me.elsiff.morefish.fishing.competition.FishingCompetition;
+import me.elsiff.morefish.fishing.fishrecords.FishingLogs;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -16,11 +18,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.UUID;
 
+import static me.elsiff.morefish.MoreFish.getPlugin;
 import static me.elsiff.morefish.text.Lang.PREFIX_COMPONENT;
 import static me.elsiff.morefish.text.Lang.join;
 import static net.kyori.adventure.text.Component.text;
 
-public class MFClear extends MFCommand implements LiteralCommand {
+class MFClear implements LiteralCommand {
 
     @NotNull
     @Override
@@ -30,7 +33,11 @@ public class MFClear extends MFCommand implements LiteralCommand {
 
     @Override
     public boolean canUse(@NotNull CommandSender sender) {
-        return testAdmin(sender);
+        return sender.hasPermission("morefish.admin");
+    }
+
+    private static FishingCompetition getCompetition() {
+        return getPlugin().getCompetition();
     }
 
     @Override
@@ -47,7 +54,23 @@ public class MFClear extends MFCommand implements LiteralCommand {
         return "clear";
     }
 
-    public static class RecordsArgument extends MFCommand implements ArgumentCommand<FishRecordsType> {
+    @NotNull
+    @Override
+    public String description(@NotNull CommandSender sender) {
+        return "Clears the records.";
+    }
+
+    @NotNull
+    @Override
+    public String usage(@NotNull CommandSender sender) {
+        return "/mf clear [alltime|competition [<player>]]";
+    }
+
+    private static FishingLogs getFishingLogs() {
+        return getPlugin().getFishingLogs();
+    }
+
+    public static class RecordsArgument implements ArgumentCommand<FishRecordsType> {
 
         @Override
         public int execute(@NotNull CommandContext<CommandSender> context) {
@@ -83,7 +106,7 @@ public class MFClear extends MFCommand implements LiteralCommand {
         }
     }
 
-    static class FishRecordHolderArgument extends MFCommand implements ArgumentCommand<UUID> {
+    static class FishRecordHolderArgument implements ArgumentCommand<UUID> {
 
         @Override
         public int execute(@NotNull CommandContext<CommandSender> context) {

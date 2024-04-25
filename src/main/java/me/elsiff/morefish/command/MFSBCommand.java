@@ -12,7 +12,13 @@ import static me.elsiff.morefish.MoreFish.getPlugin;
 import static me.elsiff.morefish.text.Lang.join;
 import static net.kyori.adventure.text.Component.text;
 
-public class MFSBCommand extends MFCommand implements LiteralCommand {
+class MFSBCommand implements LiteralCommand {
+
+    @NotNull
+    @Override
+    public String usage(@NotNull CommandSender sender) {
+        return "/mf scoreboard";
+    }
 
     @Override
     public boolean canUse(@NotNull CommandSender sender) {
@@ -22,13 +28,13 @@ public class MFSBCommand extends MFCommand implements LiteralCommand {
     @NotNull
     @Override
     public String description(@NotNull CommandSender sender) {
-        return "Show the scoreboard for the current competition";
+        return "Shows the competition scoreboard.";
     }
 
     @Override
     public int execute(@NotNull CommandContext<CommandSender> context) {
         Player player = (Player) context.getSource();
-        if (getCompetition().isEnabled()) {
+        if (getPlugin().getCompetition().isEnabled()) {
             MusiBoardHooker musiBoard = getPlugin().getMusiBoard();
             if (musiBoard.hasHooked()) {
                 getPlugin().getMusiBoard().swapScoreboards(player);

@@ -11,11 +11,23 @@ import static me.elsiff.morefish.text.Lang.PREFIX_COMPONENT;
 import static me.elsiff.morefish.text.Lang.join;
 import static net.kyori.adventure.text.Component.text;
 
-public class MFReload extends MFCommand implements LiteralCommand {
+class MFReload implements LiteralCommand {
+
+    @NotNull
+    @Override
+    public String description(@NotNull CommandSender sender) {
+        return "Reloads the config and fish from disk.";
+    }
+
+    @NotNull
+    @Override
+    public String usage(@NotNull CommandSender sender) {
+        return "/mf reload";
+    }
 
     @Override
     public boolean canUse(@NotNull CommandSender sender) {
-        return testAdmin(sender);
+        return sender.hasPermission("morefish.admin");
     }
 
     @Override

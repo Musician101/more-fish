@@ -29,9 +29,8 @@ dependencies {
     api("com.github.musician101.musigui:paper:1.2.2") {
         exclude("io.papermc.paper")
     }
-    api("com.github.Musician101:Bukkitier:1.3.3") {
-        exclude("org.spigotmc")
-    }
+
+    api("com.github.Musician101:Bukkitier:2.0.0")
     //TODO temp to fix package names
     //api("com.github.Musician101:MusiBoard:1.0.1") {
     api("com.github.Musician101:MusiBoard:master-SNAPSHOT") {
@@ -51,7 +50,7 @@ tasks {
     shadowJar {
         dependencies {
             include(dependency(":common"))
-            include(dependency("com.github.Musician101:Bukkitier:"))
+            include(dependency("com.github.musician101:bukkitier:"))
             include(dependency("com.github.musician101.musigui:"))
         }
 

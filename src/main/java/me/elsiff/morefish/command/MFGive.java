@@ -23,7 +23,19 @@ import static me.elsiff.morefish.item.FishItemStackConverter.createItemStack;
 import static me.elsiff.morefish.text.Lang.join;
 import static net.kyori.adventure.text.Component.text;
 
-class MFGive extends MFCommand implements LiteralCommand {
+class MFGive implements LiteralCommand {
+
+    @NotNull
+    @Override
+    public String description(@NotNull CommandSender sender) {
+        return "Give a player a fish.";
+    }
+
+    @NotNull
+    @Override
+    public String usage(@NotNull CommandSender sender) {
+        return "/mf give <player> <fish> [<length> [<amount>]]";
+    }
 
     @SuppressWarnings("SameReturnValue")
     private static int giveFish(CommandContext<CommandSender> context, FishType fishType, double length, int amount) {
@@ -48,7 +60,7 @@ class MFGive extends MFCommand implements LiteralCommand {
 
     @Override
     public boolean canUse(@NotNull CommandSender sender) {
-        return testAdmin(sender);
+        return sender.hasPermission("morefish.admin");
     }
 
     @NotNull
@@ -57,7 +69,7 @@ class MFGive extends MFCommand implements LiteralCommand {
         return "give";
     }
 
-    static class MFAmount extends MFCommand implements ArgumentCommand<Integer> {
+    static class MFAmount implements ArgumentCommand<Integer> {
 
         @Override
         public int execute(@NotNull CommandContext<CommandSender> context) throws CommandSyntaxException {
@@ -78,7 +90,7 @@ class MFGive extends MFCommand implements LiteralCommand {
         }
     }
 
-    static class MFFish extends MFCommand implements ArgumentCommand<FishType> {
+    static class MFFish implements ArgumentCommand<FishType> {
 
         @NotNull
         @Override
@@ -105,7 +117,7 @@ class MFGive extends MFCommand implements LiteralCommand {
         }
     }
 
-    static class MFLength extends MFCommand implements ArgumentCommand<Double> {
+    static class MFLength implements ArgumentCommand<Double> {
 
         @NotNull
         @Override

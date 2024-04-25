@@ -17,7 +17,19 @@ import static me.elsiff.morefish.text.Lang.PREFIX_COMPONENT;
 import static me.elsiff.morefish.text.Lang.join;
 import static net.kyori.adventure.text.Component.text;
 
-public class MFShop extends MFCommand implements LiteralCommand {
+class MFShop implements LiteralCommand {
+
+    @NotNull
+    @Override
+    public String description(@NotNull CommandSender sender) {
+        return "Opens the fish shop.";
+    }
+
+    @NotNull
+    @Override
+    public String usage(@NotNull CommandSender sender) {
+        return "/mf shop" + (sender.hasPermission("morefish.admin") ? " [<player>]" : "");
+    }
 
     @NotNull
     @Override
@@ -43,7 +55,7 @@ public class MFShop extends MFCommand implements LiteralCommand {
 
     @SuppressWarnings("SameReturnValue")
     int shop(CommandSender sender, Player guiUser) {
-        if (!getFishShop().getEnabled() || !getPlugin().getVault().hasEconomy()) {
+        if (!getPlugin().getFishShop().getEnabled() || !getPlugin().getVault().hasEconomy()) {
             sender.sendMessage(Lang.SHOP_DISABLED);
         }
         else {
@@ -60,7 +72,7 @@ public class MFShop extends MFCommand implements LiteralCommand {
 
         @Override
         public boolean canUse(@NotNull CommandSender sender) {
-            return testAdmin(sender);
+            return sender.hasPermission("morefish.admin");
         }
 
         @Override

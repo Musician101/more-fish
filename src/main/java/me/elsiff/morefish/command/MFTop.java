@@ -4,6 +4,8 @@ import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import io.musician101.bukkitier.command.Command;
 import io.musician101.bukkitier.command.LiteralCommand;
+import me.elsiff.morefish.fishing.competition.FishingCompetition;
+import me.elsiff.morefish.fishing.competition.FishingCompetitionHost;
 import me.elsiff.morefish.fishing.fishrecords.FishRecord;
 import me.elsiff.morefish.util.NumberUtils;
 import org.bukkit.Bukkit;
@@ -22,7 +24,19 @@ import static me.elsiff.morefish.text.Lang.join;
 import static me.elsiff.morefish.text.Lang.replace;
 import static net.kyori.adventure.text.Component.text;
 
-public class MFTop extends MFCommand implements LiteralCommand {
+class MFTop implements LiteralCommand {
+
+    @NotNull
+    @Override
+    public String description(@NotNull CommandSender sender) {
+        return "Show the top catches.";
+    }
+
+    @NotNull
+    @Override
+    public String usage(@NotNull CommandSender sender) {
+        return "/mf top [alltime [<sort>]|competition]";
+    }
 
     @Override
     public int execute(@NotNull CommandContext<CommandSender> context) {
@@ -43,7 +57,15 @@ public class MFTop extends MFCommand implements LiteralCommand {
         return List.of(new AllTimeCommand(), new CompetitionCommand());
     }
 
-    static class AllTimeCommand extends MFCommand implements LiteralCommand {
+    private static FishingCompetition getCompetition() {
+        return getPlugin().getCompetition();
+    }
+
+    public static FishingCompetitionHost getCompetitionHost() {
+        return getPlugin().getCompetitionHost();
+    }
+
+    static class AllTimeCommand implements LiteralCommand {
 
         @Override
         public int execute(@NotNull CommandContext<CommandSender> context) {
@@ -58,7 +80,7 @@ public class MFTop extends MFCommand implements LiteralCommand {
                     topSize = msg.getInt("top-number", 1);
                 }
 
-                List<FishRecord> top = getFishingLogs().top(topSize);
+                List<FishRecord> top = getPlugin().getFishingLogs().top(topSize);
                 top.forEach(record -> {
                     int number = top.indexOf(record) + 1;
                     sender.sendMessage(join(PREFIX_COMPONENT, replace("<yellow>%ordinal%. : <dark_gray>%player%, %length%cm %fish%", topReplacementOf(number, record))));
@@ -90,7 +112,7 @@ public class MFTop extends MFCommand implements LiteralCommand {
         }
     }
 
-    static class CompetitionCommand extends MFCommand implements LiteralCommand {
+    static class CompetitionCommand implements LiteralCommand {
 
         @Override
         public int execute(@NotNull CommandContext<CommandSender> context) {
