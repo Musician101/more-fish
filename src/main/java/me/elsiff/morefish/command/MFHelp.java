@@ -42,10 +42,4 @@ class MFHelp extends HelpSubCommand {
         String string = "<dark_aqua>> ===== <aqua><hover:show_text:'<color:#BDB76B>Developed by " + authorsString + "'>" + meta.getDisplayName() + "<dark_aqua> ===== <<newline><gold>Click a command for more info.<newline><click:open_url:https://github.com/Musician101/more-fish/wiki>Click here to visit our wiki.";
         return miniMessage().deserialize(string);
     }
-
-    @NotNull
-    @Override
-    public String name() {
-        return "help";
-    }
 }
