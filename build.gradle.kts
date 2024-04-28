@@ -7,9 +7,7 @@ plugins {
 group = "me.elsiff"
 version = "4.2.0"
 
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
-}
+java.toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 
 repositories {
     maven("https://papermc.io/repo/repository/maven-public/")
