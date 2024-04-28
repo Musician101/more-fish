@@ -61,6 +61,7 @@ public class MusiBoardHooker implements PluginHooker {
         hasHooked = true;
         getManager().registerNewScoreboard("morefish");
         scoreboard = getManager().getScoreboard("morefish").orElseThrow(() -> new IllegalStateException("Ok, who broke it?"));
+        scoreboard.saveData(false);
     }
 
     public void restorePreviousBoard(@NotNull Player player) {
