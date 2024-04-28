@@ -43,8 +43,13 @@ public interface FishCondition {
                         String[] args = json.getAsString().split("-");
                         yield new LocationYCondition(new Range<>(Double.parseDouble(args[0]), Double.parseDouble(args[1])));
                     }
-                    case "mcmmo-skills" ->
-                            new McmmoSkillsCondition(loadMappedConditions(json, mcMMO.p.getSkillTools()::matchSkill));
+                    case "mcmmo-skills" -> {
+                        if (getPlugin().getMcmmo().hasHooked()) {
+                            yield new McmmoSkillsCondition(loadMappedConditions(json, mcMMO.p.getSkillTools()::matchSkill));
+                        }
+
+                        yield null;
+                    }
                     case "potion-effects" ->
                             new PotionEffectCondition(loadMappedConditions(json, s -> loadFromRegistry(Registry.POTION_EFFECT_TYPE, s)));
                     case "raining" -> new RainingCondition(json.getAsBoolean());
