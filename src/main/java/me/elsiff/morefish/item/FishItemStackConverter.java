@@ -1,17 +1,11 @@
 package me.elsiff.morefish.item;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.Fish;
 import me.elsiff.morefish.fishing.FishType;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -21,7 +15,13 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import static me.elsiff.morefish.MoreFish.getPlugin;
+import static me.elsiff.morefish.text.Lang.replace;
 
 public interface FishItemStackConverter {
 
@@ -35,29 +35,24 @@ public interface FishItemStackConverter {
         ItemStack itemStack = fish.type().icon().clone();
         ItemMeta itemMeta = itemStack.getItemMeta();
         if (!fish.type().hasNotFishItemFormat()) {
-            Map<String, Object> replacement = getFormatReplacementMap(fish, length, catcher);
             GsonComponentSerializer gson = GsonComponentSerializer.gson();
-            itemMeta.displayName(Lang.replace(gson.deserialize(getFormatConfig().map(cs -> cs.get("display-name").toString()).orElse("null")), replacement, catcher));
-            List<Component> lore = Lang.replace(getFormatConfig().map(json -> json.getAsJsonArray("lore").asList().stream().map(JsonElement::toString).map(gson::deserialize).toList()).orElse(new ArrayList<>()), replacement, catcher);
+            PlainTextComponentSerializer plain = PlainTextComponentSerializer.plainText();
+            Map<String, Object> replacement = getFormatReplacementMap(fish, length, catcher);
+            itemMeta.displayName(replace(getFormatConfig().map(cs -> cs.get("display-name").getAsString()).orElse("null"), replacement, catcher));
+            List<Component> lore = replace(getFormatConfig().map(json -> json.getAsJsonArray("lore").asList().stream().map(j -> {
+                Component component = gson.deserializeFromTree(j);
+                return plain.serialize(component);
+            }).toList()).orElse(new ArrayList<>()), replacement, catcher);
             List<Component> oldLore = itemMeta.lore();
             if (oldLore != null) {
-                lore.addAll(oldLore.stream().map(component -> {
-                    for (Entry<String, Object> entry : replacement.entrySet()) {
-                        component = component.replaceText(builder -> {
-                            builder.matchLiteral(entry.getKey());
-                            builder.replacement(entry.getValue().toString());
-                        });
-                    }
-
-                    return component;
-                }).toList());
+                lore.addAll(oldLore.stream().map(c -> replace(plain.serialize(c), replacement, catcher)).toList());
             }
 
-            itemMeta.lore(Lang.replace(lore, replacement, catcher));
+            itemMeta.lore(lore);
         }
 
         PersistentDataContainer data = itemMeta.getPersistentDataContainer();
-        data.set(fishTypeKey(), PersistentDataType.STRING.STRING, fish.type().name());
+        data.set(fishTypeKey(), PersistentDataType.STRING, fish.type().name());
         data.set(fishLengthKey(), PersistentDataType.DOUBLE, fish.length());
         itemStack.setItemMeta(itemMeta);
         return itemStack;
@@ -81,7 +76,7 @@ public interface FishItemStackConverter {
     }
 
     private static Map<String, Object> getFormatReplacementMap(Fish fish, double length, Player catcher) {
-        return Map.of("%player%", catcher.getName(), "%rarity%", fish.type().rarity().name().toUpperCase(), "%rarity_color%", fish.type().rarity().color().toString(), "%length%", length, "%fish%", fish.type().displayName());
+        return Map.of("%player%", catcher.getName(), "%rarity%", fish.type().rarity().name().toUpperCase(), "%rarity_color%", fish.type().rarity().color(), "%length%", length, "%fish%", fish.type().displayName());
     }
 
     static boolean isFish(@Nullable ItemStack itemStack) {

@@ -1,55 +1,45 @@
 package me.elsiff.morefish.command;
 
-import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.builder.ArgumentBuilder;
+import io.musician101.bukkitier.command.Command;
 import io.musician101.bukkitier.command.LiteralCommand;
+import io.musician101.bukkitier.command.help.HelpSubCommand;
 import io.papermc.paper.plugin.configuration.PluginMeta;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.configuration.Lang.join;
-import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
-import static net.kyori.adventure.text.format.NamedTextColor.DARK_AQUA;
-import static net.kyori.adventure.text.format.Style.style;
-import static net.kyori.adventure.text.format.TextDecoration.BOLD;
+import static me.elsiff.morefish.command.MFMain.cmdInfo;
+import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
 
-class MFHelp extends MFCommand implements LiteralCommand {
+class MFHelp extends HelpSubCommand {
 
-    @SuppressWarnings("UnstableApiUsage")
-    @Override
-    public int execute(@NotNull CommandContext<CommandSender> context) {
-        CommandSender sender = context.getSource();
-        PluginMeta pluginInfo = getPlugin().getPluginMeta();
-        String pluginName = pluginInfo.getName();
-        Component prefix = text("[" + pluginName + "] ", AQUA);
-        sender.sendMessage(join(prefix, text("> ===== ", DARK_AQUA), text(pluginName + ' ', style(AQUA, BOLD)), text('v' + pluginInfo.getVersion(), AQUA), text(" ===== <", DARK_AQUA)));
-        Component label = join(prefix, text("/mf"));
-        sender.sendMessage(join(label, text(" help")));
-
-        if (testAdmin(sender)) {
-            sender.sendMessage(join(label, text(" begin [runningTime(sec)]")));
-            sender.sendMessage(join(label, text(" suspend")));
-            sender.sendMessage(join(label, text(" end")));
-            sender.sendMessage(join(label, text(" give <player> <fish> [length] [amount]")));
-            sender.sendMessage(join(label, text(" clear")));
-            sender.sendMessage(join(label, text(" reload")));
-        }
-
-        if (sender.hasPermission("morefish.shop") || testAdmin(sender)) {
-            sender.sendMessage(join(label, text(" shop"), text((testAdmin(sender) ? " [player]" : ""))));
-        }
-
-        sender.sendMessage(join(label, text(" contraband")));
-        sender.sendMessage(join(label, text("scoreboard")));
-        sender.sendMessage(join(label, text(" top")));
-        return 1;
+    public MFHelp(@NotNull LiteralCommand root) {
+        super(root, getPlugin());
     }
 
     @NotNull
     @Override
-    public String name() {
-        return "help";
+    protected Component commandInfo(@NotNull Command<? extends ArgumentBuilder<CommandSender, ?>> command, @NotNull CommandSender sender) {
+        return cmdInfo(command, sender);
+    }
+
+    @SuppressWarnings("UnstableApiUsage")
+    @NotNull
+    @Override
+    protected Component header() {
+        PluginMeta meta = plugin.getPluginMeta();
+        List<String> authors = meta.getAuthors();
+        int last = authors.size() - 1;
+        String authorsString = switch (last) {
+            case 0 -> authors.get(0);
+            case 1 -> String.join(" and ", authors);
+            default -> String.join(", and ", String.join(", ", authors.subList(0, last)), authors.get(last));
+        };
+        String string = "<dark_aqua>> ===== <aqua><hover:show_text:'<color:#BDB76B>Developed by " + authorsString + "'>" + meta.getDisplayName() + "<dark_aqua> ===== <<newline><gold>Click a command for more info.<newline><click:open_url:https://github.com/Musician101/more-fish/wiki>Click here to visit our wiki.";
+        return miniMessage().deserialize(string);
     }
 }

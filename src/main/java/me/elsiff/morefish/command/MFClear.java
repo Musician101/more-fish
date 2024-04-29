@@ -1,26 +1,50 @@
 package me.elsiff.morefish.command;
 
+import com.mojang.brigadier.arguments.ArgumentType;
+import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import io.musician101.bukkitier.command.ArgumentCommand;
+import io.musician101.bukkitier.command.Command;
 import io.musician101.bukkitier.command.LiteralCommand;
+import me.elsiff.morefish.command.argument.FishRecordsTypeArgumentType;
+import me.elsiff.morefish.command.argument.FishRecordsTypeArgumentType.FishRecordsType;
+import me.elsiff.morefish.command.argument.UUIDArgumentType;
+import me.elsiff.morefish.fishing.competition.FishingCompetition;
+import me.elsiff.morefish.fishing.fishrecords.FishingLogs;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
-import static me.elsiff.morefish.configuration.Lang.PREFIX;
-import static me.elsiff.morefish.configuration.Lang.join;
+import java.util.List;
+import java.util.UUID;
+
+import static me.elsiff.morefish.MoreFish.getPlugin;
+import static me.elsiff.morefish.text.Lang.PREFIX_COMPONENT;
+import static me.elsiff.morefish.text.Lang.join;
 import static net.kyori.adventure.text.Component.text;
 
-class MFClear extends MFCommand implements LiteralCommand {
+class MFClear implements LiteralCommand {
+
+    @NotNull
+    @Override
+    public List<Command<? extends ArgumentBuilder<CommandSender, ?>>> arguments() {
+        return List.of(new RecordsArgument());
+    }
 
     @Override
     public boolean canUse(@NotNull CommandSender sender) {
-        return testAdmin(sender);
+        return sender.hasPermission("morefish.admin");
+    }
+
+    private static FishingCompetition getCompetition() {
+        return getPlugin().getCompetition();
     }
 
     @Override
     public int execute(@NotNull CommandContext<CommandSender> context) {
         CommandSender sender = context.getSource();
-        getCompetition().clearRecords();
-        sender.sendMessage(join(PREFIX, text("The records has been cleared successfully.")));
+        getCompetition().clear();
+        sender.sendMessage(join(PREFIX_COMPONENT, text("The records has been cleared successfully.")));
         return 1;
     }
 
@@ -28,5 +52,94 @@ class MFClear extends MFCommand implements LiteralCommand {
     @Override
     public String name() {
         return "clear";
+    }
+
+    @NotNull
+    @Override
+    public String description(@NotNull CommandSender sender) {
+        return "Clears the records.";
+    }
+
+    @NotNull
+    @Override
+    public String usage(@NotNull CommandSender sender) {
+        return "/mf clear [alltime|competition [<player>]]";
+    }
+
+    private static FishingLogs getFishingLogs() {
+        return getPlugin().getFishingLogs();
+    }
+
+    public static class RecordsArgument implements ArgumentCommand<FishRecordsType> {
+
+        @Override
+        public int execute(@NotNull CommandContext<CommandSender> context) {
+            CommandSender sender = context.getSource();
+            FishRecordsType recordsType = context.getArgument(name(), FishRecordsType.class);
+            if (recordsType == FishRecordsType.COMPETITION) {
+                getCompetition().clear();
+                sender.sendMessage(join(PREFIX_COMPONENT, text("The records has been cleared successfully.")));
+            }
+            else if (recordsType == FishRecordsType.ALLTIME) {
+                getFishingLogs().clear();
+                sender.sendMessage(join(PREFIX_COMPONENT, text("The all time records have been cleared successfully.")));
+            }
+
+            return 1;
+        }
+
+        @NotNull
+        @Override
+        public String name() {
+            return "recordsType";
+        }
+
+        @NotNull
+        @Override
+        public ArgumentType<FishRecordsType> type() {
+            return new FishRecordsTypeArgumentType();
+        }
+
+        @Override
+        public @NotNull List<Command<? extends ArgumentBuilder<CommandSender, ?>>> arguments() {
+            return List.of(new FishRecordHolderArgument());
+        }
+    }
+
+    static class FishRecordHolderArgument implements ArgumentCommand<UUID> {
+
+        @Override
+        public int execute(@NotNull CommandContext<CommandSender> context) {
+            CommandSender sender = context.getSource();
+            FishRecordsType recordsType = context.getArgument(name(), FishRecordsType.class);
+            UUID uuid = context.getArgument(name(), UUID.class);
+            String name = Bukkit.getOfflinePlayer(uuid).getName();
+            if (name == null) {
+                name = uuid.toString();
+            }
+
+            if (recordsType == FishRecordsType.COMPETITION) {
+                getCompetition().clearRecordHolder(uuid);
+                sender.sendMessage(join(PREFIX_COMPONENT, text("The records for " + name + " has been cleared successfully.")));
+            }
+            else if (recordsType == FishRecordsType.ALLTIME) {
+                getFishingLogs().clearRecordHolder(uuid);
+                sender.sendMessage(join(PREFIX_COMPONENT, text("The all time records for" + name + " have been cleared successfully.")));
+            }
+
+            return 1;
+        }
+
+        @NotNull
+        @Override
+        public String name() {
+            return "player";
+        }
+
+        @NotNull
+        @Override
+        public ArgumentType<UUID> type() {
+            return new UUIDArgumentType();
+        }
     }
 }

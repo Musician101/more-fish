@@ -3,19 +3,20 @@ package me.elsiff.morefish.hooker;
 import io.musician101.musiboard.MusiBoard;
 import io.musician101.musiboard.scoreboard.MusiScoreboard;
 import io.musician101.musiboard.scoreboard.MusiScoreboardManager;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.IntStream;
 import me.elsiff.morefish.MoreFish;
-import me.elsiff.morefish.fishing.competition.Record;
+import me.elsiff.morefish.fishing.fishrecords.FishRecord;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Criteria;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.IntStream;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
 import static net.kyori.adventure.text.Component.text;
@@ -60,6 +61,7 @@ public class MusiBoardHooker implements PluginHooker {
         hasHooked = true;
         getManager().registerNewScoreboard("morefish");
         scoreboard = getManager().getScoreboard("morefish").orElseThrow(() -> new IllegalStateException("Ok, who broke it?"));
+        scoreboard.saveData(false);
     }
 
     public void restorePreviousBoard(@NotNull Player player) {
@@ -81,16 +83,18 @@ public class MusiBoardHooker implements PluginHooker {
     }
 
     public void update() {
-        if (leaderboard != null && scoreboard.getObjective("leaderboard") != null) {
-            leaderboard.unregister();
-        }
+        if (hasHooked) {
+            if (leaderboard != null && scoreboard.getObjective("leaderboard") != null) {
+                leaderboard.unregister();
+            }
 
-        leaderboard = scoreboard.registerNewObjective("leaderboard", Criteria.DUMMY, text("Top 5 Fishers (mm)", AQUA));
-        leaderboard.setDisplaySlot(DisplaySlot.SIDEBAR);
-        List<Record> records = getPlugin().getCompetition().getRanking();
-        IntStream.range(0, Math.min(5, records.size())).forEach(i -> {
-            Record record = records.get(i);
-            leaderboard.getScore(Bukkit.getOfflinePlayer(record.fisher())).setScore((int) (record.fish().length() * 100));
-        });
+            leaderboard = scoreboard.registerNewObjective("leaderboard", Criteria.DUMMY, text("Top 5 Fishers (mm)", AQUA));
+            leaderboard.setDisplaySlot(DisplaySlot.SIDEBAR);
+            List<FishRecord> records = getPlugin().getCompetition().getRecords();
+            IntStream.range(0, Math.min(5, records.size())).forEach(i -> {
+                FishRecord record = records.get(i);
+                leaderboard.getScore(Bukkit.getOfflinePlayer(record.fisher())).setScore((int) (record.getLength() * 100));
+            });
+        }
     }
 }

@@ -1,22 +1,19 @@
 package me.elsiff.morefish;
 
-import java.time.LocalTime;
-import java.util.List;
 import me.elsiff.morefish.command.MFMain;
-import me.elsiff.morefish.configuration.Config;
-import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.FishBags;
 import me.elsiff.morefish.fishing.FishTypeTable;
 import me.elsiff.morefish.fishing.FishingListener;
 import me.elsiff.morefish.fishing.competition.FishingCompetition;
 import me.elsiff.morefish.fishing.competition.FishingCompetitionAutoRunner;
 import me.elsiff.morefish.fishing.competition.FishingCompetitionHost;
+import me.elsiff.morefish.fishing.fishrecords.FishingLogs;
 import me.elsiff.morefish.hooker.McmmoHooker;
 import me.elsiff.morefish.hooker.MusiBoardHooker;
 import me.elsiff.morefish.hooker.ProtocolLibHooker;
 import me.elsiff.morefish.hooker.VaultHooker;
 import me.elsiff.morefish.shop.FishShop;
-import me.elsiff.morefish.shop.FishShopSignListener;
+import me.elsiff.morefish.text.Lang;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Server;
 import org.bukkit.plugin.PluginManager;
@@ -24,11 +21,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import static io.musician101.bukkitier.Bukkitier.registerCommand;
-import static me.elsiff.morefish.configuration.Lang.PREFIX;
+import static me.elsiff.morefish.text.Lang.PREFIX_COMPONENT;
 import static net.kyori.adventure.text.Component.text;
 
 public final class MoreFish extends JavaPlugin {
 
+    @NotNull
+    private final FishingLogs fishingLogs = new FishingLogs();
     @NotNull
     private final FishingCompetitionAutoRunner autoRunner = new FishingCompetitionAutoRunner();
     @NotNull
@@ -59,7 +58,7 @@ public final class MoreFish extends JavaPlugin {
             Component title = player.getOpenInventory().title();
             if (title.equals(Lang.SHOP_GUI_TITLE) || title.equals(text("Set Sale Filter(s)"))) {
                 player.closeInventory();
-                player.sendMessage(Lang.join(PREFIX, text(" The config is being updated. To prevent issues, the window has been closed.")));
+                player.sendMessage(Lang.join(PREFIX_COMPONENT, text(" The config is being updated. To prevent issues, the window has been closed.")));
             }
         });
 
@@ -72,10 +71,13 @@ public final class MoreFish extends JavaPlugin {
         }
 
         if (getConfig().getBoolean("auto-running.enable")) {
-            List<LocalTime> scheduledTimes = Config.getScheduledTimes();
-            autoRunner.setScheduledTimes(scheduledTimes);
             autoRunner.enable();
         }
+    }
+
+    @NotNull
+    public FishingLogs getFishingLogs() {
+        return fishingLogs;
     }
 
     @NotNull
@@ -120,7 +122,12 @@ public final class MoreFish extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (competition.isEnabled()) {
+            competitionHost.closeCompetition();
+        }
+
         fishBags.save();
+        fishingLogs.save();
         if (autoRunner.isEnabled()) {
             autoRunner.disable();
         }
@@ -136,15 +143,12 @@ public final class MoreFish extends JavaPlugin {
         musiBoard.hookIfEnabled(this);
         fishBags.load();
         applyConfig();
+        fishingLogs.load();
         Server server = getServer();
         PluginManager pm = server.getPluginManager();
         pm.registerEvents(new FishingListener(), this);
-        pm.registerEvents(new FishShopSignListener(), this);
         pm.registerEvents(fishBags, this);
         registerCommand(getPlugin(), new MFMain());
         getLogger().info("Plugin has been enabled.");
-        if (getConfig().getBoolean("general.auto-start")) {
-            competitionHost.openCompetition();
-        }
     }
 }

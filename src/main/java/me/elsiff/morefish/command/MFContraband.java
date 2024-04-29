@@ -12,7 +12,19 @@ import static me.elsiff.morefish.MoreFish.getPlugin;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 
-class MFContraband extends MFCommand implements LiteralCommand {
+class MFContraband implements LiteralCommand {
+
+    @NotNull
+    @Override
+    public String description(@NotNull CommandSender sender) {
+        return "Reclaim contraband in your fish bags.";
+    }
+
+    @NotNull
+    @Override
+    public String usage(@NotNull CommandSender sender) {
+        return "/mf contraband";
+    }
 
     @Override
     public int execute(@NotNull CommandContext<CommandSender> context) {

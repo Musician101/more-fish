@@ -1,10 +1,11 @@
 package me.elsiff.morefish.announcement;
 
 import com.google.gson.JsonObject;
-import java.util.List;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public interface PlayerAnnouncement {
 
@@ -51,5 +52,6 @@ public interface PlayerAnnouncement {
         return new ServerAnnouncement();
     }
 
-    @NotNull List<Player> receiversOf(@NotNull Player var1);
+    @NotNull
+    List<Player> receiversOf(@NotNull Player var1);
 }

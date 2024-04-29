@@ -1,25 +1,15 @@
 package me.elsiff.morefish.shop;
 
-import java.util.AbstractMap.SimpleEntry;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import me.elsiff.morefish.MoreFish;
-import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.Fish;
 import me.elsiff.morefish.fishing.FishBags;
 import me.elsiff.morefish.fishing.FishRarity;
 import me.elsiff.morefish.hooker.VaultHooker;
 import me.elsiff.morefish.item.FishItemStackConverter;
+import me.elsiff.morefish.text.Lang;
 import net.kyori.adventure.text.Component;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse.ResponseType;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -30,13 +20,24 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 import static io.musician101.musigui.paper.chest.PaperIconUtil.customName;
 import static io.musician101.musigui.paper.chest.PaperIconUtil.setLore;
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.configuration.Lang.PREFIX;
-import static me.elsiff.morefish.configuration.Lang.join;
 import static me.elsiff.morefish.item.FishItemStackConverter.fish;
 import static me.elsiff.morefish.item.FishItemStackConverter.isFish;
+import static me.elsiff.morefish.text.Lang.PREFIX_COMPONENT;
+import static me.elsiff.morefish.text.Lang.join;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 
@@ -76,10 +77,10 @@ public final class FishShopGui extends AbstractFishShopGUI {
     }
 
     private double getTotalPrice() {
-        return getFilteredFish().stream().mapToDouble(itemStack -> {
+        return BigDecimal.valueOf(getFilteredFish().stream().mapToDouble(itemStack -> {
             Fish fish = fish(itemStack);
             return shop.priceOf(fish) * itemStack.getAmount();
-        }).sum();
+        }).sum()).setScale(2, RoundingMode.DOWN).doubleValue();
     }
 
     @Override
@@ -89,7 +90,12 @@ public final class FishShopGui extends AbstractFishShopGUI {
             return;
         }
 
-        updatePriceIcon();
+        if (event.getClick() == ClickType.SHIFT_LEFT) {
+            player.getScheduler().execute(getPlugin(), this::updatePriceIcon, null, 1L);
+        }
+        else {
+            updatePriceIcon();
+        }
         fishBags.update(player, inventory.getContents(), page);
     }
 
@@ -112,7 +118,7 @@ public final class FishShopGui extends AbstractFishShopGUI {
     }
 
     private void updateButtons() {
-        Bukkit.getGlobalRegionScheduler().runDelayed(MoreFish.getPlugin(), task -> {
+        player.getScheduler().execute(getPlugin(), () -> {
             List<ItemStack> fish = fishBags.getFish(player, page);
             IntStream.range(0, 45).forEach(i -> {
                 removeButton(i);
@@ -144,7 +150,7 @@ public final class FishShopGui extends AbstractFishShopGUI {
             }
 
             updateUpgradeIcon(userMaxAllowedPages);
-        }, 2);
+        }, null, 2);
     }
 
     private void updatePriceIcon() {
@@ -152,13 +158,12 @@ public final class FishShopGui extends AbstractFishShopGUI {
     }
 
     private void updatePriceIcon(double price) {
-
-        Bukkit.getGlobalRegionScheduler().runDelayed(MoreFish.getPlugin(), task -> {
-            Component name = Lang.replace(text("Sell for $%price%"), Map.of("%price%", String.valueOf(price)));
+        player.getScheduler().execute(getPlugin(), () -> {
+            Component name = text("Sell for $" + price, GREEN);
             setButton(49, customName(new ItemStack(Material.EMERALD), name), ClickType.LEFT, p -> {
                 List<ItemStack> filteredFish = getFilteredFish();
                 if (filteredFish.isEmpty()) {
-                    p.sendMessage(join(PREFIX, text("There's no fish to sell. Please put them on the slots.")));
+                    p.sendMessage(join(PREFIX_COMPONENT, text("There's no fish to sell. Please put them on the slots.")));
                 }
                 else {
                     double totalPrice = getTotalPrice();
@@ -175,10 +180,10 @@ public final class FishShopGui extends AbstractFishShopGUI {
                     getEconomy().depositPlayer(player, fishList.stream().mapToDouble(shop::priceOf).sum());
                     fishBags.update(player, inventory.getContents(), page);
                     updatePriceIcon(totalPrice);
-                    p.sendMessage(Lang.replace(join(PREFIX, text("You sold fish for "), text("$%price%", GREEN), text(".")), Map.of("%price%", totalPrice)));
+                    p.sendMessage(join(PREFIX_COMPONENT, text("You sold fish for "), text("$" + totalPrice, GREEN), text(".")));
                 }
             });
-        }, 1);
+        }, null, 1);
     }
 
     private void updateUpgradeIcon(int userMaxAllowedPages) {
@@ -206,7 +211,7 @@ public final class FishShopGui extends AbstractFishShopGUI {
                     return;
                 }
 
-                p.sendMessage(join(PREFIX, text("You do not have enough money for that upgrade!")));
+                p.sendMessage(join(PREFIX_COMPONENT, text("You do not have enough money for that upgrade!")));
             });
         }
     }

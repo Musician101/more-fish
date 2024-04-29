@@ -4,20 +4,32 @@ import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import io.musician101.bukkitier.command.Command;
 import io.musician101.bukkitier.command.LiteralCommand;
-import java.util.List;
-import java.util.Map;
-import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.shop.FishShopGui;
+import me.elsiff.morefish.text.Lang;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.configuration.Lang.PREFIX;
-import static me.elsiff.morefish.configuration.Lang.join;
+import static me.elsiff.morefish.text.Lang.PREFIX_COMPONENT;
+import static me.elsiff.morefish.text.Lang.join;
 import static net.kyori.adventure.text.Component.text;
 
-public class MFShop extends MFCommand implements LiteralCommand {
+class MFShop implements LiteralCommand {
+
+    @NotNull
+    @Override
+    public String description(@NotNull CommandSender sender) {
+        return "Opens the fish shop.";
+    }
+
+    @NotNull
+    @Override
+    public String usage(@NotNull CommandSender sender) {
+        return "/mf shop" + (sender.hasPermission("morefish.admin") ? " [<player>]" : "");
+    }
 
     @NotNull
     @Override
@@ -41,14 +53,15 @@ public class MFShop extends MFCommand implements LiteralCommand {
         return "shop";
     }
 
+    @SuppressWarnings("SameReturnValue")
     int shop(CommandSender sender, Player guiUser) {
-        if (!getFishShop().getEnabled() || !getPlugin().getVault().hasEconomy()) {
+        if (!getPlugin().getFishShop().getEnabled() || !getPlugin().getVault().hasEconomy()) {
             sender.sendMessage(Lang.SHOP_DISABLED);
         }
         else {
             new FishShopGui(guiUser, 1);
             if (!guiUser.getUniqueId().equals(((Player) sender).getUniqueId())) {
-                sender.sendMessage(Lang.replace(join(PREFIX, text("Forced %s to open Shop GUI.")), Map.of("%s", guiUser.getName())));
+                sender.sendMessage(join(PREFIX_COMPONENT, text("Forced " + guiUser.getName() + " to open Shop GUI.")));
             }
         }
 
@@ -59,7 +72,7 @@ public class MFShop extends MFCommand implements LiteralCommand {
 
         @Override
         public boolean canUse(@NotNull CommandSender sender) {
-            return testAdmin(sender);
+            return sender.hasPermission("morefish.admin");
         }
 
         @Override

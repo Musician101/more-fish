@@ -1,18 +1,21 @@
 package me.elsiff.morefish.fishing.competition;
 
-import java.util.AbstractMap.SimpleEntry;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.UUID;
-import me.elsiff.morefish.RecordHandler;
 import me.elsiff.morefish.fishing.Fish;
+import me.elsiff.morefish.fishing.fishrecords.FishRecord;
+import me.elsiff.morefish.fishing.fishrecords.FishRecordKeeper;
 import me.elsiff.morefish.hooker.MusiBoardHooker;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.AbstractMap.SimpleEntry;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.UUID;
+
 import static me.elsiff.morefish.MoreFish.getPlugin;
 
-public final class FishingCompetition {
+public final class FishingCompetition extends FishRecordKeeper {
 
     @NotNull
     private FishingCompetition.State state = State.DISABLED;
@@ -29,36 +32,23 @@ public final class FishingCompetition {
         }
     }
 
-    public void clearRecords() {
-        getRecords().clear();
-    }
-
     public boolean containsContestant(@NotNull UUID contestant) {
-        return getRanking().stream().anyMatch(record -> contestant.equals(record.fisher()));
+        return getRecords().stream().anyMatch(record -> contestant.equals(record.fisher()));
     }
 
     public void disable() {
         this.checkStateEnabled();
         getMusiBoard().clear();
-        this.state = FishingCompetition.State.DISABLED;
+        this.state = State.DISABLED;
     }
 
     public void enable() {
         this.checkStateDisabled();
-        this.state = FishingCompetition.State.ENABLED;
+        this.state = State.ENABLED;
     }
 
     private MusiBoardHooker getMusiBoard() {
         return getPlugin().getMusiBoard();
-    }
-
-    @NotNull
-    public List<Record> getRanking() {
-        return this.getRecords().all();
-    }
-
-    private RecordHandler getRecords() {
-        return new RecordHandler();
     }
 
     @NotNull
@@ -67,37 +57,39 @@ public final class FishingCompetition {
     }
 
     public boolean isDisabled() {
-        return this.state == FishingCompetition.State.DISABLED;
+        return this.state == State.DISABLED;
     }
 
     public boolean isEnabled() {
-        return this.state == FishingCompetition.State.ENABLED;
+        return this.state == State.ENABLED;
     }
 
-    public void putRecord(@NotNull Record record) {
+    @Override
+    public void add(@NotNull FishRecord record) {
         checkStateEnabled();
-        if (containsContestant(record.fisher())) {
-            Record oldRecord = recordOf(record.fisher());
-            if (record.fish().length() > oldRecord.fish().length()) {
-                getRecords().update(record);
-            }
+        Optional<FishRecord> optional = getRecord(record.fisher());
+        if (optional.isPresent()) {
+            optional.filter(r -> record.getLength() >= r.getLength()).ifPresent(r -> {
+                records.remove(optional.get());
+                records.add(record);
+            });
         }
         else {
-            getRecords().insert(record);
+            records.add(record);
         }
 
         getMusiBoard().update();
     }
 
-    public int rankNumberOf(@NotNull Record record) {
-        return getRanking().indexOf(record) + 1;
+    public int rankNumberOf(@NotNull FishRecord record) {
+        return getRecords().indexOf(record) + 1;
     }
 
     @NotNull
-    public Entry<Integer, Record> rankedRecordOf(@NotNull OfflinePlayer contestant) {
-        List<Record> records = getRanking();
+    public Entry<Integer, FishRecord> rankedRecordOf(@NotNull OfflinePlayer contestant) {
+        List<FishRecord> records = getRecords();
         int place = 0;
-        for (Record record : records) {
+        for (FishRecord record : records) {
             if (record.fisher().equals(contestant.getUniqueId())) {
                 return new SimpleEntry<>(place, record);
             }
@@ -108,29 +100,28 @@ public final class FishingCompetition {
         throw new IllegalStateException("Record not found");
     }
 
-    @NotNull
-    public Record recordOf(@NotNull UUID contestant) {
-        return getRanking().stream().filter(record -> contestant.equals(record.fisher())).findFirst().orElseThrow(() -> new IllegalStateException("Record not found"));
+    private Optional<FishRecord> getRecord(@NotNull UUID contestant) {
+        return records.stream().filter(record -> contestant.equals(record.fisher())).findFirst();
     }
 
     @NotNull
-    public Record recordOf(int rankNumber) {
-        if (rankNumber >= 1 && rankNumber <= getRanking().size()) {
-            return getRanking().get(rankNumber - 1);
+    public FishRecord recordOf(@NotNull UUID contestant) {
+        return getRecord(contestant).orElseThrow(() -> new IllegalStateException("Record not found"));
+    }
+
+    @NotNull
+    public FishRecord recordOf(int rankNumber) {
+        if (rankNumber >= 1 && rankNumber <= getRecords().size()) {
+            return getRecords().get(rankNumber - 1);
         }
 
         throw new IllegalArgumentException("Rank number is out of records size.");
     }
 
-    @NotNull
-    public List<Record> top(int size) {
-        return getRecords().top(size);
-    }
-
     public boolean willBeNewFirst(@NotNull OfflinePlayer catcher, @NotNull Fish fish) {
-        if (!getRanking().isEmpty()) {
-            Record record = getRanking().get(0);
-            return fish.length() > record.fish().length() && !record.fisher().equals(catcher.getUniqueId());
+        if (!getRecords().isEmpty()) {
+            FishRecord record = getRecords().get(0);
+            return fish.length() > record.getLength() && !record.fisher().equals(catcher.getUniqueId());
         }
 
         return true;

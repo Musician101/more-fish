@@ -6,20 +6,34 @@ import com.mojang.brigadier.context.CommandContext;
 import io.musician101.bukkitier.command.ArgumentCommand;
 import io.musician101.bukkitier.command.Command;
 import io.musician101.bukkitier.command.LiteralCommand;
-import java.util.List;
-import java.util.Map;
-import me.elsiff.morefish.configuration.Lang;
+import me.elsiff.morefish.fishing.competition.FishingCompetition;
+import me.elsiff.morefish.fishing.competition.FishingCompetitionHost;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
-import static me.elsiff.morefish.configuration.Lang.PREFIX;
-import static me.elsiff.morefish.configuration.Lang.join;
+import java.util.List;
+
+import static me.elsiff.morefish.MoreFish.getPlugin;
+import static me.elsiff.morefish.text.Lang.PREFIX_COMPONENT;
+import static me.elsiff.morefish.text.Lang.join;
 import static net.kyori.adventure.text.Component.text;
 
-class MFStart extends MFCommand implements LiteralCommand {
+class MFStart implements LiteralCommand {
 
-    private static final Component ALREADY_ONGOING = join(PREFIX, text("The contest is already ongoing."));
+    @NotNull
+    @Override
+    public String description(@NotNull CommandSender sender) {
+        return "Start a competition.";
+    }
+
+    @NotNull
+    @Override
+    public String usage(@NotNull CommandSender sender) {
+        return "/mf start [<seconds>]";
+    }
+
+    private static final Component ALREADY_ONGOING = join(PREFIX_COMPONENT, text("The contest is already ongoing."));
 
     @NotNull
     @Override
@@ -29,17 +43,22 @@ class MFStart extends MFCommand implements LiteralCommand {
 
     @Override
     public boolean canUse(@NotNull CommandSender sender) {
-        return testAdmin(sender);
+        return sender.hasPermission("morefish.admin");
+    }
+
+    private static FishingCompetition getCompetition() {
+        return getPlugin().getCompetition();
+    }
+
+    private static FishingCompetitionHost getCompetitionHost() {
+        return getPlugin().getCompetitionHost();
     }
 
     @Override
     public int execute(@NotNull CommandContext<CommandSender> context) {
         CommandSender sender = context.getSource();
         if (getCompetition().isDisabled()) {
-            getCompetitionHost().openCompetitionFor(getConfig().getInt("auto-running.timer") * 20L);
-            if (!getConfig().getBoolean("messages.broadcast-start", false)) {
-                sender.sendMessage(Lang.CONTEST_START);
-            }
+            getCompetitionHost().openCompetitionFor(getPlugin().getConfig().getInt("auto-running.timer") * 20L);
         }
         else {
             sender.sendMessage(ALREADY_ONGOING);
@@ -54,7 +73,7 @@ class MFStart extends MFCommand implements LiteralCommand {
         return "start";
     }
 
-    static class MFSeconds extends MFCommand implements ArgumentCommand<Long> {
+    static class MFSeconds implements ArgumentCommand<Long> {
 
         @Override
         public int execute(@NotNull CommandContext<CommandSender> context) {
@@ -62,9 +81,6 @@ class MFStart extends MFCommand implements LiteralCommand {
             if (getCompetition().isDisabled()) {
                 long runningTime = context.getArgument("seconds", Long.class);
                 getCompetitionHost().openCompetitionFor(runningTime * 20L);
-                if (!getConfig().getBoolean("messages.broadcast-start", false)) {
-                    sender.sendMessage(Lang.replace(Lang.CONTEST_START_TIMER, Map.of("%time%", Lang.time(runningTime))));
-                }
             }
             else {
                 sender.sendMessage(ALREADY_ONGOING);

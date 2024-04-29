@@ -1,20 +1,27 @@
 package me.elsiff.morefish.fishing.competition;
 
-import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
-import java.time.LocalTime;
-import java.util.Collection;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
-import static me.elsiff.morefish.MoreFish.getPlugin;
+import java.time.Duration;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import static me.elsiff.morefish.MoreFish.getPlugin;
+import static me.elsiff.morefish.text.Lang.PREFIX_COMPONENT;
+import static me.elsiff.morefish.text.Lang.join;
+import static net.kyori.adventure.text.Component.text;
 
 public final class FishingCompetitionAutoRunner {
 
     private static final long HALF_MINUTE = 600L;
-    private Collection<LocalTime> scheduledTimes;
-    private ScheduledTask timeCheckingTask;
+    private BukkitTask timeCheckingTask;
 
     public void disable() {
         if (timeCheckingTask == null) {
@@ -25,12 +32,54 @@ public final class FishingCompetitionAutoRunner {
         timeCheckingTask = null;
     }
 
+    @SuppressWarnings("DataFlowIssue")
     public void enable() {
         if (timeCheckingTask != null) {
             throw new IllegalStateException("Auto runner must not be already enabled");
         }
 
-        timeCheckingTask = Bukkit.getGlobalRegionScheduler().runAtFixedRate(getPlugin(), task -> new TimeChecker(this::tryOpenCompetition).run(), 1, HALF_MINUTE);
+        ConfigurationSection config = getPlugin().getConfig().getConfigurationSection("auto-running");
+        int requiredPlayers = config.getInt("required-players");
+        long duration = config.getLong("timer") * 20L;
+        List<CompetitionTimes> competitionTimes = getCompetitionTimes();
+        timeCheckingTask = new BukkitRunnable() {
+
+            @Override
+            public void run() {
+                LocalTime currentTime = LocalTime.now().withSecond(0).withNano(0);
+                if (competitionTimes.stream().anyMatch(time -> time.matchesReminderTimes(currentTime))) {
+                    StringBuilder sb = new StringBuilder("If there are ").append(requiredPlayers).append(" or more players online in ");
+                    competitionTimes.stream().filter(c -> c.matchesReminderTimes(currentTime)).findFirst().ifPresent(c -> {
+                        Duration remainingTime = c.reminderTimes.get(currentTime);
+                        int hours = remainingTime.toHoursPart();
+                        int minutes = remainingTime.toMinutesPart();
+                        if (hours > 0) {
+                            sb.append(hours).append(" hours");
+                        }
+
+                        if (minutes > 0) {
+                            if (hours > 0) {
+                                sb.append(" ");
+                            }
+
+                            sb.append(minutes).append(" minutes");
+                        }
+                    });
+                    sb.append(", the next competition will begin!");
+                    Bukkit.broadcast(join(PREFIX_COMPONENT, text(sb.toString())));
+                }
+                else if (Bukkit.getOnlinePlayers().size() >= requiredPlayers) {
+                    if (competitionTimes.stream().anyMatch(time -> time.matchesStartTime(currentTime)) && getCompetitionHost().getCompetition().isDisabled()) {
+                        getCompetitionHost().openCompetitionFor(duration);
+                    }
+                }
+            }
+        }.runTaskTimer(getPlugin(), 0, HALF_MINUTE);
+    }
+
+    @NotNull
+    public List<CompetitionTimes> getCompetitionTimes() {
+        return getPlugin().getConfig().getStringList("auto-running.start-time").stream().map(CompetitionTimes::new).toList();
     }
 
     private FishingCompetitionHost getCompetitionHost() {
@@ -41,32 +90,28 @@ public final class FishingCompetitionAutoRunner {
         return this.timeCheckingTask != null;
     }
 
-    public void setScheduledTimes(@NotNull Collection<LocalTime> scheduledTimes) {
-        this.scheduledTimes = scheduledTimes;
-    }
+    public static class CompetitionTimes {
 
-    private void tryOpenCompetition() {
-        FileConfiguration config = getPlugin().getConfig();
-        int requiredPlayers = config.getInt("auto-running.required-players");
-        if (getCompetitionHost().getCompetition().isDisabled() && Bukkit.getOnlinePlayers().size() >= requiredPlayers) {
-            long duration = config.getLong("auto-running.timer") * 20L;
-            getCompetitionHost().openCompetitionFor(duration);
+        private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
+        @NotNull
+        private final LocalTime startTime;
+        @NotNull
+        private final Map<LocalTime, Duration> reminderTimes = new HashMap<>();
+
+        CompetitionTimes(@NotNull String startTime) {
+            this.startTime = LocalTime.parse(startTime, FORMATTER);
+            getPlugin().getConfig().getStringList("auto-running.reminder-timings").stream().map(s -> {
+                String[] args = s.split(":");
+                return Duration.ofHours(Integer.parseInt(args[0])).plusMinutes(Long.parseLong(args[1]));
+            }).forEach(d -> reminderTimes.put(this.startTime.minus(d), d));
         }
 
-    }
-
-    private final class TimeChecker implements Runnable {
-
-        private final Runnable work;
-
-        TimeChecker(@NotNull Runnable work) {
-            super();
-            this.work = work;
+        public boolean matchesStartTime(@NotNull LocalTime time) {
+            return startTime.equals(time);
         }
 
-        public void run() {
-            LocalTime currentTime = LocalTime.now().withSecond(0).withNano(0);
-            scheduledTimes.stream().filter(it -> it.equals(currentTime)).forEach(it -> work.run());
+        public boolean matchesReminderTimes(@NotNull LocalTime time) {
+            return reminderTimes.containsKey(time);
         }
     }
 }

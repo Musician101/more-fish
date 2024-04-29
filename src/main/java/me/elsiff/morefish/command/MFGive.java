@@ -8,22 +8,36 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.musician101.bukkitier.command.ArgumentCommand;
 import io.musician101.bukkitier.command.Command;
 import io.musician101.bukkitier.command.LiteralCommand;
-import java.util.List;
 import me.elsiff.morefish.command.argument.FishLengthArgumentType;
 import me.elsiff.morefish.command.argument.FishTypeArgumentType;
-import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.FishType;
+import me.elsiff.morefish.text.Lang;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import static me.elsiff.morefish.configuration.Lang.join;
+import java.util.List;
+
 import static me.elsiff.morefish.item.FishItemStackConverter.createItemStack;
+import static me.elsiff.morefish.text.Lang.join;
 import static net.kyori.adventure.text.Component.text;
 
-class MFGive extends MFCommand implements LiteralCommand {
+class MFGive implements LiteralCommand {
 
+    @NotNull
+    @Override
+    public String description(@NotNull CommandSender sender) {
+        return "Give a player a fish.";
+    }
+
+    @NotNull
+    @Override
+    public String usage(@NotNull CommandSender sender) {
+        return "/mf give <player> <fish> [<length> [<amount>]]";
+    }
+
+    @SuppressWarnings("SameReturnValue")
     private static int giveFish(CommandContext<CommandSender> context, FishType fishType, double length, int amount) {
         Player player = context.getArgument("player", Player.class);
         ItemStack itemStack = createItemStack(fishType.generateFish(), length, player);
@@ -31,10 +45,10 @@ class MFGive extends MFCommand implements LiteralCommand {
         player.getWorld().dropItem(player.getLocation(), itemStack);
         CommandSender sender = context.getSource();
         if (!(sender instanceof Player p && p.getUniqueId().equals(player.getUniqueId()))) {
-            context.getSource().sendMessage(join(Lang.PREFIX, text(fishType.displayName() + " given to " + player.getName() + ".")));
+            context.getSource().sendMessage(join(Lang.PREFIX_COMPONENT, text(fishType.displayName() + " given to " + player.getName() + ".")));
         }
 
-        player.sendMessage(join(Lang.PREFIX, text("You just received a " + fishType.displayName() + ".")));
+        player.sendMessage(join(Lang.PREFIX_COMPONENT, text("You just received a " + fishType.displayName() + ".")));
         return 1;
     }
 
@@ -46,7 +60,7 @@ class MFGive extends MFCommand implements LiteralCommand {
 
     @Override
     public boolean canUse(@NotNull CommandSender sender) {
-        return testAdmin(sender);
+        return sender.hasPermission("morefish.admin");
     }
 
     @NotNull
@@ -55,7 +69,7 @@ class MFGive extends MFCommand implements LiteralCommand {
         return "give";
     }
 
-    static class MFAmount extends MFCommand implements ArgumentCommand<Integer> {
+    static class MFAmount implements ArgumentCommand<Integer> {
 
         @Override
         public int execute(@NotNull CommandContext<CommandSender> context) throws CommandSyntaxException {
@@ -76,7 +90,7 @@ class MFGive extends MFCommand implements LiteralCommand {
         }
     }
 
-    static class MFFish extends MFCommand implements ArgumentCommand<FishType> {
+    static class MFFish implements ArgumentCommand<FishType> {
 
         @NotNull
         @Override
@@ -103,7 +117,7 @@ class MFGive extends MFCommand implements LiteralCommand {
         }
     }
 
-    static class MFLength extends MFCommand implements ArgumentCommand<Double> {
+    static class MFLength implements ArgumentCommand<Double> {
 
         @NotNull
         @Override

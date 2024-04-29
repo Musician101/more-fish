@@ -1,5 +1,14 @@
 package me.elsiff.morefish.shop;
 
+import me.elsiff.morefish.fishing.FishRarity;
+import me.elsiff.morefish.fishing.FishTypeTable;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -7,16 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.IntStream;
-import me.elsiff.morefish.MoreFish;
-import me.elsiff.morefish.fishing.FishRarity;
-import me.elsiff.morefish.fishing.FishTypeTable;
-import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 import static io.musician101.musigui.paper.chest.PaperIconUtil.customName;
 import static io.musician101.musigui.paper.chest.PaperIconUtil.setLore;
@@ -24,6 +23,7 @@ import static me.elsiff.morefish.MoreFish.getPlugin;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
+import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
 
 public class FishShopFilterGui extends AbstractFishShopGUI {
 
@@ -61,7 +61,7 @@ public class FishShopFilterGui extends AbstractFishShopGUI {
     }
 
     private void updateIcon(int slot, FishRarity fishRarity) {
-        Component name = text(fishRarity.displayName(), fishRarity.color());
+        Component name = miniMessage().deserialize("<color:" + fishRarity.color() + ">" + fishRarity.displayName());
         Component lore = selectedRarities.contains(fishRarity) ? text("Selected.", GREEN) : text("Not selected.", RED);
         ItemStack itemStack = setLore(customName(new ItemStack(Material.COD), name), lore);
         setButton(slot, itemStack, ClickType.LEFT, p -> {
@@ -72,8 +72,7 @@ public class FishShopFilterGui extends AbstractFishShopGUI {
                 selectedRarities.add(fishRarity);
             }
 
-
-            Bukkit.getGlobalRegionScheduler().runDelayed(MoreFish.getPlugin(), task -> updateIcon(slot, fishRarity), 2);
+            player.getScheduler().execute(getPlugin(), () -> updateIcon(slot, fishRarity), null, 2);
         });
     }
 }

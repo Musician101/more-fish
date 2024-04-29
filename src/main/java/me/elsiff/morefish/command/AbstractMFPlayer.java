@@ -6,7 +6,7 @@ import me.elsiff.morefish.command.argument.PlayerArgumentType;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractMFPlayer extends MFCommand implements ArgumentCommand<Player> {
+public abstract class AbstractMFPlayer implements ArgumentCommand<Player> {
 
     @NotNull
     @Override

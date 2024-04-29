@@ -1,5 +1,15 @@
 package me.elsiff.morefish.fishing;
 
+import me.elsiff.morefish.MoreFish;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,21 +21,9 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-import me.elsiff.morefish.MoreFish;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
+import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
 
 public class FishBags implements Listener {
 
@@ -99,13 +97,10 @@ public class FishBags implements Listener {
             return;
         }
 
-
-        Bukkit.getGlobalRegionScheduler().runDelayed(MoreFish.getPlugin(), task -> player.sendMessage(Component.text("[MF] CONTRABAND DETECTED IN YOUR FISH BAG. CLICK THIS MESSAGE TO RETRIEVE IT NOW.").color(NamedTextColor.RED).clickEvent(ClickEvent.runCommand("/mf contraband"))), 1);
-
-        Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), () -> player.sendMessage(Component.text("[MF] CONTRABAND DETECTED IN YOUR FISH BAG. CLICK THIS MESSAGE TO RETRIEVE IT NOW.").color(NamedTextColor.RED).clickEvent(ClickEvent.runCommand("/mf contraband"))));
-
+        player.getScheduler().execute(getPlugin(), () -> player.sendMessage(miniMessage().deserialize("<click:run_command:/mf contraband><red>[MF] CONTRABAND DETECTED IN YOUR FISH BAG. CLICK THIS MESSAGE TO RETRIEVE IT NOW.")), null, 1);
     }
 
+    @SuppressWarnings("StringConcatenationArgumentToLogCall")
     public void save() {
         bags.forEach(fishBag -> {
             YamlConfiguration yaml = new YamlConfiguration();

@@ -1,10 +1,11 @@
 package me.elsiff.morefish.fishing.catchhandler;
 
-import java.util.List;
 import me.elsiff.morefish.fishing.Fish;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public record CatchCommandExecutor(@NotNull List<String> commands) implements CatchHandler {
 

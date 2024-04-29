@@ -22,7 +22,8 @@ public interface PluginHooker {
         return pluginManager.isPluginEnabled(getPluginName());
     }
 
-    @NotNull String getPluginName();
+    @NotNull
+    String getPluginName();
 
     boolean hasHooked();
 

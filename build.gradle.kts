@@ -1,15 +1,13 @@
 plugins {
     java
     `java-library`
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.github.johnrengelman.shadow")
 }
 
 group = "me.elsiff"
 version = "4.2.0"
 
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
-}
+java.toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 
 repositories {
     maven("https://papermc.io/repo/repository/maven-public/")
@@ -23,15 +21,17 @@ repositories {
 dependencies {
     compileOnlyApi("com.comphenix.protocol:ProtocolLib:5.1.0")
     compileOnlyApi("com.github.MilkBowl:VaultAPI:1.7.1")
-    compileOnlyApi("dev.folia:folia-api:1.20.2-R0.1-SNAPSHOT")
-    //compileOnlyApi("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
+    compileOnlyApi("dev.folia:folia-api:1.20.4-R0.1-SNAPSHOT")
+    //compileOnlyApi("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
     compileOnlyApi(files("lib/mcMMO.jar"))
-
     api("com.github.musician101.musigui:paper:1.2.2") {
         exclude("io.papermc.paper")
     }
-    api("com.github.Musician101:Bukkitier:1.3.3") {
-        exclude("org.spigotmc")
+    api("com.github.Musician101:Bukkitier:2.0.0") {
+        exclude("io.papermc.paper")
+    }
+    api("io.musician101:musiboard:1.1.0-SNAPSHOT") {
+        exclude("io.papermc.paper")
     }
     //TODO temp to fix package names
     //api("com.github.Musician101:MusiBoard:1.0.1") {
@@ -51,7 +51,6 @@ tasks {
 
     shadowJar {
         dependencies {
-            include(dependency(":common"))
             include(dependency("com.github.Musician101:"))
             include(dependency("com.github.musician101.musigui:"))
         }
