@@ -7,9 +7,6 @@ import me.elsiff.morefish.hooker.MusiBoardHooker;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.AbstractMap.SimpleEntry;
-import java.util.List;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -30,10 +27,6 @@ public final class FishingCompetition extends FishRecordKeeper {
         if (state != State.ENABLED) {
             throw new IllegalStateException("Fishing competition isn't enabled");
         }
-    }
-
-    public boolean containsContestant(@NotNull UUID contestant) {
-        return getRecords().stream().anyMatch(record -> contestant.equals(record.fisher()));
     }
 
     public void disable() {
@@ -83,21 +76,6 @@ public final class FishingCompetition extends FishRecordKeeper {
 
     public int rankNumberOf(@NotNull FishRecord record) {
         return getRecords().indexOf(record) + 1;
-    }
-
-    @NotNull
-    public Entry<Integer, FishRecord> rankedRecordOf(@NotNull OfflinePlayer contestant) {
-        List<FishRecord> records = getRecords();
-        int place = 0;
-        for (FishRecord record : records) {
-            if (record.fisher().equals(contestant.getUniqueId())) {
-                return new SimpleEntry<>(place, record);
-            }
-
-            place++;
-        }
-
-        throw new IllegalStateException("Record not found");
     }
 
     private Optional<FishRecord> getRecord(@NotNull UUID contestant) {

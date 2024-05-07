@@ -7,9 +7,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 import java.util.UUID;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
@@ -18,18 +17,19 @@ public final class FishingLogs extends FishRecordKeeper {
 
     public void load() {
         try {
-            if (getFile().exists()) {
+            if (!getFile().exists()) {
                 getFile().createNewFile();
             }
 
             YamlConfiguration yaml = YamlConfiguration.loadConfiguration(getFile());
-            yaml.getKeys(false).stream().map(yaml::getList).filter(Objects::nonNull).map(ConfigurationSection.class::cast).map(cs -> {
-                UUID uuid = UUID.fromString(cs.getName());
-                String fishName = cs.getString("name", "invalid");
-                String rarityName = cs.getString("rarity", "invalid");
-                double length = cs.getDouble("length");
-                double rarityProbability = cs.getDouble("rarity_probability");
-                long timestamp = cs.getLong("timestamp");
+            yaml.getMapList("records").stream().map(map -> {
+                UUID uuid = UUID.fromString(getString(map, "uuid", null));
+                String fishName = getString(map, "name", "invalid");
+                String rarityName = getString(map, "rarity", "invalid");
+                double length = getDouble(map, "length");
+                double rarityProbability = getDouble(map, "rarity_probability");
+                Object obj = map.get("timestamp");
+                long timestamp = obj == null ? 0L : Long.parseLong(obj.toString());
                 return new FishRecord(uuid, length, fishName, rarityName, rarityProbability, timestamp);
             }).forEach(records::add);
         }
@@ -38,26 +38,38 @@ public final class FishingLogs extends FishRecordKeeper {
         }
     }
 
+    private double getDouble(Map<?, ?> map, String key) {
+        Object obj = map.get(key);
+        return obj == null ? 0D : Double.parseDouble(obj.toString());
+    }
+
+    private String getString(Map<?, ?> map, String key, String defaultValue) {
+        if (defaultValue == null && !map.containsKey(key)) {
+            throw new IllegalArgumentException("UUID is missing!");
+        }
+
+        Object obj = map.get(key);
+        return obj == null ? defaultValue : obj.toString();
+    }
+
     @SuppressWarnings("unchecked")
     public void save() {
         try {
-            if (getFile().exists()) {
+            if (!getFile().exists()) {
                 getFile().createNewFile();
             }
 
-            YamlConfiguration yaml = new YamlConfiguration();
-            records.forEach(record -> {
-                String fisher = record.fisher().toString();
-                List<ConfigurationSection> list = (List<ConfigurationSection>) yaml.getList(fisher, new ArrayList<>());
+            YamlConfiguration yaml = new YamlConfiguration();;
+            yaml.set("records", records.stream().map(record -> {
                 ConfigurationSection cs = new MemoryConfiguration();
+                cs.set("uuid", record.fisher().toString());
                 cs.set("name", record.getFishName());
                 cs.set("length", record.getLength());
                 cs.set("rarity", record.getRarityName());
                 cs.set("rarity_probability", record.getRarityProbability());
                 cs.set("timestamp", record.timestamp());
-                list.add(cs);
-                yaml.set(fisher, cs);
-            });
+                return cs;
+            }).toList());
             yaml.save(getFile());
         }
         catch (IOException e) {
