@@ -14,6 +14,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -50,8 +51,9 @@ class MFFLCommand implements LiteralCommand {
         }
 
         int start = (page - 1) * 8;
-        int end = start + 8;
-        List<FishRecord> records = getPlugin().getFishingLogs().getFisher(player.getUniqueId()).subList(start, end);
+        List<FishRecord> fullList = getPlugin().getFishingLogs().getFisher(player.getUniqueId());
+        int end = Math.min(start + 8, fullList.size());
+        List<FishRecord> records = new ArrayList<>(fullList.subList(start, end));
         if (records.isEmpty()) {
             player.sendMessage(join(PREFIX_COMPONENT, text("You have not caught any fish yet.")));
             return;
