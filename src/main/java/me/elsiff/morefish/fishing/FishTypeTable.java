@@ -126,13 +126,10 @@ public final class FishTypeTable {
                         throw new IllegalArgumentException("display-name is missing from rarity-list." + key + ".");
                     }
 
-                    JsonObject losJson = fish.getAsJsonObject("luck-of-the-sea");
+                    JsonObject losJson = json.getAsJsonObject("luck-of-the-sea");
                     Map<Integer, Double> luckOfTheSeaChances = new HashMap<>();
-                    if (fish.has("luck-of-the-sea")) {
+                    if (json.has("luck-of-the-sea")) {
                         luckOfTheSeaChances = losJson.entrySet().stream().collect(Collectors.toMap(e -> Integer.parseInt(e.getKey()), e -> e.getValue().getAsDouble()));
-                        if (json.has("luck-of-the-sea")) {
-                            luckOfTheSeaChances = json.getAsJsonObject("luck-of-the-sea").entrySet().stream().collect(Collectors.toMap(e -> Integer.parseInt(e.getKey()), e -> e.getValue().getAsDouble()));
-                        }
                     }
 
                     boolean isDefault = getOrDefaultFalse(json, "default");
@@ -290,26 +287,32 @@ public final class FishTypeTable {
     @NotNull
     public List<FishType> pickRandomTypes(@NotNull Item caught, @NotNull Player fisher) {
         List<FishType> fish = new ArrayList<>();
-        fish.add(pickRandomType(caught, fisher));
+        fish.add(pickRandomType(caught, fisher).get());
         ItemStack fishingRod = fisher.getInventory().getItemInMainHand();
-        int los = fishingRod.getEnchantmentLevel(Enchantment.LUCK);
-        IntStream.range(1, los + 1).mapToObj(i -> pickRandomType(caught, fisher, true, i)).forEach(fish::add);
+        int level = fishingRod.getEnchantmentLevel(Enchantment.LUCK);
+        IntStream.range(1, level + 1).mapToObj(i -> pickRandomType(caught, fisher, true, i)).filter(Optional::isPresent).map(Optional::get).forEach(fish::add);
         return fish;
     }
 
     @NotNull
-    public FishType pickRandomType(@NotNull Item caught, @NotNull Player fisher) {
+    public Optional<FishType> pickRandomType(@NotNull Item caught, @NotNull Player fisher) {
         return pickRandomType(caught, fisher, false, 0);
     }
 
     @NotNull
-    public FishType pickRandomType(@NotNull Item caught, @NotNull Player fisher, boolean luckOfTheSea, int fishNumber) {
+    public Optional<FishType> pickRandomType(@NotNull Item caught, @NotNull Player fisher, boolean luckOfTheSea, int fishNumber) {
         FishRarity rarity = pickRandomRarity();
         if (!map.containsKey(rarity)) {
             throw new IllegalStateException("Rarity must be contained in the table");
         }
 
+        double roll = random.nextDouble();
         List<FishType> types = map.get(rarity).stream().filter(type -> {
+            List<FishCondition> conditions = type.conditions();
+            if (!conditions.isEmpty() && conditions.stream().noneMatch(condition -> condition.check(caught, fisher))) {
+                return false;
+            }
+
             if (luckOfTheSea) {
                 Map<Integer, Double> losMap = type.luckOfTheSeaChances();
                 if (losMap.isEmpty()) {
@@ -321,15 +324,19 @@ public final class FishTypeTable {
                     return false;
                 }
 
-                return random.nextDouble() <= chance && type.conditions().stream().allMatch(condition -> condition.check(caught, fisher));
+                return roll <= chance;
             }
 
             return true;
         }).toList();
         if (types.isEmpty()) {
+            if (luckOfTheSea) {
+                return Optional.empty();
+            }
+
             return pickRandomType(caught, fisher);
         }
 
-        return types.get(random.nextInt(types.size()));
+        return Optional.ofNullable(types.get(random.nextInt(types.size())));
     }
 }
