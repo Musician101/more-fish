@@ -38,11 +38,6 @@ class MFShop implements LiteralCommand {
     }
 
     @Override
-    public boolean canUse(@NotNull CommandSender sender) {
-        return sender.hasPermission("morefish.shop");
-    }
-
-    @Override
     public int execute(@NotNull CommandContext<CommandSender> context) {
         return shop(context.getSource(), (Player) context.getSource());
     }
