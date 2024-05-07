@@ -5,7 +5,6 @@ import me.elsiff.morefish.fishing.fishrecords.FishRecord;
 import me.elsiff.morefish.text.Lang;
 import me.elsiff.morefish.util.NumberUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -13,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -48,7 +48,7 @@ public final class FishingCompetitionHost {
         if (!suspend) {
             if (!getPrizes().isEmpty()) {
                 List<FishRecord> ranking = getCompetition().getRecords();
-                ranking.sort(SortType.LENGTH.sorter());
+                ranking.sort(SortType.LENGTH.sorter().reversed());
                 if (!ranking.isEmpty()) {
                     getPrizes().forEach((place, prize) -> {
                         if (ranking.size() > place) {
@@ -99,15 +99,16 @@ public final class FishingCompetitionHost {
         }
         else {
             int topSize = getMsgConfig().getInt("top-number", 1);
-            List<FishRecord> top = getCompetition().top(topSize);
+            List<FishRecord> top = new ArrayList<>(getCompetition().top(topSize));
+            top.sort(SortType.LENGTH.sorter().reversed());
             top.forEach(record -> {
                 int number = top.indexOf(record) + 1;
                 receiver.sendMessage(join(PREFIX_COMPONENT, replace("<yellow>%ordinal%. : <dark_gray>%player%, %length%cm %fish%", topReplacementOf(number, record))));
             });
 
-            if (receiver instanceof Player) {
-                if (getCompetition().containsContestant(((Player) receiver).getUniqueId())) {
-                    Entry<Integer, FishRecord> entry = getCompetition().rankedRecordOf((OfflinePlayer) receiver);
+            if (receiver instanceof Player player) {
+                if (getCompetition().contains(player.getUniqueId())) {
+                    Entry<Integer, FishRecord> entry = getCompetition().rankedRecordOf(player);
                     receiver.sendMessage(join(PREFIX_COMPONENT, replace("You're %ordinal%: %length%cm %fish%", topReplacementOf(entry.getKey() + 1, entry.getValue()))));
                 }
                 else {
