@@ -17,12 +17,6 @@ import static me.elsiff.morefish.MoreFish.getPlugin;
 
 public class FishArgumentType implements ArgumentType<Holder> {
 
-    public interface Holder {
-
-        @NotNull
-        List<FishRecord> get();
-    }
-
     @Override
     public Holder parse(StringReader reader) {
         String string = reader.getRemaining();
@@ -38,5 +32,11 @@ public class FishArgumentType implements ArgumentType<Holder> {
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
         getRecords().stream().map(FishRecord::getFishName).filter(s -> s.startsWith(builder.getRemaining())).forEach(builder::suggest);
         return builder.buildFuture();
+    }
+
+    public interface Holder {
+
+        @NotNull
+        List<FishRecord> get();
     }
 }
