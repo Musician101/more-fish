@@ -21,6 +21,16 @@ import static net.kyori.adventure.text.Component.text;
 
 class MFStart implements LiteralCommand {
 
+    private static final Component ALREADY_ONGOING = join(PREFIX_COMPONENT, text("The contest is already ongoing."));
+
+    private static FishingCompetition getCompetition() {
+        return getPlugin().getCompetition();
+    }
+
+    private static FishingCompetitionHost getCompetitionHost() {
+        return getPlugin().getCompetitionHost();
+    }
+
     @NotNull
     @Override
     public String description(@NotNull CommandSender sender) {
@@ -33,8 +43,6 @@ class MFStart implements LiteralCommand {
         return "/mf start [<seconds>]";
     }
 
-    private static final Component ALREADY_ONGOING = join(PREFIX_COMPONENT, text("The contest is already ongoing."));
-
     @NotNull
     @Override
     public List<Command<? extends ArgumentBuilder<CommandSender, ?>>> arguments() {
@@ -44,14 +52,6 @@ class MFStart implements LiteralCommand {
     @Override
     public boolean canUse(@NotNull CommandSender sender) {
         return sender.hasPermission("morefish.admin");
-    }
-
-    private static FishingCompetition getCompetition() {
-        return getPlugin().getCompetition();
-    }
-
-    private static FishingCompetitionHost getCompetitionHost() {
-        return getPlugin().getCompetitionHost();
     }
 
     @Override

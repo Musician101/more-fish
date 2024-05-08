@@ -27,18 +27,6 @@ import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
 
 class MFFLCommand implements LiteralCommand {
 
-    @NotNull
-    @Override
-    public String description(@NotNull CommandSender sender) {
-        return "Shows all the fish you've caught.";
-    }
-
-    @NotNull
-    @Override
-    public String usage(@NotNull CommandSender sender) {
-        return "/mf fishinglogs [<page> [<sort>]]";
-    }
-
     private static void showRecords(CommandContext<CommandSender> context) {
         Player player = (Player) context.getSource();
         int page = 1;
@@ -64,6 +52,18 @@ class MFFLCommand implements LiteralCommand {
             Date date = new Date(record.timestamp());
             player.sendMessage(join(PREFIX_COMPONENT, text(record.getLength() + "cm " + record.getFishName(), DARK_GRAY), text(" " + date, YELLOW)));
         });
+    }
+
+    @NotNull
+    @Override
+    public String description(@NotNull CommandSender sender) {
+        return "Shows all the fish you've caught.";
+    }
+
+    @NotNull
+    @Override
+    public String usage(@NotNull CommandSender sender) {
+        return "/mf fishinglogs [<page> [<sort>]]";
     }
 
     @NotNull

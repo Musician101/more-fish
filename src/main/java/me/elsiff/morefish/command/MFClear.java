@@ -25,6 +25,14 @@ import static net.kyori.adventure.text.Component.text;
 
 class MFClear implements LiteralCommand {
 
+    private static FishingCompetition getCompetition() {
+        return getPlugin().getCompetition();
+    }
+
+    private static FishingLogs getFishingLogs() {
+        return getPlugin().getFishingLogs();
+    }
+
     @NotNull
     @Override
     public List<Command<? extends ArgumentBuilder<CommandSender, ?>>> arguments() {
@@ -34,10 +42,6 @@ class MFClear implements LiteralCommand {
     @Override
     public boolean canUse(@NotNull CommandSender sender) {
         return sender.hasPermission("morefish.admin");
-    }
-
-    private static FishingCompetition getCompetition() {
-        return getPlugin().getCompetition();
     }
 
     @Override
@@ -64,10 +68,6 @@ class MFClear implements LiteralCommand {
     @Override
     public String usage(@NotNull CommandSender sender) {
         return "/mf clear [alltime|competition [<player>]]";
-    }
-
-    private static FishingLogs getFishingLogs() {
-        return getPlugin().getFishingLogs();
     }
 
     public static class RecordsArgument implements ArgumentCommand<FishRecordsType> {

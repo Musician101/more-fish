@@ -16,6 +16,10 @@ import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
 
 public class MFMain extends HelpMainCommand {
 
+    public MFMain() {
+        super(getPlugin());
+    }
+
     @NotNull
     static Component cmdInfo(@NotNull Command<? extends ArgumentBuilder<CommandSender, ?>> command, @NotNull CommandSender sender) {
         String string = "<click:run_command:/mf help " + command.name() + ">/mf " + command.name() + " <dark_gray>- <gray>" + command.description(sender);
@@ -26,10 +30,6 @@ public class MFMain extends HelpMainCommand {
     @Override
     protected Component commandInfo(@NotNull Command<? extends ArgumentBuilder<CommandSender, ?>> command, @NotNull CommandSender sender) {
         return cmdInfo(command, sender);
-    }
-
-    public MFMain() {
-        super(getPlugin());
     }
 
     @SuppressWarnings("UnstableApiUsage")

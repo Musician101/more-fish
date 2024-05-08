@@ -25,18 +25,6 @@ import static net.kyori.adventure.text.Component.text;
 
 class MFGive implements LiteralCommand {
 
-    @NotNull
-    @Override
-    public String description(@NotNull CommandSender sender) {
-        return "Give a player a fish.";
-    }
-
-    @NotNull
-    @Override
-    public String usage(@NotNull CommandSender sender) {
-        return "/mf give <player> <fish> [<length> [<amount>]]";
-    }
-
     @SuppressWarnings("SameReturnValue")
     private static int giveFish(CommandContext<CommandSender> context, FishType fishType, double length, int amount) {
         Player player = context.getArgument("player", Player.class);
@@ -50,6 +38,18 @@ class MFGive implements LiteralCommand {
 
         player.sendMessage(join(Lang.PREFIX_COMPONENT, text("You just received a " + fishType.displayName() + ".")));
         return 1;
+    }
+
+    @NotNull
+    @Override
+    public String description(@NotNull CommandSender sender) {
+        return "Give a player a fish.";
+    }
+
+    @NotNull
+    @Override
+    public String usage(@NotNull CommandSender sender) {
+        return "/mf give <player> <fish> [<length> [<amount>]]";
     }
 
     @NotNull

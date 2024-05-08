@@ -9,7 +9,6 @@ import io.musician101.bukkitier.command.Command;
 import io.musician101.bukkitier.command.LiteralCommand;
 import me.elsiff.morefish.command.argument.FishArgumentType;
 import me.elsiff.morefish.command.argument.SortArgumentType.SortType;
-import me.elsiff.morefish.fishing.competition.FishingCompetition;
 import me.elsiff.morefish.fishing.competition.FishingCompetitionHost;
 import me.elsiff.morefish.fishing.fishrecords.FishRecord;
 import me.elsiff.morefish.fishing.fishrecords.FishingLogs;
@@ -32,6 +31,19 @@ import static me.elsiff.morefish.text.Lang.replace;
 import static net.kyori.adventure.text.Component.text;
 
 class MFTop implements LiteralCommand {
+
+    public static FishingCompetitionHost getCompetitionHost() {
+        return getPlugin().getCompetitionHost();
+    }
+
+    public static FishingLogs getFishingLogs() {
+        return getPlugin().getFishingLogs();
+    }
+
+    private static Map<String, Object> topReplacementOf(int number, FishRecord record) {
+        String player = Bukkit.getOfflinePlayer(record.fisher()).getName();
+        return Map.of("%ordinal%", NumberUtils.ordinalOf(number), "%number%", String.valueOf(number), "%player%", player == null ? "null" : player, "%length%", String.valueOf(record.getLength()), "%fish%", record.getFishName());
+    }
 
     @NotNull
     @Override
@@ -62,23 +74,6 @@ class MFTop implements LiteralCommand {
     @Override
     public List<Command<? extends ArgumentBuilder<CommandSender, ?>>> arguments() {
         return List.of(new AllTimeCommand(), new CompetitionCommand());
-    }
-
-    private static FishingCompetition getCompetition() {
-        return getPlugin().getCompetition();
-    }
-
-    public static FishingCompetitionHost getCompetitionHost() {
-        return getPlugin().getCompetitionHost();
-    }
-
-    public static FishingLogs getFishingLogs() {
-        return getPlugin().getFishingLogs();
-    }
-
-    private static Map<String, Object> topReplacementOf(int number, FishRecord record) {
-        String player = Bukkit.getOfflinePlayer(record.fisher()).getName();
-        return Map.of("%ordinal%", NumberUtils.ordinalOf(number), "%number%", String.valueOf(number), "%player%", player == null ? "null" : player, "%length%", String.valueOf(record.getLength()), "%fish%", record.getFishName());
     }
 
     static class AllTimeCommand implements LiteralCommand {
