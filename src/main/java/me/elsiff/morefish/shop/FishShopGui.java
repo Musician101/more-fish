@@ -97,7 +97,10 @@ public final class FishShopGui extends AbstractFishShopGUI {
         else {
             updatePriceIcon();
         }
-        fishBags.update(player, inventory.getContents(), page);
+
+        if (fishBags.getMaxAllowedPages(player) > 0) {
+            fishBags.update(player, inventory.getContents(), page);
+        }
     }
 
     @Override
