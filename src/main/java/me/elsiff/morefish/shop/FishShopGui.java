@@ -204,7 +204,7 @@ public final class FishShopGui extends AbstractFishShopGUI {
                 return;
             }
 
-            Entry<Integer, Integer> upgrade = upgradeEntries.get(0);
+            Entry<Integer, Integer> upgrade = upgradeEntries.getFirst();
             Component lore = text(upgrade.getKey() + " page(s) for $" + upgrade.getValue(), GREEN);
             ItemStack icon = setLore(customName(new ItemStack(Material.GOLD_INGOT), text("Bag Upgrades")), lore);
             setButton(51, icon, ClickType.LEFT, p -> {

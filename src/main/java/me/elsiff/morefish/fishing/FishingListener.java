@@ -58,7 +58,7 @@ public final class FishingListener implements Listener {
                 fishes.forEach(fish -> catchHandlersOf(event, fish).forEach(handler -> handler.handle(player, fish)));
                 List<ItemStack> fishItems = fishes.stream().map(fish -> createItemStack(fish, player)).toList();
                 // There's always one fish
-                ItemStack fishItem = fishItems.get(0);
+                ItemStack fishItem = fishItems.getFirst();
                 caught.setItemStack(fishItem);
                 fishItems.stream().filter(item -> !getPlugin().getFishBags().addFish(player, item)).forEach(item -> {
                     World world = player.getWorld();

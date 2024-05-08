@@ -98,7 +98,7 @@ public final class FishingCompetition extends FishRecordKeeper {
 
     public boolean willBeNewFirst(@NotNull OfflinePlayer catcher, @NotNull Fish fish) {
         if (!getRecords().isEmpty()) {
-            FishRecord record = getRecords().get(0);
+            FishRecord record = getRecords().getFirst();
             return fish.length() > record.getLength() && !record.fisher().equals(catcher.getUniqueId());
         }
 
