@@ -11,7 +11,6 @@ import me.elsiff.morefish.fishing.fishrecords.FishingLogs;
 import me.elsiff.morefish.hooker.McmmoHooker;
 import me.elsiff.morefish.hooker.MusiBoardHooker;
 import me.elsiff.morefish.hooker.VaultHooker;
-import me.elsiff.morefish.shop.FishShop;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Server;
 import org.bukkit.plugin.PluginManager;
@@ -36,8 +35,6 @@ public final class MoreFish extends JavaPlugin {
     private final FishingCompetitionHost competitionHost = new FishingCompetitionHost();
     @NotNull
     private final FishBags fishBags = new FishBags();
-    @NotNull
-    private final FishShop fishShop = new FishShop();
     @NotNull
     private final FishTypeTable fishTypeTable = new FishTypeTable();
     @NotNull
@@ -91,11 +88,6 @@ public final class MoreFish extends JavaPlugin {
     @NotNull
     public FishBags getFishBags() {
         return fishBags;
-    }
-
-    @NotNull
-    public FishShop getFishShop() {
-        return fishShop;
     }
 
     @NotNull

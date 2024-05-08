@@ -49,7 +49,7 @@ class MFShop implements LiteralCommand {
 
     @SuppressWarnings("SameReturnValue")
     int shop(CommandSender sender, Player guiUser) {
-        if (!getPlugin().getFishShop().getEnabled() || !getPlugin().getVault().hasEconomy()) {
+        if (!getPlugin().getConfig().getBoolean("fish-shop.enable") || !getPlugin().getVault().hasEconomy()) {
             sender.sendMessage(Lang.SHOP_DISABLED);
         }
         else {

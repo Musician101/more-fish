@@ -74,13 +74,18 @@ public final class FishShopGui extends AbstractFishShopGUI {
     }
 
     private List<ItemStack> getFilteredFish() {
-        return IntStream.range(0, 45).mapToObj(inventory::getItem).filter(Objects::nonNull).filter(FishItemStackConverter::isFish).filter(itemStack -> shop.priceOf(fish(itemStack)) >= 0).filter(itemStack -> selectedRarities.contains(fish(itemStack).rarity())).collect(Collectors.toList());
+        return IntStream.range(0, 45).mapToObj(inventory::getItem).filter(Objects::nonNull).filter(FishItemStackConverter::isFish).filter(itemStack -> price(fish(itemStack)) >= 0).filter(itemStack -> selectedRarities.contains(fish(itemStack).rarity())).collect(Collectors.toList());
+    }
+
+    private double price(Fish fish) {
+        double multi = getPlugin().getConfig().getDouble("fish-shop.multiplier");
+        return multi * fish.length() + fish.type().additionalPrice();
     }
 
     private double getTotalPrice() {
         return BigDecimal.valueOf(getFilteredFish().stream().mapToDouble(itemStack -> {
             Fish fish = fish(itemStack);
-            return shop.priceOf(fish) * itemStack.getAmount();
+            return price(fish) * itemStack.getAmount();
         }).sum()).setScale(2, RoundingMode.DOWN).doubleValue();
     }
 
@@ -181,7 +186,7 @@ public final class FishShopGui extends AbstractFishShopGUI {
                         itemStack.setAmount(0);
                     });
 
-                    getEconomy().depositPlayer(player, fishList.stream().mapToDouble(shop::priceOf).sum());
+                    getEconomy().depositPlayer(player, fishList.stream().mapToDouble(this::price).sum());
                     fishBags.update(player, inventory.getContents(), page);
                     updatePriceIcon(totalPrice);
                     p.sendMessage(replace(PREFIX_STRING + "<white>You sold fish for <green>$" + totalPrice + "<white>."));

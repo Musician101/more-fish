@@ -14,9 +14,6 @@ import static net.kyori.adventure.text.Component.text;
 
 public class AbstractFishShopGUI extends PaperChestGUI<MoreFish> {
 
-    @NotNull
-    protected final FishShop shop = getPlugin().getFishShop();
-
     protected AbstractFishShopGUI(@NotNull Component title, @NotNull Player user) {
         super(user, title, 54, getPlugin(), false);
     }
