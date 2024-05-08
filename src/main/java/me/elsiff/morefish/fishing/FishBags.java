@@ -1,6 +1,5 @@
 package me.elsiff.morefish.fishing;
 
-import me.elsiff.morefish.MoreFish;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -14,8 +13,9 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -66,12 +66,11 @@ public class FishBags implements Listener {
     }
 
     public void load() {
-        File bagsFolder = getPlugin().getDataFolder().toPath().resolve("fish_bags").toFile();
-        File[] files = bagsFolder.listFiles();
-        if (files != null) {
-            Stream.of(files).filter(file -> file.getName().endsWith(".yml")).forEach(file -> {
-                YamlConfiguration yaml = YamlConfiguration.loadConfiguration(file);
-                UUID uuid = UUID.fromString(file.getName().replace(".yml", ""));
+        Path bagsFolder = getPlugin().getDataFolder().toPath().resolve("fish_bags");
+        try (Stream<Path> bags = Files.list(bagsFolder)) {
+            bags.filter(path -> path.getFileName().toString().endsWith(".yml")).forEach(path -> {
+                YamlConfiguration yaml = YamlConfiguration.loadConfiguration(path.toFile());
+                UUID uuid = UUID.fromString(path.getFileName().toString().replace(".yml", ""));
                 FishBag fishBag = new FishBag(uuid);
                 fishBag.setMaxAllowedPages(yaml.getInt("max_allowed_pages", 0));
                 ConfigurationSection fishSection = yaml.getConfigurationSection("fish");
@@ -86,8 +85,11 @@ public class FishBags implements Listener {
                     });
                 }
 
-                bags.add(fishBag);
+                this.bags.add(fishBag);
             });
+        }
+        catch (IOException e) {
+            getPlugin().getSLF4JLogger().error("An error occurred while loading fish bags.", e);
         }
     }
 
@@ -107,7 +109,7 @@ public class FishBags implements Listener {
     public void save() {
         bags.forEach(fishBag -> {
             YamlConfiguration yaml = new YamlConfiguration();
-            File bagsFolder = getPlugin().getDataFolder().toPath().resolve("fish_bags").toFile();
+            Path bagsFolder = getPlugin().getDataFolder().toPath().resolve("fish_bags");
             UUID uuid = fishBag.getUUID();
             int maxAllowedPages = fishBag.getMaxAllowedPages();
             yaml.set("max_allowed_pages", maxAllowedPages);
@@ -117,10 +119,10 @@ public class FishBags implements Listener {
             });
 
             try {
-                yaml.save(new File(bagsFolder, uuid + ".yml"));
+                yaml.save(bagsFolder.resolve(uuid + ".yml").toFile());
             }
             catch (IOException e) {
-                MoreFish.getPlugin().getSLF4JLogger().error("An error occurred while saving fish bag for " + uuid + ".", e);
+                getPlugin().getSLF4JLogger().error("An error occurred while saving fish bag for " + uuid + ".", e);
             }
         });
     }

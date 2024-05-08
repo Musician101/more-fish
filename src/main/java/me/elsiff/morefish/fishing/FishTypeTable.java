@@ -28,9 +28,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -99,11 +99,11 @@ public final class FishTypeTable {
 
     public void load() {
         map.clear();
-        File fishDir = getPlugin().getDataFolder().toPath().resolve("fish").toFile();
+        Path fishDir = getPlugin().getDataFolder().toPath().resolve("fish");
         String fishFile = "fish.json";
         try {
             getPlugin().saveResource("fish/" + fishFile, false);
-            fish = GSON.fromJson(Files.readString(new File(fishDir, fishFile).toPath()), JsonObject.class);
+            fish = GSON.fromJson(Files.readString(fishDir.resolve(fishFile)), JsonObject.class);
             JsonObject raritiesConfig = fish.getAsJsonObject("rarity-list");
             if (raritiesConfig != null) {
                 List<FishRarity> rarities = raritiesConfig.keySet().stream().map(key -> {
@@ -158,7 +158,7 @@ public final class FishTypeTable {
                     }
 
                     try {
-                        JsonObject fishList = GSON.fromJson(Files.readString(new File(fishDir, fishRarityFile).toPath()), JsonObject.class);
+                        JsonObject fishList = GSON.fromJson(Files.readString(fishDir.resolve(fishRarityFile)), JsonObject.class);
                         List<FishType> fishTypes = fishList.keySet().stream().map(name -> {
                             JsonObject json = fishList.getAsJsonObject(name);
                             List<CatchHandler> catchHandlers = new ArrayList<>(fishRarity.catchHandlers());
