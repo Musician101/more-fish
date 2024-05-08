@@ -52,14 +52,13 @@ public final class FishingLogs extends FishRecordKeeper {
         return obj == null ? defaultValue : obj.toString();
     }
 
-    @SuppressWarnings("unchecked")
     public void save() {
         try {
             if (!getFile().exists()) {
                 getFile().createNewFile();
             }
 
-            YamlConfiguration yaml = new YamlConfiguration();;
+            YamlConfiguration yaml = new YamlConfiguration();
             yaml.set("records", records.stream().map(record -> {
                 ConfigurationSection cs = new MemoryConfiguration();
                 cs.set("uuid", record.fisher().toString());
