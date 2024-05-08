@@ -3,7 +3,6 @@ package me.elsiff.morefish.command;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.musician101.bukkitier.command.ArgumentCommand;
 import io.musician101.bukkitier.command.Command;
 import io.musician101.bukkitier.command.LiteralCommand;
@@ -131,7 +130,7 @@ class MFTop implements LiteralCommand {
             }
 
             @Override
-            public int execute(@NotNull CommandContext<CommandSender> context) throws CommandSyntaxException {
+            public int execute(@NotNull CommandContext<CommandSender> context) {
                 CommandSender sender = context.getSource();
                 List<FishRecord> records = context.getArgument(name(), FishArgumentType.Holder.class).get();
                 if (getFishingLogs().getRecords().isEmpty()) {
