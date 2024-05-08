@@ -24,7 +24,7 @@ import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
 
 public interface Lang {
 
-    String PREFIX_STRING = "<aqua>[MoreFish] ";
+    String PREFIX_STRING = "<dark_gray>[<gold>MoreFish<dark_gray>] ";
     Component PREFIX_COMPONENT = miniMessage().deserialize(PREFIX_STRING);
     Component CONTEST_START = join(PREFIX_COMPONENT, text("The fishing contest has started!"));
     Component CONTEST_STOP = join(PREFIX_COMPONENT, text("The fishing contest has ended!"));
