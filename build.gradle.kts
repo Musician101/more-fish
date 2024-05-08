@@ -55,7 +55,7 @@ tasks {
             include(dependency("com.github.Musician101.MusiGui:"))
         }
 
-        archiveClassifier.set("")
+        archiveFileName.set("${project.name}-${project.version}.jar")
         relocate("io.musician101.bukkitier", "me.elsiff.morefish.lib.io.musician101.bukkitier")
         relocate("io.musician101.musigui", "me.elsiff.morefish.lib.io.musician101.musigui")
         dependsOn("build")
