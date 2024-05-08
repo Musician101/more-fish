@@ -287,7 +287,7 @@ public final class FishTypeTable {
     @NotNull
     public List<FishType> pickRandomTypes(@NotNull Item caught, @NotNull Player fisher) {
         List<FishType> fish = new ArrayList<>();
-        fish.add(pickRandomType(caught, fisher).get());
+        fish.add(pickRandomType(caught, fisher).orElseThrow(() -> new IllegalStateException("Well this isn't supposed to happen...")));
         ItemStack fishingRod = fisher.getInventory().getItemInMainHand();
         int level = fishingRod.getEnchantmentLevel(Enchantment.LUCK);
         IntStream.range(1, level + 1).mapToObj(i -> pickRandomType(caught, fisher, true, i)).filter(Optional::isPresent).map(Optional::get).forEach(fish::add);
