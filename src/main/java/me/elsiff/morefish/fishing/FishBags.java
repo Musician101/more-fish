@@ -1,8 +1,5 @@
 package me.elsiff.morefish.fishing;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -27,6 +24,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
+import static me.elsiff.morefish.text.Lang.replace;
 
 public class FishBags implements Listener {
 
@@ -104,7 +102,7 @@ public class FishBags implements Listener {
             return;
         }
 
-        Bukkit.getGlobalRegionScheduler().run(getPlugin(), task -> player.sendMessage(Component.text("[MF] CONTRABAND DETECTED IN YOUR FISH BAG. CLICK THIS MESSAGE TO RETRIEVE IT NOW.").color(NamedTextColor.RED).clickEvent(ClickEvent.runCommand("/mf contraband"))));
+        Bukkit.getGlobalRegionScheduler().run(getPlugin(), task -> player.sendMessage(replace("<red><click:run_command:/mf contraband>[MF] CONTRABAND DETECTED IN YOUR FISH BAG. CLICK THIS MESSAGE TO RETRIEVE IT NOW.")));
     }
 
     @SuppressWarnings("StringConcatenationArgumentToLogCall")
