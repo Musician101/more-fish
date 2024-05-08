@@ -2,7 +2,6 @@ package me.elsiff.morefish.command;
 
 import com.mojang.brigadier.context.CommandContext;
 import io.musician101.bukkitier.command.LiteralCommand;
-import me.elsiff.morefish.MoreFish;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,7 +36,7 @@ class MFReload implements LiteralCommand {
             sender.sendMessage(replace(PREFIX_STRING + "<white>Reloaded the config successfully."));
         }
         catch (Exception e) {
-            MoreFish.getPlugin().getSLF4JLogger().error("An error occurred while reloading the config.", e);
+            getPlugin().getSLF4JLogger().error("An error occurred while reloading the config.", e);
             sender.sendMessage(replace(PREFIX_STRING + "<white>Failed to reload: Please check your console."));
         }
 
