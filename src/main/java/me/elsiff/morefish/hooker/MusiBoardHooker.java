@@ -3,13 +3,16 @@ package me.elsiff.morefish.hooker;
 import io.musician101.musiboard.MusiBoard;
 import io.musician101.musiboard.scoreboard.MusiScoreboard;
 import io.musician101.musiboard.scoreboard.MusiScoreboardManager;
+import io.papermc.paper.scoreboard.numbers.NumberFormat;
 import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.fishing.fishrecords.FishRecord;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Criteria;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Score;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -21,6 +24,7 @@ import java.util.stream.IntStream;
 import static me.elsiff.morefish.MoreFish.getPlugin;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
+import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
 
 public class MusiBoardHooker implements PluginHooker {
 
@@ -88,12 +92,16 @@ public class MusiBoardHooker implements PluginHooker {
                 leaderboard.unregister();
             }
 
-            leaderboard = scoreboard.registerNewObjective("leaderboard", Criteria.DUMMY, text("Top 5 Fishers (mm)", AQUA));
+            leaderboard = scoreboard.registerNewObjective("leaderboard", Criteria.DUMMY, text("Top 5 Fishers", AQUA));
             leaderboard.setDisplaySlot(DisplaySlot.SIDEBAR);
+            leaderboard.numberFormat(NumberFormat.blank());
             List<FishRecord> records = getPlugin().getCompetition().getRecords();
             IntStream.range(0, Math.min(5, records.size())).forEach(i -> {
                 FishRecord record = records.get(i);
-                leaderboard.getScore(Bukkit.getOfflinePlayer(record.fisher())).setScore((int) (record.getLength() * 100));
+                OfflinePlayer player = Bukkit.getOfflinePlayer(record.fisher());
+                Score score = leaderboard.getScore(player);
+                score.setScore((int) (record.getLength() * 100));
+                score.customName(miniMessage().deserialize(player.getName() + " <red>" + record.getLength() + "cm"));
             });
         }
     }
