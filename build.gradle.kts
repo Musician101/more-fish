@@ -25,7 +25,6 @@ repositories {
     maven("https://oss.sonatype.org/content/repositories/snapshots/")
     maven("https://repo.dmulloy2.net/nexus/repository/public/")
     maven("https://jitpack.io")
-    maven("https://libraries.minecraft.net/")
     mavenCentral()
 }
 
@@ -37,8 +36,8 @@ dependencies {
     api("com.github.Musician101.MusiGui:paper:1.2.2")
     api("io.github.Musician101:Bukkitier:2.0.0")
     //TODO temp to fix package names
-    //api("com.github.Musician101:MusiBoard:1.0.1") {
-    api("com.github.Musician101:MusiBoard:master-SNAPSHOT")
+    //api("com.github.Musician101:MusiBoard:1.0.1")
+    api("com.github.musician101:musiboard:-SNAPSHOT")
 }
 
 tasks {
