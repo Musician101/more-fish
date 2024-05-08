@@ -5,8 +5,9 @@ import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -17,11 +18,11 @@ public final class FishingLogs extends FishRecordKeeper {
 
     public void load() {
         try {
-            if (!getFile().exists()) {
-                getFile().createNewFile();
+            if (Files.notExists(getPath())) {
+                Files.createFile(getPath());
             }
 
-            YamlConfiguration yaml = YamlConfiguration.loadConfiguration(getFile());
+            YamlConfiguration yaml = YamlConfiguration.loadConfiguration(getPath().toFile());
             yaml.getMapList("records").stream().map(map -> {
                 UUID uuid = UUID.fromString(getString(map, "uuid", null));
                 String fishName = getString(map, "name", "invalid");
@@ -54,8 +55,8 @@ public final class FishingLogs extends FishRecordKeeper {
 
     public void save() {
         try {
-            if (!getFile().exists()) {
-                getFile().createNewFile();
+            if (Files.notExists(getPath())) {
+                Files.createFile(getPath());
             }
 
             YamlConfiguration yaml = new YamlConfiguration();
@@ -69,15 +70,15 @@ public final class FishingLogs extends FishRecordKeeper {
                 cs.set("timestamp", record.timestamp());
                 return cs;
             }).toList());
-            yaml.save(getFile());
+            yaml.save(getPath().toFile());
         }
         catch (IOException e) {
             getPlugin().getSLF4JLogger().error("Error loading fishing_logs.yml", e);
         }
     }
 
-    private File getFile() {
-        return new File(getPlugin().getDataFolder(), "fishing_logs.yml");
+    private Path getPath() {
+        return getPlugin().getDataFolder().toPath().resolve("fishing_logs.yml");
     }
 
     @NotNull
