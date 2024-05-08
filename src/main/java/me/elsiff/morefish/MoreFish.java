@@ -10,7 +10,6 @@ import me.elsiff.morefish.fishing.competition.FishingCompetitionHost;
 import me.elsiff.morefish.fishing.fishrecords.FishingLogs;
 import me.elsiff.morefish.hooker.McmmoHooker;
 import me.elsiff.morefish.hooker.MusiBoardHooker;
-import me.elsiff.morefish.hooker.ProtocolLibHooker;
 import me.elsiff.morefish.hooker.VaultHooker;
 import me.elsiff.morefish.shop.FishShop;
 import net.kyori.adventure.text.Component;
@@ -45,8 +44,6 @@ public final class MoreFish extends JavaPlugin {
     private final McmmoHooker mcmmo = new McmmoHooker();
     @NotNull
     private final MusiBoardHooker musiBoard = new MusiBoardHooker();
-    @NotNull
-    private final ProtocolLibHooker protocolLib = new ProtocolLibHooker();
     @NotNull
     private final VaultHooker vault = new VaultHooker();
 
@@ -138,7 +135,6 @@ public final class MoreFish extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        protocolLib.hookIfEnabled(this);
         vault.hookIfEnabled(this);
         mcmmo.hookIfEnabled(this);
         musiBoard.hookIfEnabled(this);

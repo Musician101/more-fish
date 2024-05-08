@@ -70,7 +70,7 @@ bukkitPluginYaml {
     main = "me.elsiff.morefish.MoreFish"
     authors.addAll("elsiff", "Musician101")
     apiVersion.set("1.20")
-    softDepend.addAll("mcMMO", "MusiBoard", "ProtocolLib", "Vault")
+    softDepend.addAll("mcMMO", "MusiBoard", "Vault")
     commands.create("morefish") {
         aliases.addAll("mf", "fish")
         description.set("Main command for MoreFish.")

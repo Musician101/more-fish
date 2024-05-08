@@ -1,5 +1,7 @@
 package me.elsiff.morefish.fishing;
 
+import com.destroystokyo.paper.profile.PlayerProfile;
+import com.destroystokyo.paper.profile.ProfileProperty;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.gson.Gson;
@@ -11,9 +13,6 @@ import me.elsiff.morefish.fishing.catchhandler.CatchCommandExecutor;
 import me.elsiff.morefish.fishing.catchhandler.CatchFireworkSpawner;
 import me.elsiff.morefish.fishing.catchhandler.CatchHandler;
 import me.elsiff.morefish.fishing.condition.FishCondition;
-import me.elsiff.morefish.hooker.PluginHooker;
-import me.elsiff.morefish.hooker.ProtocolLibHooker;
-import me.elsiff.morefish.hooker.SkullNbtHandler;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -248,8 +247,16 @@ public final class FishTypeTable {
             ((Damageable) itemMeta).setDamage(json.has("durability") ? json.get("durability").getAsInt() : 0);
         }
 
-        if (json.has("skull-uuid") && itemMeta instanceof SkullMeta) {
-            ((SkullMeta) itemMeta).setOwningPlayer(Bukkit.getOfflinePlayer(UUID.fromString(json.get("skull-uuid").getAsString())));
+        if (itemMeta instanceof SkullMeta) {
+            if (json.has("skull-uuid")) {
+                ((SkullMeta) itemMeta).setOwningPlayer(Bukkit.getOfflinePlayer(UUID.fromString(json.get("skull-uuid").getAsString())));
+            }
+
+            if (json.has("skull-texture")) {
+                PlayerProfile profile = Bukkit.createProfile(name + "_skull_texture");
+                profile.setProperty(new ProfileProperty("textures", json.get("skull-texture").getAsString()));
+                ((SkullMeta) itemMeta).setPlayerProfile(profile);
+            }
         }
 
         if (json.has("custom-model-data")) {
@@ -258,18 +265,6 @@ public final class FishTypeTable {
 
         itemMeta.setCustomModelData(customModelData);
         itemStack.setItemMeta(itemMeta);
-        if (json.has("skull-texture")) {
-            ProtocolLibHooker protocolLib = new ProtocolLibHooker();
-            PluginHooker.checkHooked(protocolLib);
-            SkullNbtHandler skullNbtHandler = protocolLib.skullNbtHandler;
-            if (skullNbtHandler != null) {
-                String skullTexture = json.get("skull-texture").getAsString();
-                if (skullTexture != null) {
-                    itemStack = skullNbtHandler.writeTexture(itemStack, skullTexture);
-                }
-            }
-        }
-
         return itemStack;
     }
 
