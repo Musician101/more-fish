@@ -69,15 +69,15 @@ tasks {
 bukkitPluginYaml {
     main = "me.elsiff.morefish.MoreFish"
     authors.addAll("elsiff", "Musician101")
-    apiVersion.set("1.20")
+    apiVersion = "1.20"
     softDepend.addAll("mcMMO", "MusiBoard", "Vault")
     commands.create("morefish") {
         aliases.addAll("mf", "fish")
-        description.set("Main command for MoreFish.")
-        usage.set("/morefish")
+        description = "Main command for MoreFish."
+        usage = "/morefish"
     }
     permissions.create("morefish.admin") {
-        default.set(Permission.Default.OP)
-        description.set("Gives the user the ability to control the fishing contest.")
+        default = Permission.Default.OP
+        description = "Gives the user the ability to control the fishing contest."
     }
 }
