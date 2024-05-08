@@ -37,8 +37,8 @@ import static io.musician101.musigui.paper.chest.PaperIconUtil.setLore;
 import static me.elsiff.morefish.MoreFish.getPlugin;
 import static me.elsiff.morefish.item.FishItemStackConverter.fish;
 import static me.elsiff.morefish.item.FishItemStackConverter.isFish;
-import static me.elsiff.morefish.text.Lang.PREFIX_COMPONENT;
-import static me.elsiff.morefish.text.Lang.join;
+import static me.elsiff.morefish.text.Lang.PREFIX_STRING;
+import static me.elsiff.morefish.text.Lang.replace;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 
@@ -167,7 +167,7 @@ public final class FishShopGui extends AbstractFishShopGUI {
             setButton(49, customName(new ItemStack(Material.EMERALD), name), ClickType.LEFT, p -> {
                 List<ItemStack> filteredFish = getFilteredFish();
                 if (filteredFish.isEmpty()) {
-                    p.sendMessage(join(PREFIX_COMPONENT, text("There's no fish to sell. Please put them on the slots.")));
+                    p.sendMessage(replace(PREFIX_STRING + "<white>There's no fish to sell. Please put them on the slots."));
                 }
                 else {
                     double totalPrice = getTotalPrice();
@@ -184,7 +184,7 @@ public final class FishShopGui extends AbstractFishShopGUI {
                     getEconomy().depositPlayer(player, fishList.stream().mapToDouble(shop::priceOf).sum());
                     fishBags.update(player, inventory.getContents(), page);
                     updatePriceIcon(totalPrice);
-                    p.sendMessage(join(PREFIX_COMPONENT, text("You sold fish for "), text("$" + totalPrice, GREEN), text(".")));
+                    p.sendMessage(replace(PREFIX_STRING + "<white>You sold fish for <green>$" + totalPrice + "<white>."));
                 }
             });
         });
@@ -215,7 +215,7 @@ public final class FishShopGui extends AbstractFishShopGUI {
                     return;
                 }
 
-                p.sendMessage(join(PREFIX_COMPONENT, text("You do not have enough money for that upgrade!")));
+                p.sendMessage(replace(PREFIX_STRING + "<white>You do not have enough money for that upgrade!"));
             });
         }
     }

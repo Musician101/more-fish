@@ -11,7 +11,6 @@ import io.musician101.bukkitier.command.LiteralCommand;
 import me.elsiff.morefish.command.argument.FishLengthArgumentType;
 import me.elsiff.morefish.command.argument.FishTypeArgumentType;
 import me.elsiff.morefish.fishing.FishType;
-import me.elsiff.morefish.text.Lang;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -20,8 +19,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import static me.elsiff.morefish.item.FishItemStackConverter.createItemStack;
-import static me.elsiff.morefish.text.Lang.join;
-import static net.kyori.adventure.text.Component.text;
+import static me.elsiff.morefish.text.Lang.PREFIX_STRING;
+import static me.elsiff.morefish.text.Lang.replace;
 
 class MFGive implements LiteralCommand {
 
@@ -33,10 +32,10 @@ class MFGive implements LiteralCommand {
         player.getWorld().dropItem(player.getLocation(), itemStack);
         CommandSender sender = context.getSource();
         if (!(sender instanceof Player p && p.getUniqueId().equals(player.getUniqueId()))) {
-            context.getSource().sendMessage(join(Lang.PREFIX_COMPONENT, text(fishType.displayName() + " given to " + player.getName() + ".")));
+            context.getSource().sendMessage(replace(PREFIX_STRING + "<white>" + fishType.displayName() + " given to " + player.getName() + "."));
         }
 
-        player.sendMessage(join(Lang.PREFIX_COMPONENT, text("You just received a " + fishType.displayName() + ".")));
+        player.sendMessage(replace(PREFIX_STRING + "<white>You just received a " + fishType.displayName() + "."));
         return 1;
     }
 

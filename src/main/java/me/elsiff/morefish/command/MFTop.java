@@ -24,10 +24,8 @@ import java.util.List;
 import java.util.Map;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.text.Lang.PREFIX_COMPONENT;
-import static me.elsiff.morefish.text.Lang.join;
+import static me.elsiff.morefish.text.Lang.PREFIX_STRING;
 import static me.elsiff.morefish.text.Lang.replace;
-import static net.kyori.adventure.text.Component.text;
 
 class MFTop implements LiteralCommand {
 
@@ -37,11 +35,6 @@ class MFTop implements LiteralCommand {
 
     public static FishingLogs getFishingLogs() {
         return getPlugin().getFishingLogs();
-    }
-
-    private static Map<String, Object> topReplacementOf(int number, FishRecord record) {
-        String player = Bukkit.getOfflinePlayer(record.fisher()).getName();
-        return Map.of("%ordinal%", NumberUtils.ordinalOf(number), "%number%", String.valueOf(number), "%player%", player == null ? "null" : player, "%length%", String.valueOf(record.getLength()), "%fish%", record.getFishName());
     }
 
     @NotNull
@@ -81,7 +74,7 @@ class MFTop implements LiteralCommand {
         public int execute(@NotNull CommandContext<CommandSender> context) {
             CommandSender sender = context.getSource();
             if (getFishingLogs().getRecords().isEmpty()) {
-                sender.sendMessage(join(PREFIX_COMPONENT, text("Nobody has caught anything yet.")));
+                sender.sendMessage(replace(PREFIX_STRING + "<white>Nobody has caught anything yet."));
             }
             else {
                 int topSize = 1;
@@ -93,16 +86,18 @@ class MFTop implements LiteralCommand {
                 List<FishRecord> top = getPlugin().getFishingLogs().top(topSize);
                 top.forEach(record -> {
                     int number = top.indexOf(record) + 1;
-                    sender.sendMessage(join(PREFIX_COMPONENT, replace("<yellow>%ordinal%. : <dark_gray>%player%, %length%cm %fish%", topReplacementOf(number, record))));
+                    String player = Bukkit.getOfflinePlayer(record.fisher()).getName();
+                    sender.sendMessage(replace(PREFIX_STRING + "<yellow>" + NumberUtils.ordinalOf(number) + ". : <dark_gray>" + (player == null ? "null" : player) + ", " + record.getLength() + "cm " + record.getFishName()));
                 });
 
                 if (sender instanceof Player player) {
                     if (getFishingLogs().contains(player.getUniqueId())) {
                         Map.Entry<Integer, FishRecord> entry = getFishingLogs().rankedRecordOf(player);
-                        sender.sendMessage(join(PREFIX_COMPONENT, replace("You're %ordinal%: %length%cm %fish%", topReplacementOf(entry.getKey() + 1, entry.getValue()))));
+                        FishRecord record = entry.getValue();
+                        sender.sendMessage(replace(PREFIX_STRING + "<white>You're " + NumberUtils.ordinalOf(entry.getKey() + 1) + ": " + record.getLength() + "cm %fish%"));
                     }
                     else {
-                        sender.sendMessage(join(PREFIX_COMPONENT, text("You haven't caught any fish.")));
+                        sender.sendMessage(replace(PREFIX_STRING + "<white>You haven't caught any fish."));
                     }
                 }
             }
@@ -134,7 +129,7 @@ class MFTop implements LiteralCommand {
                 CommandSender sender = context.getSource();
                 List<FishRecord> records = context.getArgument(name(), FishArgumentType.Holder.class).get();
                 if (getFishingLogs().getRecords().isEmpty()) {
-                    sender.sendMessage(join(PREFIX_COMPONENT, text("Nobody has caught anything yet.")));
+                    sender.sendMessage(replace(PREFIX_STRING + "<white>Nobody has caught anything yet."));
                 }
                 else {
                     int topSize = 1;
@@ -147,16 +142,18 @@ class MFTop implements LiteralCommand {
                     List<FishRecord> top = records.subList(0, Math.min(topSize, records.size()));
                     top.forEach(record -> {
                         int number = top.indexOf(record) + 1;
-                        sender.sendMessage(join(PREFIX_COMPONENT, replace("<yellow>%ordinal%. : <dark_gray>%player%, %length%cm %fish%", topReplacementOf(number, record))));
+                        String player = Bukkit.getOfflinePlayer(record.fisher()).getName();
+                        sender.sendMessage(replace(PREFIX_STRING + "<yellow>" + NumberUtils.ordinalOf(number) + ". : <dark_gray>" + (player == null ? "null" : player) + ", " + record.getLength() + "cm " + record.getFishName()));
                     });
 
                     if (sender instanceof Player player) {
                         if (records.stream().anyMatch(r -> r.fisher().equals(player.getUniqueId()))) {
                             Map.Entry<Integer, FishRecord> entry = rankedRecordOf(records, player);
-                            sender.sendMessage(join(PREFIX_COMPONENT, replace("You're %ordinal%: %length%cm %fish%", topReplacementOf(entry.getKey() + 1, entry.getValue()))));
+                            FishRecord record = entry.getValue();
+                            sender.sendMessage(replace(PREFIX_STRING + "<white>You're " + NumberUtils.ordinalOf(entry.getKey() + 1) + ": " + record.getLength() + "cm %fish%"));
                         }
                         else {
-                            sender.sendMessage(join(PREFIX_COMPONENT, text("You haven't caught any fish.")));
+                            sender.sendMessage(replace(PREFIX_STRING + "<white>You haven't caught any fish."));
                         }
                     }
                 }

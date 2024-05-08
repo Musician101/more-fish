@@ -7,12 +7,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 import java.util.UUID;
 
-public abstract class PlayerTagResolver extends CompetitionTagResolver {
+public abstract class FisRecordTagResolver extends CompetitionTagResolver {
 
     @Nullable
     private final UUID uuid;
 
-    protected PlayerTagResolver(@Nullable UUID uuid) {
+    protected FisRecordTagResolver(@Nullable UUID uuid) {
         this.uuid = uuid;
     }
 

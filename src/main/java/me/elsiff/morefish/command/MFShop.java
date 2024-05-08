@@ -13,9 +13,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.text.Lang.PREFIX_COMPONENT;
-import static me.elsiff.morefish.text.Lang.join;
-import static net.kyori.adventure.text.Component.text;
+import static me.elsiff.morefish.text.Lang.PREFIX_STRING;
+import static me.elsiff.morefish.text.Lang.replace;
 
 class MFShop implements LiteralCommand {
 
@@ -56,7 +55,7 @@ class MFShop implements LiteralCommand {
         else {
             new FishShopGui(guiUser, 1);
             if (!guiUser.getUniqueId().equals(((Player) sender).getUniqueId())) {
-                sender.sendMessage(join(PREFIX_COMPONENT, text("Forced " + guiUser.getName() + " to open Shop GUI.")));
+                sender.sendMessage(replace(PREFIX_STRING + "<white>Forced " + guiUser.getName() + " to open Shop GUI."));
             }
         }
 

@@ -2,6 +2,7 @@ package me.elsiff.morefish.shop;
 
 import me.elsiff.morefish.fishing.FishRarity;
 import me.elsiff.morefish.fishing.FishTypeTable;
+import me.elsiff.morefish.text.Lang;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -34,7 +35,7 @@ public class FishShopFilterGui extends AbstractFishShopGUI {
     private final List<FishRarity> selectedRarities;
 
     public FishShopFilterGui(int page, @NotNull Player user) {
-        super(text("Set Sale Filter(s)"), user);
+        super(Lang.SALE_FILTERS_TITLE, user);
         this.selectedRarities = FILTERS.getOrDefault(user.getUniqueId(), new ArrayList<>());
         updateButtons(page);
         IntStream.of(45, 46, 47, 48, 50, 51, 52, 53).forEach(this::glassPaneButton);

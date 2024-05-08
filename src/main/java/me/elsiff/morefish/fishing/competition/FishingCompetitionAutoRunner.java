@@ -14,9 +14,8 @@ import java.util.List;
 import java.util.Map;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.text.Lang.PREFIX_COMPONENT;
-import static me.elsiff.morefish.text.Lang.join;
-import static net.kyori.adventure.text.Component.text;
+import static me.elsiff.morefish.text.Lang.PREFIX_STRING;
+import static me.elsiff.morefish.text.Lang.replace;
 
 public final class FishingCompetitionAutoRunner {
 
@@ -48,7 +47,7 @@ public final class FishingCompetitionAutoRunner {
             public void run() {
                 LocalTime currentTime = LocalTime.now().withSecond(0).withNano(0);
                 if (competitionTimes.stream().anyMatch(time -> time.matchesReminderTimes(currentTime))) {
-                    StringBuilder sb = new StringBuilder("If there are ").append(requiredPlayers).append(" or more players online in ");
+                    StringBuilder sb = new StringBuilder(PREFIX_STRING).append("If there are ").append(requiredPlayers).append(" or more players online in ");
                     competitionTimes.stream().filter(c -> c.matchesReminderTimes(currentTime)).findFirst().ifPresent(c -> {
                         Duration remainingTime = c.reminderTimes.get(currentTime);
                         int hours = remainingTime.toHoursPart();
@@ -66,7 +65,7 @@ public final class FishingCompetitionAutoRunner {
                         }
                     });
                     sb.append(", the next competition will begin!");
-                    Bukkit.broadcast(join(PREFIX_COMPONENT, text(sb.toString())));
+                    Bukkit.broadcast(replace(sb.toString()));
                 }
                 else if (Bukkit.getOnlinePlayers().size() >= requiredPlayers) {
                     if (competitionTimes.stream().anyMatch(time -> time.matchesStartTime(currentTime)) && getCompetitionHost().getCompetition().isDisabled()) {

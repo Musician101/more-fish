@@ -6,6 +6,7 @@ import me.elsiff.morefish.fishing.Fish;
 import me.elsiff.morefish.fishing.FishType;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -17,12 +18,16 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
+import static me.elsiff.morefish.text.Lang.fishName;
+import static me.elsiff.morefish.text.Lang.fishRarity;
+import static me.elsiff.morefish.text.Lang.fishRarityColor;
+import static me.elsiff.morefish.text.Lang.playerName;
 import static me.elsiff.morefish.text.Lang.replace;
+import static me.elsiff.morefish.text.Lang.tagResolver;
 
 public interface FishItemStackConverter {
 
@@ -36,13 +41,13 @@ public interface FishItemStackConverter {
         ItemStack itemStack = fish.type().icon().clone();
         ItemMeta itemMeta = itemStack.getItemMeta();
         if (!fish.type().hasNotFishItemFormat()) {
-            Map<String, Object> replacement = getFormatReplacementMap(fish, length, catcher);
+            List<TagResolver> tagResolvers = List.of(playerName(catcher), tagResolver("length", length), fishRarity(fish), fishRarityColor(fish), fishName(fish));
             MiniMessage mm = MiniMessage.miniMessage();
-            itemMeta.displayName(replace(getFormatConfig().map(cs -> cs.get("display-name").getAsString()).orElse("null"), replacement, catcher));
-            List<Component> lore = replace(getFormatConfig().map(json -> json.getAsJsonArray("lore").asList().stream().map(JsonElement::getAsString).collect(Collectors.toList())).orElse(new ArrayList<>()), replacement, catcher);
+            itemMeta.displayName(replace(getFormatConfig().map(cs -> cs.get("display-name").getAsString()).orElse("null"), tagResolvers, catcher));
+            List<Component> lore = replace(getFormatConfig().map(json -> json.getAsJsonArray("lore").asList().stream().map(JsonElement::getAsString).collect(Collectors.toList())).orElse(new ArrayList<>()), tagResolvers, catcher);
             List<Component> oldLore = itemMeta.lore();
             if (oldLore != null) {
-                lore.addAll(oldLore.stream().map(c -> replace(mm.serialize(c), replacement, catcher)).toList());
+                lore.addAll(oldLore.stream().map(c -> replace(mm.serialize(c), tagResolvers, catcher)).toList());
             }
 
             itemMeta.lore(lore);
@@ -50,7 +55,7 @@ public interface FishItemStackConverter {
 
         PersistentDataContainer data = itemMeta.getPersistentDataContainer();
         data.set(fishTypeKey(), PersistentDataType.STRING, fish.type().name());
-        data.set(fishLengthKey(), PersistentDataType.DOUBLE, fish.length());
+        data.set(fishLengthKey(), PersistentDataType.DOUBLE, length);
         itemStack.setItemMeta(itemMeta);
         return itemStack;
     }
@@ -70,10 +75,6 @@ public interface FishItemStackConverter {
 
     private static Optional<JsonObject> getFormatConfig() {
         return getPlugin().getFishTypeTable().getItemFormat();
-    }
-
-    private static Map<String, Object> getFormatReplacementMap(Fish fish, double length, Player catcher) {
-        return Map.of("%player%", catcher.getName(), "%rarity%", fish.type().rarity().name().toUpperCase(), "%rarity_color%", fish.type().rarity().color(), "%length%", length, "%fish%", fish.type().displayName());
     }
 
     static boolean isFish(@Nullable ItemStack itemStack) {

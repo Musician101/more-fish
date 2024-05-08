@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public class RankTagResolver extends PlayerTagResolver {
+public class RankTagResolver extends FisRecordTagResolver {
 
     public RankTagResolver(@Nullable UUID uuid) {
         super(uuid);

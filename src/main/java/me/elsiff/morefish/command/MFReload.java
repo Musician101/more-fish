@@ -7,9 +7,8 @@ import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.text.Lang.PREFIX_COMPONENT;
-import static me.elsiff.morefish.text.Lang.join;
-import static net.kyori.adventure.text.Component.text;
+import static me.elsiff.morefish.text.Lang.PREFIX_STRING;
+import static me.elsiff.morefish.text.Lang.replace;
 
 class MFReload implements LiteralCommand {
 
@@ -35,11 +34,11 @@ class MFReload implements LiteralCommand {
         CommandSender sender = context.getSource();
         try {
             getPlugin().applyConfig();
-            sender.sendMessage(join(PREFIX_COMPONENT, text("Reloaded the config successfully.")));
+            sender.sendMessage(replace(PREFIX_STRING + "<white>Reloaded the config successfully."));
         }
         catch (Exception e) {
             MoreFish.getPlugin().getSLF4JLogger().error("An error occurred while reloading the config.", e);
-            sender.sendMessage(join(PREFIX_COMPONENT, text("Failed to reload: Please check your console.")));
+            sender.sendMessage(replace(PREFIX_STRING + "<white>Failed to reload: Please check your console."));
         }
 
         return 1;

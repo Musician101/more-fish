@@ -19,11 +19,9 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.text.Lang.PREFIX_COMPONENT;
+import static me.elsiff.morefish.text.Lang.PREFIX_STRING;
 import static me.elsiff.morefish.text.Lang.contestStartTimer;
-import static me.elsiff.morefish.text.Lang.join;
 import static me.elsiff.morefish.text.Lang.replace;
-import static net.kyori.adventure.text.Component.text;
 
 public final class FishingCompetitionHost {
 
@@ -95,7 +93,7 @@ public final class FishingCompetitionHost {
 
     public void informAboutRanking(@NotNull CommandSender receiver) {
         if (getCompetition().getRecords().isEmpty()) {
-            receiver.sendMessage(join(PREFIX_COMPONENT, text("Nobody has caught anything yet.")));
+            receiver.sendMessage(replace(PREFIX_STRING + "<white>Nobody has caught anything yet."));
         }
         else {
             int topSize = getMsgConfig().getInt("top-number", 1);
@@ -103,16 +101,18 @@ public final class FishingCompetitionHost {
             top.sort(SortType.LENGTH.sorter().reversed());
             top.forEach(record -> {
                 int number = top.indexOf(record) + 1;
-                receiver.sendMessage(join(PREFIX_COMPONENT, replace("<yellow>%ordinal%. : <dark_gray>%player%, %length%cm %fish%", topReplacementOf(number, record))));
+                String player = Bukkit.getOfflinePlayer(record.fisher()).getName();
+                receiver.sendMessage(replace(PREFIX_STRING + "<yellow>" + NumberUtils.ordinalOf(number) + ". : <dark_gray>" + (player == null ? "null" : player) + ", " + record.getLength() + "cm " + record.getFishName()));
             });
 
             if (receiver instanceof Player player) {
                 if (getCompetition().contains(player.getUniqueId())) {
                     Entry<Integer, FishRecord> entry = getCompetition().rankedRecordOf(player);
-                    receiver.sendMessage(join(PREFIX_COMPONENT, replace("You're %ordinal%: %length%cm %fish%", topReplacementOf(entry.getKey() + 1, entry.getValue()))));
+                    FishRecord record = entry.getValue();
+                    receiver.sendMessage(replace(PREFIX_STRING + "<white>You're " + NumberUtils.ordinalOf(entry.getKey() + 1) + ": " + record.getLength() + "cm %fish%"));
                 }
                 else {
-                    receiver.sendMessage(join(PREFIX_COMPONENT, text("You didn't catch any fish.")));
+                    receiver.sendMessage(replace(PREFIX_STRING + "<white>You didn't catch any fish."));
                 }
             }
         }
@@ -125,10 +125,5 @@ public final class FishingCompetitionHost {
         timerBarHandler.enableTimer(duration);
         Bukkit.broadcast(Lang.CONTEST_START);
         Bukkit.broadcast(contestStartTimer(duration));
-    }
-
-    private Map<String, Object> topReplacementOf(int number, FishRecord record) {
-        String player = Bukkit.getOfflinePlayer(record.fisher()).getName();
-        return Map.of("%ordinal%", NumberUtils.ordinalOf(number), "%number%", String.valueOf(number), "%player%", player == null ? "null" : player, "%length%", String.valueOf(record.getLength()), "%fish%", record.getFishName());
     }
 }

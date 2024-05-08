@@ -15,13 +15,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.text.Lang.PREFIX_COMPONENT;
-import static me.elsiff.morefish.text.Lang.join;
-import static net.kyori.adventure.text.Component.text;
+import static me.elsiff.morefish.text.Lang.PREFIX_STRING;
+import static me.elsiff.morefish.text.Lang.replace;
 
 class MFStart implements LiteralCommand {
 
-    private static final Component ALREADY_ONGOING = join(PREFIX_COMPONENT, text("The contest is already ongoing."));
+    private static final Component ALREADY_ONGOING = replace(PREFIX_STRING + "<white>The contest is already ongoing.");
 
     private static FishingCompetition getCompetition() {
         return getPlugin().getCompetition();

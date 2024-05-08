@@ -13,7 +13,6 @@ import me.elsiff.morefish.hooker.MusiBoardHooker;
 import me.elsiff.morefish.hooker.ProtocolLibHooker;
 import me.elsiff.morefish.hooker.VaultHooker;
 import me.elsiff.morefish.shop.FishShop;
-import me.elsiff.morefish.text.Lang;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Server;
 import org.bukkit.plugin.PluginManager;
@@ -21,8 +20,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import static io.musician101.bukkitier.Bukkitier.registerCommand;
-import static me.elsiff.morefish.text.Lang.PREFIX_COMPONENT;
-import static net.kyori.adventure.text.Component.text;
+import static me.elsiff.morefish.text.Lang.PREFIX_STRING;
+import static me.elsiff.morefish.text.Lang.SALE_FILTERS_TITLE;
+import static me.elsiff.morefish.text.Lang.SHOP_GUI_TITLE;
+import static me.elsiff.morefish.text.Lang.replace;
 
 public final class MoreFish extends JavaPlugin {
 
@@ -56,9 +57,9 @@ public final class MoreFish extends JavaPlugin {
     public void applyConfig() {
         getServer().getOnlinePlayers().forEach(player -> {
             Component title = player.getOpenInventory().title();
-            if (title.equals(Lang.SHOP_GUI_TITLE) || title.equals(text("Set Sale Filter(s)"))) {
+            if (title.equals(SHOP_GUI_TITLE) || title.equals(SALE_FILTERS_TITLE)) {
                 player.closeInventory();
-                player.sendMessage(Lang.join(PREFIX_COMPONENT, text(" The config is being updated. To prevent issues, the window has been closed.")));
+                player.sendMessage(replace(PREFIX_STRING + "<white>The config is being updated. To prevent issues, the window has been closed."));
             }
         });
 

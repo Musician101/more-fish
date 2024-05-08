@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public class FishTagResolver extends PlayerTagResolver {
+public class FishTagResolver extends FisRecordTagResolver {
 
     public FishTagResolver(@Nullable UUID uuid) {
         super(uuid);
