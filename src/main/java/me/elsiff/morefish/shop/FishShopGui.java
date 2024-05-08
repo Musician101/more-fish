@@ -10,7 +10,6 @@ import me.elsiff.morefish.text.Lang;
 import net.kyori.adventure.text.Component;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse.ResponseType;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -97,7 +96,7 @@ public final class FishShopGui extends AbstractFishShopGUI {
         }
 
         if (event.getClick() == ClickType.SHIFT_LEFT) {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), this::updatePriceIcon, 1L);
+            event.getWhoClicked().getScheduler().runDelayed(getPlugin(), task -> updatePriceIcon(), null, 1L);
         }
         else {
             updatePriceIcon();
@@ -127,7 +126,7 @@ public final class FishShopGui extends AbstractFishShopGUI {
     }
 
     private void updateButtons() {
-        Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), () -> {
+        player.getScheduler().runDelayed(getPlugin(), task -> {
             List<ItemStack> fish = fishBags.getFish(player, page);
             IntStream.range(0, 45).forEach(i -> {
                 removeButton(i);
@@ -159,7 +158,7 @@ public final class FishShopGui extends AbstractFishShopGUI {
             }
 
             updateUpgradeIcon(userMaxAllowedPages);
-        }, 2);
+        }, null, 2);
     }
 
     private void updatePriceIcon() {
@@ -167,7 +166,7 @@ public final class FishShopGui extends AbstractFishShopGUI {
     }
 
     private void updatePriceIcon(double price) {
-        Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), () -> {
+        player.getScheduler().run(getPlugin(), task -> {
             Component name = text("Sell for $" + price, GREEN);
             setButton(49, customName(new ItemStack(Material.EMERALD), name), ClickType.LEFT, p -> {
                 List<ItemStack> filteredFish = getFilteredFish();
@@ -192,7 +191,7 @@ public final class FishShopGui extends AbstractFishShopGUI {
                     p.sendMessage(replace(PREFIX_STRING + "<white>You sold fish for <green>$" + totalPrice + "<white>."));
                 }
             });
-        });
+        }, null);
     }
 
     private void updateUpgradeIcon(int userMaxAllowedPages) {

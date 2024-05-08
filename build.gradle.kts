@@ -80,4 +80,6 @@ bukkitPluginYaml {
         default = Permission.Default.OP
         description = "Gives the user the ability to control the fishing contest."
     }
+
+    foliaSupported = true;
 }

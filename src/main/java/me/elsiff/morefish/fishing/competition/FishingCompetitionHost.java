@@ -1,5 +1,6 @@
 package me.elsiff.morefish.fishing.competition;
 
+import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import me.elsiff.morefish.command.argument.SortArgumentType.SortType;
 import me.elsiff.morefish.fishing.fishrecords.FishRecord;
 import me.elsiff.morefish.text.Lang;
@@ -9,7 +10,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ public final class FishingCompetitionHost {
 
     @NotNull
     private final FishingCompetitionTimerBarHandler timerBarHandler = new FishingCompetitionTimerBarHandler();
-    private BukkitTask timerTask;
+    private ScheduledTask timerTask;
 
     public void closeCompetition() {
         closeCompetition(false);
@@ -121,7 +121,7 @@ public final class FishingCompetitionHost {
     public void openCompetitionFor(long tick) {
         long duration = tick / (long) 20;
         getCompetition().enable();
-        timerTask = Bukkit.getScheduler().runTaskLater(getPlugin(), (Runnable) this::closeCompetition, tick);
+        timerTask = Bukkit.getGlobalRegionScheduler().runDelayed(getPlugin(), task -> closeCompetition(), tick);
         timerBarHandler.enableTimer(duration);
         Bukkit.broadcast(Lang.CONTEST_START);
         Bukkit.broadcast(contestStartTimer(duration));

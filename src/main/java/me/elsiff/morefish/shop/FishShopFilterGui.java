@@ -4,7 +4,6 @@ import me.elsiff.morefish.fishing.FishRarity;
 import me.elsiff.morefish.fishing.FishTypeTable;
 import me.elsiff.morefish.text.Lang;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -74,7 +73,7 @@ public class FishShopFilterGui extends AbstractFishShopGUI {
                 selectedRarities.add(fishRarity);
             }
 
-            Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), () -> updateIcon(slot, fishRarity), 2);
+            player.getScheduler().runDelayed(getPlugin(), task -> updateIcon(slot, fishRarity), null, 2);
         });
     }
 }
