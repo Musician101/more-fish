@@ -60,6 +60,7 @@ public final class FishingListener implements Listener {
                 // There's always one fish
                 ItemStack fishItem = fishItems.getFirst();
                 caught.setItemStack(fishItem);
+                caught.setGlowing(fishes.getFirst().type().rarity().glow());
                 fishItems.stream().filter(item -> !getPlugin().getFishBags().addFish(player, item)).forEach(item -> {
                     World world = player.getWorld();
                     world.dropItem(player.getLocation(), item);

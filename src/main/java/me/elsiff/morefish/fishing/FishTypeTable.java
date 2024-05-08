@@ -141,7 +141,13 @@ public final class FishTypeTable {
                     boolean firework = getOrDefaultFalse(json, "firework");
                     double additionalPrice = getOrDefaultZero(json, "additional-price");
                     List<FishCondition> conditions = FishCondition.loadFrom(json, "conditions");
-                    return new FishRarity(key, displayName, isDefault, chance, color, catchHandlers, conditions, announcement, luckOfTheSeaChances, skipItemFormat, noDisplay, firework, additionalPrice);
+                    boolean glow = getOrDefaultFalse(json, "glow");
+                    int customModelData = 0;
+                    if (json.has("custom-model-data")) {
+                        customModelData = json.get("custom-model-data").getAsInt();
+                    }
+
+                    return new FishRarity(key, displayName, isDefault, chance, color, catchHandlers, conditions, announcement, luckOfTheSeaChances, skipItemFormat, noDisplay, firework, additionalPrice, customModelData, glow);
                 }).filter(Objects::nonNull).toList();
                 rarities.forEach(fishRarity -> {
                     String fishRarityFile = fishRarity.name() + ".json";
@@ -176,7 +182,7 @@ public final class FishTypeTable {
 
                             double minLength = json.get("length-min").getAsDouble();
                             double maxLength = json.get("length-max").getAsDouble();
-                            ItemStack itemStack = loadItemStack(name, json.getAsJsonObject("icon"), "fish-list." + fishRarity.name() + "." + name);
+                            ItemStack itemStack = loadItemStack(name, json.getAsJsonObject("icon"), fishRarity.customModelData(), "fish-list." + fishRarity.name() + "." + name);
                             PlayerAnnouncement announcement = PlayerAnnouncement.fromConfigOrDefault(json, "catch-announce", fishRarity.catchAnnouncement());
                             List<FishCondition> conditions = Stream.concat(FishCondition.loadFrom(json, "conditions").stream(), fishRarity.conditions().stream()).toList();
                             boolean skipItemFormat = getOrDefault(json, "skip-item-format", fishRarity.hasNotFishItemFormat());
@@ -198,7 +204,7 @@ public final class FishTypeTable {
         }
     }
 
-    private ItemStack loadItemStack(String name, JsonObject json, String path) {
+    private ItemStack loadItemStack(String name, JsonObject json, int customModelData, String path) {
         if (json == null) {
             throw new IllegalArgumentException("icon is missing from " + name);
         }
@@ -246,6 +252,11 @@ public final class FishTypeTable {
             ((SkullMeta) itemMeta).setOwningPlayer(Bukkit.getOfflinePlayer(UUID.fromString(json.get("skull-uuid").getAsString())));
         }
 
+        if (json.has("custom-model-data")) {
+            customModelData = json.get("custom-model-data").getAsInt();
+        }
+
+        itemMeta.setCustomModelData(customModelData);
         itemStack.setItemMeta(itemMeta);
         if (json.has("skull-texture")) {
             ProtocolLibHooker protocolLib = new ProtocolLibHooker();
