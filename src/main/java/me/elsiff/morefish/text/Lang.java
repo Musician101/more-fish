@@ -94,13 +94,13 @@ public interface Lang {
 
     @NotNull
     static TagResolver fishRarity(@NotNull Fish fish) {
-        return tagResolver("rarity", fish.type().rarity().displayName().toUpperCase());
+        return tagResolver("rarity", fish.rarity().displayName().toUpperCase());
     }
 
     @NotNull
     static TagResolver fishRarityColor(@NotNull Fish fish) {
         return tagResolver("rarity_color", Tag.styling(builder -> {
-            String color = fish.type().rarity().color();
+            String color = fish.rarity().color();
             TextColor textColor = NamedTextColor.NAMES.valueOr(color, NamedTextColor.WHITE);
             if (color.startsWith(TextColor.HEX_PREFIX)) {
                 textColor = TextColor.fromHexString(color);
@@ -112,7 +112,7 @@ public interface Lang {
 
     @NotNull
     static TagResolver fishName(@NotNull Fish fish) {
-        return tagResolver("fish", fish.type().name());
+        return tagResolver("fish", fish.name());
     }
 
     @NotNull

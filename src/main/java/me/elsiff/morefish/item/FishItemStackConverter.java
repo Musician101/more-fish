@@ -54,7 +54,7 @@ public interface FishItemStackConverter {
         }
 
         PersistentDataContainer data = itemMeta.getPersistentDataContainer();
-        data.set(fishTypeKey(), PersistentDataType.STRING, fish.type().name());
+        data.set(fishTypeKey(), PersistentDataType.STRING, fish.name());
         data.set(fishLengthKey(), PersistentDataType.DOUBLE, length);
         itemStack.setItemMeta(itemMeta);
         return itemStack;
