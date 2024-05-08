@@ -135,9 +135,9 @@ public final class MoreFish extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        vault.hookIfEnabled(this);
-        mcmmo.hookIfEnabled(this);
-        musiBoard.hookIfEnabled(this);
+        vault.hookIfEnabled();
+        mcmmo.hookIfEnabled();
+        musiBoard.hookIfEnabled();
         fishBags.load();
         applyConfig();
         fishingLogs.load();

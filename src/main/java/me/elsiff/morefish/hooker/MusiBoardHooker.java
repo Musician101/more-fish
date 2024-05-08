@@ -4,7 +4,6 @@ import io.musician101.musiboard.MusiBoard;
 import io.musician101.musiboard.scoreboard.MusiScoreboard;
 import io.musician101.musiboard.scoreboard.MusiScoreboardManager;
 import io.papermc.paper.scoreboard.numbers.NumberFormat;
-import me.elsiff.morefish.MoreFish;
 import me.elsiff.morefish.fishing.fishrecords.FishRecord;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -60,12 +59,13 @@ public class MusiBoardHooker implements PluginHooker {
     }
 
     @Override
-    public void hook(@NotNull MoreFish plugin) {
-        PluginHooker.checkEnabled(this, plugin.getServer().getPluginManager());
-        hasHooked = true;
-        getManager().registerNewScoreboard("morefish");
-        scoreboard = getManager().getScoreboard("morefish").orElseThrow(() -> new IllegalStateException("Ok, who broke it?"));
-        scoreboard.saveData(false);
+    public void hook() {
+        if (canHook()) {
+            hasHooked = true;
+            getManager().registerNewScoreboard("morefish");
+            scoreboard = getManager().getScoreboard("morefish").orElseThrow(() -> new IllegalStateException("Ok, who broke it?"));
+            scoreboard.saveData(false);
+        }
     }
 
     public void restorePreviousBoard(@NotNull Player player) {
