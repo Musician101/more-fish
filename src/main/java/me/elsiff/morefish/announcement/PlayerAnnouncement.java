@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public interface PlayerAnnouncement {
@@ -21,37 +22,37 @@ public interface PlayerAnnouncement {
     @NotNull
     static PlayerAnnouncement fromValue(double d) {
         return switch ((int) d) {
-            case -2 -> PlayerAnnouncement.ofEmpty();
-            case -1 -> PlayerAnnouncement.ofServerBroadcast();
-            case 0 -> PlayerAnnouncement.ofBaseOnly();
-            default -> PlayerAnnouncement.ofRanged(d);
+            case -2 -> PlayerAnnouncement.empty();
+            case -1 -> PlayerAnnouncement.serverBroadcast();
+            case 0 -> PlayerAnnouncement.catcherOnly();
+            default -> PlayerAnnouncement.ranged(d);
         };
     }
 
     @NotNull
-    static PlayerAnnouncement ofBaseOnly() {
-        return new BaseOnlyAnnouncement();
+    static PlayerAnnouncement catcherOnly() {
+        return List::of;
     }
 
     @NotNull
-    static PlayerAnnouncement ofEmpty() {
-        return new NoAnnouncement();
+    static PlayerAnnouncement empty() {
+        return catcher -> List.of();
     }
 
     @NotNull
-    static PlayerAnnouncement ofRanged(double radius) {
+    static PlayerAnnouncement ranged(double radius) {
         if (radius <= 0) {
             throw new IllegalArgumentException("Radius must not be negative");
         }
 
-        return new RangedAnnouncement(radius);
+        return catcher -> catcher.getWorld().getPlayers().stream().filter(player -> player.getLocation().distance(catcher.getLocation()) <= radius).toList();
     }
 
     @NotNull
-    static PlayerAnnouncement ofServerBroadcast() {
-        return new ServerAnnouncement();
+    static PlayerAnnouncement serverBroadcast() {
+        return catcher -> new ArrayList<>(catcher.getServer().getOnlinePlayers());
     }
 
     @NotNull
-    List<Player> receiversOf(@NotNull Player var1);
+    List<Player> receiversOf(@NotNull Player catcher);
 }

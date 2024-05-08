@@ -134,7 +134,7 @@ public final class FishTypeTable {
                     boolean isDefault = getOrDefaultFalse(json, "default");
                     double chance = getOrDefaultZero(json, "chance") / 100D;
                     String color = json.get("color").getAsString();
-                    PlayerAnnouncement announcement = PlayerAnnouncement.fromConfigOrDefault(json, "catch-announce", PlayerAnnouncement.ofServerBroadcast());
+                    PlayerAnnouncement announcement = PlayerAnnouncement.fromConfigOrDefault(json, "catch-announce", PlayerAnnouncement.serverBroadcast());
                     boolean skipItemFormat = getOrDefaultFalse(json, "skip-item-format");
                     boolean noDisplay = getOrDefaultFalse(json, "no-display");
                     boolean firework = getOrDefaultFalse(json, "firework");
