@@ -1,3 +1,5 @@
+import xyz.jpenilla.resourcefactory.bukkit.Permission
+
 buildscript {
     configurations {
         classpath {
@@ -10,9 +12,11 @@ buildscript {
 }
 
 plugins {
-    java
     `java-library`
-    id("com.github.johnrengelman.shadow")
+    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("io.papermc.paperweight.userdev") version "1.7.0"
+    id("xyz.jpenilla.run-paper") version "2.2.4"
+    id("xyz.jpenilla.resource-factory-bukkit-convention") version "1.1.1"
 }
 
 group = "me.elsiff"
@@ -31,7 +35,7 @@ repositories {
 dependencies {
     compileOnlyApi("com.comphenix.protocol:ProtocolLib:5.1.0")
     compileOnlyApi("com.github.MilkBowl:VaultAPI:1.7.1")
-    compileOnlyApi("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
+    paperweight.paperDevBundle("1.20.4-R0.1-SNAPSHOT")
     compileOnlyApi(files("lib/mcMMO.jar"))
     api("com.github.Musician101.MusiGui:paper:1.2.2")
     api("io.github.Musician101:Bukkitier:2.0.0")
@@ -43,9 +47,6 @@ dependencies {
 tasks {
     processResources {
         duplicatesStrategy = DuplicatesStrategy.INCLUDE
-        filesMatching("plugin.yml") {
-            expand("version" to project.version)
-        }
     }
 
     shadowJar {
@@ -60,9 +61,23 @@ tasks {
         dependsOn("build")
     }
 
-    register<Copy>("prepTestJar") {
-        dependsOn("shadowJar")
-        from("build/libs/${project.name}-${project.version}.jar")
-        into("server/plugins")
+    runServer {
+        minecraftVersion("1.20.4")
+    }
+}
+
+bukkitPluginYaml {
+    main = "me.elsiff.morefish.MoreFish"
+    authors.addAll("elsiff", "Musician101")
+    apiVersion.set("1.20")
+    softDepend.addAll("mcMMO", "MusiBoard", "ProtocolLib", "Vault")
+    commands.create("morefish") {
+        aliases.addAll("mf", "fish")
+        description.set("Main command for MoreFish.")
+        usage.set("/morefish")
+    }
+    permissions.create("morefish.admin") {
+        default.set(Permission.Default.OP)
+        description.set("Gives the user the ability to control the fishing contest.")
     }
 }

@@ -117,4 +117,4 @@ Thumbs.db
 !/ios-moe/xcode/*.xcodeproj/project.pbxproj
 /ios-moe/xcode/native/
 lib/
-server/
+run/
