@@ -122,18 +122,18 @@ class MFTop implements LiteralCommand {
             return List.of(new FishArgument());
         }
 
-        static class FishArgument implements ArgumentCommand<List<FishRecord>> {
+        static class FishArgument implements ArgumentCommand<FishArgumentType.Holder> {
 
             @NotNull
             @Override
-            public ArgumentType<List<FishRecord>> type() {
+            public ArgumentType<FishArgumentType.Holder> type() {
                 return new FishArgumentType();
             }
 
             @Override
             public int execute(@NotNull CommandContext<CommandSender> context) throws CommandSyntaxException {
                 CommandSender sender = context.getSource();
-                List<FishRecord> records = context.getArgument(name(), List.class);
+                List<FishRecord> records = context.getArgument(name(), FishArgumentType.Holder.class).get();
                 if (getFishingLogs().getRecords().isEmpty()) {
                     sender.sendMessage(join(PREFIX_COMPONENT, text("Nobody has caught anything yet.")));
                 }
