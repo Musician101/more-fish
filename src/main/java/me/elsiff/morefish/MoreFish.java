@@ -12,6 +12,7 @@ import me.elsiff.morefish.hooker.McmmoHooker;
 import me.elsiff.morefish.hooker.MusiBoardHooker;
 import me.elsiff.morefish.hooker.VaultHooker;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -49,25 +50,29 @@ public final class MoreFish extends JavaPlugin {
     }
 
     public void applyConfig() {
-        getServer().getOnlinePlayers().forEach(player -> {
-            Component title = player.getOpenInventory().title();
-            if (title.equals(SHOP_GUI_TITLE) || title.equals(SALE_FILTERS_TITLE)) {
-                player.closeInventory();
-                player.sendMessage(replace(PREFIX_STRING + "<white>The config is being updated. To prevent issues, the window has been closed."));
+        Bukkit.getAsyncScheduler().runNow(this, task -> {
+            getServer().getOnlinePlayers().forEach(player -> {
+                Component title = player.getOpenInventory().title();
+                if (title.equals(SHOP_GUI_TITLE) || title.equals(SALE_FILTERS_TITLE)) {
+                    player.getScheduler().run(this, t -> {
+                        player.closeInventory();
+                        player.sendMessage(replace(PREFIX_STRING + "<white>The config is being updated. To prevent issues, the window has been closed."));
+                    }, null);
+                }
+            });
+
+            saveDefaultConfig();
+            reloadConfig();
+            fishTypeTable.load();
+            getLogger().info("Loaded " + fishTypeTable.getRarities().size() + " rarities and " + fishTypeTable.getTypes().size() + " fish types");
+            if (autoRunner.isEnabled()) {
+                autoRunner.disable();
+            }
+
+            if (getConfig().getBoolean("auto-running.enable")) {
+                autoRunner.enable();
             }
         });
-
-        saveDefaultConfig();
-        reloadConfig();
-        fishTypeTable.load();
-        getLogger().info("Loaded " + fishTypeTable.getRarities().size() + " rarities and " + fishTypeTable.getTypes().size() + " fish types");
-        if (autoRunner.isEnabled()) {
-            autoRunner.disable();
-        }
-
-        if (getConfig().getBoolean("auto-running.enable")) {
-            autoRunner.enable();
-        }
     }
 
     @NotNull
@@ -130,8 +135,8 @@ public final class MoreFish extends JavaPlugin {
         vault.hookIfEnabled();
         mcmmo.hookIfEnabled();
         musiBoard.hookIfEnabled();
-        fishBags.load();
         applyConfig();
+        fishBags.load();
         fishingLogs.load();
         Server server = getServer();
         PluginManager pm = server.getPluginManager();
