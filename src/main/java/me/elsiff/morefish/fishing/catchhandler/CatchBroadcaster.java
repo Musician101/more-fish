@@ -10,7 +10,7 @@ public final class CatchBroadcaster extends AbstractBroadcaster {
 
     @NotNull
     public String getCatchMessageFormat() {
-        return PREFIX_STRING + "<yellow>%player% <white>caught <color:%rarity_color%>%length%cm <bold><color:%rarity_color%>%fish_with_rarity%";
+        return PREFIX_STRING + "<yellow><player> <white>caught <rarity_color><length>cm <bold><rarity_color><fish_with_rarity>";
     }
 
     public boolean meetBroadcastCondition(@NotNull Player catcher, @NotNull Fish fish) {

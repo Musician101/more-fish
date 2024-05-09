@@ -94,7 +94,7 @@ class MFTop implements LiteralCommand {
                     if (getFishingLogs().contains(player.getUniqueId())) {
                         Map.Entry<Integer, FishRecord> entry = getFishingLogs().rankedRecordOf(player);
                         FishRecord record = entry.getValue();
-                        sender.sendMessage(replace(PREFIX_STRING + "<white>You're " + NumberUtils.ordinalOf(entry.getKey() + 1) + ": " + record.getLength() + "cm %fish%"));
+                        player.sendMessage(replace(PREFIX_STRING + "<white>You're " + NumberUtils.ordinalOf(entry.getKey() + 1) + ": " + record.getLength() + "cm " + record.getFishName()));
                     }
                     else {
                         sender.sendMessage(replace(PREFIX_STRING + "<white>You haven't caught any fish."));
@@ -150,7 +150,7 @@ class MFTop implements LiteralCommand {
                         if (records.stream().anyMatch(r -> r.fisher().equals(player.getUniqueId()))) {
                             Map.Entry<Integer, FishRecord> entry = rankedRecordOf(records, player);
                             FishRecord record = entry.getValue();
-                            sender.sendMessage(replace(PREFIX_STRING + "<white>You're " + NumberUtils.ordinalOf(entry.getKey() + 1) + ": " + record.getLength() + "cm %fish%"));
+                            player.sendMessage(replace(PREFIX_STRING + "<white>You're " + NumberUtils.ordinalOf(entry.getKey() + 1) + ": " + record.getLength() + "cm " + record.getFishName()));
                         }
                         else {
                             sender.sendMessage(replace(PREFIX_STRING + "<white>You haven't caught any fish."));

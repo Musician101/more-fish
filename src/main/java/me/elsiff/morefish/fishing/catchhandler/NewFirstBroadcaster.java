@@ -12,7 +12,7 @@ public final class NewFirstBroadcaster extends AbstractBroadcaster {
 
     @NotNull
     public String getCatchMessageFormat() {
-        return PREFIX_STRING + "<yellow>%player% <white>is now 1st!";
+        return PREFIX_STRING + "<yellow><player> <white>is now 1st!";
     }
 
     public boolean meetBroadcastCondition(@NotNull Player catcher, @NotNull Fish fish) {

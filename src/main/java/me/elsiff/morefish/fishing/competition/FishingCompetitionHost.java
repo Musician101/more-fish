@@ -109,7 +109,7 @@ public final class FishingCompetitionHost {
                 if (getCompetition().contains(player.getUniqueId())) {
                     Entry<Integer, FishRecord> entry = getCompetition().rankedRecordOf(player);
                     FishRecord record = entry.getValue();
-                    receiver.sendMessage(replace(PREFIX_STRING + "<white>You're " + NumberUtils.ordinalOf(entry.getKey() + 1) + ": " + record.getLength() + "cm %fish%"));
+                    receiver.sendMessage(replace(PREFIX_STRING + "<white>You're " + NumberUtils.ordinalOf(entry.getKey() + 1) + ": " + record.getLength() + "cm " + record.getFishName()));
                 }
                 else {
                     receiver.sendMessage(replace(PREFIX_STRING + "<white>You didn't catch any fish."));
