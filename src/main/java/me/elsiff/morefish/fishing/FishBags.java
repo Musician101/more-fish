@@ -107,25 +107,23 @@ public class FishBags implements Listener {
 
     @SuppressWarnings("StringConcatenationArgumentToLogCall")
     public void save() {
-        Bukkit.getAsyncScheduler().runNow(getPlugin(), task -> {
-            bags.forEach(fishBag -> {
-                YamlConfiguration yaml = new YamlConfiguration();
-                Path bagsFolder = getPlugin().getDataFolder().toPath().resolve("fish_bags");
-                UUID uuid = fishBag.getUUID();
-                int maxAllowedPages = fishBag.getMaxAllowedPages();
-                yaml.set("max_allowed_pages", maxAllowedPages);
-                IntStream.range(1, maxAllowedPages + 1).forEach(page -> {
-                    List<ItemStack> fish = fishBag.getFish(page);
-                    IntStream.range(0, fish.size()).forEach(i -> yaml.set("fish." + page + "." + i, fish.get(i)));
-                });
-
-                try {
-                    yaml.save(bagsFolder.resolve(uuid + ".yml").toFile());
-                }
-                catch (IOException e) {
-                    getPlugin().getSLF4JLogger().error("An error occurred while saving fish bag for " + uuid + ".", e);
-                }
+        bags.forEach(fishBag -> {
+            YamlConfiguration yaml = new YamlConfiguration();
+            Path bagsFolder = getPlugin().getDataFolder().toPath().resolve("fish_bags");
+            UUID uuid = fishBag.getUUID();
+            int maxAllowedPages = fishBag.getMaxAllowedPages();
+            yaml.set("max_allowed_pages", maxAllowedPages);
+            IntStream.range(1, maxAllowedPages + 1).forEach(page -> {
+                List<ItemStack> fish = fishBag.getFish(page);
+                IntStream.range(0, fish.size()).forEach(i -> yaml.set("fish." + page + "." + i, fish.get(i)));
             });
+
+            try {
+                yaml.save(bagsFolder.resolve(uuid + ".yml").toFile());
+            }
+            catch (IOException e) {
+                getPlugin().getSLF4JLogger().error("An error occurred while saving fish bag for " + uuid + ".", e);
+            }
         });
     }
 

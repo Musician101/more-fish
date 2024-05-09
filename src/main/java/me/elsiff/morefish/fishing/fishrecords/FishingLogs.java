@@ -57,29 +57,27 @@ public final class FishingLogs extends FishRecordKeeper {
     }
 
     public void save() {
-        Bukkit.getAsyncScheduler().runNow(getPlugin(), task -> {
-            try {
-                if (Files.notExists(getPath())) {
-                    Files.createFile(getPath());
-                }
+        try {
+            if (Files.notExists(getPath())) {
+                Files.createFile(getPath());
+            }
 
-                YamlConfiguration yaml = new YamlConfiguration();
-                yaml.set("records", records.stream().map(record -> {
-                    ConfigurationSection cs = new MemoryConfiguration();
-                    cs.set("uuid", record.fisher().toString());
-                    cs.set("name", record.getFishName());
-                    cs.set("length", record.getLength());
-                    cs.set("rarity", record.getRarityName());
-                    cs.set("rarity_probability", record.getRarityProbability());
-                    cs.set("timestamp", record.timestamp());
-                    return cs;
-                }).toList());
-                yaml.save(getPath().toFile());
-            }
-            catch (IOException e) {
-                getPlugin().getSLF4JLogger().error("Error loading fishing_logs.yml", e);
-            }
-        });
+            YamlConfiguration yaml = new YamlConfiguration();
+            yaml.set("records", records.stream().map(record -> {
+                ConfigurationSection cs = new MemoryConfiguration();
+                cs.set("uuid", record.fisher().toString());
+                cs.set("name", record.getFishName());
+                cs.set("length", record.getLength());
+                cs.set("rarity", record.getRarityName());
+                cs.set("rarity_probability", record.getRarityProbability());
+                cs.set("timestamp", record.timestamp());
+                return cs;
+            }).toList());
+            yaml.save(getPath().toFile());
+        }
+        catch (IOException e) {
+            getPlugin().getSLF4JLogger().error("Error loading fishing_logs.yml", e);
+        }
     }
 
     private Path getPath() {
