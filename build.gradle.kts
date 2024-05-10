@@ -55,7 +55,7 @@ tasks {
             include(dependency("com.github.Musician101.MusiGui:"))
         }
 
-        archiveFileName.set("${project.name}-${project.version}.jar")
+        archiveClassifier = ""
         relocate("io.musician101.bukkitier", "me.elsiff.morefish.lib.io.musician101.bukkitier")
         relocate("io.musician101.musigui", "me.elsiff.morefish.lib.io.musician101.musigui")
         dependsOn("build")
@@ -65,7 +65,6 @@ tasks {
         minecraftVersion("1.20.4")
     }
 }
-
 bukkitPluginYaml {
     main = "me.elsiff.morefish.MoreFish"
     authors.addAll("elsiff", "Musician101")
