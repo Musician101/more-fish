@@ -39,30 +39,44 @@ public interface FishItemStackConverter {
     @NotNull
     static ItemStack createItemStack(@NotNull Fish fish, double length, @NotNull Player catcher) {
         ItemStack itemStack = fish.type().icon().clone();
-        ItemMeta itemMeta = itemStack.getItemMeta();
-        if (!fish.type().hasNotFishItemFormat()) {
-            List<TagResolver> tagResolvers = List.of(playerName(catcher), tagResolver("length", length), fishRarity(fish), fishRarityColor(fish), fishName(fish));
-            MiniMessage mm = MiniMessage.miniMessage();
-            itemMeta.displayName(replace(getFormatConfig().map(cs -> cs.get("display-name").getAsString()).orElse("null"), tagResolvers, catcher));
-            List<Component> lore = replace(getFormatConfig().map(json -> json.getAsJsonArray("lore").asList().stream().map(JsonElement::getAsString).collect(Collectors.toList())).orElse(new ArrayList<>()), tagResolvers, catcher);
-            List<Component> oldLore = itemMeta.lore();
-            if (oldLore != null) {
-                lore.addAll(oldLore.stream().map(c -> replace(mm.serialize(c), tagResolvers, catcher)).toList());
+        itemStack.editMeta(itemMeta -> {
+            if (!fish.type().hasNotFishItemFormat()) {
+                List<TagResolver> tagResolvers = List.of(playerName(catcher), tagResolver("length", length), fishRarity(fish), fishRarityColor(fish), fishName(fish));
+                MiniMessage mm = MiniMessage.miniMessage();
+                itemMeta.displayName(replace(getFormatConfig().map(cs -> cs.get("display-name").getAsString()).orElse("null"), tagResolvers, catcher));
+                List<Component> lore = replace(getFormatConfig().map(json -> json.getAsJsonArray("lore").asList().stream().map(JsonElement::getAsString).collect(Collectors.toList())).orElse(new ArrayList<>()), tagResolvers, catcher);
+                List<Component> oldLore = itemMeta.lore();
+                if (oldLore != null) {
+                    lore.addAll(oldLore.stream().map(c -> replace(mm.serialize(c), tagResolvers, catcher)).toList());
+                }
+
+                itemMeta.lore(lore);
             }
 
-            itemMeta.lore(lore);
-        }
+            PersistentDataContainer data = itemMeta.getPersistentDataContainer();
+            data.set(fishTypeKey(), PersistentDataType.STRING, fish.name());
+            data.set(fishLengthKey(), PersistentDataType.DOUBLE, length);
+        });
 
-        PersistentDataContainer data = itemMeta.getPersistentDataContainer();
-        data.set(fishTypeKey(), PersistentDataType.STRING, fish.name());
-        data.set(fishLengthKey(), PersistentDataType.DOUBLE, length);
-        itemStack.setItemMeta(itemMeta);
         return itemStack;
     }
 
     @NotNull
     static Fish fish(@NotNull ItemStack itemStack) {
-        return read(itemStack.getItemMeta());
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        PersistentDataContainer tags = itemMeta.getPersistentDataContainer();
+        if (!tags.has(fishTypeKey(), PersistentDataType.STRING)) {
+            throw new IllegalArgumentException("Item meta must have fish type tag");
+        }
+
+        if (!tags.has(fishLengthKey(), PersistentDataType.DOUBLE)) {
+            throw new IllegalArgumentException("Item meta must have fish length tag");
+        }
+
+        String typeName = tags.get(fishTypeKey(), PersistentDataType.STRING);
+        FishType type = getPlugin().getFishTypeTable().getTypes().stream().filter(it -> it.name().equals(typeName)).findFirst().orElseThrow(() -> new IllegalStateException("Fish type doesn't exist"));
+        Double length = tags.get(fishLengthKey(), PersistentDataType.DOUBLE);
+        return new Fish(type, length == null ? 0 : length);
     }
 
     static NamespacedKey fishLengthKey() {
@@ -89,22 +103,5 @@ public interface FishItemStackConverter {
 
         PersistentDataContainer tags = itemMeta.getPersistentDataContainer();
         return tags.has(fishTypeKey(), PersistentDataType.STRING) && tags.has(fishLengthKey(), PersistentDataType.DOUBLE);
-    }
-
-    @NotNull
-    private static Fish read(@NotNull ItemMeta itemMeta) {
-        PersistentDataContainer tags = itemMeta.getPersistentDataContainer();
-        if (!tags.has(fishTypeKey(), PersistentDataType.STRING)) {
-            throw new IllegalArgumentException("Item meta must have fish type tag");
-        }
-
-        if (!tags.has(fishLengthKey(), PersistentDataType.DOUBLE)) {
-            throw new IllegalArgumentException("Item meta must have fish length tag");
-        }
-
-        String typeName = tags.get(fishTypeKey(), PersistentDataType.STRING);
-        FishType type = getPlugin().getFishTypeTable().getTypes().stream().filter(it -> it.name().equals(typeName)).findFirst().orElseThrow(() -> new IllegalStateException("Fish type doesn't exist"));
-        Double length = tags.get(fishLengthKey(), PersistentDataType.DOUBLE);
-        return new Fish(type, length == null ? 0 : length);
     }
 }

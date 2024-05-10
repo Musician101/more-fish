@@ -24,7 +24,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
 
@@ -220,51 +219,48 @@ public final class FishTypeTable {
 
         int amount = json.has("amount") ? json.get("amount").getAsInt() : 1;
         ItemStack itemStack = new ItemStack(material, amount);
-        ItemMeta itemMeta = itemStack.getItemMeta();
-        if (json.has("lore")) {
-            List<Component> lore = json.getAsJsonArray("lore").asList().stream().map(content -> replace(content.getAsString())).toList();
-            itemMeta.lore(lore);
-        }
+        itemStack.editMeta(itemMeta -> {
+            if (json.has("lore")) {
+                List<Component> lore = json.getAsJsonArray("lore").asList().stream().map(content -> replace(content.getAsString())).toList();
+                itemMeta.lore(lore);
+            }
 
-        if (json.has("enchantments")) {
-            json.getAsJsonArray("enchantments").asList().stream().map(JsonElement::getAsString).map(string -> string.split("\\|")).forEach(tokens -> {
-                NamespacedKey key = tokens[0].contains(":") ? NamespacedKey.fromString(tokens[0]) : NamespacedKey.minecraft(tokens[0]);
-                Enchantment enchantment;
-                if (key != null && (enchantment = Registry.ENCHANTMENT.get(key)) != null) {
-                    int level = Integer.parseInt(tokens[1]);
-                    if (itemMeta instanceof EnchantmentStorageMeta esm) {
-                        esm.addStoredEnchant(enchantment, level, true);
+            int finalCustomModelData = customModelData;
+            if (json.has("custom-model-data")) {
+                finalCustomModelData = json.get("custom-model-data").getAsInt();
+            }
+
+            itemMeta.setCustomModelData(finalCustomModelData);
+            itemMeta.setUnbreakable(json.has("unbreakable") && json.get("unbreakable").getAsBoolean());
+            if (json.has("enchantments")) {
+                json.getAsJsonArray("enchantments").asList().stream().map(JsonElement::getAsString).map(string -> string.split("\\|")).forEach(tokens -> {
+                    NamespacedKey key = tokens[0].contains(":") ? NamespacedKey.fromString(tokens[0]) : NamespacedKey.minecraft(tokens[0]);
+                    Enchantment enchantment;
+                    if (key != null && (enchantment = Registry.ENCHANTMENT.get(key)) != null) {
+                        int level = Integer.parseInt(tokens[1]);
+                        if (itemMeta instanceof EnchantmentStorageMeta esm) {
+                            esm.addStoredEnchant(enchantment, level, true);
+                        }
+                        else {
+                            itemMeta.addEnchant(enchantment, level, true);
+                        }
                     }
-                    else {
-                        itemMeta.addEnchant(enchantment, level, true);
-                    }
-                }
-            });
-        }
-
-        itemMeta.setUnbreakable(json.has("unbreakable") && json.get("unbreakable").getAsBoolean());
-        if (itemMeta instanceof Damageable) {
-            ((Damageable) itemMeta).setDamage(json.has("durability") ? json.get("durability").getAsInt() : 0);
-        }
-
-        if (itemMeta instanceof SkullMeta) {
+                });
+            }
+        });
+        itemStack.editMeta(Damageable.class, itemMeta -> itemMeta.setDamage(json.has("durability") ? json.get("durability").getAsInt() : 0));
+        itemStack.editMeta(SkullMeta.class, itemMeta -> {
             if (json.has("skull-uuid")) {
-                ((SkullMeta) itemMeta).setOwningPlayer(Bukkit.getOfflinePlayer(UUID.fromString(json.get("skull-uuid").getAsString())));
+                itemMeta.setOwningPlayer(Bukkit.getOfflinePlayer(UUID.fromString(json.get("skull-uuid").getAsString())));
             }
 
             if (json.has("skull-texture")) {
                 PlayerProfile profile = Bukkit.createProfile(name + "_skull_texture");
                 profile.setProperty(new ProfileProperty("textures", json.get("skull-texture").getAsString()));
-                ((SkullMeta) itemMeta).setPlayerProfile(profile);
+                itemMeta.setPlayerProfile(profile);
             }
-        }
+        });
 
-        if (json.has("custom-model-data")) {
-            customModelData = json.get("custom-model-data").getAsInt();
-        }
-
-        itemMeta.setCustomModelData(customModelData);
-        itemStack.setItemMeta(itemMeta);
         return itemStack;
     }
 
