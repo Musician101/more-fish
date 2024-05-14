@@ -112,7 +112,7 @@ public interface Lang {
 
     @NotNull
     static TagResolver fishName(@NotNull Fish fish) {
-        return tagResolver("fish", fish.name());
+        return tagResolver("fish_name", fish.name());
     }
 
     @NotNull

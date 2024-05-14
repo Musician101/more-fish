@@ -4,6 +4,7 @@ import io.musician101.musiboard.MusiBoard;
 import io.musician101.musiboard.scoreboard.MusiScoreboard;
 import io.musician101.musiboard.scoreboard.MusiScoreboardManager;
 import io.papermc.paper.scoreboard.numbers.NumberFormat;
+import me.elsiff.morefish.command.argument.SortArgumentType.SortType;
 import me.elsiff.morefish.fishing.fishrecords.FishRecord;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -96,6 +97,7 @@ public class MusiBoardHooker implements PluginHooker {
             leaderboard.setDisplaySlot(DisplaySlot.SIDEBAR);
             leaderboard.numberFormat(NumberFormat.blank());
             List<FishRecord> records = getPlugin().getCompetition().getRecords();
+            records.sort(SortType.LENGTH.sorter().reversed());
             IntStream.range(0, Math.min(5, records.size())).forEach(i -> {
                 FishRecord record = records.get(i);
                 OfflinePlayer player = Bukkit.getOfflinePlayer(record.fisher());

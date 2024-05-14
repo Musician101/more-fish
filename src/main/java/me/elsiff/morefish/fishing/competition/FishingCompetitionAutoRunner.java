@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,19 +42,21 @@ public final class FishingCompetitionAutoRunner {
         int requiredPlayers = config.getInt("required-players");
         long duration = config.getLong("timer") * 20L;
         List<CompetitionTimes> competitionTimes = getCompetitionTimes();
+        List<Duration> displayedReminders = new ArrayList<>();
         timeCheckingTask = new BukkitRunnable() {
 
             @Override
             public void run() {
                 LocalTime currentTime = LocalTime.now().withSecond(0).withNano(0);
-                if (competitionTimes.stream().anyMatch(time -> time.matchesReminderTimes(currentTime))) {
-                    StringBuilder sb = new StringBuilder(PREFIX_STRING).append("If there are ").append(requiredPlayers).append(" or more players online in ");
+                if (competitionTimes.stream().anyMatch(time -> time.matchesReminderTimes(currentTime) && !displayedReminders.contains(time.reminderTimes.get(currentTime)))) {
+                    StringBuilder sb = new StringBuilder(PREFIX_STRING).append("<white>If there are <gold>").append(requiredPlayers).append(" <white>or more players online in <gold>");
                     competitionTimes.stream().filter(c -> c.matchesReminderTimes(currentTime)).findFirst().ifPresent(c -> {
                         Duration remainingTime = c.reminderTimes.get(currentTime);
                         int hours = remainingTime.toHoursPart();
                         int minutes = remainingTime.toMinutesPart();
+                        displayedReminders.add(remainingTime);
                         if (hours > 0) {
-                            sb.append(hours).append(" hours");
+                            sb.append(hours).append(" hour").append((hours > 1 ? "s" : ""));
                         }
 
                         if (minutes > 0) {
@@ -61,15 +64,16 @@ public final class FishingCompetitionAutoRunner {
                                 sb.append(" ");
                             }
 
-                            sb.append(minutes).append(" minutes");
+                            sb.append(minutes).append(" minute").append((minutes > 1 ? "s" : ""));
                         }
                     });
-                    sb.append(", the next competition will begin!");
+                    sb.append("<white>, the next competition will begin!");
                     Bukkit.broadcast(replace(sb.toString()));
                 }
                 else if (Bukkit.getOnlinePlayers().size() >= requiredPlayers) {
                     if (competitionTimes.stream().anyMatch(time -> time.matchesStartTime(currentTime)) && getCompetitionHost().getCompetition().isDisabled()) {
                         getCompetitionHost().openCompetitionFor(duration);
+                        displayedReminders.clear();
                     }
                 }
             }

@@ -1,5 +1,6 @@
 package me.elsiff.morefish.fishing.competition;
 
+import me.elsiff.morefish.command.argument.SortArgumentType.SortType;
 import me.elsiff.morefish.fishing.Fish;
 import me.elsiff.morefish.fishing.fishrecords.FishRecord;
 import me.elsiff.morefish.fishing.fishrecords.FishRecordKeeper;
@@ -7,6 +8,7 @@ import me.elsiff.morefish.hooker.MusiBoardHooker;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -98,7 +100,9 @@ public final class FishingCompetition extends FishRecordKeeper {
 
     public boolean willBeNewFirst(@NotNull OfflinePlayer catcher, @NotNull Fish fish) {
         if (!getRecords().isEmpty()) {
-            FishRecord record = getRecords().getFirst();
+            List<FishRecord> records = getRecords();
+            records.sort(SortType.LENGTH.sorter().reversed());
+            FishRecord record = records.getFirst();
             return fish.length() > record.getLength() && !record.fisher().equals(catcher.getUniqueId());
         }
 

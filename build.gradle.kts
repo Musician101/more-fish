@@ -20,7 +20,7 @@ plugins {
 }
 
 group = "me.elsiff"
-version = "4.2.1"
+version = "4.2.2"
 
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 
@@ -58,13 +58,17 @@ tasks {
         archiveClassifier = ""
         relocate("io.musician101.bukkitier", "me.elsiff.morefish.lib.io.musician101.bukkitier")
         relocate("io.musician101.musigui", "me.elsiff.morefish.lib.io.musician101.musigui")
-        dependsOn("build")
+    }
+
+    assemble {
+        dependsOn("reobfJar")
     }
 
     runServer {
         minecraftVersion("1.20.4")
     }
 }
+
 bukkitPluginYaml {
     main = "me.elsiff.morefish.MoreFish"
     authors.addAll("elsiff", "Musician101")
