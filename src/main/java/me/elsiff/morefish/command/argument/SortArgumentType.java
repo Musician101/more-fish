@@ -36,7 +36,7 @@ public class SortArgumentType implements ArgumentType<SortType> {
         PLAYER;
 
         @NotNull
-        public Comparator<FishRecord> sorter() {
+        public Comparator<FishRecord> natural() {
             return switch (this) {
                 case LENGTH -> FishRecord::compareTo;
                 case NAME -> Comparator.comparing(FishRecord::getFishName);
@@ -44,6 +44,11 @@ public class SortArgumentType implements ArgumentType<SortType> {
                 case TIMESTAMP -> Comparator.comparingLong(FishRecord::timestamp);
                 case PLAYER -> Comparator.comparing(FishRecord::fisher);
             };
+        }
+
+        @NotNull
+        public Comparator<FishRecord> reversed() {
+            return natural().reversed();
         }
     }
 }

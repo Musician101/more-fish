@@ -19,8 +19,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import static me.elsiff.morefish.item.FishItemStackConverter.createItemStack;
-import static me.elsiff.morefish.text.Lang.PREFIX_STRING;
+import static me.elsiff.morefish.text.Lang.raw;
 import static me.elsiff.morefish.text.Lang.replace;
+import static me.elsiff.morefish.text.Lang.tagResolver;
 
 class MFGive implements LiteralCommand {
 
@@ -32,17 +33,17 @@ class MFGive implements LiteralCommand {
         player.getWorld().dropItem(player.getLocation(), itemStack);
         CommandSender sender = context.getSource();
         if (!(sender instanceof Player p && p.getUniqueId().equals(player.getUniqueId()))) {
-            context.getSource().sendMessage(replace(PREFIX_STRING + "<white>" + fishType.displayName() + " given to " + player.getName() + "."));
+            context.getSource().sendMessage(replace("<mf-lang:command-give-sender>", tagResolver("fish-display-name", fishType.displayName())));
         }
 
-        player.sendMessage(replace(PREFIX_STRING + "<white>You just received a " + fishType.displayName() + "."));
+        player.sendMessage(replace("<mf-lang:command-give-receiver>", tagResolver("fish-display-name", fishType.displayName())));
         return 1;
     }
 
     @NotNull
     @Override
     public String description(@NotNull CommandSender sender) {
-        return "Give a player a fish.";
+        return raw("command-give-description");
     }
 
     @NotNull

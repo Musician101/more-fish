@@ -15,12 +15,15 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.text.Lang.PREFIX_STRING;
+import static me.elsiff.morefish.text.Lang.date;
+import static me.elsiff.morefish.text.Lang.fishLength;
+import static me.elsiff.morefish.text.Lang.fishName;
+import static me.elsiff.morefish.text.Lang.raw;
 import static me.elsiff.morefish.text.Lang.replace;
+import static net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.resolver;
 
 class MFFLCommand implements LiteralCommand {
 
@@ -40,21 +43,19 @@ class MFFLCommand implements LiteralCommand {
         int end = Math.min(start + 8, fullList.size());
         List<FishRecord> records = new ArrayList<>(fullList.subList(start, end));
         if (records.isEmpty()) {
-            player.sendMessage(replace(PREFIX_STRING + "<white>You have not caught any fish yet."));
+            player.sendMessage(replace("<mf-lang:command-fishinglogs-none>"));
             return;
         }
 
-        records.sort(sortType.sorter());
-        records.forEach(record -> {
-            Date date = new Date(record.timestamp());
-            player.sendMessage(replace(PREFIX_STRING + "<dark_gray>" + record.getLength() + "cm " + record.getFishName() + " <yellow>" + date));
-        });
+        records.sort(sortType.reversed());
+        records.forEach(record -> player.sendMessage(replace("<mf-lang:command-fishing-logs-record>", resolver(fishName(record), fishLength(record), date(record)))));
     }
 
+    //TODO command to show fishing competition times
     @NotNull
     @Override
     public String description(@NotNull CommandSender sender) {
-        return "Shows all the fish you've caught.";
+        return raw("command-fishing-logs-description");
     }
 
     @NotNull

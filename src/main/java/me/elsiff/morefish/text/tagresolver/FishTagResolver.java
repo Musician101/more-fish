@@ -23,7 +23,7 @@ public class FishTagResolver extends FisRecordTagResolver {
             return null;
         }
 
-        return recordOf().map(FishRecord::getFishName).map(Component::text).map(Tag::inserting).orElse(null);
+        return recordOf().map(FishRecord::getFishName).map(Component::text).map(Tag::selfClosingInserting).orElse(null);
     }
 
     @Override

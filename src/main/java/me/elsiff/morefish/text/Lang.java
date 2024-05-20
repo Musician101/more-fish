@@ -1,7 +1,9 @@
 package me.elsiff.morefish.text;
 
 import me.elsiff.morefish.fishing.Fish;
+import me.elsiff.morefish.fishing.fishrecords.FishRecord;
 import me.elsiff.morefish.text.tagresolver.FishTagResolver;
+import me.elsiff.morefish.text.tagresolver.LangTagResolver;
 import me.elsiff.morefish.text.tagresolver.RankTagResolver;
 import me.elsiff.morefish.text.tagresolver.TopFishLengthTagResolver;
 import me.elsiff.morefish.text.tagresolver.TopFishTagResolver;
@@ -11,94 +13,137 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.MemoryConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static me.elsiff.morefish.MoreFish.getPlugin;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
+import static net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.resolver;
 
-public interface Lang {
+public class Lang {
 
-    String PREFIX_STRING = "<dark_gray>[<gold>MoreFish<dark_gray>] ";
-    Component CONTEST_START = replace(PREFIX_STRING + "<white>The fishing contest has started!");
-    Component CONTEST_STOP = replace(PREFIX_STRING + "<white>The fishing contest has ended!");
-    Component ALREADY_STOPPED = replace(PREFIX_STRING + "<white>The contest is already stopped.");
-    Component SHOP_DISABLED = replace(PREFIX_STRING + "<white>Fish Shop is disabled now.");
-    Component SHOP_GUI_TITLE = text("Put your fish to sell");
-    Component SALE_FILTERS_TITLE = text("Set Sale Filter(s)");
+    @NotNull
+    private static ConfigurationSection LANG = new MemoryConfiguration();
 
-    static Component contestStartTimer(long time) {
-        return replace(PREFIX_STRING + "<white>This contest will end in " + time(time) + ".");
+    private Lang() {
+
+    }
+
+    public static void reload() {
+        getPlugin().saveResource("lang.yml", false);
+        File file = new File(getPlugin().getDataFolder(), "lang.yml");
+        LANG = YamlConfiguration.loadConfiguration(file);
     }
 
     @NotNull
-    static Component replace(@NotNull String string, @NotNull List<TagResolver> tagResolvers, @Nullable Player player) {
+    public static String raw(@NotNull String key) {
+        return LANG.getString(key, "");
+    }
+
+    @NotNull
+    public static Set<String> keys() {
+        return LANG.getKeys(false);
+    }
+
+    @NotNull
+    public static Component replace(@NotNull String string, @NotNull TagResolver extraTagResolvers, @Nullable Player player) {
         UUID uuid = player == null ? null : player.getUniqueId();
-        List<TagResolver> list = new ArrayList<>(tagResolvers);
-        list.addAll(List.of(new FishTagResolver(uuid), new RankTagResolver(uuid), new TopFishTagResolver(), new TopFishLengthTagResolver(), new TopPlayerTagResolver()));
-        return miniMessage().deserialize(string, list.toArray(new TagResolver[0]));
+        TagResolver tagResolver = resolver(new LangTagResolver(extraTagResolvers, player), new FishTagResolver(uuid), new RankTagResolver(uuid), new TopFishTagResolver(), new TopFishLengthTagResolver(), new TopPlayerTagResolver(), extraTagResolvers);
+        return miniMessage().deserialize(string, tagResolver);
     }
 
     @NotNull
-    static TagResolver tagResolver(@NotNull String name, @NotNull String tag) {
+    public static TagResolver tagResolver(@NotNull String name, @NotNull String tag) {
         return tagResolver(name, text(tag));
     }
 
     @NotNull
-    static TagResolver tagResolver(@NotNull String name, @NotNull Component tag) {
-        return tagResolver(name, Tag.inserting(tag));
+    public static TagResolver tagResolver(@NotNull String name, @NotNull Component tag) {
+        return tagResolver(name, Tag.selfClosingInserting(tag));
     }
 
     @SuppressWarnings("PatternValidation")
     @NotNull
-    static TagResolver tagResolver(@NotNull String name, @NotNull Tag tag) {
+    public static TagResolver tagResolver(@NotNull String name, @NotNull Tag tag) {
         return TagResolver.builder().tag(name, tag).build();
     }
 
     @NotNull
-    static TagResolver tagResolver(@NotNull String name, double tag) {
+    public static TagResolver tagResolver(@NotNull String name, double tag) {
         return tagResolver(name, text(tag));
     }
 
     @NotNull
-    static Component replace(@NotNull String string) {
-        return replace(string, List.of());
+    public static Component replace(@NotNull String string) {
+        return replace(string, TagResolver.empty());
     }
 
     @NotNull
-    static Component replace(@NotNull String string, @NotNull List<TagResolver> tagResolvers) {
-        return replace(string, tagResolvers, null);
+    public static Component replace(@NotNull String string, @NotNull TagResolver extraTagResolvers) {
+        return replace(string, extraTagResolvers, null);
     }
 
     @NotNull
-    static List<Component> replace(@NotNull List<String> strings, @NotNull List<TagResolver> tagResolvers, @Nullable Player player) {
-        return strings.stream().map(c -> replace(c, tagResolvers, player)).collect(Collectors.toList());
+    public static List<Component> replace(@NotNull List<String> strings, @NotNull TagResolver extraTagResolver, @Nullable Player player) {
+        return strings.stream().map(c -> replace(c, extraTagResolver, player)).collect(Collectors.toList());
     }
 
     @NotNull
-    static TagResolver playerName(@NotNull Player player) {
-        return tagResolver("player", player.getName());
+    public static TagResolver playerName(@NotNull OfflinePlayer player) {
+        String name = player.getName();
+        if (name == null) {
+            name = player.getUniqueId().toString();
+        }
+
+        return tagResolver("player", name);
     }
 
     @NotNull
-    static TagResolver fishLength(@NotNull Fish fish) {
+    public static TagResolver fishLength(@NotNull Fish fish) {
         return tagResolver("length", fish.length());
     }
 
     @NotNull
-    static TagResolver fishRarity(@NotNull Fish fish) {
+    public static TagResolver fishLength(@NotNull FishRecord record) {
+        return tagResolver("length", record.getLength());
+    }
+
+    @NotNull
+    public static TagResolver date(@NotNull FishRecord record) {
+        return resolver("date", (argumentQueue, context) -> {
+            Date date = new Date(record.timestamp());
+            DateFormat format = DateFormat.getDateInstance();
+            if (argumentQueue.hasNext()) {
+                format = new SimpleDateFormat(argumentQueue.pop().value());
+            }
+
+            return Tag.selfClosingInserting(text(format.format(date)));
+        });
+    }
+
+    @NotNull
+    public static TagResolver fishRarity(@NotNull Fish fish) {
         return tagResolver("rarity", fish.rarity().displayName().toUpperCase());
     }
 
     @NotNull
-    static TagResolver fishRarityColor(@NotNull Fish fish) {
+    public static TagResolver fishRarityColor(@NotNull Fish fish) {
         return tagResolver("rarity_color", Tag.styling(builder -> {
             String color = fish.rarity().color();
             TextColor textColor = NamedTextColor.NAMES.valueOr(color, NamedTextColor.WHITE);
@@ -110,13 +155,19 @@ public interface Lang {
         }));
     }
 
+    //TODO make sure to update fish.json item-format.display-name
     @NotNull
-    static TagResolver fishName(@NotNull Fish fish) {
+    public static TagResolver fishName(@NotNull Fish fish) {
         return tagResolver("fish_name", fish.name());
     }
 
     @NotNull
-    static String time(long second) {
+    public static TagResolver fishName(@NotNull FishRecord record) {
+        return tagResolver("fish_name", record.getFishName());
+    }
+
+    @NotNull
+    public static TagResolver timeRemaining(long second) {
         StringBuilder builder = new StringBuilder();
         Duration duration = Duration.ofSeconds(second);
         if (duration.toMinutes() > 0L) {
@@ -124,6 +175,6 @@ public interface Lang {
         }
 
         builder.append(duration.getSeconds() % (long) 60).append("s");
-        return builder.toString();
+        return tagResolver("time-remaining", builder.toString());
     }
 }

@@ -41,13 +41,13 @@ public interface FishItemStackConverter {
         ItemStack itemStack = fish.type().icon().clone();
         itemStack.editMeta(itemMeta -> {
             if (!fish.type().hasNotFishItemFormat()) {
-                List<TagResolver> tagResolvers = List.of(playerName(catcher), tagResolver("length", length), fishRarity(fish), fishRarityColor(fish), fishName(fish));
+                TagResolver tagResolver = TagResolver.resolver(playerName(catcher), tagResolver("length", length), fishRarity(fish), fishRarityColor(fish), fishName(fish));
                 MiniMessage mm = MiniMessage.miniMessage();
-                itemMeta.displayName(replace(getFormatConfig().map(cs -> cs.get("display-name").getAsString()).orElse("null"), tagResolvers, catcher));
-                List<Component> lore = replace(getFormatConfig().map(json -> json.getAsJsonArray("lore").asList().stream().map(JsonElement::getAsString).collect(Collectors.toList())).orElse(new ArrayList<>()), tagResolvers, catcher);
+                itemMeta.displayName(replace(getFormatConfig().map(cs -> cs.get("display-name").getAsString()).orElse("null"), tagResolver, catcher));
+                List<Component> lore = replace(getFormatConfig().map(json -> json.getAsJsonArray("lore").asList().stream().map(JsonElement::getAsString).collect(Collectors.toList())).orElse(new ArrayList<>()), tagResolver, catcher);
                 List<Component> oldLore = itemMeta.lore();
                 if (oldLore != null) {
-                    lore.addAll(oldLore.stream().map(c -> replace(mm.serialize(c), tagResolvers, catcher)).toList());
+                    lore.addAll(oldLore.stream().map(c -> replace(mm.serialize(c), tagResolver, catcher)).toList());
                 }
 
                 itemMeta.lore(lore);

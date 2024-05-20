@@ -9,15 +9,15 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
+import static me.elsiff.morefish.text.Lang.raw;
+import static me.elsiff.morefish.text.Lang.replace;
 
 class MFContraband implements LiteralCommand {
 
     @NotNull
     @Override
     public String description(@NotNull CommandSender sender) {
-        return "Reclaim contraband in your fish bags.";
+        return raw("command-contraband-description");
     }
 
     @NotNull
@@ -35,7 +35,7 @@ class MFContraband implements LiteralCommand {
             world.dropItem(player.getLocation(), i);
         });
         fishBag.clearContraband();
-        player.sendMessage(text("[MF] All contraband has been dropped from your bag. Make sure you get it all.", GREEN));
+        player.sendMessage(replace("command-contraband-success"));
         return 1;
     }
 

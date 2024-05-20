@@ -34,8 +34,8 @@ public abstract class AbstractBroadcaster implements CatchHandler {
     public void handle(@NotNull Player catcher, @NotNull Fish fish) {
         if (meetBroadcastCondition(catcher, fish)) {
             List<Player> receivers = fish.type().catchAnnouncement().receiversOf(catcher);
-            List<TagResolver> tagResolvers = List.of(playerName(catcher), fishLength(fish), fishRarity(fish), fishRarityColor(fish), fishName(fish), tagResolver("fish_with_rarity", fishNameWithRarity(fish.type())));
-            Component msg = replace(getCatchMessageFormat(), tagResolvers, catcher);
+            TagResolver tagResolver = TagResolver.resolver(playerName(catcher), fishLength(fish), fishRarity(fish), fishRarityColor(fish), fishName(fish), tagResolver("fish_with_rarity", fishNameWithRarity(fish.type())));
+            Component msg = replace(getCatchMessageFormat(), tagResolver, catcher);
             receivers.forEach(player -> player.sendMessage(msg));
         }
     }

@@ -7,40 +7,26 @@ import io.musician101.bukkitier.command.ArgumentCommand;
 import io.musician101.bukkitier.command.Command;
 import io.musician101.bukkitier.command.LiteralCommand;
 import me.elsiff.morefish.command.argument.FishArgumentType;
-import me.elsiff.morefish.command.argument.SortArgumentType.SortType;
-import me.elsiff.morefish.fishing.competition.FishingCompetitionHost;
 import me.elsiff.morefish.fishing.fishrecords.FishRecord;
-import me.elsiff.morefish.fishing.fishrecords.FishingLogs;
-import me.elsiff.morefish.util.NumberUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
+import me.elsiff.morefish.fishing.fishrecords.FishRecordKeeper;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.AbstractMap.SimpleEntry;
 import java.util.List;
-import java.util.Map;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.text.Lang.PREFIX_STRING;
-import static me.elsiff.morefish.text.Lang.replace;
+import static me.elsiff.morefish.text.Lang.raw;
 
 class MFTop implements LiteralCommand {
 
-    public static FishingCompetitionHost getCompetitionHost() {
-        return getPlugin().getCompetitionHost();
-    }
-
-    public static FishingLogs getFishingLogs() {
-        return getPlugin().getFishingLogs();
+    private static void informAboutRanking(CommandContext<CommandSender> context, FishRecordKeeper recordKeeper, List<FishRecord> records) {
+        recordKeeper.informAboutRanking(context.getSource(), records);
     }
 
     @NotNull
     @Override
     public String description(@NotNull CommandSender sender) {
-        return "Show the top catches.";
+        return raw("command-top-description");
     }
 
     @NotNull
@@ -51,8 +37,7 @@ class MFTop implements LiteralCommand {
 
     @Override
     public int execute(@NotNull CommandContext<CommandSender> context) {
-        CommandSender sender = context.getSource();
-        getCompetitionHost().informAboutRanking(sender);
+        informAboutRanking(context, getPlugin().getCompetition(), null);
         return 1;
     }
 
@@ -72,36 +57,7 @@ class MFTop implements LiteralCommand {
 
         @Override
         public int execute(@NotNull CommandContext<CommandSender> context) {
-            CommandSender sender = context.getSource();
-            if (getFishingLogs().getRecords().isEmpty()) {
-                sender.sendMessage(replace(PREFIX_STRING + "<white>Nobody has caught anything yet."));
-            }
-            else {
-                int topSize = 1;
-                ConfigurationSection msg = getPlugin().getConfig().getConfigurationSection("messages");
-                if (msg != null) {
-                    topSize = msg.getInt("top-number", 1);
-                }
-
-                List<FishRecord> top = getPlugin().getFishingLogs().top(topSize);
-                top.forEach(record -> {
-                    int number = top.indexOf(record) + 1;
-                    String player = Bukkit.getOfflinePlayer(record.fisher()).getName();
-                    sender.sendMessage(replace(PREFIX_STRING + "<yellow>" + NumberUtils.ordinalOf(number) + ". : <dark_gray>" + (player == null ? "null" : player) + ", " + record.getLength() + "cm " + record.getFishName()));
-                });
-
-                if (sender instanceof Player player) {
-                    if (getFishingLogs().contains(player.getUniqueId())) {
-                        Map.Entry<Integer, FishRecord> entry = getFishingLogs().rankedRecordOf(player);
-                        FishRecord record = entry.getValue();
-                        player.sendMessage(replace(PREFIX_STRING + "<white>You're " + NumberUtils.ordinalOf(entry.getKey() + 1) + ": " + record.getLength() + "cm " + record.getFishName()));
-                    }
-                    else {
-                        sender.sendMessage(replace(PREFIX_STRING + "<white>You haven't caught any fish."));
-                    }
-                }
-            }
-
+            informAboutRanking(context, getPlugin().getFishingLogs(), null);
             return 1;
         }
 
@@ -126,54 +82,8 @@ class MFTop implements LiteralCommand {
 
             @Override
             public int execute(@NotNull CommandContext<CommandSender> context) {
-                CommandSender sender = context.getSource();
-                List<FishRecord> records = context.getArgument(name(), FishArgumentType.Holder.class).get();
-                if (getFishingLogs().getRecords().isEmpty()) {
-                    sender.sendMessage(replace(PREFIX_STRING + "<white>Nobody has caught anything yet."));
-                }
-                else {
-                    int topSize = 1;
-                    ConfigurationSection msg = getPlugin().getConfig().getConfigurationSection("messages");
-                    if (msg != null) {
-                        topSize = msg.getInt("top-number", 1);
-                    }
-
-                    records.sort(SortType.LENGTH.sorter().reversed());
-                    List<FishRecord> top = records.subList(0, Math.min(topSize, records.size()));
-                    top.forEach(record -> {
-                        int number = top.indexOf(record) + 1;
-                        String player = Bukkit.getOfflinePlayer(record.fisher()).getName();
-                        sender.sendMessage(replace(PREFIX_STRING + "<yellow>" + NumberUtils.ordinalOf(number) + ". : <dark_gray>" + (player == null ? "null" : player) + ", " + record.getLength() + "cm " + record.getFishName()));
-                    });
-
-                    if (sender instanceof Player player) {
-                        if (records.stream().anyMatch(r -> r.fisher().equals(player.getUniqueId()))) {
-                            Map.Entry<Integer, FishRecord> entry = rankedRecordOf(records, player);
-                            FishRecord record = entry.getValue();
-                            player.sendMessage(replace(PREFIX_STRING + "<white>You're " + NumberUtils.ordinalOf(entry.getKey() + 1) + ": " + record.getLength() + "cm " + record.getFishName()));
-                        }
-                        else {
-                            sender.sendMessage(replace(PREFIX_STRING + "<white>You haven't caught any fish."));
-                        }
-                    }
-                }
-
+                informAboutRanking(context, getPlugin().getFishingLogs(), context.getArgument(name(), FishArgumentType.Holder.class).get());
                 return 1;
-            }
-
-            @NotNull
-            private Map.Entry<Integer, FishRecord> rankedRecordOf(List<FishRecord> records, OfflinePlayer contestant) {
-                records.sort(SortType.LENGTH.sorter().reversed());
-                int place = 0;
-                for (FishRecord record : records) {
-                    if (record.fisher().equals(contestant.getUniqueId())) {
-                        return new SimpleEntry<>(place, record);
-                    }
-
-                    place++;
-                }
-
-                throw new IllegalStateException("Record not found");
             }
 
             @NotNull
@@ -189,7 +99,7 @@ class MFTop implements LiteralCommand {
         @Override
         public int execute(@NotNull CommandContext<CommandSender> context) {
             CommandSender sender = context.getSource();
-            getCompetitionHost().informAboutRanking(sender);
+            getPlugin().getCompetition().informAboutRanking(sender);
             return 1;
         }
 

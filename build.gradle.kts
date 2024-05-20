@@ -14,15 +14,15 @@ buildscript {
 plugins {
     `java-library`
     id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("io.papermc.paperweight.userdev") version "1.7.0"
+    id("io.papermc.paperweight.userdev") version "1.7.1"
     id("xyz.jpenilla.run-paper") version "2.2.4"
     id("xyz.jpenilla.resource-factory-bukkit-convention") version "1.1.1"
 }
 
 group = "me.elsiff"
-version = "4.2.2"
+version = "4.3.0"
 
-java.toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 repositories {
     maven("https://papermc.io/repo/repository/maven-public/")
@@ -30,6 +30,8 @@ repositories {
     maven("https://repo.dmulloy2.net/nexus/repository/public/")
     maven("https://jitpack.io")
     mavenCentral()
+    //TODO testing
+    mavenLocal()
 }
 
 dependencies {
@@ -38,7 +40,9 @@ dependencies {
     paperweight.paperDevBundle("1.20.4-R0.1-SNAPSHOT")
     compileOnlyApi(files("lib/mcMMO.jar"))
     api("com.github.Musician101.MusiGui:paper:1.2.2")
-    api("io.github.Musician101:Bukkitier:2.0.0")
+    //TODO testing
+    api("io.musician101:bukkitier:2.1.0")
+    //api("com.github.Musician101:Bukkitier:2.0.0")
     //TODO temp to fix package names
     //api("com.github.Musician101:MusiBoard:1.0.1")
     api("com.github.musician101:musiboard:-SNAPSHOT")
@@ -51,7 +55,8 @@ tasks {
 
     shadowJar {
         dependencies {
-            include(dependency("com.github.Musician101:Bukkitier:"))
+            include(dependency("io.musician101:bukkitier:"))
+            //include(dependency("com.github.Musician101:Bukkitier:"))
             include(dependency("com.github.Musician101.MusiGui:"))
         }
 

@@ -17,6 +17,6 @@ public abstract class TopTagResolver extends CompetitionTagResolver {
             return null;
         }
 
-        return arguments.popOr("Rank number is required").asInt().stream().filter(i -> getCompetition().getRecords().size() >= i).mapToObj(getCompetition()::recordOf).map(getter).map(Component::text).map(Tag::inserting).findFirst().orElse(null);
+        return arguments.popOr("Rank number is required").asInt().stream().filter(i -> getCompetition().getRecords().size() >= i).mapToObj(getCompetition()::recordOf).map(getter).map(Component::text).map(Tag::selfClosingInserting).findFirst().orElse(null);
     }
 }

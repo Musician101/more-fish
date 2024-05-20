@@ -19,8 +19,9 @@ import java.util.List;
 import java.util.UUID;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.text.Lang.PREFIX_STRING;
+import static me.elsiff.morefish.text.Lang.raw;
 import static me.elsiff.morefish.text.Lang.replace;
+import static me.elsiff.morefish.text.Lang.tagResolver;
 
 class MFClear implements LiteralCommand {
 
@@ -47,7 +48,7 @@ class MFClear implements LiteralCommand {
     public int execute(@NotNull CommandContext<CommandSender> context) {
         CommandSender sender = context.getSource();
         getCompetition().clear();
-        sender.sendMessage(replace(PREFIX_STRING + "<white>The records has been cleared successfully."));
+        sender.sendMessage(replace("<mf-lang:command-clear-success>"));
         return 1;
     }
 
@@ -60,7 +61,7 @@ class MFClear implements LiteralCommand {
     @NotNull
     @Override
     public String description(@NotNull CommandSender sender) {
-        return "Clears the records.";
+        return raw("command-clear-description");
     }
 
     @NotNull
@@ -77,11 +78,11 @@ class MFClear implements LiteralCommand {
             FishRecordsType recordsType = context.getArgument(name(), FishRecordsType.class);
             if (recordsType == FishRecordsType.COMPETITION) {
                 getCompetition().clear();
-                sender.sendMessage(replace(PREFIX_STRING + "<white>The records has been cleared successfully."));
+                sender.sendMessage(replace("<mf-lang:command-clear-competition-success>"));
             }
             else if (recordsType == FishRecordsType.ALLTIME) {
                 getFishingLogs().clear();
-                sender.sendMessage(replace(PREFIX_STRING + "<white>The all time records have been cleared successfully."));
+                sender.sendMessage(replace("<mf-lang:command-clear-alltime-success>"));
             }
 
             return 1;
@@ -119,11 +120,11 @@ class MFClear implements LiteralCommand {
 
             if (recordsType == FishRecordsType.COMPETITION) {
                 getCompetition().clearRecordHolder(uuid);
-                sender.sendMessage(replace(PREFIX_STRING + "<white>The records for " + name + " has been cleared successfully."));
+                sender.sendMessage(replace("<mf-lang:command-clear-competition-player-success>", tagResolver("player", name)));
             }
             else if (recordsType == FishRecordsType.ALLTIME) {
                 getFishingLogs().clearRecordHolder(uuid);
-                sender.sendMessage(replace(PREFIX_STRING + "<white>The all time records for" + name + " have been cleared successfully."));
+                sender.sendMessage(replace("<mf-lang:command-clear-alltime-player-success>", tagResolver("player", name)));
             }
 
             return 1;

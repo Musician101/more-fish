@@ -11,6 +11,7 @@ import me.elsiff.morefish.fishing.fishrecords.FishingLogs;
 import me.elsiff.morefish.hooker.McmmoHooker;
 import me.elsiff.morefish.hooker.MusiBoardHooker;
 import me.elsiff.morefish.hooker.VaultHooker;
+import me.elsiff.morefish.text.Lang;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
@@ -19,9 +20,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import static io.musician101.bukkitier.Bukkitier.registerCommand;
-import static me.elsiff.morefish.text.Lang.PREFIX_STRING;
-import static me.elsiff.morefish.text.Lang.SALE_FILTERS_TITLE;
-import static me.elsiff.morefish.text.Lang.SHOP_GUI_TITLE;
 import static me.elsiff.morefish.text.Lang.replace;
 
 public final class MoreFish extends JavaPlugin {
@@ -53,10 +51,10 @@ public final class MoreFish extends JavaPlugin {
         Bukkit.getAsyncScheduler().runNow(this, task -> {
             getServer().getOnlinePlayers().forEach(player -> {
                 Component title = player.getOpenInventory().title();
-                if (title.equals(SHOP_GUI_TITLE) || title.equals(SALE_FILTERS_TITLE)) {
+                if (title.equals(replace("<mf-lang:shop-gui-title>")) || title.equals(replace("<mf-lang:sales-filter-title>"))) {
                     player.getScheduler().run(this, t -> {
                         player.closeInventory();
-                        player.sendMessage(replace(PREFIX_STRING + "<white>The config is being updated. To prevent issues, the window has been closed."));
+                        player.sendMessage(replace("<mf-lang:gui-closed-config-update>"));
                     }, null);
                 }
             });
@@ -64,7 +62,7 @@ public final class MoreFish extends JavaPlugin {
             saveDefaultConfig();
             reloadConfig();
             fishTypeTable.load();
-            getLogger().info("Loaded " + fishTypeTable.getRarities().size() + " rarities and " + fishTypeTable.getTypes().size() + " fish types");
+            getSLF4JLogger().info("Loaded {} rarities and {} fish types", fishTypeTable.getRarities().size(), fishTypeTable.getTypes().size());
             if (autoRunner.isEnabled()) {
                 autoRunner.disable();
             }
@@ -72,9 +70,13 @@ public final class MoreFish extends JavaPlugin {
             if (getConfig().getBoolean("auto-running.enable")) {
                 autoRunner.enable();
             }
+
+            Lang.reload();
+            getSLF4JLogger().info("Loaded language configuration file.");
         });
     }
 
+    //TODO switch all getLogger() to getSLF4JLogger()
     @NotNull
     public FishingLogs getFishingLogs() {
         return fishingLogs;

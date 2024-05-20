@@ -2,18 +2,19 @@ package me.elsiff.morefish.command;
 
 import com.mojang.brigadier.context.CommandContext;
 import io.musician101.bukkitier.command.LiteralCommand;
-import me.elsiff.morefish.text.Lang;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
+import static me.elsiff.morefish.text.Lang.raw;
+import static me.elsiff.morefish.text.Lang.replace;
 
 public class MFSuspend implements LiteralCommand {
 
     @NotNull
     @Override
     public String description(@NotNull CommandSender sender) {
-        return "Suspend the competition.";
+        return raw("command-suspend-description");
     }
 
     @NotNull
@@ -30,12 +31,12 @@ public class MFSuspend implements LiteralCommand {
     @Override
     public int execute(@NotNull CommandContext<CommandSender> context) {
         CommandSender sender = context.getSource();
-        if (!getPlugin().getCompetition().isDisabled()) {
+        if (getPlugin().getCompetition().isEnabled()) {
             getPlugin().getCompetitionHost().closeCompetition(true);
-            sender.sendMessage(Lang.CONTEST_STOP);
+            sender.sendMessage(replace("<mf-lang:contest-stop>"));
         }
         else {
-            sender.sendMessage(Lang.ALREADY_STOPPED);
+            sender.sendMessage(replace("<mf-lang:already-stopped>"));
         }
 
         return 1;

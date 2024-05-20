@@ -1,5 +1,6 @@
 package me.elsiff.morefish.fishing.competition;
 
+import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.bossbar.BossBar.Color;
 import net.kyori.adventure.bossbar.BossBar.Overlay;
@@ -11,19 +12,21 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.concurrent.TimeUnit;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
 import static me.elsiff.morefish.text.Lang.replace;
-import static me.elsiff.morefish.text.Lang.time;
+import static me.elsiff.morefish.text.Lang.timeRemaining;
 
 public final class FishingCompetitionTimerBarHandler {
 
+    //TODO add lang file for better messages configuration
     private FishingCompetitionTimerBarHandler.TimerBarDisplayer barDisplayer;
-    private BukkitTask barUpdatingTask;
+    private ScheduledTask barUpdatingTask;
     private BossBar timerBar;
+    private long remainingSeconds;
 
     public void disableTimer() {
         barUpdatingTask.cancel();
@@ -38,10 +41,15 @@ public final class FishingCompetitionTimerBarHandler {
     }
 
     public void enableTimer(long duration) {
+        this.remainingSeconds = duration;
         Color barColor = Color.NAMES.valueOr(getPlugin().getConfig().getString("messages.contest-bar-color", "blue"), Color.BLUE);
         timerBar = BossBar.bossBar(timerBarTitle(duration), 1, barColor, Overlay.NOTCHED_10);
         Bukkit.getOnlinePlayers().forEach(player -> player.showBossBar(timerBar));
-        barUpdatingTask = new TimerBarUpdater(duration).runTaskTimer(getPlugin(), 0, 20L);
+        barUpdatingTask = Bukkit.getAsyncScheduler().runAtFixedRate(getPlugin(), task -> {
+            remainingSeconds--;
+            timerBar.name(timerBarTitle(remainingSeconds));
+            timerBar.progress((float) remainingSeconds / duration);
+        }, 0, 1, TimeUnit.SECONDS);
         Bukkit.getPluginManager().registerEvents(barDisplayer = new TimerBarDisplayer(), getPlugin());
     }
 
@@ -50,13 +58,15 @@ public final class FishingCompetitionTimerBarHandler {
     }
 
     private NamespacedKey getTimerBarKey() {
-        return new NamespacedKey(getPlugin(), "fishing-competition-timer-bar");
+        return new NamespacedKey(getPlugin(), "morefish-timer-bar");
     }
 
     private Component timerBarTitle(long remainingSeconds) {
-        return replace("<aqua><bold>Fishing Contest</bold></aqua> [" + time(remainingSeconds) + " left]");
+        return replace("<mf-lang:timer-bar-title>", timeRemaining(remainingSeconds));
     }
 
+    //TODO literally can just add this to the main class
+    @Deprecated
     private final class TimerBarDisplayer implements Listener {
 
         @EventHandler
@@ -67,23 +77,6 @@ public final class FishingCompetitionTimerBarHandler {
         @EventHandler
         public void onPlayerQuit(@NotNull PlayerQuitEvent event) {
             event.getPlayer().hideBossBar(timerBar);
-        }
-    }
-
-    private final class TimerBarUpdater extends BukkitRunnable {
-
-        private final long duration;
-        private long remainingSeconds;
-
-        public TimerBarUpdater(long duration) {
-            this.duration = duration;
-            this.remainingSeconds = this.duration;
-        }
-
-        public void run() {
-            remainingSeconds--;
-            timerBar.name(timerBarTitle(remainingSeconds));
-            timerBar.progress((float) remainingSeconds / duration);
         }
     }
 }

@@ -1,27 +1,27 @@
 package me.elsiff.morefish.fishing.competition;
 
+import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.text.Lang.PREFIX_STRING;
 import static me.elsiff.morefish.text.Lang.replace;
+import static me.elsiff.morefish.text.Lang.tagResolver;
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.resolver;
 
 public final class FishingCompetitionAutoRunner {
 
-    private static final long HALF_MINUTE = 600L;
-    private BukkitTask timeCheckingTask;
+    private ScheduledTask timeCheckingTask;
 
     public void disable() {
         if (timeCheckingTask == null) {
@@ -32,52 +32,44 @@ public final class FishingCompetitionAutoRunner {
         timeCheckingTask = null;
     }
 
-    @SuppressWarnings("DataFlowIssue")
     public void enable() {
         if (timeCheckingTask != null) {
             throw new IllegalStateException("Auto runner must not be already enabled");
         }
 
-        ConfigurationSection config = getPlugin().getConfig().getConfigurationSection("auto-running");
-        int requiredPlayers = config.getInt("required-players");
-        long duration = config.getLong("timer") * 20L;
+        FileConfiguration config = getPlugin().getConfig();
+        int requiredPlayers = config.getInt("auto-running.required-players", 5);
+        long duration = config.getLong("auto-running.timer", 300) * 20L;
         List<CompetitionTimes> competitionTimes = getCompetitionTimes();
-        List<Duration> displayedReminders = new ArrayList<>();
-        timeCheckingTask = new BukkitRunnable() {
-
-            @Override
-            public void run() {
-                LocalTime currentTime = LocalTime.now().withSecond(0).withNano(0);
-                if (competitionTimes.stream().anyMatch(time -> time.matchesReminderTimes(currentTime) && !displayedReminders.contains(time.reminderTimes.get(currentTime)))) {
-                    StringBuilder sb = new StringBuilder(PREFIX_STRING).append("<white>If there are <gold>").append(requiredPlayers).append(" <white>or more players online in <gold>");
-                    competitionTimes.stream().filter(c -> c.matchesReminderTimes(currentTime)).findFirst().ifPresent(c -> {
-                        Duration remainingTime = c.reminderTimes.get(currentTime);
-                        int hours = remainingTime.toHoursPart();
-                        int minutes = remainingTime.toMinutesPart();
-                        displayedReminders.add(remainingTime);
-                        if (hours > 0) {
-                            sb.append(hours).append(" hour").append((hours > 1 ? "s" : ""));
-                        }
-
-                        if (minutes > 0) {
-                            if (hours > 0) {
-                                sb.append(" ");
-                            }
-
-                            sb.append(minutes).append(" minute").append((minutes > 1 ? "s" : ""));
-                        }
-                    });
-                    sb.append("<white>, the next competition will begin!");
-                    Bukkit.broadcast(replace(sb.toString()));
-                }
-                else if (Bukkit.getOnlinePlayers().size() >= requiredPlayers) {
-                    if (competitionTimes.stream().anyMatch(time -> time.matchesStartTime(currentTime)) && getCompetitionHost().getCompetition().isDisabled()) {
-                        getCompetitionHost().openCompetitionFor(duration);
-                        displayedReminders.clear();
+        timeCheckingTask = Bukkit.getAsyncScheduler().runAtFixedRate(getPlugin(), task -> {
+            LocalTime currentTime = LocalTime.now().withSecond(0).withNano(0);
+            if (competitionTimes.stream().anyMatch(time -> time.matchesReminderTimes(currentTime))) {
+                competitionTimes.stream().filter(c -> c.matchesReminderTimes(currentTime)).findFirst().ifPresent(c -> {
+                    StringBuilder sb = new StringBuilder();
+                    Duration remainingTime = c.reminderTimes.get(currentTime);
+                    int hours = remainingTime.toHoursPart();
+                    int minutes = remainingTime.toMinutesPart();
+                    if (hours > 0) {
+                        sb.append(hours).append(" hour").append((hours > 1 ? "s" : ""));
                     }
+
+                    if (minutes > 0) {
+                        if (hours > 0) {
+                            sb.append(" ");
+                        }
+
+                        sb.append(minutes).append(" minute").append((minutes > 1 ? "s" : ""));
+                    }
+
+                    Bukkit.broadcast(replace("<mf-lang:pre-announcement>", resolver(tagResolver("time-before-start", sb.toString()), tagResolver("required-players", text(requiredPlayers)))));
+                });
+            }
+            else if (Bukkit.getOnlinePlayers().size() >= requiredPlayers) {
+                if (competitionTimes.stream().anyMatch(time -> time.matchesStartTime(currentTime)) && !getCompetitionHost().getCompetition().isEnabled()) {
+                    getCompetitionHost().openCompetitionFor(duration);
                 }
             }
-        }.runTaskTimer(getPlugin(), 0, HALF_MINUTE);
+        }, 0, 1, TimeUnit.MINUTES);
     }
 
     @NotNull

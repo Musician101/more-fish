@@ -16,52 +16,27 @@ import static me.elsiff.morefish.MoreFish.getPlugin;
 
 public final class FishingCompetition extends FishRecordKeeper {
 
-    @NotNull
-    private FishingCompetition.State state = State.DISABLED;
-
-    private void checkStateDisabled() {
-        if (state != State.DISABLED) {
-            throw new IllegalStateException("Fishing competition isn't disabled");
-        }
-    }
-
-    private void checkStateEnabled() {
-        if (state != State.ENABLED) {
-            throw new IllegalStateException("Fishing competition isn't enabled");
-        }
-    }
+    private boolean enabled = false;
 
     public void disable() {
-        this.checkStateEnabled();
+        enabled = false;
         getMusiBoard().clear();
-        this.state = FishingCompetition.State.DISABLED;
     }
 
     public void enable() {
-        this.checkStateDisabled();
-        this.state = FishingCompetition.State.ENABLED;
+        enabled = true;
     }
 
     private MusiBoardHooker getMusiBoard() {
         return getPlugin().getMusiBoard();
     }
 
-    @NotNull
-    public FishingCompetition.State getState() {
-        return this.state;
-    }
-
-    public boolean isDisabled() {
-        return this.state == FishingCompetition.State.DISABLED;
-    }
-
     public boolean isEnabled() {
-        return this.state == FishingCompetition.State.ENABLED;
+        return enabled;
     }
 
     @Override
     public void add(@NotNull FishRecord record) {
-        checkStateEnabled();
         Optional<FishRecord> optional = getRecord(record.fisher());
         if (optional.isPresent()) {
             optional.filter(r -> record.getLength() >= r.getLength()).ifPresent(r -> {
@@ -101,16 +76,11 @@ public final class FishingCompetition extends FishRecordKeeper {
     public boolean willBeNewFirst(@NotNull OfflinePlayer catcher, @NotNull Fish fish) {
         if (!getRecords().isEmpty()) {
             List<FishRecord> records = getRecords();
-            records.sort(SortType.LENGTH.sorter().reversed());
+            records.sort(SortType.LENGTH.reversed());
             FishRecord record = records.getFirst();
             return fish.length() > record.getLength() && !record.fisher().equals(catcher.getUniqueId());
         }
 
         return true;
-    }
-
-    public enum State {
-        ENABLED,
-        DISABLED
     }
 }

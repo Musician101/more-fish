@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.text.Lang.PREFIX_STRING;
+import static me.elsiff.morefish.text.Lang.raw;
 import static me.elsiff.morefish.text.Lang.replace;
 
 class MFSBCommand implements LiteralCommand {
@@ -27,7 +27,7 @@ class MFSBCommand implements LiteralCommand {
     @NotNull
     @Override
     public String description(@NotNull CommandSender sender) {
-        return "Shows the competition scoreboard.";
+        return raw("command-scoreboard-description");
     }
 
     @Override
@@ -37,15 +37,15 @@ class MFSBCommand implements LiteralCommand {
             MusiBoardHooker musiBoard = getPlugin().getMusiBoard();
             if (musiBoard.hasHooked()) {
                 getPlugin().getMusiBoard().swapScoreboards(player);
-                player.sendMessage(replace(PREFIX_STRING + "<white>Scoreboard swapped."));
+                player.sendMessage(replace("<mf-lang:command-scoreboard-success>"));
                 return 1;
             }
 
-            player.sendMessage(replace(PREFIX_STRING + "<white>Scoreboard support is not enabled."));
+            player.sendMessage(replace("<mf-lang:command-scoreboard-no-support>"));
             return 1;
         }
 
-        player.sendMessage(replace(PREFIX_STRING + "<white>There is no competition running."));
+        player.sendMessage(replace("<mf-lang:command-scoreboard-no-competition>"));
         return 1;
     }
 

@@ -12,8 +12,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.command.MFMain.cmdInfo;
-import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
+import static me.elsiff.morefish.text.Lang.replace;
+import static me.elsiff.morefish.text.Lang.tagResolver;
+import static net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.resolver;
 
 class MFHelp extends HelpSubCommand {
 
@@ -21,10 +22,9 @@ class MFHelp extends HelpSubCommand {
         super(root, getPlugin());
     }
 
-    @NotNull
     @Override
-    protected Component commandInfo(@NotNull Command<? extends ArgumentBuilder<CommandSender, ?>> command, @NotNull CommandSender sender) {
-        return cmdInfo(command, sender);
+    protected @NotNull Component commandInfo(@NotNull Command<? extends ArgumentBuilder<CommandSender, ?>> root, @NotNull Command<? extends ArgumentBuilder<CommandSender, ?>> command, @NotNull CommandSender sender) {
+        return replace("<mf-lang:command-help-info>", resolver(tagResolver("command-usage", root.usage(sender) + command.name()), tagResolver("command-description", command.description(sender))));
     }
 
     @SuppressWarnings("UnstableApiUsage")
@@ -33,13 +33,16 @@ class MFHelp extends HelpSubCommand {
     protected Component header() {
         PluginMeta meta = plugin.getPluginMeta();
         List<String> authors = meta.getAuthors();
-        int last = authors.size() - 1;
-        String authorsString = switch (last) {
-            case 0 -> authors.getFirst();
-            case 1 -> String.join(" and ", authors);
-            default -> String.join(", and ", String.join(", ", authors.subList(0, last)), authors.get(last));
-        };
-        String string = "<dark_aqua>> ===== <aqua><hover:show_text:'<color:#BDB76B>Developed by " + authorsString + "'>" + meta.getDisplayName() + "<dark_aqua> ===== <<newline><gold>Click a command for more info.<newline><click:open_url:https://github.com/Musician101/more-fish/wiki>Click here to visit our wiki.";
-        return miniMessage().deserialize(string);
+        String authorsString = "";
+        if (!authors.isEmpty()) {
+            int last = authors.size() - 1;
+            authorsString = switch (last) {
+                case 0 -> authors.getFirst();
+                case 1 -> String.join(" and ", authors);
+                default -> String.join(", and ", String.join(", ", authors.subList(0, last)), authors.get(last));
+            };
+        }
+
+        return replace("<mf-lang:command-help-header>", resolver(tagResolver("authors", authorsString), tagResolver("plugin-display-name", meta.getDisplayName())));
     }
 }
