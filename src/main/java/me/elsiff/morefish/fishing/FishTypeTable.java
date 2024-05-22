@@ -153,7 +153,7 @@ public final class FishTypeTable {
                         getPlugin().saveResource("fish/" + fishRarityFile, false);
                     }
                     catch (IllegalArgumentException e) {
-                        getPlugin().getSLF4JLogger().warn("Could not find fish/" + fishRarityFile + " in plugin jar. This message can be ignored if the rarity is not in fish.json");
+                        getPlugin().getSLF4JLogger().warn("Could not find fish/{} in plugin jar. This message can be ignored if the rarity is not in fish.json", fishRarityFile);
                     }
 
                     try {
