@@ -22,6 +22,9 @@ import static net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.reso
 
 public abstract class FishRecordKeeper {
 
+    @NotNull
+    protected final List<FishRecord> records = new ArrayList<>();
+
     public void informAboutRanking(@NotNull CommandSender receiver) {
         informAboutRanking(receiver, records);
     }
@@ -52,9 +55,6 @@ public abstract class FishRecordKeeper {
             }
         }
     }
-
-    @NotNull
-    protected final List<FishRecord> records = new ArrayList<>();
 
     public void clear() {
         records.clear();
