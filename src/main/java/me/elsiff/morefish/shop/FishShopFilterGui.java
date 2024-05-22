@@ -62,7 +62,6 @@ public class FishShopFilterGui extends AbstractFishShopGUI {
         });
     }
 
-    //TODO remove underscores from all tag resolvers
     private void updateIcon(int slot, FishRarity fishRarity) {
         Component name = replace("<mf-lang:sales-filter-name>", resolver(tagResolver("rarity-color", Tag.styling(builder -> {
             String color = fishRarity.color();

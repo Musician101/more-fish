@@ -144,7 +144,7 @@ public class Lang {
 
     @NotNull
     public static TagResolver fishRarityColor(@NotNull Fish fish) {
-        return tagResolver("rarity_color", Tag.styling(builder -> {
+        return tagResolver("fish-rarity-color", Tag.styling(builder -> {
             String color = fish.rarity().color();
             TextColor textColor = NamedTextColor.NAMES.valueOr(color, NamedTextColor.WHITE);
             if (color.startsWith(TextColor.HEX_PREFIX)) {
@@ -157,12 +157,12 @@ public class Lang {
 
     @NotNull
     public static TagResolver fishName(@NotNull Fish fish) {
-        return tagResolver("fish_name", fish.name());
+        return tagResolver("fish-name", fish.name());
     }
 
     @NotNull
     public static TagResolver fishName(@NotNull FishRecord record) {
-        return tagResolver("fish_name", record.getFishName());
+        return tagResolver("fish-name", record.getFishName());
     }
 
     @NotNull
