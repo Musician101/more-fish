@@ -20,10 +20,8 @@ import static me.elsiff.morefish.MoreFish.getPlugin;
 import static me.elsiff.morefish.text.Lang.replace;
 import static me.elsiff.morefish.text.Lang.timeRemaining;
 
-public final class FishingCompetitionTimerBarHandler {
+public final class FishingCompetitionTimerBarHandler implements Listener {
 
-    //TODO add lang file for better messages configuration
-    private FishingCompetitionTimerBarHandler.TimerBarDisplayer barDisplayer;
     private ScheduledTask barUpdatingTask;
     private BossBar timerBar;
     private long remainingSeconds;
@@ -34,8 +32,7 @@ public final class FishingCompetitionTimerBarHandler {
         timerBar.name(timerBarTitle(0));
         timerBar.progress(0);
         Bukkit.getOnlinePlayers().forEach(player -> player.hideBossBar(timerBar));
-        HandlerList.unregisterAll(barDisplayer);
-        barDisplayer = null;
+        HandlerList.unregisterAll(this);
         Bukkit.removeBossBar(getTimerBarKey());
         timerBar = null;
     }
@@ -50,7 +47,7 @@ public final class FishingCompetitionTimerBarHandler {
             timerBar.name(timerBarTitle(remainingSeconds));
             timerBar.progress((float) remainingSeconds / duration);
         }, 0, 1, TimeUnit.SECONDS);
-        Bukkit.getPluginManager().registerEvents(barDisplayer = new TimerBarDisplayer(), getPlugin());
+        Bukkit.getPluginManager().registerEvents(this, getPlugin());
     }
 
     public boolean getHasTimerEnabled() {
@@ -65,18 +62,13 @@ public final class FishingCompetitionTimerBarHandler {
         return replace("<mf-lang:timer-bar-title>", timeRemaining(remainingSeconds));
     }
 
-    //TODO literally can just add this to the main class
-    @Deprecated
-    private final class TimerBarDisplayer implements Listener {
+    @EventHandler
+    public void onPlayerJoin(@NotNull PlayerJoinEvent event) {
+        event.getPlayer().showBossBar(timerBar);
+    }
 
-        @EventHandler
-        public void onPlayerJoin(@NotNull PlayerJoinEvent event) {
-            event.getPlayer().showBossBar(timerBar);
-        }
-
-        @EventHandler
-        public void onPlayerQuit(@NotNull PlayerQuitEvent event) {
-            event.getPlayer().hideBossBar(timerBar);
-        }
+    @EventHandler
+    public void onPlayerQuit(@NotNull PlayerQuitEvent event) {
+        event.getPlayer().hideBossBar(timerBar);
     }
 }

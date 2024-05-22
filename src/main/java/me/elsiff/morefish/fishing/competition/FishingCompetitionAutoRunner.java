@@ -61,7 +61,7 @@ public final class FishingCompetitionAutoRunner {
                         sb.append(minutes).append(" minute").append((minutes > 1 ? "s" : ""));
                     }
 
-                    Bukkit.broadcast(replace("<mf-lang:pre-announcement>", resolver(tagResolver("time-before-start", sb.toString()), tagResolver("required-players", text(requiredPlayers)))));
+                    Bukkit.broadcast(replace("<mf-lang:pre-announcement>", resolver(tagResolver("time-remaining", sb.toString()), tagResolver("required-players", text(requiredPlayers)))));
                 });
             }
             else if (Bukkit.getOnlinePlayers().size() >= requiredPlayers) {
@@ -99,6 +99,10 @@ public final class FishingCompetitionAutoRunner {
                 String[] args = s.split(":");
                 return Duration.ofHours(Integer.parseInt(args[0])).plusMinutes(Long.parseLong(args[1]));
             }).forEach(d -> reminderTimes.put(this.startTime.minus(d), d));
+        }
+
+        public @NotNull LocalTime getStartTime() {
+            return startTime;
         }
 
         public boolean matchesStartTime(@NotNull LocalTime time) {

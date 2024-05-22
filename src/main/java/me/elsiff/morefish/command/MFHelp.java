@@ -24,7 +24,7 @@ class MFHelp extends HelpSubCommand {
 
     @Override
     protected @NotNull Component commandInfo(@NotNull Command<? extends ArgumentBuilder<CommandSender, ?>> root, @NotNull Command<? extends ArgumentBuilder<CommandSender, ?>> command, @NotNull CommandSender sender) {
-        return replace("<mf-lang:command-help-info>", resolver(tagResolver("command-usage", root.usage(sender) + command.name()), tagResolver("command-description", command.description(sender))));
+        return replace("<mf-lang:command-help-info>", resolver(tagResolver("command-usage", root.usage(sender) + " " + command.name()), tagResolver("command-description", command.description(sender))));
     }
 
     @SuppressWarnings("UnstableApiUsage")

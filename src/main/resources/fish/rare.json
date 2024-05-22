@@ -34,7 +34,7 @@
   "Squid": {
     "commands": [
       "minecraft:effect give @p minecraft:blindness 5 1",
-      "tellraw @p [{\"text\":\"[MoreFish]\",\"color\":\"aqua\"},{\"text\":\" The squid gifted you some darkness!\",\"color\":\"white\"}]"
+      "tellraw @p [{\"text\":\"[\",\"color\":\"dark_gray\"},{\"text\":\"MoreFish\",\"color\":\"gold\"},{\"text\":\"]\",\"color\":\"dark_gray\"},{\"text\":\" The squid gifted you some darkness!\",\"color\":\"white\"}]"
     ],
     "length-max": 50,
     "display-name": "Squid",
@@ -57,7 +57,7 @@
   },
   "Goldie": {
     "commands": [
-      "tellraw @p [{\"text\":\"[MoreFish]\",\"color\":\"aqua\"},{\"text\":\" You have found Goldie!\",\"color\":\"white\"}]"
+      "tellraw @p [{\"text\":\"[\",\"color\":\"dark_gray\"},{\"text\":\"MoreFish\",\"color\":\"gold\"},{\"text\":\"]\",\"color\":\"dark_gray\"},{\"text\":\" You have found Goldie!\",\"color\":\"white\"}]"
     ],
     "length-max": 140,
     "display-name": "Goldie",
@@ -108,7 +108,7 @@
   "Jellyfish": {
     "commands": [
       "minecraft:effect give @p minecraft:poison 3 1",
-      "tellraw @p [{\"text\":\"[MoreFish]\",\"color\":\"aqua\"},{\"text\":\" The jellyfish made you feel very bad!\",\"color\":\"white\"}]"
+      "tellraw @p [{\"text\":\"[\",\"color\":\"dark_gray\"},{\"text\":\"MoreFish\",\"color\":\"gold\"},{\"text\":\"]\",\"color\":\"dark_gray\"},{\"text\":\" The jellyfish made you feel very bad!\",\"color\":\"white\"}]"
     ],
     "length-max": 40,
     "display-name": "Jellyfish",

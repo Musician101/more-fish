@@ -153,7 +153,7 @@ public final class FishTypeTable {
                         getPlugin().saveResource("fish/" + fishRarityFile, false);
                     }
                     catch (IllegalArgumentException e) {
-                        getPlugin().getLogger().warning("Could not find fish/" + fishRarityFile + " in plugin jar. This message can be ignored if the rarity is not in fish.json");
+                        getPlugin().getSLF4JLogger().warn("Could not find fish/" + fishRarityFile + " in plugin jar. This message can be ignored if the rarity is not in fish.json");
                     }
 
                     try {
@@ -198,7 +198,7 @@ public final class FishTypeTable {
             }
         }
         catch (IOException e) {
-            getPlugin().getLogger().severe("Failed to load " + fishFile);
+            getPlugin().getSLF4JLogger().error("Failed to load {}", fishFile);
         }
     }
 

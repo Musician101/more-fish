@@ -71,10 +71,6 @@ public final class FishingCompetitionHost {
         return getPlugin().getConfig();
     }
 
-    private ConfigurationSection getMsgConfig() {
-        return getConfig().getConfigurationSection("messages");
-    }
-
     @NotNull
     private Map<Integer, Prize> getPrizes() {
         ConfigurationSection cs = getConfig().getConfigurationSection("contest-prizes");

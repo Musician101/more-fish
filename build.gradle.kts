@@ -20,7 +20,7 @@ plugins {
 }
 
 group = "me.elsiff"
-version = "4.3.0"
+version = "4.3.1"
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
@@ -78,7 +78,8 @@ bukkitPluginYaml {
     main = "me.elsiff.morefish.MoreFish"
     authors.addAll("elsiff", "Musician101")
     apiVersion = "1.20"
-    softDepend.addAll("mcMMO", "MusiBoard", "Vault")
+    softDepend.addAll("mcMMO", "Vault")
+    depend.add("MusiBoard")
     commands.create("morefish") {
         aliases.addAll("mf", "fish")
         description = "Main command for MoreFish."

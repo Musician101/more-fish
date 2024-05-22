@@ -63,7 +63,7 @@
   },
   "BaggedMilk": {
     "commands": [
-      "tellraw @p [{\"text\":\"[MoreFish] \",\"color\":\"aqua\"},{\"text\":\"Return this to your local Merzetti.\",\"color\":\"white\"}]"
+      "tellraw @p [{\"text\":\"[\",\"color\":\"dark_gray\"},{\"text\":\"MoreFish\",\"color\":\"gold\"},{\"text\":\"]\",\"color\":\"dark_gray\"},{\"text\":\" Return this to your local Merzetti.\",\"color\":\"white\"}]"
     ],
     "length-max": 20,
     "display-name": "Bagged Milk",
@@ -87,7 +87,7 @@
   "StinkyFish": {
     "commands": [
       "minecraft:effect give @p minecraft:nausea 5 1",
-      "tellraw @p [{\"text\":\"[MoreFish]\",\"color\":\"aqua\"},{\"text\":\"Aw Barf! That is one stinky fish!\",\"color\":\"white\"}]"
+      "tellraw @p [{\"text\":\"[\",\"color\":\"dark_gray\"},{\"text\":\"MoreFish\",\"color\":\"gold\"},{\"text\":\"]\",\"color\":\"dark_gray\"},{\"text\":\" Aw Barf! That is one stinky fish!\",\"color\":\"white\"}]"
     ],
     "length-max": 1,
     "display-name": "Stinky Fish",

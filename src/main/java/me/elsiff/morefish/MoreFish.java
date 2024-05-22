@@ -76,7 +76,6 @@ public final class MoreFish extends JavaPlugin {
         });
     }
 
-    //TODO switch all getLogger() to getSLF4JLogger()
     @NotNull
     public FishingLogs getFishingLogs() {
         return fishingLogs;
@@ -90,6 +89,11 @@ public final class MoreFish extends JavaPlugin {
     @NotNull
     public FishingCompetitionHost getCompetitionHost() {
         return competitionHost;
+    }
+
+    @NotNull
+    public FishingCompetitionAutoRunner getAutoRunner() {
+        return autoRunner;
     }
 
     @NotNull
@@ -129,14 +133,14 @@ public final class MoreFish extends JavaPlugin {
             autoRunner.disable();
         }
 
-        getLogger().info("Plugin has been disabled.");
+        getSLF4JLogger().info("Plugin has been disabled.");
     }
 
     @Override
     public void onEnable() {
-        vault.hookIfEnabled();
-        mcmmo.hookIfEnabled();
-        musiBoard.hookIfEnabled();
+        vault.hook();
+        mcmmo.hook();
+        musiBoard.hook();
         applyConfig();
         fishBags.load();
         fishingLogs.load();
@@ -145,6 +149,6 @@ public final class MoreFish extends JavaPlugin {
         pm.registerEvents(new FishingListener(), this);
         pm.registerEvents(fishBags, this);
         registerCommand(getPlugin(), new MFMain());
-        getLogger().info("Plugin has been enabled.");
+        getSLF4JLogger().info("Plugin has been enabled.");
     }
 }

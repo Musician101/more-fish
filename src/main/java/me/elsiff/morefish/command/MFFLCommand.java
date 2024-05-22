@@ -51,7 +51,6 @@ class MFFLCommand implements LiteralCommand {
         records.forEach(record -> player.sendMessage(replace("<mf-lang:command-fishing-logs-record>", resolver(fishName(record), fishLength(record), date(record)))));
     }
 
-    //TODO command to show fishing competition times
     @NotNull
     @Override
     public String description(@NotNull CommandSender sender) {

@@ -41,7 +41,6 @@ public class MFLang implements LiteralCommand {
         return sender.hasPermission("morefish.admin");
     }
 
-    //TODO move all tag resolvers to singular class/package
     @Override
     public @NotNull List<Command<? extends ArgumentBuilder<CommandSender, ?>>> arguments() {
         return List.of(new ArgumentCommand<String>() {

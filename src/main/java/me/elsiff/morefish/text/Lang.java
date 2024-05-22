@@ -155,7 +155,6 @@ public class Lang {
         }));
     }
 
-    //TODO make sure to update fish.json item-format.display-name
     @NotNull
     public static TagResolver fishName(@NotNull Fish fish) {
         return tagResolver("fish_name", fish.name());

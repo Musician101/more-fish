@@ -3,6 +3,9 @@ package me.elsiff.morefish.shop;
 import me.elsiff.morefish.fishing.FishRarity;
 import me.elsiff.morefish.fishing.FishTypeTable;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.minimessage.tag.Tag;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -21,6 +24,8 @@ import static io.musician101.musigui.paper.chest.PaperIconUtil.customName;
 import static io.musician101.musigui.paper.chest.PaperIconUtil.setLore;
 import static me.elsiff.morefish.MoreFish.getPlugin;
 import static me.elsiff.morefish.text.Lang.replace;
+import static me.elsiff.morefish.text.Lang.tagResolver;
+import static net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.resolver;
 
 public class FishShopFilterGui extends AbstractFishShopGUI {
 
@@ -59,8 +64,16 @@ public class FishShopFilterGui extends AbstractFishShopGUI {
 
     //TODO remove underscores from all tag resolvers
     private void updateIcon(int slot, FishRarity fishRarity) {
-        Component name = replace("<mf-lang:sales-filter-name>");
-        Component lore = replace("<mf-lang:sales-filter-" + (selectedRarities.contains(fishRarity) ? "" : "not-") + "selected");
+        Component name = replace("<mf-lang:sales-filter-name>", resolver(tagResolver("rarity-color", Tag.styling(builder -> {
+            String color = fishRarity.color();
+            TextColor textColor = NamedTextColor.NAMES.valueOr(color, NamedTextColor.WHITE);
+            if (color.startsWith(TextColor.HEX_PREFIX)) {
+                textColor = TextColor.fromHexString(color);
+            }
+
+            builder.color(textColor);
+        })), tagResolver("fish-rarity", fishRarity.displayName())));
+        Component lore = replace("<mf-lang:sales-filter-icon-" + (selectedRarities.contains(fishRarity) ? "" : "not-") + "selected>");
         ItemStack itemStack = setLore(customName(new ItemStack(Material.COD), name), lore);
         setButton(slot, itemStack, ClickType.LEFT, p -> {
             if (selectedRarities.contains(fishRarity)) {
