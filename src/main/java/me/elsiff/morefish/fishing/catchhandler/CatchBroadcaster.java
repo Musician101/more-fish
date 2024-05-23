@@ -1,19 +1,19 @@
 package me.elsiff.morefish.fishing.catchhandler;
 
-import javax.annotation.Nonnull;
-import me.elsiff.morefish.announcement.NoAnnouncement;
-import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.Fish;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+
+import static me.elsiff.morefish.text.Lang.raw;
 
 public final class CatchBroadcaster extends AbstractBroadcaster {
 
-    @Nonnull
+    @NotNull
     public String getCatchMessageFormat() {
-        return Lang.CATCH_FISH;
+        return raw("catch-message-format");
     }
 
-    public boolean meetBroadcastCondition(@Nonnull Player catcher, @Nonnull Fish fish) {
-        return !(fish.type().catchAnnouncement() instanceof NoAnnouncement);
+    public boolean meetBroadcastCondition(@NotNull Player catcher, @NotNull Fish fish) {
+        return !fish.type().catchAnnouncement().receiversOf(catcher).isEmpty();
     }
 }

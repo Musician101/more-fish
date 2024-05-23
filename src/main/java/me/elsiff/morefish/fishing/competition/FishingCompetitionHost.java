@@ -1,32 +1,27 @@
 package me.elsiff.morefish.fishing.competition;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import javax.annotation.Nonnull;
-import me.elsiff.morefish.MoreFish;
-import me.elsiff.morefish.configuration.Config;
-import me.elsiff.morefish.configuration.Lang;
-import me.elsiff.morefish.util.NumberUtils;
-import net.kyori.adventure.text.Component;
+import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
+import me.elsiff.morefish.command.argument.SortArgumentType.SortType;
+import me.elsiff.morefish.fishing.fishrecords.FishRecord;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.Server;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import static me.elsiff.morefish.MoreFish.getPlugin;
+import static me.elsiff.morefish.text.Lang.replace;
+import static me.elsiff.morefish.text.Lang.timeRemaining;
 
 public final class FishingCompetitionHost {
 
-    @Nonnull
-    private MoreFish getPlugin() {
-        return MoreFish.instance();
-    }
-    @Nonnull
+    @NotNull
     private final FishingCompetitionTimerBarHandler timerBarHandler = new FishingCompetitionTimerBarHandler();
-    private BukkitTask timerTask;
+    private ScheduledTask timerTask;
 
     public void closeCompetition() {
         closeCompetition(false);
@@ -41,103 +36,57 @@ public final class FishingCompetitionHost {
             }
         }
 
-        boolean broadcast = getMsgConfig().getBoolean("broadcast-stop");
-        if (broadcast) {
-            getPlugin().getServer().broadcast(Component.text(Lang.CONTEST_STOP));
-        }
-
+        Bukkit.broadcast(replace("<mf-lang:contest-stop>"));
         if (!suspend) {
             if (!getPrizes().isEmpty()) {
-                List<Record> ranking = getCompetition().getRanking();
+                List<FishRecord> ranking = getCompetition().getRecords();
+                ranking.sort(SortType.LENGTH.reversed());
                 if (!ranking.isEmpty()) {
                     getPrizes().forEach((place, prize) -> {
                         if (ranking.size() > place) {
-                            Record record = ranking.get(place);
+                            FishRecord record = ranking.get(place);
                             prize.giveTo(Bukkit.getOfflinePlayer(record.fisher()), getCompetition().rankNumberOf(record), getPlugin());
                         }
                     });
                 }
             }
 
-            if (broadcast && getMsgConfig().getBoolean("show-top-on-ending")) {
-                getPlugin().getServer().getOnlinePlayers().forEach(this::informAboutRanking);
-            }
+            Bukkit.getOnlinePlayers().forEach(getPlugin().getCompetition()::informAboutRanking);
         }
 
-        if (!getConfig().getBoolean("general.save-records")) {
-            getCompetition().clearRecords();
+        if (getConfig().getBoolean("general.save-records")) {
+            getCompetition().getRecords().forEach(r -> getPlugin().getFishingLogs().add(r));
         }
+
+        getCompetition().clear();
     }
 
-    @Nonnull
+    @NotNull
     public FishingCompetition getCompetition() {
         return getPlugin().getCompetition();
     }
 
-    @Nonnull
+    @NotNull
     private FileConfiguration getConfig() {
         return getPlugin().getConfig();
     }
 
-    private ConfigurationSection getMsgConfig() {
-        return getConfig().getConfigurationSection("messages");
-    }
-
-    @Nonnull
+    @NotNull
     private Map<Integer, Prize> getPrizes() {
-        return Config.getPrizes();
-    }
-
-    public void informAboutRanking(@Nonnull CommandSender receiver) {
-        if (getCompetition().getRanking().isEmpty()) {
-            receiver.sendMessage(Lang.TOP_NO_RECORD);
-        }
-        else {
-            int topSize = getMsgConfig().getInt("top-number", 1);
-            List<Record> top = getCompetition().top(topSize);
-            top.forEach(record -> {
-                int number = top.indexOf(record) + 1;
-                receiver.sendMessage(Lang.replace(Lang.TOP_LIST, topReplacementOf(number, record)));
-            });
-
-            if (receiver instanceof Player) {
-                if (!getCompetition().containsContestant(((Player) receiver).getUniqueId())) {
-                    receiver.sendMessage(Lang.TOP_MINE_NO_RECORD);
-                }
-                else {
-                    Entry<Integer, Record> entry = getCompetition().rankedRecordOf((OfflinePlayer) receiver);
-                    receiver.sendMessage(Lang.replace(Lang.TOP_MINE, topReplacementOf(entry.getKey() + 1, entry.getValue())));
-                }
-            }
+        ConfigurationSection cs = getConfig().getConfigurationSection("contest-prizes");
+        if (cs == null) {
+            return Map.of();
         }
 
-    }
-
-    public void openCompetition() {
-        getCompetition().enable();
-        if (getMsgConfig().getBoolean("broadcast-start")) {
-            getPlugin().getServer().broadcast(Component.text(Lang.CONTEST_START));
-        }
-
+        return cs.getKeys(false).stream().collect(Collectors.toMap(key -> Integer.parseInt(key) - 1, key -> new Prize(cs.getStringList(key))));
     }
 
     public void openCompetitionFor(long tick) {
         long duration = tick / (long) 20;
         getCompetition().enable();
-        Server server = getPlugin().getServer();
-        timerTask = server.getScheduler().runTaskLater(getPlugin(), (Runnable) this::closeCompetition, tick);
-        if (getConfig().getBoolean("general.use-boss-bar")) {
-            timerBarHandler.enableTimer(duration);
-        }
-
-        if (getMsgConfig().getBoolean("broadcast-start")) {
-            server.broadcast(Component.text(Lang.CONTEST_START));
-            server.broadcast(Component.text(Lang.replace(Lang.CONTEST_START_TIMER, Map.of("%time%", Lang.time(duration)))));
-        }
-    }
-
-    private Map<String, Object> topReplacementOf(int number, Record record) {
-        String player = Bukkit.getOfflinePlayer(record.fisher()).getName();
-        return Map.of("%ordinal%", NumberUtils.ordinalOf(number), "%number%", String.valueOf(number), "%player%", player == null ? "null" : player, "%length%", String.valueOf(record.fish().length()), "%fish%", record.fish().type().name());
+        timerTask = Bukkit.getAsyncScheduler().runDelayed(getPlugin(), task -> closeCompetition(), duration, TimeUnit.SECONDS);
+        timerBarHandler.enableTimer(duration);
+        Bukkit.broadcast(replace("<mf-lang:contest-start>"));
+        Bukkit.broadcast(replace("<mf-lang:contest-start-timer>", timeRemaining(duration)));
     }
 }

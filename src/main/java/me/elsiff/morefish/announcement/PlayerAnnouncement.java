@@ -1,56 +1,58 @@
 package me.elsiff.morefish.announcement;
 
-import java.util.List;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import org.bukkit.configuration.ConfigurationSection;
+import com.google.gson.JsonObject;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public interface PlayerAnnouncement {
 
-    @Nonnull
-    static PlayerAnnouncement fromConfigOrDefault(@Nullable ConfigurationSection cs, @Nonnull String path, @Nonnull PlayerAnnouncement def) {
-        if (cs == null || !cs.contains(path)) {
+    @NotNull
+    static PlayerAnnouncement fromConfigOrDefault(@Nullable JsonObject json, @NotNull String path, @NotNull PlayerAnnouncement def) {
+        if (json == null || !json.has(path)) {
             return def;
         }
 
-        return fromValue(cs.getDouble(path));
+        return fromValue(json.getAsJsonPrimitive(path).getAsDouble());
     }
 
-    @Nonnull
+    @NotNull
     static PlayerAnnouncement fromValue(double d) {
         return switch ((int) d) {
-            case -2 -> PlayerAnnouncement.ofEmpty();
-            case -1 -> PlayerAnnouncement.ofServerBroadcast();
-            case 0 -> PlayerAnnouncement.ofBaseOnly();
-            default -> PlayerAnnouncement.ofRanged(d);
+            case -2 -> PlayerAnnouncement.empty();
+            case -1 -> PlayerAnnouncement.serverBroadcast();
+            case 0 -> PlayerAnnouncement.catcherOnly();
+            default -> PlayerAnnouncement.ranged(d);
         };
     }
 
-    @Nonnull
-    static PlayerAnnouncement ofBaseOnly() {
-        return new BaseOnlyAnnouncement();
+    @NotNull
+    static PlayerAnnouncement catcherOnly() {
+        return List::of;
     }
 
-    @Nonnull
-    static PlayerAnnouncement ofEmpty() {
-        return new NoAnnouncement();
+    @NotNull
+    static PlayerAnnouncement empty() {
+        return catcher -> List.of();
     }
 
-    @Nonnull
-    static PlayerAnnouncement ofRanged(double radius) {
+    @NotNull
+    static PlayerAnnouncement ranged(double radius) {
         if (radius <= 0) {
             throw new IllegalArgumentException("Radius must not be negative");
         }
 
-        return new RangedAnnouncement(radius);
+        return catcher -> catcher.getWorld().getPlayers().stream().filter(player -> player.getLocation().distance(catcher.getLocation()) <= radius).toList();
     }
 
-    @Nonnull
-    static PlayerAnnouncement ofServerBroadcast() {
-        return new ServerAnnouncement();
+    @NotNull
+    static PlayerAnnouncement serverBroadcast() {
+        return catcher -> new ArrayList<>(catcher.getServer().getOnlinePlayers());
     }
 
-    @Nonnull
-    List<Player> receiversOf(@Nonnull Player var1);
+    @NotNull
+    List<Player> receiversOf(@NotNull Player catcher);
 }

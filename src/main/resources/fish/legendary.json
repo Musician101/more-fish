@@ -1,0 +1,78 @@
+{
+  "BlueShark": {
+    "length-max": 240,
+    "food-effects": {
+      "commands": [
+        "minecraft:effect give @p minecraft:strength 120 1",
+        "mcmmo:addxp @p Fishing 1000"
+      ]
+    },
+    "display-name": "Blue Shark",
+    "length-min": 160,
+    "icon": {
+      "lore": [
+        "<italic><gray>The Toughest Fish",
+        "<gray>Get <blue>Strength I (2:00)",
+        "<gray>when you eat it."
+      ],
+      "id": "minecraft:salmon"
+    }
+  },
+  "PygmyWhale": {
+    "length-max": 650,
+    "food-effects": {
+      "saturation": 14.4,
+      "points": 20,
+      "commands": [
+        "minecraft:effect give @p minecraft:regeneration 2 127",
+        "mcmmo:addxp @p Fishing 1000"
+      ]
+    },
+    "display-name": "Pygmy Whale",
+    "length-min": 600,
+    "icon": {
+      "lore": [
+        "<gray>The Biggest Fish",
+        "<gray>Get <blue>full health and hunger",
+        "<gray>when you eat it."
+      ],
+      "id": "minecraft:salmon"
+    }
+  },
+  "Gyarados": {
+    "commands": [
+      "minecraft:effect give @p minecraft:strength 120 2",
+      "mcmmo:addxp @p Fishing 1000"
+    ],
+    "length-max": 700,
+    "durability": 1,
+    "display-name": "Gyarados",
+    "length-min": 600,
+    "icon": {
+      "lore": [
+        "<italic><dark_purple>I can't believe it's Magikarp!",
+        "<blue>You feel strong just being near it"
+      ],
+      "id": "minecraft:salmon"
+    }
+  },
+  "EccoTheDolphin": {
+    "commands": [
+      "minecraft:effect give @p minecraft:health_boost 120 4",
+      "mcmmo:addxp @p Fishing 1000"
+    ],
+    "length-max": 250,
+    "display-name": "Ecco the Dolphin",
+    "length-min": 180,
+    "icon": {
+      "lore": [
+        "<italic><dark_purple>Ecco the Dolphin is an action-adventure game",
+        "<italic><dark_purple>originally developed by Ed Annunziata and Novotrade",
+        "<italic><dark_purple>International for the Mega Drive and published",
+        "<italic><dark_purple>by Sega in 1992",
+        "<blue>Boosts your metabolism"
+      ],
+      "id": "minecraft:salmon"
+    }
+  }
+}

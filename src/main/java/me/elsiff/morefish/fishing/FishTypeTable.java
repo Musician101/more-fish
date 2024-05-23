@@ -1,52 +1,59 @@
 package me.elsiff.morefish.fishing;
 
+import com.destroystokyo.paper.profile.PlayerProfile;
+import com.destroystokyo.paper.profile.ProfileProperty;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import java.io.File;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import me.elsiff.morefish.announcement.PlayerAnnouncement;
+import me.elsiff.morefish.fishing.catchhandler.CatchCommandExecutor;
+import me.elsiff.morefish.fishing.catchhandler.CatchFireworkSpawner;
+import me.elsiff.morefish.fishing.catchhandler.CatchHandler;
+import me.elsiff.morefish.fishing.condition.FishCondition;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.inventory.meta.SkullMeta;
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
-import javax.annotation.Nonnull;
-import me.elsiff.morefish.MoreFish;
-import me.elsiff.morefish.announcement.PlayerAnnouncement;
-import me.elsiff.morefish.configuration.Config;
-import me.elsiff.morefish.fishing.catchhandler.CatchCommandExecutor;
-import me.elsiff.morefish.fishing.catchhandler.CatchFireworkSpawner;
-import me.elsiff.morefish.fishing.catchhandler.CatchHandler;
-import me.elsiff.morefish.fishing.competition.FishingCompetition;
-import me.elsiff.morefish.fishing.condition.FishCondition;
-import me.elsiff.morefish.hooker.PluginHooker;
-import me.elsiff.morefish.hooker.ProtocolLibHooker;
-import me.elsiff.morefish.hooker.SkullNbtHandler;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.Damageable;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
+
+import static me.elsiff.morefish.MoreFish.getPlugin;
+import static me.elsiff.morefish.text.Lang.replace;
 
 public final class FishTypeTable {
 
-    private final YamlConfiguration fish = new YamlConfiguration();
+    private static final Gson GSON = new Gson();
     private final BiMap<FishRarity, List<FishType>> map = HashBiMap.create();
+    private final Random random = new Random();
+    private JsonObject fish = new JsonObject();
 
-    @Nonnull
+    @NotNull
     public Optional<FishRarity> getDefaultRarity() {
         Set<FishRarity> defaultRarities = getRarities().stream().filter(FishRarity::isDefault).collect(Collectors.toSet());
         if (defaultRarities.size() <= 1) {
@@ -58,151 +65,206 @@ public final class FishTypeTable {
         return Optional.empty();
     }
 
-    @Nonnull
-    public Optional<ConfigurationSection> getItemFormat() {
-        return Optional.ofNullable(fish.getConfigurationSection("item-format"));
+    @NotNull
+    public Optional<JsonObject> getItemFormat() {
+        return Optional.ofNullable(fish.getAsJsonObject("item-format"));
     }
 
-    @Nonnull
+    private boolean getOrDefault(JsonObject json, String key, boolean def) {
+        return json.has(key) ? json.get(key).getAsBoolean() : def;
+    }
+
+    private boolean getOrDefaultFalse(JsonObject json, String key) {
+        return json.has(key) && json.get(key).getAsBoolean();
+    }
+
+    private double getOrDefaultZero(JsonObject json, String key) {
+        return json.has(key) ? json.get(key).getAsDouble() : 0D;
+    }
+
+    @NotNull
     public Set<FishRarity> getRarities() {
         return map.keySet();
     }
 
-    @Nonnull
+    private List<String> getStringList(JsonArray json) {
+        return json.asList().stream().map(JsonElement::getAsString).toList();
+    }
+
+    @NotNull
     public List<FishType> getTypes() {
         return map.values().stream().flatMap(List::stream).toList();
     }
 
     public void load() {
         map.clear();
-        MoreFish plugin = MoreFish.instance();
-        String fishFile = "fish.yml";
+        Path fishDir = getPlugin().getDataFolder().toPath().resolve("fish");
+        String fishFile = "fish.json";
         try {
-            plugin.saveResource(fishFile, false);
-            fish.load(new File(plugin.getDataFolder(), fishFile));
-            ConfigurationSection raritiesConfig = fish.getConfigurationSection("rarity-list");
+            getPlugin().saveResource("fish/" + fishFile, false);
+            fish = GSON.fromJson(Files.readString(fishDir.resolve(fishFile)), JsonObject.class);
+            JsonObject raritiesConfig = fish.getAsJsonObject("rarity-list");
             if (raritiesConfig != null) {
-                List<FishRarity> rarities = raritiesConfig.getKeys(false).stream().map(raritiesConfig::getConfigurationSection).filter(Objects::nonNull).map(cs -> {
-                    List<CatchHandler> catchHandlers = new ArrayList<>();
-                    if (cs.contains("commands")) {
-                        catchHandlers.add(new CatchCommandExecutor(cs.getStringList("commands")));
+                List<FishRarity> rarities = raritiesConfig.keySet().stream().map(key -> {
+                    if (!raritiesConfig.has(key)) {
+                        return null;
                     }
-                    else if (cs.getBoolean("firework", false)) {
+
+                    JsonObject json = raritiesConfig.getAsJsonObject(key);
+                    List<CatchHandler> catchHandlers = new ArrayList<>();
+                    if (json.has("commands")) {
+                        catchHandlers.add(new CatchCommandExecutor(getStringList(json.getAsJsonArray("commands"))));
+                    }
+                    else if (getOrDefaultFalse(json, "firework")) {
                         catchHandlers.add(new CatchFireworkSpawner());
                     }
 
-                    String displayName = cs.getString("display-name");
+                    String displayName = json.get("display-name").getAsString();
                     if (displayName == null) {
-                        throw new IllegalArgumentException("display-name is missing from " + cs.getCurrentPath() + ".");
+                        throw new IllegalArgumentException("display-name is missing from rarity-list." + key + ".");
                     }
 
-                    boolean isDefault = cs.getBoolean("default", false);
-                    double chance = cs.getDouble("chance", 0D) / 100D;
-                    ChatColor color = Optional.ofNullable(cs.getString("color")).map(String::toUpperCase).map(ChatColor::valueOf).orElse(ChatColor.RESET);
-                    PlayerAnnouncement announcement = PlayerAnnouncement.fromConfigOrDefault(cs, "catch-announce", Config.getDefaultCatchAnnouncement());
-                    boolean skipItemFormat = cs.getBoolean("skip-item-format", false);
-                    boolean noDisplay = cs.getBoolean("no-display", false);
-                    boolean firework = cs.getBoolean("firework", false);
-                    double additionalPrice = cs.getDouble("additional-price", 0D);
-                    List<FishCondition> conditions = FishCondition.loadFrom(cs, "conditions");
-                    return new FishRarity(cs.getName(), displayName, isDefault, chance, color, catchHandlers, conditions, announcement, skipItemFormat, noDisplay, firework, additionalPrice);
-                }).toList();
-                ConfigurationSection fishList = fish.getConfigurationSection("fish-list");
-                if (fishList != null) {
-                    fishList.getKeys(false).stream().map(fishList::getConfigurationSection).filter(Objects::nonNull).forEach(groupByRarity -> {
-                        String rarityName = groupByRarity.getName();
-                        FishRarity rarity = rarities.stream().filter(fishRarity -> rarityName.equals(fishRarity.name())).findFirst().orElseThrow(() -> new IllegalStateException("Rarity " + rarityName + " doesn't exist."));
-                        List<FishType> fishTypes = groupByRarity.getKeys(false).stream().map(groupByRarity::getConfigurationSection).filter(Objects::nonNull).map(cs -> {
-                            List<CatchHandler> catchHandlers = new ArrayList<>(rarity.catchHandlers());
-                            if (cs.contains("commands")) {
-                                catchHandlers.add(new CatchCommandExecutor(cs.getStringList("commands")));
+                    JsonObject losJson = json.getAsJsonObject("luck-of-the-sea");
+                    Map<Integer, Double> luckOfTheSeaChances = new HashMap<>();
+                    if (json.has("luck-of-the-sea")) {
+                        luckOfTheSeaChances = losJson.entrySet().stream().collect(Collectors.toMap(e -> Integer.parseInt(e.getKey()), e -> e.getValue().getAsDouble()));
+                    }
+
+                    boolean isDefault = getOrDefaultFalse(json, "default");
+                    double chance = getOrDefaultZero(json, "chance") / 100D;
+                    String color = json.get("color").getAsString();
+                    PlayerAnnouncement announcement = PlayerAnnouncement.fromConfigOrDefault(json, "catch-announce", PlayerAnnouncement.serverBroadcast());
+                    boolean skipItemFormat = getOrDefaultFalse(json, "skip-item-format");
+                    boolean noDisplay = getOrDefaultFalse(json, "no-display");
+                    boolean firework = getOrDefaultFalse(json, "firework");
+                    double additionalPrice = getOrDefaultZero(json, "additional-price");
+                    List<FishCondition> conditions = FishCondition.loadFrom(json, "conditions");
+                    boolean glow = getOrDefaultFalse(json, "glow");
+                    int customModelData = 0;
+                    if (json.has("custom-model-data")) {
+                        customModelData = json.get("custom-model-data").getAsInt();
+                    }
+
+                    return new FishRarity(key, displayName, isDefault, chance, color, catchHandlers, conditions, announcement, luckOfTheSeaChances, skipItemFormat, noDisplay, firework, additionalPrice, customModelData, glow);
+                }).filter(Objects::nonNull).toList();
+                rarities.forEach(fishRarity -> {
+                    String fishRarityFile = fishRarity.name() + ".json";
+                    try {
+                        getPlugin().saveResource("fish/" + fishRarityFile, false);
+                    }
+                    catch (IllegalArgumentException e) {
+                        getPlugin().getSLF4JLogger().warn("Could not find fish/{} in plugin jar. This message can be ignored if the rarity is not in fish.json", fishRarityFile);
+                    }
+
+                    try {
+                        JsonObject fishList = GSON.fromJson(Files.readString(fishDir.resolve(fishRarityFile)), JsonObject.class);
+                        List<FishType> fishTypes = fishList.keySet().stream().map(name -> {
+                            JsonObject json = fishList.getAsJsonObject(name);
+                            List<CatchHandler> catchHandlers = new ArrayList<>(fishRarity.catchHandlers());
+                            if (json.has("commands")) {
+                                catchHandlers.add(new CatchCommandExecutor(getStringList(json.getAsJsonArray("commands"))));
                             }
-                            else if (cs.getBoolean("firework", false)) {
+                            else if (getOrDefaultFalse(json, "firework")) {
                                 catchHandlers.add(new CatchFireworkSpawner());
                             }
 
-                            String displayName = cs.getString("display-name");
+                            String displayName = json.get("display-name").getAsString();
                             if (displayName == null) {
-                                throw new IllegalArgumentException("display-name is missing from " + cs.getCurrentPath() + ".");
+                                throw new IllegalArgumentException("display-name is missing from fish-list." + fishRarity.name() + "." + name + ".");
                             }
 
-                            String name = cs.getName();
-                            double minLength = cs.getDouble("length-min");
-                            double maxLength = cs.getDouble("length-max");
-                            ItemStack itemStack = loadItemStack(name, cs.getConfigurationSection("icon"));
-                            PlayerAnnouncement announcement = PlayerAnnouncement.fromConfigOrDefault(cs, "catch-announce", rarity.catchAnnouncement());
-                            List<FishCondition> conditions = Stream.concat(FishCondition.loadFrom(cs, "conditions").stream(), rarity.conditions().stream()).toList();
-                            boolean skipItemFormat = cs.getBoolean("skip-item-format", rarity.hasNotFishItemFormat());
-                            boolean noDisplay = cs.getBoolean("no-display", rarity.noDisplay());
-                            boolean firework = cs.getBoolean("firework", rarity.hasCatchFirework());
-                            double additionalPrice = rarity.additionalPrice() + cs.getDouble("additional-price", 0D);
-                            return new FishType(cs.getName(), rarity, displayName, minLength, maxLength, itemStack, catchHandlers, announcement, conditions, skipItemFormat, noDisplay, firework, additionalPrice);
+                            Map<Integer, Double> luckOfTheSeaChances = new HashMap<>(fishRarity.luckOfTheSeaChances());
+                            if (json.has("luck-of-the-sea")) {
+                                luckOfTheSeaChances = json.getAsJsonObject("luck-of-the-sea").entrySet().stream().collect(Collectors.toMap(e -> Integer.parseInt(e.getKey()), e -> e.getValue().getAsDouble()));
+                            }
+
+                            double minLength = json.get("length-min").getAsDouble();
+                            double maxLength = json.get("length-max").getAsDouble();
+                            ItemStack itemStack = loadItemStack(name, json.getAsJsonObject("icon"), fishRarity.customModelData(), "fish-list." + fishRarity.name() + "." + name);
+                            PlayerAnnouncement announcement = PlayerAnnouncement.fromConfigOrDefault(json, "catch-announce", fishRarity.catchAnnouncement());
+                            List<FishCondition> conditions = Stream.concat(FishCondition.loadFrom(json, "conditions").stream(), fishRarity.conditions().stream()).toList();
+                            boolean skipItemFormat = getOrDefault(json, "skip-item-format", fishRarity.hasNotFishItemFormat());
+                            boolean noDisplay = getOrDefault(json, "no-display", fishRarity.noDisplay());
+                            boolean firework = getOrDefault(json, "firework", fishRarity.hasCatchFirework());
+                            double additionalPrice = fishRarity.additionalPrice() + getOrDefaultZero(json, "additional-price");
+                            return new FishType(name, fishRarity, displayName, minLength, maxLength, itemStack, catchHandlers, announcement, conditions, luckOfTheSeaChances, skipItemFormat, noDisplay, firework, additionalPrice);
                         }).toList();
-                        map.put(rarity, fishTypes);
-                    });
-                }
+                        map.put(fishRarity, fishTypes);
+                    }
+                    catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
             }
         }
-        catch (IOException | InvalidConfigurationException e) {
-            plugin.getLogger().severe("Failed to load " + fishFile);
+        catch (IOException e) {
+            getPlugin().getSLF4JLogger().error("Failed to load {}", fishFile);
         }
     }
 
-    private ItemStack loadItemStack(String name, ConfigurationSection cs) {
-        if (cs == null) {
+    private ItemStack loadItemStack(String name, JsonObject json, int customModelData, String path) {
+        if (json == null) {
             throw new IllegalArgumentException("icon is missing from " + name);
         }
 
-        String id = cs.getString("id");
+        String id = json.get("id").getAsString();
         if (id == null) {
-            throw new IllegalArgumentException("id is missing from " + cs.getCurrentPath() + ".");
+            throw new IllegalArgumentException("id is missing from " + path + ".icon");
         }
 
         Material material = Material.matchMaterial(id);
         if (material == null) {
-            throw new IllegalArgumentException("id " + id + " in " + cs.getCurrentPath() + " is not a valid item ID.");
+            throw new IllegalArgumentException("id " + id + " in " + path + ".icon is not a valid item ID.");
         }
 
-        int amount = cs.getInt("amount", 1);
+        int amount = json.has("amount") ? json.get("amount").getAsInt() : 1;
         ItemStack itemStack = new ItemStack(material, amount);
-        ItemMeta itemMeta = itemStack.getItemMeta();
-        itemMeta.lore(cs.getStringList("lore").stream().map(content -> LegacyComponentSerializer.legacy('&').deserialize(content)).collect(Collectors.toList()));
-        if (cs.contains("enchantments")) {
-            cs.getStringList("enchantments").stream().map(string -> string.split("\\|")).forEach(tokens -> {
-                Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(tokens[0]));
-                if (enchantment != null) {
-                    int level = Integer.parseInt(tokens[1]);
-                    itemMeta.addEnchant(enchantment, level, true);
-                }
-            });
-        }
-
-        itemMeta.setUnbreakable(cs.getBoolean("unbreakable", false));
-        if (itemMeta instanceof Damageable) {
-            ((Damageable) itemMeta).setDamage(cs.getInt("durability", 0));
-        }
-
-        if (cs.contains("skull-uuid") && itemMeta instanceof SkullMeta) {
-            ((SkullMeta) itemMeta).setOwningPlayer(Bukkit.getOfflinePlayer(UUID.fromString("skull-uuid")));
-        }
-
-        itemStack.setItemMeta(itemMeta);
-        if (cs.contains("skull-texture")) {
-            ProtocolLibHooker protocolLib = new ProtocolLibHooker();
-            PluginHooker.checkHooked(protocolLib);
-            SkullNbtHandler skullNbtHandler = protocolLib.skullNbtHandler;
-            if (skullNbtHandler != null) {
-                String skullTexture = cs.getString("skull-texture");
-                if (skullTexture != null) {
-                    itemStack = skullNbtHandler.writeTexture(itemStack, skullTexture);
-                }
+        itemStack.editMeta(itemMeta -> {
+            if (json.has("lore")) {
+                List<Component> lore = json.getAsJsonArray("lore").asList().stream().map(content -> replace(content.getAsString())).toList();
+                itemMeta.lore(lore);
             }
-        }
+
+            int finalCustomModelData = customModelData;
+            if (json.has("custom-model-data")) {
+                finalCustomModelData = json.get("custom-model-data").getAsInt();
+            }
+
+            itemMeta.setCustomModelData(finalCustomModelData);
+            itemMeta.setUnbreakable(json.has("unbreakable") && json.get("unbreakable").getAsBoolean());
+            if (json.has("enchantments")) {
+                json.getAsJsonArray("enchantments").asList().stream().map(JsonElement::getAsString).map(string -> string.split("\\|")).forEach(tokens -> {
+                    NamespacedKey key = tokens[0].contains(":") ? NamespacedKey.fromString(tokens[0]) : NamespacedKey.minecraft(tokens[0]);
+                    Enchantment enchantment;
+                    if (key != null && (enchantment = Registry.ENCHANTMENT.get(key)) != null) {
+                        int level = Integer.parseInt(tokens[1]);
+                        if (itemMeta instanceof EnchantmentStorageMeta esm) {
+                            esm.addStoredEnchant(enchantment, level, true);
+                        }
+                        else {
+                            itemMeta.addEnchant(enchantment, level, true);
+                        }
+                    }
+                });
+            }
+        });
+        itemStack.editMeta(Damageable.class, itemMeta -> itemMeta.setDamage(json.has("durability") ? json.get("durability").getAsInt() : 0));
+        itemStack.editMeta(SkullMeta.class, itemMeta -> {
+            if (json.has("skull-uuid")) {
+                itemMeta.setOwningPlayer(Bukkit.getOfflinePlayer(UUID.fromString(json.get("skull-uuid").getAsString())));
+            }
+
+            if (json.has("skull-texture")) {
+                PlayerProfile profile = Bukkit.createProfile(name + "_skull_texture");
+                profile.setProperty(new ProfileProperty("textures", json.get("skull-texture").getAsString()));
+                itemMeta.setPlayerProfile(profile);
+            }
+        });
 
         return itemStack;
     }
 
-    @Nonnull
+    @NotNull
     public FishRarity pickRandomRarity() {
         double probabilitySum = getRarities().stream().filter(rarity -> !rarity.isDefault()).mapToDouble(FishRarity::probability).sum();
         if (probabilitySum >= 1.0) {
@@ -210,7 +272,7 @@ public final class FishTypeTable {
         }
 
         Set<FishRarity> rarities = getRarities();
-        double randomVal = new Random().nextDouble();
+        double randomVal = random.nextDouble();
         double chanceSum = 0.0;
         for (FishRarity rarity : rarities) {
             if (!rarity.isDefault()) {
@@ -224,23 +286,59 @@ public final class FishTypeTable {
         return getDefaultRarity().orElseThrow(() -> new IllegalStateException("Default rarity doesn't exist"));
     }
 
-    @Nonnull
-    public FishType pickRandomType(@Nonnull Item caught, @Nonnull Player fisher, @Nonnull FishingCompetition competition) {
-        return pickRandomType(caught, fisher, competition, pickRandomRarity());
+    @NotNull
+    public List<FishType> pickRandomTypes(@NotNull Item caught, @NotNull Player fisher) {
+        List<FishType> fish = new ArrayList<>();
+        fish.add(pickRandomType(caught, fisher).orElseThrow(() -> new IllegalStateException("Well this isn't supposed to happen...")));
+        ItemStack fishingRod = fisher.getInventory().getItemInMainHand();
+        int level = fishingRod.getEnchantmentLevel(Enchantment.LUCK);
+        IntStream.range(1, level + 1).mapToObj(i -> pickRandomType(caught, fisher, true, i)).filter(Optional::isPresent).map(Optional::get).forEach(fish::add);
+        return fish;
     }
 
-    @Nonnull
-    public FishType pickRandomType(@Nonnull Item caught, @Nonnull Player fisher, @Nonnull FishingCompetition competition, @Nonnull FishRarity rarity) {
+    @NotNull
+    public Optional<FishType> pickRandomType(@NotNull Item caught, @NotNull Player fisher) {
+        return pickRandomType(caught, fisher, false, 0);
+    }
+
+    @NotNull
+    public Optional<FishType> pickRandomType(@NotNull Item caught, @NotNull Player fisher, boolean luckOfTheSea, int fishNumber) {
+        FishRarity rarity = pickRandomRarity();
         if (!map.containsKey(rarity)) {
             throw new IllegalStateException("Rarity must be contained in the table");
         }
 
-        List<FishType> types = map.get(rarity).stream().filter(type -> type.conditions().stream().allMatch(condition -> condition.check(caught, fisher, competition))).toList();
+        double roll = random.nextDouble();
+        List<FishType> types = map.get(rarity).stream().filter(type -> {
+            List<FishCondition> conditions = type.conditions();
+            if (!conditions.isEmpty() && conditions.stream().noneMatch(condition -> condition.check(caught, fisher))) {
+                return false;
+            }
+
+            if (luckOfTheSea) {
+                Map<Integer, Double> losMap = type.luckOfTheSeaChances();
+                if (losMap.isEmpty()) {
+                    return false;
+                }
+
+                Double chance = losMap.get(fishNumber);
+                if (chance == null) {
+                    return false;
+                }
+
+                return roll <= chance;
+            }
+
+            return true;
+        }).toList();
         if (types.isEmpty()) {
-            return pickRandomType(caught, fisher, competition);
-            //throw new IllegalStateException("No fish type matches given condition");
+            if (luckOfTheSea) {
+                return Optional.empty();
+            }
+
+            return pickRandomType(caught, fisher);
         }
 
-        return types.get(new Random().nextInt(types.size()));
+        return Optional.ofNullable(types.get(random.nextInt(types.size())));
     }
 }

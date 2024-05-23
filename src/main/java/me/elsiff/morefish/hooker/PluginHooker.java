@@ -1,37 +1,18 @@
 package me.elsiff.morefish.hooker;
 
-import javax.annotation.Nonnull;
-import me.elsiff.morefish.MoreFish;
-import org.bukkit.plugin.PluginManager;
+import org.bukkit.Bukkit;
+import org.jetbrains.annotations.NotNull;
 
 public interface PluginHooker {
 
-    static void checkEnabled(@Nonnull PluginHooker hooker, @Nonnull PluginManager pluginManager) {
-        if (!hooker.canHook(pluginManager)) {
-            throw new IllegalStateException(hooker.getPluginName() + " must be enabled.");
-        }
+    default boolean canHook() {
+        return Bukkit.getPluginManager().isPluginEnabled(getPluginName());
     }
 
-    static void checkHooked(@Nonnull PluginHooker hooker) {
-        if (!hooker.hasHooked()) {
-            throw new IllegalStateException(hooker.getPluginName() + " must be hooked");
-        }
-    }
-
-    default boolean canHook(@Nonnull PluginManager pluginManager) {
-        return pluginManager.isPluginEnabled(getPluginName());
-    }
-
-    @Nonnull
+    @NotNull
     String getPluginName();
 
     boolean hasHooked();
 
-    void hook(@Nonnull MoreFish plugin);
-
-    default void hookIfEnabled(@Nonnull MoreFish plugin) {
-        if (canHook(plugin.getServer().getPluginManager())) {
-            hook(plugin);
-        }
-    }
+    void hook();
 }

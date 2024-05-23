@@ -1,0 +1,88 @@
+{
+  "Pufferfish": {
+    "display-name": "Pufferfish",
+    "length-max": 30,
+    "length-min": 20,
+    "icon": {
+      "id": "minecraft:pufferfish",
+      "durability": 3
+    }
+  },
+  "Ecdysiast": {
+    "display-name": "Ecdysiast",
+    "length-max": 169,
+    "length-min": 124,
+    "icon": {
+      "lore": [
+        "<italic><dark_purple>All great things come with a hidden meaning"
+      ],
+      "id": "minecraft:cod",
+      "durability": 2
+    }
+  },
+  "FinDiesel": {
+    "display-name": "Fin Diesel",
+    "length-max": 190,
+    "length-min": 110,
+    "icon": {
+      "lore": [
+        "<italic><dark_purple>I live my life a quarter fathom at a time"
+      ],
+      "id": "minecraft:cod"
+    }
+  },
+  "HammaFish": {
+    "display-name": "Hamma Fish",
+    "length-max": 190,
+    "length-min": 150,
+    "icon": {
+      "lore": [
+        "<italic><dark_purple>I'm back in da house, hamma hamma hamma"
+      ],
+      "id": "minecraft:cod",
+      "durability": 1
+    }
+  },
+  "Salmon": {
+    "display-name": "Salmon",
+    "length-max": 130,
+    "length-min": 100,
+    "icon": {
+      "id": "minecraft:salmon",
+      "durability": 1
+    }
+  },
+  "SeaTurtle": {
+    "display-name": "Sea Turtle",
+    "length-max": 130,
+    "length-min": 90,
+    "icon": {
+      "id": "minecraft:turtle_egg"
+    }
+  },
+  "Clownfish": {
+    "display-name": "Clownfish",
+    "length-max": 18,
+    "length-min": 10,
+    "icon": {
+      "id": "minecraft:tropical_fish",
+      "durability": 2
+    }
+  },
+  "BlackDrum": {
+    "display-name": "Black Drum",
+    "length-max": 180,
+    "length-min": 100,
+    "icon": {
+      "id": "minecraft:cod"
+    }
+  },
+  "Tuna": {
+    "display-name": "Tuna",
+    "length-max": 180,
+    "length-min": 130,
+    "icon": {
+      "id": "minecraft:cod"
+    }
+  }
+}

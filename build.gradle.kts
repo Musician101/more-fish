@@ -1,66 +1,94 @@
+import xyz.jpenilla.resourcefactory.bukkit.Permission
+
+buildscript {
+    configurations {
+        classpath {
+            resolutionStrategy {
+                force("org.ow2.asm:asm:9.6")
+                force("org.ow2.asm:asm-commons:9.6")
+            }
+        }
+    }
+}
+
 plugins {
-    java
     `java-library`
-    id("com.github.johnrengelman.shadow")
+    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("io.papermc.paperweight.userdev") version "1.7.1"
+    id("xyz.jpenilla.run-paper") version "2.2.4"
+    id("xyz.jpenilla.resource-factory-bukkit-convention") version "1.1.1"
 }
 
 group = "me.elsiff"
-version = "4.1.4"
+version = "4.3.1"
 
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
-}
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 repositories {
     maven("https://papermc.io/repo/repository/maven-public/")
     maven("https://oss.sonatype.org/content/repositories/snapshots/")
     maven("https://repo.dmulloy2.net/nexus/repository/public/")
     maven("https://jitpack.io")
-    maven("https://libraries.minecraft.net/")
     mavenCentral()
+    //TODO testing
+    mavenLocal()
 }
 
 dependencies {
-    compileOnlyApi("com.comphenix.protocol:ProtocolLib:5.0.0")
+    compileOnlyApi("com.comphenix.protocol:ProtocolLib:5.1.0")
     compileOnlyApi("com.github.MilkBowl:VaultAPI:1.7.1")
-    compileOnlyApi("io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT")
+    paperweight.paperDevBundle("1.20.4-R0.1-SNAPSHOT")
     compileOnlyApi(files("lib/mcMMO.jar"))
-
-    //TODO work around since Jitpack can't build the 1.1.0 release for some reason
-    api("com.github.musician101.musigui:spigot:e292d9c8e2") {
-        exclude("com.google.code.findbugs")
-        exclude("org.spigotmc")
-    }
-    api("com.github.musician101:bukkitier:1.2.2") {
-        exclude("org.spigotmc")
-    }
+    api("com.github.Musician101.MusiGui:paper:1.2.2")
+    //TODO testing
+    api("io.musician101:bukkitier:2.1.0")
+    //api("com.github.Musician101:Bukkitier:2.0.0")
+    //TODO temp to fix package names
+    //api("com.github.Musician101:MusiBoard:1.0.1")
+    api("com.github.musician101:musiboard:-SNAPSHOT")
 }
 
 tasks {
     processResources {
         duplicatesStrategy = DuplicatesStrategy.INCLUDE
-        filesMatching("plugin.yml") {
-            expand("version" to project.version)
-        }
     }
 
     shadowJar {
         dependencies {
-            include(dependency(":common"))
-            include(dependency("com.github.musician101:"))
-            include(dependency("com.github.musician101.musigui:spigot:"))
+            include(dependency("io.musician101:bukkitier:"))
+            //include(dependency("com.github.Musician101:Bukkitier:"))
+            include(dependency("com.github.Musician101.MusiGui:"))
         }
 
-        archiveClassifier.set("")
-        relocate("io.musician101", "me.elsiff.morefish.lib.io.musician101")
-        dependsOn("build")
+        archiveClassifier = ""
+        relocate("io.musician101.bukkitier", "me.elsiff.morefish.lib.io.musician101.bukkitier")
+        relocate("io.musician101.musigui", "me.elsiff.morefish.lib.io.musician101.musigui")
     }
 
-    register<Copy>("prepTestJar") {
-        dependsOn("shadowJar")
-        from("build/libs/${project.name}-${project.version}.jar")
-        into("server/plugins")
+    assemble {
+        dependsOn("reobfJar")
+    }
+
+    runServer {
+        minecraftVersion("1.20.4")
     }
 }
 
+bukkitPluginYaml {
+    main = "me.elsiff.morefish.MoreFish"
+    authors.addAll("elsiff", "Musician101")
+    apiVersion = "1.20"
+    softDepend.addAll("mcMMO", "Vault")
+    depend.add("MusiBoard")
+    commands.create("morefish") {
+        aliases.addAll("mf", "fish")
+        description = "Main command for MoreFish."
+        usage = "/morefish"
+    }
+    permissions.create("morefish.admin") {
+        default = Permission.Default.OP
+        description = "Gives the user the ability to control the fishing contest."
+    }
 
+    foliaSupported = true;
+}

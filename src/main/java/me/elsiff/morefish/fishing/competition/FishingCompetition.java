@@ -1,143 +1,86 @@
 package me.elsiff.morefish.fishing.competition;
 
-import java.util.AbstractMap.SimpleEntry;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.UUID;
-import javax.annotation.Nonnull;
-import me.elsiff.morefish.RecordHandler;
+import me.elsiff.morefish.command.argument.SortArgumentType.SortType;
 import me.elsiff.morefish.fishing.Fish;
+import me.elsiff.morefish.fishing.fishrecords.FishRecord;
+import me.elsiff.morefish.fishing.fishrecords.FishRecordKeeper;
+import me.elsiff.morefish.hooker.MusiBoardHooker;
 import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.NotNull;
 
-public final class FishingCompetition {
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
-    @Nonnull
-    private final MFScoreboard scoreboard = new MFScoreboard();
-    @Nonnull
-    private FishingCompetition.State state = State.DISABLED;
+import static me.elsiff.morefish.MoreFish.getPlugin;
 
-    private void checkStateDisabled() {
-        if (state != State.DISABLED) {
-            throw new IllegalStateException("Fishing competition hasn't disabled");
-        }
-    }
+public final class FishingCompetition extends FishRecordKeeper {
 
-    private void checkStateEnabled() {
-        if (state != State.ENABLED) {
-            throw new IllegalStateException("Fishing competition hasn't enabled");
-        }
-    }
-
-    public void clearRecords() {
-        getRecords().clear();
-    }
-
-    public boolean containsContestant(@Nonnull UUID contestant) {
-        return getRanking().stream().anyMatch(record -> contestant.equals(record.fisher()));
-    }
+    private boolean enabled = false;
 
     public void disable() {
-        this.checkStateEnabled();
-        scoreboard.clear();
-        this.state = FishingCompetition.State.DISABLED;
+        enabled = false;
+        getMusiBoard().clear();
     }
 
     public void enable() {
-        this.checkStateDisabled();
-        this.state = FishingCompetition.State.ENABLED;
+        enabled = true;
     }
 
-    @Nonnull
-    public List<Record> getRanking() {
-        return this.getRecords().all();
-    }
-
-    private RecordHandler getRecords() {
-        return new RecordHandler();
-    }
-
-    @Nonnull
-    public MFScoreboard getScoreboard() {
-        return scoreboard;
-    }
-
-    @Nonnull
-    public FishingCompetition.State getState() {
-        return this.state;
-    }
-
-    public boolean isDisabled() {
-        return this.state == FishingCompetition.State.DISABLED;
+    private MusiBoardHooker getMusiBoard() {
+        return getPlugin().getMusiBoard();
     }
 
     public boolean isEnabled() {
-        return this.state == FishingCompetition.State.ENABLED;
+        return enabled;
     }
 
-    public void putRecord(@Nonnull Record record) {
-        checkStateEnabled();
-        if (containsContestant(record.fisher())) {
-            Record oldRecord = recordOf(record.fisher());
-            if (record.fish().length() > oldRecord.fish().length()) {
-                getRecords().update(record);
-            }
+    @Override
+    public void add(@NotNull FishRecord record) {
+        Optional<FishRecord> optional = getRecord(record.fisher());
+        if (optional.isPresent()) {
+            optional.filter(r -> record.getLength() >= r.getLength()).ifPresent(r -> {
+                records.remove(optional.get());
+                records.add(record);
+            });
         }
         else {
-            getRecords().insert(record);
+            records.add(record);
         }
 
-        scoreboard.update();
+        getMusiBoard().update();
     }
 
-    public int rankNumberOf(@Nonnull Record record) {
-        return getRanking().indexOf(record) + 1;
+    public int rankNumberOf(@NotNull FishRecord record) {
+        return getRecords().indexOf(record) + 1;
     }
 
-    @Nonnull
-    public Entry<Integer, Record> rankedRecordOf(@Nonnull OfflinePlayer contestant) {
-        List<Record> records = getRanking();
-        int place = 0;
-        for (Record record : records) {
-            if (record.fisher().equals(contestant.getUniqueId())) {
-                return new SimpleEntry<>(place, record);
-            }
-
-            place++;
-        }
-
-        throw new IllegalStateException("Record not found");
+    private Optional<FishRecord> getRecord(@NotNull UUID contestant) {
+        return records.stream().filter(record -> contestant.equals(record.fisher())).findFirst();
     }
 
-    @Nonnull
-    public Record recordOf(@Nonnull UUID contestant) {
-        return getRanking().stream().filter(record -> contestant.equals(record.fisher())).findFirst().orElseThrow(() -> new IllegalStateException("Record not found"));
+    @NotNull
+    public FishRecord recordOf(@NotNull UUID contestant) {
+        return getRecord(contestant).orElseThrow(() -> new IllegalStateException("Record not found"));
     }
 
-    @Nonnull
-    public Record recordOf(int rankNumber) {
-        if (rankNumber >= 1 && rankNumber <= getRanking().size()) {
-            return getRanking().get(rankNumber - 1);
+    @NotNull
+    public FishRecord recordOf(int rankNumber) {
+        if (rankNumber >= 1 && rankNumber <= getRecords().size()) {
+            return getRecords().get(rankNumber - 1);
         }
 
         throw new IllegalArgumentException("Rank number is out of records size.");
     }
 
-    @Nonnull
-    public List<Record> top(int size) {
-        return getRecords().top(size);
-    }
-
-    public boolean willBeNewFirst(@Nonnull OfflinePlayer catcher, @Nonnull Fish fish) {
-        if (!getRanking().isEmpty()) {
-            Record record = getRanking().get(0);
-            return fish.length() > record.fish().length() && !record.fisher().equals(catcher.getUniqueId());
+    public boolean willBeNewFirst(@NotNull OfflinePlayer catcher, @NotNull Fish fish) {
+        if (!getRecords().isEmpty()) {
+            List<FishRecord> records = getRecords();
+            records.sort(SortType.LENGTH.reversed());
+            FishRecord record = records.getFirst();
+            return fish.length() > record.getLength() && !record.fisher().equals(catcher.getUniqueId());
         }
 
         return true;
-    }
-
-    public enum State {
-        ENABLED,
-        DISABLED
     }
 }

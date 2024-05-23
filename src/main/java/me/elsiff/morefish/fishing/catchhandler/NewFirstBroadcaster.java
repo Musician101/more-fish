@@ -1,21 +1,22 @@
 package me.elsiff.morefish.fishing.catchhandler;
 
-import javax.annotation.Nonnull;
-import me.elsiff.morefish.MoreFish;
-import me.elsiff.morefish.configuration.Lang;
 import me.elsiff.morefish.fishing.Fish;
 import me.elsiff.morefish.fishing.competition.FishingCompetition;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+
+import static me.elsiff.morefish.MoreFish.getPlugin;
+import static me.elsiff.morefish.text.Lang.raw;
 
 public final class NewFirstBroadcaster extends AbstractBroadcaster {
 
-    @Nonnull
+    @NotNull
     public String getCatchMessageFormat() {
-        return Lang.GET_1ST;
+        return raw("new-1st-message-format");
     }
 
-    public boolean meetBroadcastCondition(@Nonnull Player catcher, @Nonnull Fish fish) {
-        FishingCompetition competition = MoreFish.instance().getCompetition();
+    public boolean meetBroadcastCondition(@NotNull Player catcher, @NotNull Fish fish) {
+        FishingCompetition competition = getPlugin().getCompetition();
         return competition.isEnabled() && competition.willBeNewFirst(catcher, fish);
     }
 }

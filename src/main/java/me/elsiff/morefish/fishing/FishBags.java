@@ -1,7 +1,18 @@
 package me.elsiff.morefish.fishing;
 
-import java.io.File;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,26 +22,16 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-import javax.annotation.Nonnull;
-import me.elsiff.morefish.MoreFish;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.inventory.ItemStack;
+
+import static me.elsiff.morefish.MoreFish.getPlugin;
+import static me.elsiff.morefish.text.Lang.replace;
 
 public class FishBags implements Listener {
 
-    @Nonnull
+    @NotNull
     private final List<FishBag> bags = new ArrayList<>();
 
-    public boolean addFish(@Nonnull Player player, @Nonnull ItemStack itemStack) {
+    public boolean addFish(@NotNull Player player, @NotNull ItemStack itemStack) {
         FishBag fishBag = getFishBag(player);
         for (int i = 1; i < getMaxAllowedPages(player) + 1; i++) {
             if (fishBag.addFish(i, itemStack)) {
@@ -41,13 +42,13 @@ public class FishBags implements Listener {
         return false;
     }
 
-    @Nonnull
-    public List<ItemStack> getFish(@Nonnull Player player, int page) {
+    @NotNull
+    public List<ItemStack> getFish(@NotNull Player player, int page) {
         return getFishBag(player).getFish(page);
     }
 
-    @Nonnull
-    public FishBag getFishBag(@Nonnull Player player) {
+    @NotNull
+    public FishBag getFishBag(@NotNull Player player) {
         Optional<FishBag> fishBag = bags.stream().filter(fb -> fb.getUUID().equals(player.getUniqueId())).findFirst();
         if (fishBag.isPresent()) {
             return fishBag.get();
@@ -58,39 +59,42 @@ public class FishBags implements Listener {
         return fb;
     }
 
-    public int getMaxAllowedPages(@Nonnull Player player) {
+    public int getMaxAllowedPages(@NotNull Player player) {
         return getFishBag(player).getMaxAllowedPages();
     }
 
     public void load() {
-        File bagsFolder = new File(MoreFish.instance().getDataFolder(), "fish_bags");
-        bagsFolder.mkdirs();
-        File[] files = bagsFolder.listFiles();
-        if (files != null) {
-            Stream.of(files).filter(file -> file.getName().endsWith(".yml")).forEach(file -> {
-                YamlConfiguration yaml = YamlConfiguration.loadConfiguration(file);
-                UUID uuid = UUID.fromString(file.getName().replace(".yml", ""));
-                FishBag fishBag = new FishBag(uuid);
-                fishBag.setMaxAllowedPages(yaml.getInt("max_allowed_pages", 0));
-                ConfigurationSection fishSection = yaml.getConfigurationSection("fish");
-                if (fishSection != null) {
-                    IntStream.range(1, fishBag.getMaxAllowedPages() + 1).forEach(page -> {
-                        ConfigurationSection pageSection = fishSection.getConfigurationSection(String.valueOf(page));
-                        if (pageSection == null) {
-                            return;
-                        }
+        Bukkit.getAsyncScheduler().runNow(getPlugin(), task -> {
+            Path bagsFolder = getPlugin().getDataFolder().toPath().resolve("fish_bags");
+            try (Stream<Path> bags = Files.list(bagsFolder)) {
+                bags.filter(path -> path.getFileName().toString().endsWith(".yml")).forEach(path -> {
+                    YamlConfiguration yaml = YamlConfiguration.loadConfiguration(path.toFile());
+                    UUID uuid = UUID.fromString(path.getFileName().toString().replace(".yml", ""));
+                    FishBag fishBag = new FishBag(uuid);
+                    fishBag.setMaxAllowedPages(yaml.getInt("max_allowed_pages", 0));
+                    ConfigurationSection fishSection = yaml.getConfigurationSection("fish");
+                    if (fishSection != null) {
+                        IntStream.range(1, fishBag.getMaxAllowedPages() + 1).forEach(page -> {
+                            ConfigurationSection pageSection = fishSection.getConfigurationSection(String.valueOf(page));
+                            if (pageSection == null) {
+                                return;
+                            }
 
-                        fishBag.updatePage(page, IntStream.range(0, 45).mapToObj(Integer::toString).map(pageSection::getItemStack).filter(Objects::nonNull).collect(Collectors.toList()));
-                    });
-                }
+                            fishBag.updatePage(page, IntStream.range(0, 45).mapToObj(Integer::toString).map(pageSection::getItemStack).filter(Objects::nonNull).collect(Collectors.toList()));
+                        });
+                    }
 
-                bags.add(fishBag);
-            });
-        }
+                    this.bags.add(fishBag);
+                });
+            }
+            catch (IOException e) {
+                getPlugin().getSLF4JLogger().error("An error occurred while loading fish bags.", e);
+            }
+        });
     }
 
     @EventHandler
-    public void onJoin(@Nonnull PlayerJoinEvent event) {
+    public void onJoin(@NotNull PlayerJoinEvent event) {
         Player player = event.getPlayer();
         FishBag fishBag = getFishBag(player);
         List<ItemStack> contraband = fishBag.getContraband();
@@ -98,14 +102,14 @@ public class FishBags implements Listener {
             return;
         }
 
-        Bukkit.getScheduler().scheduleSyncDelayedTask(MoreFish.instance(), () -> player.sendMessage(Component.text("[MF] CONTRABAND DETECTED IN YOUR FISH BAG. CLICK THIS MESSAGE TO RETRIEVE IT NOW.").color(NamedTextColor.RED).clickEvent(ClickEvent.runCommand("/mf contraband"))));
+        Bukkit.getGlobalRegionScheduler().run(getPlugin(), task -> player.sendMessage(replace("<red><click:run_command:/mf contraband>[MF] CONTRABAND DETECTED IN YOUR FISH BAG. CLICK THIS MESSAGE TO RETRIEVE IT NOW.")));
     }
 
+    @SuppressWarnings("StringConcatenationArgumentToLogCall")
     public void save() {
         bags.forEach(fishBag -> {
             YamlConfiguration yaml = new YamlConfiguration();
-            File bagsFolder = new File(MoreFish.instance().getDataFolder(), "fish_bags");
-            bagsFolder.mkdirs();
+            Path bagsFolder = getPlugin().getDataFolder().toPath().resolve("fish_bags");
             UUID uuid = fishBag.getUUID();
             int maxAllowedPages = fishBag.getMaxAllowedPages();
             yaml.set("max_allowed_pages", maxAllowedPages);
@@ -115,15 +119,15 @@ public class FishBags implements Listener {
             });
 
             try {
-                yaml.save(new File(bagsFolder, uuid + ".yml"));
+                yaml.save(bagsFolder.resolve(uuid + ".yml").toFile());
             }
             catch (IOException e) {
-                e.printStackTrace();
+                getPlugin().getSLF4JLogger().error("An error occurred while saving fish bag for " + uuid + ".", e);
             }
         });
     }
 
-    public void setMaxAllowedPages(@Nonnull Player player, int maxAllowedPages) {
+    public void setMaxAllowedPages(@NotNull Player player, int maxAllowedPages) {
         FishBag fishBag = getFishBag(player);
         if (!bags.contains(fishBag)) {
             bags.add(fishBag);
@@ -132,7 +136,7 @@ public class FishBags implements Listener {
         fishBag.setMaxAllowedPages(maxAllowedPages);
     }
 
-    public void update(@Nonnull Player player, ItemStack[] contents, int page) {
+    public void update(@NotNull Player player, ItemStack[] contents, int page) {
         FishBag fishBag = getFishBag(player);
         if (!bags.contains(fishBag)) {
             bags.add(fishBag);

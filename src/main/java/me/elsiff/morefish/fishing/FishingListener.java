@@ -1,21 +1,11 @@
 package me.elsiff.morefish.fishing;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
-import javax.annotation.Nonnull;
-import me.elsiff.morefish.MoreFish;
-import me.elsiff.morefish.configuration.Lang;
+import me.elsiff.morefish.fishing.catchhandler.CatchBroadcaster;
 import me.elsiff.morefish.fishing.catchhandler.CatchHandler;
 import me.elsiff.morefish.fishing.catchhandler.CompetitionRecordAdder;
 import me.elsiff.morefish.fishing.catchhandler.NewFirstBroadcaster;
 import me.elsiff.morefish.fishing.competition.FishingCompetition;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Item;
@@ -26,38 +16,23 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerFishEvent.State;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+
+import static me.elsiff.morefish.MoreFish.getPlugin;
 import static me.elsiff.morefish.item.FishItemStackConverter.createItemStack;
 
 public final class FishingListener implements Listener {
 
-    private final MoreFish plugin = MoreFish.instance();
-    private final FishingCompetition competition = plugin.getCompetition();
-    private final List<Predicate<PlayerFishEvent>> replacingVanillaConditions = Arrays.asList(event -> {
-        if (getConfig().getBoolean("general.only-for-contest")) {
-            return competition.isEnabled();
-        }
-
-        return true;
-    }, event -> {
-        if (getConfig().getBoolean("general.replace-only-fish")) {
-            if (event.getCaught() != null) {
-                Material type = ((Item) event.getCaught()).getItemStack().getType();
-                return Stream.of(Material.COD, Material.SALMON, Material.PUFFERFISH, Material.TROPICAL_FISH).anyMatch(m -> m == type);
-            }
-        }
-
-        return true;
-    });
-    private final FishTypeTable fishTypeTable = plugin.getFishTypeTable();
-    private final List<CatchHandler> globalCatchHandlers = plugin.getGlobalCatchHandlers();
-
-    private boolean canReplaceVanillaFishing(PlayerFishEvent event) {
-        return replacingVanillaConditions.stream().anyMatch(it -> it.test(event));
-    }
+    private final FishingCompetition competition = getPlugin().getCompetition();
+    private final FishTypeTable fishTypeTable = getPlugin().getFishTypeTable();
 
     private Collection<CatchHandler> catchHandlersOf(PlayerFishEvent event, Fish fish) {
-        List<CatchHandler> catchHandlers = new ArrayList<>(globalCatchHandlers);
+        List<CatchHandler> catchHandlers = new ArrayList<>(List.of(new CatchBroadcaster(), new NewFirstBroadcaster(), new CompetitionRecordAdder()));
         catchHandlers.addAll(fish.type().catchHandlers());
         List<World> contestDisabledWorlds = getConfig().getStringList("general.contest-disabled-worlds").stream().map(Bukkit::getWorld).filter(Objects::nonNull).toList();
         Player player = event.getPlayer();
@@ -69,32 +44,28 @@ public final class FishingListener implements Listener {
     }
 
     private FileConfiguration getConfig() {
-        return plugin.getConfig();
+        return getPlugin().getConfig();
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onPlayerFish(@Nonnull PlayerFishEvent event) {
+    public void onPlayerFish(@NotNull PlayerFishEvent event) {
         if (event.getState() == State.CAUGHT_FISH && event.getCaught() instanceof Item) {
-            if (competition.isDisabled()) {
-                if (getConfig().getBoolean("general.no-fishing-unless-contest")) {
-                    event.setCancelled(true);
-                    event.getPlayer().sendMessage(Lang.NO_FISHING_ALLOWED);
-                }
-            }
-            else if (canReplaceVanillaFishing(event)) {
+            if (competition.isEnabled()) {
                 Player player = event.getPlayer();
-                plugin.getCompetition().getScoreboard().addPlayer(player);
+                getPlugin().getMusiBoard().addToLeaderboard(player);
                 Item caught = (Item) event.getCaught();
-                Fish fish = fishTypeTable.pickRandomType(caught, player, competition).generateFish();
-                catchHandlersOf(event, fish).forEach(handler -> handler.handle(player, fish));
-                FishBags fishBags = plugin.getFishBags();
-                ItemStack itemStack = createItemStack(fish, player);
-                if (fishBags.addFish(player, itemStack)) {
-                    caught.remove();
-                    return;
-                }
-
-                caught.setItemStack(itemStack);
+                List<Fish> fishes = fishTypeTable.pickRandomTypes(caught, player).stream().map(FishType::generateFish).toList();
+                fishes.forEach(fish -> catchHandlersOf(event, fish).forEach(handler -> handler.handle(player, fish)));
+                List<ItemStack> fishItems = fishes.stream().map(fish -> createItemStack(fish, player)).toList();
+                // There's always one fish
+                ItemStack fishItem = fishItems.getFirst();
+                caught.setItemStack(fishItem);
+                caught.setGlowing(fishes.getFirst().rarity().glow());
+                fishItems.stream().filter(item -> !getPlugin().getFishBags().addFish(player, item)).forEach(item -> {
+                    World world = player.getWorld();
+                    world.dropItem(player.getLocation(), item);
+                });
+                caught.remove();
             }
         }
     }
