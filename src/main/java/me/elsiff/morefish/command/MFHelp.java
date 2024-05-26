@@ -1,37 +1,33 @@
 package me.elsiff.morefish.command;
 
-import com.mojang.brigadier.builder.ArgumentBuilder;
-import io.musician101.bukkitier.command.Command;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.musician101.bukkitier.command.LiteralCommand;
-import io.musician101.bukkitier.command.help.HelpSubCommand;
 import io.papermc.paper.plugin.configuration.PluginMeta;
-import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
+import static me.elsiff.morefish.text.Lang.raw;
 import static me.elsiff.morefish.text.Lang.replace;
 import static me.elsiff.morefish.text.Lang.tagResolver;
 import static net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.resolver;
 
-class MFHelp extends HelpSubCommand {
+class MFHelp implements LiteralCommand {
+
+    private final LiteralCommand root;
 
     public MFHelp(@NotNull LiteralCommand root) {
-        super(root, getPlugin());
-    }
-
-    @Override
-    protected @NotNull Component commandInfo(@NotNull Command<? extends ArgumentBuilder<CommandSender, ?>> root, @NotNull Command<? extends ArgumentBuilder<CommandSender, ?>> command, @NotNull CommandSender sender) {
-        return replace("<mf-lang:command-help-info>", resolver(tagResolver("command-usage", root.usage(sender) + " " + command.name()), tagResolver("command-description", command.description(sender))));
+        this.root = root;
     }
 
     @SuppressWarnings("UnstableApiUsage")
-    @NotNull
     @Override
-    protected Component header() {
-        PluginMeta meta = plugin.getPluginMeta();
+    public int execute(@NotNull CommandContext<CommandSender> context) throws CommandSyntaxException {
+        CommandSender sender = context.getSource();
+        PluginMeta meta = getPlugin().getPluginMeta();
         List<String> authors = meta.getAuthors();
         String authorsString = "";
         if (!authors.isEmpty()) {
@@ -42,7 +38,18 @@ class MFHelp extends HelpSubCommand {
                 default -> String.join(", and ", String.join(", ", authors.subList(0, last)), authors.get(last));
             };
         }
+        sender.sendMessage(replace("<mf-lang:command-help-header>", resolver(tagResolver("authors", authorsString), tagResolver("plugin-display-name", meta.getDisplayName()))));
+        root.arguments().stream().filter(cmd -> cmd.canUse(sender)).forEach(cmd -> sender.sendMessage(replace("<mf-lang:command-help-info>", resolver(tagResolver("command-usage", root.usage(sender) + " " + cmd.name()), tagResolver("command-description", cmd.description(sender))))));
+        return 1;
+    }
 
-        return replace("<mf-lang:command-help-header>", resolver(tagResolver("authors", authorsString), tagResolver("plugin-display-name", meta.getDisplayName())));
+    @Override
+    public @NotNull String name() {
+        return "help";
+    }
+
+    @Override
+    public @NotNull String description(@NotNull CommandSender sender) {
+        return raw("command-help-description");
     }
 }

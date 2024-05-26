@@ -1,4 +1,6 @@
+import org.gradle.internal.impldep.org.junit.After
 import xyz.jpenilla.resourcefactory.bukkit.Permission
+import xyz.jpenilla.resourcefactory.paper.PaperPluginYaml
 
 buildscript {
     configurations {
@@ -17,6 +19,7 @@ plugins {
     id("io.papermc.paperweight.userdev") version "1.7.1"
     id("xyz.jpenilla.run-paper") version "2.2.4"
     id("xyz.jpenilla.resource-factory-bukkit-convention") version "1.1.1"
+    id("xyz.jpenilla.resource-factory-paper-convention") version "1.1.1"
 }
 
 group = "me.elsiff"
@@ -91,4 +94,32 @@ bukkitPluginYaml {
     }
 
     foliaSupported = true;
+}
+
+paperPluginYaml {
+    main = "me.elsiff.morefish.MoreFish"
+    apiVersion = "1.20"
+    authors.addAll("elsiff", "Musician101")
+    foliaSupported = true
+    dependencies.server {
+        create("mcMMO") {
+            load = PaperPluginYaml.Load.AFTER
+            required = false
+            joinClasspath = true
+        }
+        create("MusiBoard") {
+            load = PaperPluginYaml.Load.AFTER
+            required = false
+            joinClasspath = true
+        }
+        create("Vault") {
+            load = PaperPluginYaml.Load.AFTER
+            required = false
+            joinClasspath = true
+        }
+    }
+    permissions.create("morefish.admin") {
+        default = Permission.Default.OP
+        description = "Gives the user the ability to control the fishing contest."
+    }
 }

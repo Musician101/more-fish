@@ -15,6 +15,7 @@ command-fishing-logs-record: "<color:#ff312e><length>cm <fish-name> <color:#ffe1
 command-give-description: "Give a player a fish."
 command-give-sender: "<mf-lang:prefix> <white><fish-display-name> given to <player>."
 command-give-receiver: "<mf-lang:prefix> <white>You just received a <fish-display-name>."
+command-help-description: "Shows the help info for /morefish"
 command-help-header: "<gradient:#555555:#FF5300:#555555>> ===== <hover:show_text:'<color:#BDB76B>Developed by <authors>'><plugin-display-name></hover> ===== <"
 command-help-info: "<color:#FF5300><command-usage> <dark_gray>- <gray><command-description>"
 command-lang-description: "Test out messages from lang.yml in game."

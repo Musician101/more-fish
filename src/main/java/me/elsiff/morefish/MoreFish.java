@@ -148,7 +148,7 @@ public final class MoreFish extends JavaPlugin {
         PluginManager pm = server.getPluginManager();
         pm.registerEvents(new FishingListener(), this);
         pm.registerEvents(fishBags, this);
-        registerCommand(getPlugin(), new MFMain());
+        registerCommand(getPlugin(), new MFMain(), "mf");
         getSLF4JLogger().info("Plugin has been enabled.");
     }
 }
