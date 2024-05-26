@@ -4,7 +4,7 @@
       "<gray><length>cm",
       "<gray>Caught by <player>"
     ],
-    "display-name": "<rarity_color><fish_name>"
+    "display-name": "<fish-rarity-color><fish-name>"
   },
   "rarity-list": {
     "junk": {
