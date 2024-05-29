@@ -45,7 +45,7 @@ public abstract class FishRecordKeeper {
 
             if (receiver instanceof Player player) {
                 if (contains(player.getUniqueId())) {
-                    Entry<Integer, FishRecord> entry = rankedRecordOf(player);
+                    Entry<Integer, FishRecord> entry = rankedRecordOf(player, fishRecords);
                     FishRecord record = entry.getValue();
                     receiver.sendMessage(replace("<mf-lang:top-player-record>", resolver(tagResolver("ordinal", ordinalOf(entry.getKey() + 1)), tagResolver("record-length", record.getLength()), tagResolver("record-fish-name", record.getFishName()))));
                 }
@@ -77,8 +77,7 @@ public abstract class FishRecordKeeper {
         return records.stream().anyMatch(r -> r.fisher().equals(uuid));
     }
 
-    private Map.Entry<Integer, FishRecord> rankedRecordOf(@NotNull OfflinePlayer contestant) {
-        List<FishRecord> records = new ArrayList<>(getRecords());
+    private Map.Entry<Integer, FishRecord> rankedRecordOf(OfflinePlayer contestant, List<FishRecord> records) {
         records.sort(SortType.LENGTH.reversed());
         int place = 0;
         for (FishRecord record : records) {

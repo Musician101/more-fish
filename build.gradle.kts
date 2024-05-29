@@ -1,4 +1,4 @@
-import org.gradle.internal.impldep.org.junit.After
+import io.papermc.paperweight.userdev.ReobfArtifactConfiguration
 import xyz.jpenilla.resourcefactory.bukkit.Permission
 import xyz.jpenilla.resourcefactory.paper.PaperPluginYaml
 
@@ -23,7 +23,7 @@ plugins {
 }
 
 group = "me.elsiff"
-version = "4.3.1"
+version = "4.3.2"
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
@@ -38,22 +38,30 @@ repositories {
 }
 
 dependencies {
+    paperweight.paperDevBundle("1.20.6-R0.1-SNAPSHOT")
     compileOnlyApi("com.comphenix.protocol:ProtocolLib:5.1.0")
     compileOnlyApi("com.github.MilkBowl:VaultAPI:1.7.1")
-    paperweight.paperDevBundle("1.20.4-R0.1-SNAPSHOT")
     compileOnlyApi(files("lib/mcMMO.jar"))
     api("com.github.Musician101.MusiGui:paper:1.2.2")
     //TODO testing
+    //api("io.musician101.musicommand:paper:1.0.0-SNAPSHOT")
     api("io.musician101:bukkitier:2.1.0")
     //api("com.github.Musician101:Bukkitier:2.0.0")
     //TODO temp to fix package names
     //api("com.github.Musician101:MusiBoard:1.0.1")
-    api("com.github.musician101:musiboard:-SNAPSHOT")
+    //api("com.github.musician101:musiboard:master-SNAPSHOT")
+    api("io.musician101:musiboard:1.1.0-SNAPSHOT")
 }
+
+paperweight.reobfArtifactConfiguration = ReobfArtifactConfiguration.MOJANG_PRODUCTION
 
 tasks {
     processResources {
         duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    }
+
+    build {
+        dependsOn(shadowJar)
     }
 
     shadowJar {
@@ -61,19 +69,17 @@ tasks {
             include(dependency("io.musician101:bukkitier:"))
             //include(dependency("com.github.Musician101:Bukkitier:"))
             include(dependency("com.github.Musician101.MusiGui:"))
+            //include(dependency("io.musician101.musicommand:"))
         }
 
         archiveClassifier = ""
         relocate("io.musician101.bukkitier", "me.elsiff.morefish.lib.io.musician101.bukkitier")
         relocate("io.musician101.musigui", "me.elsiff.morefish.lib.io.musician101.musigui")
-    }
-
-    assemble {
-        dependsOn("reobfJar")
+        //relocate("io.musician101.musicommand", "me.elsiff.morefish.lib.io.musician101.musigui")
     }
 
     runServer {
-        minecraftVersion("1.20.4")
+        minecraftVersion("1.20.6")
     }
 }
 
@@ -103,17 +109,17 @@ paperPluginYaml {
     foliaSupported = true
     dependencies.server {
         create("mcMMO") {
-            load = PaperPluginYaml.Load.AFTER
+            load = PaperPluginYaml.Load.BEFORE
             required = false
             joinClasspath = true
         }
         create("MusiBoard") {
-            load = PaperPluginYaml.Load.AFTER
+            load = PaperPluginYaml.Load.BEFORE
             required = false
             joinClasspath = true
         }
         create("Vault") {
-            load = PaperPluginYaml.Load.AFTER
+            load = PaperPluginYaml.Load.BEFORE
             required = false
             joinClasspath = true
         }

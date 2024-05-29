@@ -19,6 +19,15 @@ import static me.elsiff.morefish.text.Lang.replace;
 
 class MFStart implements LiteralCommand {
 
+    private static void start(CommandSender sender, long runningTime) {
+        if (getCompetition().isEnabled()) {
+            sender.sendMessage(replace("<mf-lang:command-start-ongoing>"));
+        }
+        else {
+            getCompetitionHost().openCompetitionFor(runningTime * 20L);
+        }
+    }
+
     private static FishingCompetition getCompetition() {
         return getPlugin().getCompetition();
     }
@@ -52,14 +61,7 @@ class MFStart implements LiteralCommand {
 
     @Override
     public int execute(@NotNull CommandContext<CommandSender> context) {
-        CommandSender sender = context.getSource();
-        if (getCompetition().isEnabled()) {
-            sender.sendMessage(replace("<mf-lang:command-start-ongoing>"));
-        }
-        else {
-            getCompetitionHost().openCompetitionFor(getPlugin().getConfig().getInt("auto-running.timer") * 20L);
-        }
-
+        start(context.getSource(), getPlugin().getConfig().getInt("auto-running.timer"));
         return 1;
     }
 
@@ -73,15 +75,7 @@ class MFStart implements LiteralCommand {
 
         @Override
         public int execute(@NotNull CommandContext<CommandSender> context) {
-            CommandSender sender = context.getSource();
-            if (getCompetition().isEnabled()) {
-                sender.sendMessage(replace("<mf-lang:command-start-ongoing>"));
-            }
-            else {
-                long runningTime = context.getArgument("seconds", Long.class);
-                getCompetitionHost().openCompetitionFor(runningTime * 20L);
-            }
-
+            start(context.getSource(), context.getArgument("seconds", Long.class));
             return 1;
         }
 

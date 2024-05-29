@@ -20,7 +20,12 @@ import static me.elsiff.morefish.text.Lang.raw;
 class MFTop implements LiteralCommand {
 
     private static void informAboutRanking(CommandContext<CommandSender> context, FishRecordKeeper recordKeeper, List<FishRecord> records) {
-        recordKeeper.informAboutRanking(context.getSource(), records);
+        if (records != null) {
+            recordKeeper.informAboutRanking(context.getSource(), records);
+        }
+        else {
+            recordKeeper.informAboutRanking(context.getSource());
+        }
     }
 
     @NotNull
@@ -98,8 +103,7 @@ class MFTop implements LiteralCommand {
 
         @Override
         public int execute(@NotNull CommandContext<CommandSender> context) {
-            CommandSender sender = context.getSource();
-            getPlugin().getCompetition().informAboutRanking(sender);
+            informAboutRanking(context, getPlugin().getCompetition(), null);
             return 1;
         }
 

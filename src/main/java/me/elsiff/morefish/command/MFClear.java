@@ -25,6 +25,17 @@ import static me.elsiff.morefish.text.Lang.tagResolver;
 
 class MFClear implements LiteralCommand {
 
+    private static void clearAll(CommandSender sender, FishRecordsType recordsType) {
+        if (recordsType == FishRecordsType.COMPETITION) {
+            getCompetition().clear();
+            sender.sendMessage(replace("<mf-lang:command-clear-competition-success>"));
+        }
+        else if (recordsType == FishRecordsType.ALLTIME) {
+            getFishingLogs().clear();
+            sender.sendMessage(replace("<mf-lang:command-clear-alltime-success>"));
+        }
+    }
+
     private static FishingCompetition getCompetition() {
         return getPlugin().getCompetition();
     }
@@ -46,6 +57,7 @@ class MFClear implements LiteralCommand {
 
     @Override
     public int execute(@NotNull CommandContext<CommandSender> context) {
+        clearAll(context.getSource(), FishRecordsType.COMPETITION);
         CommandSender sender = context.getSource();
         getCompetition().clear();
         sender.sendMessage(replace("<mf-lang:command-clear-success>"));
@@ -74,17 +86,7 @@ class MFClear implements LiteralCommand {
 
         @Override
         public int execute(@NotNull CommandContext<CommandSender> context) {
-            CommandSender sender = context.getSource();
-            FishRecordsType recordsType = context.getArgument(name(), FishRecordsType.class);
-            if (recordsType == FishRecordsType.COMPETITION) {
-                getCompetition().clear();
-                sender.sendMessage(replace("<mf-lang:command-clear-competition-success>"));
-            }
-            else if (recordsType == FishRecordsType.ALLTIME) {
-                getFishingLogs().clear();
-                sender.sendMessage(replace("<mf-lang:command-clear-alltime-success>"));
-            }
-
+            clearAll(context.getSource(), context.getArgument(name(), FishRecordsType.class));
             return 1;
         }
 
@@ -111,7 +113,7 @@ class MFClear implements LiteralCommand {
         @Override
         public int execute(@NotNull CommandContext<CommandSender> context) {
             CommandSender sender = context.getSource();
-            FishRecordsType recordsType = context.getArgument(name(), FishRecordsType.class);
+            FishRecordsType recordsType = context.getArgument("recordsType", FishRecordsType.class);
             UUID uuid = context.getArgument(name(), UUID.class);
             String name = Bukkit.getOfflinePlayer(uuid).getName();
             if (name == null) {
@@ -126,7 +128,6 @@ class MFClear implements LiteralCommand {
                 getFishingLogs().clearRecordHolder(uuid);
                 sender.sendMessage(replace("<mf-lang:command-clear-alltime-player-success>", tagResolver("player", name)));
             }
-
             return 1;
         }
 

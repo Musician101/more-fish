@@ -38,7 +38,8 @@ class MFShop implements LiteralCommand {
 
     @Override
     public int execute(@NotNull CommandContext<CommandSender> context) {
-        return shop(context.getSource(), (Player) context.getSource());
+        shop(context.getSource(), (Player) context.getSource());
+        return 1;
     }
 
     @NotNull
@@ -47,8 +48,7 @@ class MFShop implements LiteralCommand {
         return "shop";
     }
 
-    @SuppressWarnings("SameReturnValue")
-    int shop(CommandSender sender, Player guiUser) {
+    void shop(CommandSender sender, Player guiUser) {
         if (!getPlugin().getConfig().getBoolean("fish-shop.enable") || !getPlugin().getVault().hasEconomy()) {
             sender.sendMessage(replace("<mf-lang:command-shop-disabled>"));
         }
@@ -58,8 +58,6 @@ class MFShop implements LiteralCommand {
                 sender.sendMessage(replace("<mf-lang:command-shop-forced>", playerName(guiUser)));
             }
         }
-
-        return 1;
     }
 
     class MFPlayer extends AbstractMFPlayer {
@@ -71,7 +69,8 @@ class MFShop implements LiteralCommand {
 
         @Override
         public int execute(@NotNull CommandContext<CommandSender> context) {
-            return shop(context.getSource(), context.getArgument("player", Player.class));
+            shop(context.getSource(), context.getArgument("player", Player.class));
+            return 1;
         }
     }
 }

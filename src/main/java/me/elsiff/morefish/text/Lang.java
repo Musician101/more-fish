@@ -9,6 +9,7 @@ import me.elsiff.morefish.text.tagresolver.TopFishLengthTagResolver;
 import me.elsiff.morefish.text.tagresolver.TopFishTagResolver;
 import me.elsiff.morefish.text.tagresolver.TopPlayerTagResolver;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.tag.Tag;
@@ -74,7 +75,7 @@ public class Lang {
     }
 
     @NotNull
-    public static TagResolver tagResolver(@NotNull String name, @NotNull Component tag) {
+    public static TagResolver tagResolver(@NotNull String name, @NotNull ComponentLike tag) {
         return tagResolver(name, Tag.selfClosingInserting(tag));
     }
 
