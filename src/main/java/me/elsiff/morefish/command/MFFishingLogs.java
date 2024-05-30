@@ -25,7 +25,7 @@ import static me.elsiff.morefish.text.Lang.raw;
 import static me.elsiff.morefish.text.Lang.replace;
 import static net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.resolver;
 
-class MFFLCommand implements LiteralCommand {
+class MFFishingLogs implements LiteralCommand {
 
     private static void showRecords(CommandContext<CommandSender> context) {
         Player player = (Player) context.getSource();

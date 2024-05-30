@@ -11,7 +11,7 @@ import static me.elsiff.morefish.MoreFish.getPlugin;
 import static me.elsiff.morefish.text.Lang.raw;
 import static me.elsiff.morefish.text.Lang.replace;
 
-class MFSBCommand implements LiteralCommand {
+class MFScoreboard implements LiteralCommand {
 
     @NotNull
     @Override
