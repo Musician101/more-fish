@@ -1,7 +1,6 @@
 package me.elsiff.morefish.command;
 
 import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.musician101.bukkitier.command.LiteralCommand;
 import io.papermc.paper.plugin.configuration.PluginMeta;
 import org.bukkit.command.CommandSender;
@@ -25,7 +24,7 @@ class MFHelp implements LiteralCommand {
 
     @SuppressWarnings("UnstableApiUsage")
     @Override
-    public int execute(@NotNull CommandContext<CommandSender> context) throws CommandSyntaxException {
+    public int execute(@NotNull CommandContext<CommandSender> context) {
         CommandSender sender = context.getSource();
         PluginMeta meta = getPlugin().getPluginMeta();
         List<String> authors = meta.getAuthors();

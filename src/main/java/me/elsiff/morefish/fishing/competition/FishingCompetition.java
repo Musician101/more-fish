@@ -28,6 +28,7 @@ public final class FishingCompetition extends FishRecordKeeper {
     private boolean enabled = false;
     private String startTime;
 
+    @SuppressWarnings("StringConcatenationArgumentToLogCall")
     @Override
     public void save() {
         try {

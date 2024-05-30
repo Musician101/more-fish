@@ -39,7 +39,7 @@ public final class FishingLogs extends FishRecordKeeper {
             yaml.save(getPath().toFile());
         }
         catch (IOException e) {
-            getPlugin().getSLF4JLogger().error("Error loading " + getPath().getFileName(), e);
+            getPlugin().getSLF4JLogger().error("Error loading fishing_logs.yml", e);
         }
     }
 
