@@ -140,14 +140,13 @@ public final class FishTypeTable {
                     boolean firework = getOrDefaultFalse(json, "firework");
                     double additionalPrice = getOrDefaultZero(json, "additional-price");
                     List<FishCondition> conditions = FishCondition.loadFrom(json, "conditions");
-                    boolean glow = getOrDefaultFalse(json, "glow");
                     boolean filterDefaultEnabled = getOrDefaultFalse(json, "filter-default-enabled");
                     int customModelData = 0;
                     if (json.has("custom-model-data")) {
                         customModelData = json.get("custom-model-data").getAsInt();
                     }
 
-                    return new FishRarity(key, displayName, isDefault, chance, color, catchHandlers, conditions, announcement, luckOfTheSeaChances, skipItemFormat, noDisplay, firework, additionalPrice, customModelData, glow, filterDefaultEnabled);
+                    return new FishRarity(key, displayName, isDefault, chance, color, catchHandlers, conditions, announcement, luckOfTheSeaChances, skipItemFormat, noDisplay, firework, additionalPrice, customModelData, filterDefaultEnabled);
                 }).filter(Objects::nonNull).toList();
                 rarities.forEach(fishRarity -> {
                     String fishRarityFile = fishRarity.name() + ".json";

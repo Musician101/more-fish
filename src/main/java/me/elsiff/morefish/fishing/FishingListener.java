@@ -60,8 +60,6 @@ public final class FishingListener implements Listener {
                 // There's always at least one fish
                 ItemStack fishItem = fishItems.getFirst();
                 caught.setItemStack(fishItem);
-                //TODO glow color requires teams/packets
-                //caught.setGlowing(fishes.getFirst().rarity().glow());
                 fishItems.stream().filter(item -> !getPlugin().getFishBags().addFish(player, item)).forEach(item -> {
                     World world = player.getWorld();
                     world.dropItem(player.getLocation(), item);
