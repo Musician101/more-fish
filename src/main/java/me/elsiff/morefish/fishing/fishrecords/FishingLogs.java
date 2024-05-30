@@ -17,6 +17,32 @@ import static me.elsiff.morefish.MoreFish.getPlugin;
 
 public final class FishingLogs extends FishRecordKeeper {
 
+    @Override
+    public void save() {
+        try {
+            if (Files.notExists(getPath())) {
+                Files.createDirectories(getPath().getParent());
+                Files.createFile(getPath());
+            }
+
+            YamlConfiguration yaml = new YamlConfiguration();
+            yaml.set("records", records.stream().map(record -> {
+                ConfigurationSection cs = new MemoryConfiguration();
+                cs.set("uuid", record.fisher().toString());
+                cs.set("name", record.getFishName());
+                cs.set("length", record.getLength());
+                cs.set("rarity", record.getRarityName());
+                cs.set("rarity_probability", record.getRarityProbability());
+                cs.set("timestamp", record.timestamp());
+                return cs;
+            }).toList());
+            yaml.save(getPath().toFile());
+        }
+        catch (IOException e) {
+            getPlugin().getSLF4JLogger().error("Error loading " + getPath().getFileName(), e);
+        }
+    }
+
     public void load() {
         Bukkit.getAsyncScheduler().runNow(getPlugin(), task -> {
             try {
@@ -56,31 +82,8 @@ public final class FishingLogs extends FishRecordKeeper {
         return obj == null ? defaultValue : obj.toString();
     }
 
-    public void save() {
-        try {
-            if (Files.notExists(getPath())) {
-                Files.createFile(getPath());
-            }
-
-            YamlConfiguration yaml = new YamlConfiguration();
-            yaml.set("records", records.stream().map(record -> {
-                ConfigurationSection cs = new MemoryConfiguration();
-                cs.set("uuid", record.fisher().toString());
-                cs.set("name", record.getFishName());
-                cs.set("length", record.getLength());
-                cs.set("rarity", record.getRarityName());
-                cs.set("rarity_probability", record.getRarityProbability());
-                cs.set("timestamp", record.timestamp());
-                return cs;
-            }).toList());
-            yaml.save(getPath().toFile());
-        }
-        catch (IOException e) {
-            getPlugin().getSLF4JLogger().error("Error loading fishing_logs.yml", e);
-        }
-    }
-
-    private Path getPath() {
+    @Override
+    protected Path getPath() {
         return getPlugin().getDataFolder().toPath().resolve("fishing_logs.yml");
     }
 

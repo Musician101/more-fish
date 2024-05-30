@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.nio.file.Path;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +57,8 @@ public abstract class FishRecordKeeper {
         }
     }
 
+    public abstract void save();
+
     public void clear() {
         records.clear();
     }
@@ -90,4 +93,6 @@ public abstract class FishRecordKeeper {
 
         throw new IllegalStateException("Record not found");
     }
+
+    protected abstract Path getPath();
 }
