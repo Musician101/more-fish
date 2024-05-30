@@ -57,7 +57,7 @@ public final class FishingListener implements Listener {
                 List<Fish> fishes = fishTypeTable.pickRandomTypes(caught, player).stream().map(FishType::generateFish).toList();
                 fishes.forEach(fish -> catchHandlersOf(event, fish).forEach(handler -> handler.handle(player, fish)));
                 List<ItemStack> fishItems = fishes.stream().map(fish -> createItemStack(fish, player)).toList();
-                // There's always one fish
+                // There's always at least one fish
                 ItemStack fishItem = fishItems.getFirst();
                 caught.setItemStack(fishItem);
                 caught.setGlowing(fishes.getFirst().rarity().glow());
