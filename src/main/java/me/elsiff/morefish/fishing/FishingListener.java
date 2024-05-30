@@ -7,7 +7,6 @@ import me.elsiff.morefish.fishing.catchhandler.NewFirstBroadcaster;
 import me.elsiff.morefish.fishing.competition.FishingCompetition;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -34,17 +33,13 @@ public final class FishingListener implements Listener {
     private Collection<CatchHandler> catchHandlersOf(PlayerFishEvent event, Fish fish) {
         List<CatchHandler> catchHandlers = new ArrayList<>(List.of(new CatchBroadcaster(), new NewFirstBroadcaster(), new CompetitionRecordAdder()));
         catchHandlers.addAll(fish.type().catchHandlers());
-        List<World> contestDisabledWorlds = getConfig().getStringList("general.contest-disabled-worlds").stream().map(Bukkit::getWorld).filter(Objects::nonNull).toList();
+        List<World> contestDisabledWorlds = getPlugin().getConfig().getStringList("general.contest-disabled-worlds").stream().map(Bukkit::getWorld).filter(Objects::nonNull).toList();
         Player player = event.getPlayer();
         if (contestDisabledWorlds.contains(player.getWorld())) {
             return catchHandlers.stream().filter(catchHandler -> !(catchHandler instanceof CompetitionRecordAdder) && !(catchHandler instanceof NewFirstBroadcaster)).toList();
         }
 
         return catchHandlers;
-    }
-
-    private FileConfiguration getConfig() {
-        return getPlugin().getConfig();
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
