@@ -13,7 +13,7 @@ public record FishRarity(@NotNull String name, @NotNull String displayName, bool
                          @NotNull List<FishCondition> conditions, @NotNull PlayerAnnouncement catchAnnouncement,
                          @NotNull Map<Integer, Double> luckOfTheSeaChances,
                          boolean hasNotFishItemFormat, boolean noDisplay, boolean hasCatchFirework,
-                         double additionalPrice, int customModelData, boolean glow) implements Comparable<FishRarity> {
+                         double additionalPrice, int customModelData, boolean glow, boolean filterDefaultEnabled) implements Comparable<FishRarity> {
 
     @Override
     public int compareTo(@NotNull FishRarity o) {

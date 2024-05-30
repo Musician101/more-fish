@@ -46,6 +46,7 @@ import java.util.stream.Stream;
 import static me.elsiff.morefish.MoreFish.getPlugin;
 import static me.elsiff.morefish.text.Lang.replace;
 
+//TODO put all fishtype and fishrarity data onto the itemstack for backwards compatibility
 public final class FishTypeTable {
 
     private static final Gson GSON = new Gson();
@@ -140,12 +141,13 @@ public final class FishTypeTable {
                     double additionalPrice = getOrDefaultZero(json, "additional-price");
                     List<FishCondition> conditions = FishCondition.loadFrom(json, "conditions");
                     boolean glow = getOrDefaultFalse(json, "glow");
+                    boolean filterDefaultEnabled = getOrDefaultFalse(json, "filter-default-enabled");
                     int customModelData = 0;
                     if (json.has("custom-model-data")) {
                         customModelData = json.get("custom-model-data").getAsInt();
                     }
 
-                    return new FishRarity(key, displayName, isDefault, chance, color, catchHandlers, conditions, announcement, luckOfTheSeaChances, skipItemFormat, noDisplay, firework, additionalPrice, customModelData, glow);
+                    return new FishRarity(key, displayName, isDefault, chance, color, catchHandlers, conditions, announcement, luckOfTheSeaChances, skipItemFormat, noDisplay, firework, additionalPrice, customModelData, glow, filterDefaultEnabled);
                 }).filter(Objects::nonNull).toList();
                 rarities.forEach(fishRarity -> {
                     String fishRarityFile = fishRarity.name() + ".json";

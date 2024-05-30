@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static io.musician101.musigui.paper.chest.PaperIconUtil.customName;
@@ -36,7 +37,7 @@ public class FishShopFilterGui extends AbstractFishShopGUI {
 
     public FishShopFilterGui(int page, @NotNull Player user) {
         super(replace("<mf-lang:sales-filter-title>"), user);
-        this.selectedRarities = FILTERS.getOrDefault(user.getUniqueId(), new ArrayList<>());
+        this.selectedRarities = FILTERS.computeIfAbsent(user.getUniqueId(), k -> getPlugin().getFishTypeTable().getRarities().stream().filter(FishRarity::filterDefaultEnabled).collect(Collectors.toList()));
         updateButtons(page);
         IntStream.of(45, 46, 47, 48, 50, 51, 52, 53).forEach(this::glassPaneButton);
     }
