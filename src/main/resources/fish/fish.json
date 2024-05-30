@@ -1,72 +1,72 @@
 {
-  "item-format": {
-    "lore": [
-      "<gray><length>cm",
-      "<gray>Caught by <player>"
-    ],
-    "display-name": "<fish-rarity-color><fish-name>"
-  },
-  "rarity-list": {
-    "junk": {
-      "color": "gray",
-      "display-name": "JUNK",
-      "chance": 1,
-      "no-display": true,
-      "additional-price": -999999
+    "item-format": {
+        "lore": [
+            "<gray><length>cm",
+            "<gray>Caught by <player>"
+        ],
+        "display-name": "<fish-rarity-color><fish-name>"
     },
-    "rare": {
-      "color": "dark_blue",
-      "display-name": "RARE",
-      "conditions": {
-        "mcmmo-skills": {
-          "Fishing": 25
+    "rarity-list": {
+        "junk": {
+            "color": "gray",
+            "display-name": "JUNK",
+            "chance": 1,
+            "no-display": true,
+            "additional-price": -999999
+        },
+        "rare": {
+            "color": "dark_blue",
+            "display-name": "RARE",
+            "conditions": {
+                "mcmmo-skills": {
+                    "Fishing": 25
+                }
+            },
+            "chance": 22,
+            "additional-price": 100.0
+        },
+        "common": {
+            "announcement": 0,
+            "no-display": true,
+            "default": true,
+            "display-name": "COMMON",
+            "color": "white",
+            "additional-price": 0.0
+        },
+        "legendary": {
+            "chance": 0.7,
+            "firework": true,
+            "color": "gold",
+            "display-name": "LEGENDARY",
+            "conditions": {
+                "mcmmo-skills": {
+                    "Fishing": 100
+                }
+            },
+            "additional-price": 1000.0
+        },
+        "mythic": {
+            "chance": 0.03,
+            "firework": true,
+            "color": "light_purple",
+            "display-name": "MYTHIC",
+            "conditions": {
+                "mcmmo-skills": {
+                    "Fishing": 200
+                }
+            },
+            "additional-price": 15000.0
+        },
+        "epic": {
+            "color": "dark_purple",
+            "display-name": "EPIC",
+            "conditions": {
+                "mcmmo-skills": {
+                    "Fishing": 50
+                }
+            },
+            "chance": 6.5,
+            "additional-price": 500.0
         }
-      },
-      "chance": 22,
-      "additional-price": 3.0
-    },
-    "common": {
-      "announcement": 0,
-      "no-display": true,
-      "default": true,
-      "display-name": "COMMON",
-      "color": "white",
-      "additional-price": 0.0
-    },
-    "legendary": {
-      "chance": 0.7,
-      "firework": true,
-      "color": "gold",
-      "display-name": "LEGENDARY",
-      "conditions": {
-        "mcmmo-skills": {
-          "Fishing": 100
-        }
-      },
-      "additional-price": 5.0
-    },
-    "mythic": {
-      "chance": 0.03,
-      "firework": true,
-      "color": "light_purple",
-      "display-name": "MYTHIC",
-      "conditions": {
-        "mcmmo-skills": {
-          "Fishing": 200
-        }
-      },
-      "additional-price": 6.0
-    },
-    "epic": {
-      "color": "dark_purple",
-      "display-name": "EPIC",
-      "conditions": {
-        "mcmmo-skills": {
-          "Fishing": 50
-        }
-      },
-      "chance": 6.5,
-      "additional-price": 4.0
     }
-  }
 }

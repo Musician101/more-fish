@@ -19,11 +19,18 @@ general:
 #    - "say @p is 2nd"
 #  3:
 #    - "say @p is 3rd~"
-contest-prizes: { }
+contest-prizes:
+  1:
+    - "say @p got 1st!"
+  2:
+    - "say @p got 2nd!"
+  3:
+    - "say @p got 3rd!"
+
 
 auto-running:
   # Toggles auto-running feature. Using it, fishing contest starts periodically with predetermined timer.
-  enable: false
+  enable: true
   #The minimum amount of players required to start contest.
   required-players: 5
   # Time limit of the contest measured in seconds.
@@ -56,18 +63,21 @@ auto-running:
 #   2: 2000
 fish-bag-upgrades:
   1: 1000
+  2: 3000
+  3: 5000
+  4: 10000
 
 fish-shop:
   # Enables the Fish Shop feature.
-  enable: false
+  enable: true
   # The multiplier to be used for calculating prices of fish.
   # (Price = (Length × Multiplier) + Additional Price From Rarity)
-  multiplier: 0.1
+  multiplier: 3
 
 messages:
   # The color of boss bar for contest.
   # For color list, visit https://hub.spigotmc.org/javadocs/spigot/org/bukkit/boss/BarColor.html
-  contest-bar-color: 'blue'
+  contest-bar-color: 'purple'
   # The number of top records that would be displayed in the ranking.
   # When it's set to '5', '/morefish top' command will show the ranking by 5th record.
   top-number: 3

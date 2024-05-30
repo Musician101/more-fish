@@ -1,94 +1,124 @@
 {
-  "RarePepe": {
-    "display-name": "Rare Pepe",
-    "length-max": 20,
-    "length-min": 4,
-    "icon": {
-      "lore": [
-        "<italic><dark_purple>FeelsBadMan"
-      ],
-      "id": "minecraft:slime_ball"
+    "Islehoppers": {
+        "display-name": "Islehopper",
+        "length-max": 25,
+        "length-min": 20,
+        "icon": {
+            "id": "minecraft:pufferfish",
+            "lore": [
+                "<red>Ay! I'm hoppin here!"
+            ]
+        }
+    },
+    "Wildsplash": {
+        "display-name": "Wildsplash",
+        "length-max": 22,
+        "length-min": 15,
+        "icon": {
+            "id": "minecraft:tropical_fish",
+            "lore": [
+                "<aqua>Splish Splash I'm takin a bath!"
+            ]
+        }
+    },
+    "Devilfish": {
+        "display-name": "Devilfish",
+        "length-max": 15,
+        "length-min": 9,
+        "icon": {
+            "id": "minecraft:tropical_fish"
+        }
+    },
+    "RarePepe": {
+        "display-name": "Rare Pepe",
+        "length-max": 20,
+        "length-min": 4,
+        "icon": {
+            "lore": [
+                "<italic><dark_purple>FeelsBadMan"
+            ],
+            "id": "minecraft:slime_ball"
+        }
+    },
+    "Anchovy": {
+        "display-name": "Anchovy",
+        "length-max": 13,
+        "length-min": 7,
+        "icon": {
+            "id": "minecraft:cod"
+        }
+    },
+    "Chub": {
+        "display-name": "Chub",
+        "length-max": 15,
+        "length-min": 5,
+        "icon": {
+            "lore": [
+                "<italic><dark_purple>Wider than it is long"
+            ],
+            "id": "minecraft:cod"
+        }
+    },
+    "Mackerel": {
+        "display-name": "Mackerel",
+        "length-max": 30,
+        "length-min": 15,
+        "icon": {
+            "id": "minecraft:cod"
+        }
+    },
+    "Shrimp": {
+        "display-name": "Shrimp",
+        "length-max": 8,
+        "length-min": 3,
+        "icon": {
+            "id": "minecraft:cod"
+        }
+    },
+    "Croaker": {
+        "display-name": "Croaker",
+        "length-max": 15,
+        "length-min": 12,
+        "icon": {
+            "id": "minecraft:cod"
+        }
+    },
+    "Crab": {
+        "display-name": "Crab",
+        "length-max": 15,
+        "length-min": 10,
+        "icon": {
+            "id": "minecraft:cod"
+        }
+    },
+    "MudCrab": {
+        "display-name": "Mud Crab",
+        "length-max": 15,
+        "length-min": 10,
+        "icon": {
+            "lore": [
+                "<italic><dark_purple>I am become Death, destroyer of worlds!"
+            ],
+            "id": "minecraft:cod"
+        }
+    },
+    "GooberFish": {
+        "display-name": "GooberFish",
+        "length-max": 18,
+        "length-min": 7,
+        "icon": {
+            "lore": [
+                "<italic><dark_purple>Just a goofy GooberFish!"
+            ],
+            "id": "minecraft:cod"
+        }
+    },
+    "Herring": {
+        "display-name": "Herring",
+        "length-max": 30,
+        "length-min": 20,
+        "icon": {
+            "id": "minecraft:cod"
+        }
     }
-  },
-  "Anchovy": {
-    "display-name": "Anchovy",
-    "length-max": 13,
-    "length-min": 7,
-    "icon": {
-      "id": "minecraft:cod"
-    }
-  },
-  "Chub": {
-    "display-name": "Chub",
-    "length-max": 15,
-    "length-min": 5,
-    "icon": {
-      "lore": [
-        "<italic><dark_purple>Wider than it is long"
-      ],
-      "id": "minecraft:cod"
-    }
-  },
-  "Mackerel": {
-    "display-name": "Mackerel",
-    "length-max": 30,
-    "length-min": 15,
-    "icon": {
-      "id": "minecraft:cod"
-    }
-  },
-  "Shrimp": {
-    "display-name": "Shrimp",
-    "length-max": 8,
-    "length-min": 3,
-    "icon": {
-      "id": "minecraft:cod"
-    }
-  },
-  "Croaker": {
-    "display-name": "Croaker",
-    "length-max": 15,
-    "length-min": 12,
-    "icon": {
-      "id": "minecraft:cod"
-    }
-  },
-  "Crab": {
-    "display-name": "Crab",
-    "length-max": 15,
-    "length-min": 10,
-    "icon": {
-      "id": "minecraft:cod"
-    }
-  },
-  "MudCrab": {
-    "display-name": "Mud Crab",
-    "length-max": 15,
-    "length-min": 10,
-    "icon": {
-      "lore": [
-        "<italic><dark_purple>I am become Death, destroyer of worlds!"
-      ],
-      "id": "minecraft:cod"
-    }
-  },
-  "GooberFish": {
-    "display-name": "GooberFish",
-    "length-max": 18,
-    "length-min": 7,
-    "icon": {
-      "lore": [
-        "<italic><dark_purple>Just a goofy GooberFish!"
-      ],
-      "id": "minecraft:cod"
-    }
-  },
-  "Herring": {
-    "display-name": "Herring",
-    "length-max": 30,
-    "length-min": 20,
-    "icon": {
-      "id": "minecraft:cod"
-    }
-  }
 }
