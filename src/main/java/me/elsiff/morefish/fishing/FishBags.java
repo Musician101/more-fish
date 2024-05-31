@@ -1,5 +1,6 @@
 package me.elsiff.morefish.fishing;
 
+import me.elsiff.morefish.item.FishItemStackConverter;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -80,7 +81,7 @@ public class FishBags implements Listener {
                                 return;
                             }
 
-                            fishBag.updatePage(page, IntStream.range(0, 45).mapToObj(Integer::toString).map(pageSection::getItemStack).filter(Objects::nonNull).collect(Collectors.toList()));
+                            fishBag.updatePage(page, IntStream.range(0, 45).mapToObj(Integer::toString).map(pageSection::getItemStack).filter(Objects::nonNull).peek(FishItemStackConverter::updateFish).collect(Collectors.toList()));
                         });
                     }
 

@@ -54,8 +54,7 @@ public interface FishItemStackConverter {
             }
 
             PersistentDataContainer data = itemMeta.getPersistentDataContainer();
-            data.set(fishTypeKey(), PersistentDataType.STRING, fish.name());
-            data.set(fishLengthKey(), PersistentDataType.DOUBLE, length);
+            TagKey.FISH.setValue(data, fish);
         });
 
         return itemStack;
@@ -65,12 +64,8 @@ public interface FishItemStackConverter {
     static Fish fish(@NotNull ItemStack itemStack) {
         ItemMeta itemMeta = itemStack.getItemMeta();
         PersistentDataContainer tags = itemMeta.getPersistentDataContainer();
-        if (!tags.has(fishTypeKey(), PersistentDataType.STRING)) {
-            throw new IllegalArgumentException("Item meta must have fish type tag");
-        }
-
-        if (!tags.has(fishLengthKey(), PersistentDataType.DOUBLE)) {
-            throw new IllegalArgumentException("Item meta must have fish length tag");
+        if (!TagKey.FISH.isPresent(itemStack)) {
+            throw new IllegalArgumentException("ItemStack is missing fish NBT data.");
         }
 
         String typeName = tags.get(fishTypeKey(), PersistentDataType.STRING);
@@ -79,12 +74,35 @@ public interface FishItemStackConverter {
         return new Fish(type, length == null ? 0 : length);
     }
 
-    static NamespacedKey fishLengthKey() {
-        return new NamespacedKey(getPlugin(), "fishLength");
+    static void updateFish(@NotNull ItemStack itemStack) {
+        itemStack.editMeta(itemMeta -> {
+            if (TagKey.FISH.isPresent(itemStack)) {
+                return;
+            }
+
+            PersistentDataContainer tags = itemMeta.getPersistentDataContainer();
+            if (!tags.has(fishTypeKey(), PersistentDataType.STRING)) {
+                throw new IllegalArgumentException("Item meta must have fish type tag");
+            }
+
+            if (!tags.has(fishLengthKey(), PersistentDataType.DOUBLE)) {
+                throw new IllegalArgumentException("Item meta must have fish length tag");
+            }
+
+            String typeName = tags.get(fishTypeKey(), PersistentDataType.STRING);
+            FishType type = getPlugin().getFishTypeTable().getTypes().stream().filter(it -> it.name().equals(typeName)).findFirst().orElseThrow(() -> new IllegalStateException("Fish type doesn't exist"));
+            Double length = tags.get(fishLengthKey(), PersistentDataType.DOUBLE);
+            Fish fish = new Fish(type, length == null ? 0 : length);
+            TagKey.FISH.setValue(tags, fish);
+        });
     }
 
-    static NamespacedKey fishTypeKey() {
+    private static NamespacedKey fishTypeKey() {
         return new NamespacedKey(getPlugin(), "fishType");
+    }
+
+    private static NamespacedKey fishLengthKey() {
+        return new NamespacedKey(getPlugin(), "fishLength");
     }
 
     private static Optional<JsonObject> getFormatConfig() {
