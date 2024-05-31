@@ -1,5 +1,6 @@
 package me.elsiff.morefish;
 
+import io.musician101.bukkitier.Bukkitier;
 import me.elsiff.morefish.command.MFMain;
 import me.elsiff.morefish.fishing.FishBags;
 import me.elsiff.morefish.fishing.FishTypeTable;
@@ -18,9 +19,6 @@ import org.bukkit.Server;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-
-import static io.musician101.bukkitier.Bukkitier.registerCommand;
-import static me.elsiff.morefish.text.Lang.replace;
 
 public final class MoreFish extends JavaPlugin {
 
@@ -51,10 +49,10 @@ public final class MoreFish extends JavaPlugin {
         Bukkit.getAsyncScheduler().runNow(this, task -> {
             getServer().getOnlinePlayers().forEach(player -> {
                 Component title = player.getOpenInventory().title();
-                if (title.equals(replace("<mf-lang:shop-gui-title>")) || title.equals(replace("<mf-lang:sales-filter-title>"))) {
+                if (title.equals(Lang.replace("<mf-lang:shop-gui-title>")) || title.equals(Lang.replace("<mf-lang:sales-filter-title>"))) {
                     player.getScheduler().run(this, t -> {
                         player.closeInventory();
-                        player.sendMessage(replace("<mf-lang:gui-closed-config-update>"));
+                        player.sendMessage(Lang.replace("<mf-lang:gui-closed-config-update>"));
                     }, null);
                 }
             });
@@ -148,7 +146,7 @@ public final class MoreFish extends JavaPlugin {
         PluginManager pm = server.getPluginManager();
         pm.registerEvents(new FishingListener(), this);
         pm.registerEvents(fishBags, this);
-        registerCommand(getPlugin(), new MFMain(), "mf");
+        Bukkitier.registerCommand(getPlugin(), new MFMain(), "mf");
         getSLF4JLogger().info("Plugin has been enabled.");
     }
 }

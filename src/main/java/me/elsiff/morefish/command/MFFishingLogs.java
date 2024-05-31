@@ -10,6 +10,8 @@ import io.musician101.bukkitier.command.LiteralCommand;
 import me.elsiff.morefish.command.argument.SortArgumentType;
 import me.elsiff.morefish.command.argument.SortArgumentType.SortType;
 import me.elsiff.morefish.fishing.fishrecords.FishRecord;
+import me.elsiff.morefish.text.Lang;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -18,12 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.text.Lang.date;
-import static me.elsiff.morefish.text.Lang.fishLength;
-import static me.elsiff.morefish.text.Lang.fishName;
-import static me.elsiff.morefish.text.Lang.raw;
-import static me.elsiff.morefish.text.Lang.replace;
-import static net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.resolver;
 
 class MFFishingLogs implements LiteralCommand {
 
@@ -43,18 +39,18 @@ class MFFishingLogs implements LiteralCommand {
         int end = Math.min(start + 8, fullList.size());
         List<FishRecord> records = new ArrayList<>(fullList.subList(start, end));
         if (records.isEmpty()) {
-            player.sendMessage(replace("<mf-lang:command-fishinglogs-none>"));
+            player.sendMessage(Lang.replace("<mf-lang:command-fishinglogs-none>"));
             return;
         }
 
         records.sort(sortType.reversed());
-        records.forEach(record -> player.sendMessage(replace("<mf-lang:command-fishing-logs-record>", resolver(fishName(record), fishLength(record), date(record)))));
+        records.forEach(record -> player.sendMessage(Lang.replace("<mf-lang:command-fishing-logs-record>", TagResolver.resolver(Lang.fishName(record), Lang.fishLength(record), Lang.date(record)))));
     }
 
     @NotNull
     @Override
     public String description(@NotNull CommandSender sender) {
-        return raw("command-fishing-logs-description");
+        return Lang.raw("command-fishing-logs-description");
     }
 
     @NotNull

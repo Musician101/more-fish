@@ -1,6 +1,7 @@
 package me.elsiff.morefish.fishing.fishrecords;
 
 import me.elsiff.morefish.command.argument.SortArgumentType.SortType;
+import me.elsiff.morefish.text.Lang;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -16,8 +17,6 @@ import java.util.Map.Entry;
 import java.util.UUID;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.text.Lang.replace;
-import static me.elsiff.morefish.text.Lang.tagResolver;
 import static me.elsiff.morefish.util.NumberUtils.ordinalOf;
 import static net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.resolver;
 
@@ -32,7 +31,7 @@ public abstract class FishRecordKeeper {
 
     public void informAboutRanking(@NotNull CommandSender receiver, @NotNull List<FishRecord> fishRecords) {
         if (fishRecords.isEmpty()) {
-            receiver.sendMessage(replace("<mf-lang:top-no-catches>"));
+            receiver.sendMessage(Lang.replace("<mf-lang:top-no-catches>"));
         }
         else {
             int topSize = getPlugin().getConfig().getInt("messages.top-number", 1);
@@ -41,17 +40,17 @@ public abstract class FishRecordKeeper {
             top.forEach(record -> {
                 int number = top.indexOf(record) + 1;
                 OfflinePlayer player = Bukkit.getOfflinePlayer(record.fisher());
-                receiver.sendMessage(replace("<mf-lang:top-ranked-record>", resolver(tagResolver("player", player.getName() == null ? player.getUniqueId().toString() : player.getName()), tagResolver("ordinal", ordinalOf(number)), tagResolver("record-length", record.getLength()), tagResolver("record-fish-name", record.getFishName()))));
+                receiver.sendMessage(Lang.replace("<mf-lang:top-ranked-record>", resolver(Lang.tagResolver("player", player.getName() == null ? player.getUniqueId().toString() : player.getName()), Lang.tagResolver("ordinal", ordinalOf(number)), Lang.tagResolver("record-length", record.getLength()), Lang.tagResolver("record-fish-name", record.getFishName()))));
             });
 
             if (receiver instanceof Player player) {
                 if (contains(player.getUniqueId())) {
                     Entry<Integer, FishRecord> entry = rankedRecordOf(player, fishRecords);
                     FishRecord record = entry.getValue();
-                    receiver.sendMessage(replace("<mf-lang:top-player-record>", resolver(tagResolver("ordinal", ordinalOf(entry.getKey() + 1)), tagResolver("record-length", record.getLength()), tagResolver("record-fish-name", record.getFishName()))));
+                    receiver.sendMessage(Lang.replace("<mf-lang:top-player-record>", resolver(Lang.tagResolver("ordinal", ordinalOf(entry.getKey() + 1)), Lang.tagResolver("record-length", record.getLength()), Lang.tagResolver("record-fish-name", record.getFishName()))));
                 }
                 else {
-                    receiver.sendMessage(replace("<mf-lang:top-player-no-catch>"));
+                    receiver.sendMessage(Lang.replace("<mf-lang:top-player-no-catch>"));
                 }
             }
         }

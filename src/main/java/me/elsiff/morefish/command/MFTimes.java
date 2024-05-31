@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.mojang.brigadier.context.CommandContext;
 import io.musician101.bukkitier.command.LiteralCommand;
 import me.elsiff.morefish.fishing.competition.FishingCompetitionAutoRunner.CompetitionTimes;
+import me.elsiff.morefish.text.Lang;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,9 +13,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.stream.Collectors;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.text.Lang.raw;
-import static me.elsiff.morefish.text.Lang.replace;
-import static me.elsiff.morefish.text.Lang.tagResolver;
 
 class MFTimes implements LiteralCommand {
 
@@ -23,7 +21,7 @@ class MFTimes implements LiteralCommand {
         CommandSender sender = context.getSource();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm z");
         String times = Lists.partition(getPlugin().getAutoRunner().getCompetitionTimes(), 6).stream().map(list -> list.stream().map(CompetitionTimes::getStartTime).map(ZonedDateTime.now()::with).map(l -> l.format(formatter)).collect(Collectors.joining(", "))).collect(Collectors.joining("<newline>"));
-        sender.sendMessage(replace("<mf-lang:command-times-message>", tagResolver("times", replace(times))));
+        sender.sendMessage(Lang.replace("<mf-lang:command-times-message>", Lang.tagResolver("times", Lang.replace(times))));
         return 1;
     }
 
@@ -36,7 +34,7 @@ class MFTimes implements LiteralCommand {
     @NotNull
     @Override
     public String description(@NotNull CommandSender sender) {
-        return raw("command-times-description");
+        return Lang.raw("command-times-description");
     }
 
     @NotNull

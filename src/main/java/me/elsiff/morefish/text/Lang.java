@@ -112,17 +112,17 @@ public class Lang {
             name = player.getUniqueId().toString();
         }
 
-        return tagResolver("player", name);
+        return Lang.tagResolver("player", name);
     }
 
     @NotNull
     public static TagResolver fishLength(@NotNull Fish fish) {
-        return tagResolver("length", fish.length());
+        return Lang.tagResolver("length", fish.length());
     }
 
     @NotNull
     public static TagResolver fishLength(@NotNull FishRecord record) {
-        return tagResolver("length", record.getLength());
+        return Lang.tagResolver("length", record.getLength());
     }
 
     @NotNull
@@ -140,12 +140,12 @@ public class Lang {
 
     @NotNull
     public static TagResolver fishRarity(@NotNull Fish fish) {
-        return tagResolver("rarity", fish.rarity().displayName().toUpperCase());
+        return Lang.tagResolver("rarity", fish.rarity().displayName().toUpperCase());
     }
 
     @NotNull
     public static TagResolver fishRarityColor(@NotNull Fish fish) {
-        return tagResolver("fish-rarity-color", Tag.styling(builder -> {
+        return Lang.tagResolver("fish-rarity-color", Tag.styling(builder -> {
             String color = fish.rarity().color();
             TextColor textColor = NamedTextColor.NAMES.valueOr(color, NamedTextColor.WHITE);
             if (color.startsWith(TextColor.HEX_PREFIX)) {
@@ -158,12 +158,12 @@ public class Lang {
 
     @NotNull
     public static TagResolver fishName(@NotNull Fish fish) {
-        return tagResolver("fish-name", fish.name());
+        return Lang.tagResolver("fish-name", fish.name());
     }
 
     @NotNull
     public static TagResolver fishName(@NotNull FishRecord record) {
-        return tagResolver("fish-name", record.getFishName());
+        return Lang.tagResolver("fish-name", record.getFishName());
     }
 
     @NotNull
@@ -175,6 +175,6 @@ public class Lang {
         }
 
         builder.append(duration.getSeconds() % (long) 60).append("s");
-        return tagResolver("time-remaining", builder.toString());
+        return Lang.tagResolver("time-remaining", builder.toString());
     }
 }

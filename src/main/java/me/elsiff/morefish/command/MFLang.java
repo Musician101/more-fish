@@ -7,6 +7,7 @@ import io.musician101.bukkitier.command.ArgumentCommand;
 import io.musician101.bukkitier.command.Command;
 import io.musician101.bukkitier.command.LiteralCommand;
 import me.elsiff.morefish.command.argument.LangKeyArgumentType;
+import me.elsiff.morefish.text.Lang;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.command.CommandSender;
@@ -14,16 +15,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static me.elsiff.morefish.text.Lang.raw;
-import static me.elsiff.morefish.text.Lang.replace;
-import static me.elsiff.morefish.text.Lang.tagResolver;
 import static net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.resolver;
 
 public class MFLang implements LiteralCommand {
 
     @Override
     public @NotNull String description(@NotNull CommandSender sender) {
-        return raw("command-lang-description");
+        return Lang.raw("command-lang-description");
     }
 
     @Override
@@ -49,8 +47,8 @@ public class MFLang implements LiteralCommand {
             public int execute(@NotNull CommandContext<CommandSender> context) {
                 CommandSender sender = context.getSource();
                 String value = context.getArgument("key", String.class);
-                TagResolver t = resolver(tagResolver("raw-text", value), tagResolver("parsed-text", replace(value)));
-                Component message = replace("<mf-lang:command-lang-message>", t);
+                TagResolver t = resolver(Lang.tagResolver("raw-text", value), Lang.tagResolver("parsed-text", Lang.replace(value)));
+                Component message = Lang.replace("<mf-lang:command-lang-message>", t);
                 sender.sendMessage(message);
                 return 1;
             }

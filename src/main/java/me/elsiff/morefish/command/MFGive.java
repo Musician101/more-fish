@@ -11,6 +11,7 @@ import io.musician101.bukkitier.command.LiteralCommand;
 import me.elsiff.morefish.command.argument.FishLengthArgumentType;
 import me.elsiff.morefish.command.argument.FishTypeArgumentType;
 import me.elsiff.morefish.fishing.FishType;
+import me.elsiff.morefish.text.Lang;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -19,9 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import static me.elsiff.morefish.item.FishItemStackConverter.createItemStack;
-import static me.elsiff.morefish.text.Lang.raw;
-import static me.elsiff.morefish.text.Lang.replace;
-import static me.elsiff.morefish.text.Lang.tagResolver;
 
 class MFGive implements LiteralCommand {
 
@@ -33,17 +31,17 @@ class MFGive implements LiteralCommand {
         player.getWorld().dropItem(player.getLocation(), itemStack);
         CommandSender sender = context.getSource();
         if (!(sender instanceof Player p && p.getUniqueId().equals(player.getUniqueId()))) {
-            context.getSource().sendMessage(replace("<mf-lang:command-give-sender>", tagResolver("fish-display-name", fishType.displayName())));
+            context.getSource().sendMessage(Lang.replace("<mf-lang:command-give-sender>", Lang.tagResolver("fish-display-name", fishType.displayName())));
         }
 
-        player.sendMessage(replace("<mf-lang:command-give-receiver>", tagResolver("fish-display-name", fishType.displayName())));
+        player.sendMessage(Lang.replace("<mf-lang:command-give-receiver>", Lang.tagResolver("fish-display-name", fishType.displayName())));
         return 1;
     }
 
     @NotNull
     @Override
     public String description(@NotNull CommandSender sender) {
-        return raw("command-give-description");
+        return Lang.raw("command-give-description");
     }
 
     @NotNull

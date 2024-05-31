@@ -2,20 +2,13 @@ package me.elsiff.morefish.fishing.catchhandler;
 
 import me.elsiff.morefish.fishing.Fish;
 import me.elsiff.morefish.fishing.FishType;
+import me.elsiff.morefish.text.Lang;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-
-import static me.elsiff.morefish.text.Lang.fishLength;
-import static me.elsiff.morefish.text.Lang.fishName;
-import static me.elsiff.morefish.text.Lang.fishRarity;
-import static me.elsiff.morefish.text.Lang.fishRarityColor;
-import static me.elsiff.morefish.text.Lang.playerName;
-import static me.elsiff.morefish.text.Lang.replace;
-import static me.elsiff.morefish.text.Lang.tagResolver;
 
 public abstract class AbstractBroadcaster implements CatchHandler {
 
@@ -34,8 +27,8 @@ public abstract class AbstractBroadcaster implements CatchHandler {
     public void handle(@NotNull Player catcher, @NotNull Fish fish) {
         if (meetBroadcastCondition(catcher, fish)) {
             List<Player> receivers = fish.type().catchAnnouncement().receiversOf(catcher);
-            TagResolver tagResolver = TagResolver.resolver(playerName(catcher), fishLength(fish), fishRarity(fish), fishRarityColor(fish), fishName(fish), tagResolver("fish-with-rarity", fishNameWithRarity(fish.type())));
-            Component msg = replace(getCatchMessageFormat(), tagResolver, catcher);
+            TagResolver tagResolver = TagResolver.resolver(Lang.playerName(catcher), Lang.fishLength(fish), Lang.fishRarity(fish), Lang.fishRarityColor(fish), Lang.fishName(fish), Lang.tagResolver("fish-with-rarity", fishNameWithRarity(fish.type())));
+            Component msg = Lang.replace(getCatchMessageFormat(), tagResolver, catcher);
             receivers.forEach(player -> player.sendMessage(msg));
         }
     }

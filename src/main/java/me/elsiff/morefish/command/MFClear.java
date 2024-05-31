@@ -11,6 +11,7 @@ import me.elsiff.morefish.command.argument.FishRecordsTypeArgumentType.FishRecor
 import me.elsiff.morefish.command.argument.UUIDArgumentType;
 import me.elsiff.morefish.fishing.competition.FishingCompetition;
 import me.elsiff.morefish.fishing.fishrecords.FishingLogs;
+import me.elsiff.morefish.text.Lang;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -19,20 +20,17 @@ import java.util.List;
 import java.util.UUID;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.text.Lang.raw;
-import static me.elsiff.morefish.text.Lang.replace;
-import static me.elsiff.morefish.text.Lang.tagResolver;
 
 class MFClear implements LiteralCommand {
 
     private static void clearAll(CommandSender sender, FishRecordsType recordsType) {
         if (recordsType == FishRecordsType.COMPETITION) {
             getCompetition().clear();
-            sender.sendMessage(replace("<mf-lang:command-clear-competition-success>"));
+            sender.sendMessage(Lang.replace("<mf-lang:command-clear-competition-success>"));
         }
         else if (recordsType == FishRecordsType.ALLTIME) {
             getFishingLogs().clear();
-            sender.sendMessage(replace("<mf-lang:command-clear-alltime-success>"));
+            sender.sendMessage(Lang.replace("<mf-lang:command-clear-alltime-success>"));
         }
     }
 
@@ -60,7 +58,7 @@ class MFClear implements LiteralCommand {
         clearAll(context.getSource(), FishRecordsType.COMPETITION);
         CommandSender sender = context.getSource();
         getCompetition().clear();
-        sender.sendMessage(replace("<mf-lang:command-clear-success>"));
+        sender.sendMessage(Lang.replace("<mf-lang:command-clear-success>"));
         return 1;
     }
 
@@ -73,7 +71,7 @@ class MFClear implements LiteralCommand {
     @NotNull
     @Override
     public String description(@NotNull CommandSender sender) {
-        return raw("command-clear-description");
+        return Lang.raw("command-clear-description");
     }
 
     @NotNull
@@ -122,11 +120,11 @@ class MFClear implements LiteralCommand {
 
             if (recordsType == FishRecordsType.COMPETITION) {
                 getCompetition().clearRecordHolder(uuid);
-                sender.sendMessage(replace("<mf-lang:command-clear-competition-player-success>", tagResolver("player", name)));
+                sender.sendMessage(Lang.replace("<mf-lang:command-clear-competition-player-success>", Lang.tagResolver("player", name)));
             }
             else if (recordsType == FishRecordsType.ALLTIME) {
                 getFishingLogs().clearRecordHolder(uuid);
-                sender.sendMessage(replace("<mf-lang:command-clear-alltime-player-success>", tagResolver("player", name)));
+                sender.sendMessage(Lang.replace("<mf-lang:command-clear-alltime-player-success>", Lang.tagResolver("player", name)));
             }
             return 1;
         }

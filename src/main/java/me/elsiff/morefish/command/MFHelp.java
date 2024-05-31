@@ -3,15 +3,13 @@ package me.elsiff.morefish.command;
 import com.mojang.brigadier.context.CommandContext;
 import io.musician101.bukkitier.command.LiteralCommand;
 import io.papermc.paper.plugin.configuration.PluginMeta;
+import me.elsiff.morefish.text.Lang;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.text.Lang.raw;
-import static me.elsiff.morefish.text.Lang.replace;
-import static me.elsiff.morefish.text.Lang.tagResolver;
 import static net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.resolver;
 
 class MFHelp implements LiteralCommand {
@@ -37,8 +35,8 @@ class MFHelp implements LiteralCommand {
                 default -> String.join(", and ", String.join(", ", authors.subList(0, last)), authors.get(last));
             };
         }
-        sender.sendMessage(replace("<mf-lang:command-help-header>", resolver(tagResolver("authors", authorsString), tagResolver("plugin-display-name", meta.getDisplayName()))));
-        root.arguments().stream().filter(cmd -> cmd.canUse(sender)).forEach(cmd -> sender.sendMessage(replace("<mf-lang:command-help-info>", resolver(tagResolver("command-usage", root.usage(sender) + " " + cmd.name()), tagResolver("command-description", cmd.description(sender))))));
+        sender.sendMessage(Lang.replace("<mf-lang:command-help-header>", resolver(Lang.tagResolver("authors", authorsString), Lang.tagResolver("plugin-display-name", meta.getDisplayName()))));
+        root.arguments().stream().filter(cmd -> cmd.canUse(sender)).forEach(cmd -> sender.sendMessage(Lang.replace("<mf-lang:command-help-info>", resolver(Lang.tagResolver("command-usage", root.usage(sender) + " " + cmd.name()), Lang.tagResolver("command-description", cmd.description(sender))))));
         return 1;
     }
 
@@ -49,6 +47,6 @@ class MFHelp implements LiteralCommand {
 
     @Override
     public @NotNull String description(@NotNull CommandSender sender) {
-        return raw("command-help-description");
+        return Lang.raw("command-help-description");
     }
 }

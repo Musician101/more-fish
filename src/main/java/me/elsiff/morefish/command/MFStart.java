@@ -8,20 +8,19 @@ import io.musician101.bukkitier.command.Command;
 import io.musician101.bukkitier.command.LiteralCommand;
 import me.elsiff.morefish.fishing.competition.FishingCompetition;
 import me.elsiff.morefish.fishing.competition.FishingCompetitionHost;
+import me.elsiff.morefish.text.Lang;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.text.Lang.raw;
-import static me.elsiff.morefish.text.Lang.replace;
 
 class MFStart implements LiteralCommand {
 
     private static void start(CommandSender sender, long runningTime) {
         if (getCompetition().isEnabled()) {
-            sender.sendMessage(replace("<mf-lang:command-start-ongoing>"));
+            sender.sendMessage(Lang.replace("<mf-lang:command-start-ongoing>"));
         }
         else {
             getCompetitionHost().openCompetitionFor(runningTime * 20L);
@@ -39,7 +38,7 @@ class MFStart implements LiteralCommand {
     @NotNull
     @Override
     public String description(@NotNull CommandSender sender) {
-        return raw("command-start-description");
+        return Lang.raw("command-start-description");
     }
 
     @NotNull

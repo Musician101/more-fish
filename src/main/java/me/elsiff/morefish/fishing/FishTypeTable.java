@@ -13,6 +13,7 @@ import me.elsiff.morefish.fishing.catchhandler.CatchCommandExecutor;
 import me.elsiff.morefish.fishing.catchhandler.CatchFireworkSpawner;
 import me.elsiff.morefish.fishing.catchhandler.CatchHandler;
 import me.elsiff.morefish.fishing.condition.FishCondition;
+import me.elsiff.morefish.text.Lang;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -44,7 +45,6 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.text.Lang.replace;
 
 //TODO put all fishtype and fishrarity data onto the itemstack for backwards compatibility
 public final class FishTypeTable {
@@ -225,7 +225,7 @@ public final class FishTypeTable {
         ItemStack itemStack = new ItemStack(material, amount);
         itemStack.editMeta(itemMeta -> {
             if (json.has("lore")) {
-                List<Component> lore = json.getAsJsonArray("lore").asList().stream().map(content -> replace(content.getAsString())).toList();
+                List<Component> lore = json.getAsJsonArray("lore").asList().stream().map(content -> Lang.replace(content.getAsString())).toList();
                 itemMeta.lore(lore);
             }
 

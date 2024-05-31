@@ -9,13 +9,13 @@ import io.musician101.bukkitier.command.LiteralCommand;
 import me.elsiff.morefish.command.argument.FishArgumentType;
 import me.elsiff.morefish.fishing.fishrecords.FishRecord;
 import me.elsiff.morefish.fishing.fishrecords.FishRecordKeeper;
+import me.elsiff.morefish.text.Lang;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.text.Lang.raw;
 
 class MFTop implements LiteralCommand {
 
@@ -31,7 +31,7 @@ class MFTop implements LiteralCommand {
     @NotNull
     @Override
     public String description(@NotNull CommandSender sender) {
-        return raw("command-top-description");
+        return Lang.raw("command-top-description");
     }
 
     @NotNull

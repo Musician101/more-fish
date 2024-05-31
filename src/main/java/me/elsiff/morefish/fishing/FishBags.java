@@ -1,6 +1,7 @@
 package me.elsiff.morefish.fishing;
 
 import me.elsiff.morefish.item.FishItemStackConverter;
+import me.elsiff.morefish.text.Lang;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -25,7 +26,6 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.text.Lang.replace;
 
 public class FishBags implements Listener {
 
@@ -103,7 +103,7 @@ public class FishBags implements Listener {
             return;
         }
 
-        Bukkit.getGlobalRegionScheduler().run(getPlugin(), task -> player.sendMessage(replace("<red><click:run_command:/mf contraband>[MF] CONTRABAND DETECTED IN YOUR FISH BAG. CLICK THIS MESSAGE TO RETRIEVE IT NOW.")));
+        Bukkit.getGlobalRegionScheduler().run(getPlugin(), task -> player.sendMessage(Lang.replace("<red><click:run_command:/mf contraband>[MF] CONTRABAND DETECTED IN YOUR FISH BAG. CLICK THIS MESSAGE TO RETRIEVE IT NOW.")));
     }
 
     @SuppressWarnings("StringConcatenationArgumentToLogCall")

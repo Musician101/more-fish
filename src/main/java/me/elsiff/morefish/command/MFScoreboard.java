@@ -3,13 +3,12 @@ package me.elsiff.morefish.command;
 import com.mojang.brigadier.context.CommandContext;
 import io.musician101.bukkitier.command.LiteralCommand;
 import me.elsiff.morefish.hooker.MusiBoardHooker;
+import me.elsiff.morefish.text.Lang;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.text.Lang.raw;
-import static me.elsiff.morefish.text.Lang.replace;
 
 class MFScoreboard implements LiteralCommand {
 
@@ -27,7 +26,7 @@ class MFScoreboard implements LiteralCommand {
     @NotNull
     @Override
     public String description(@NotNull CommandSender sender) {
-        return raw("command-scoreboard-description");
+        return Lang.raw("command-scoreboard-description");
     }
 
     @Override
@@ -37,15 +36,15 @@ class MFScoreboard implements LiteralCommand {
             MusiBoardHooker musiBoard = getPlugin().getMusiBoard();
             if (musiBoard.hasHooked()) {
                 getPlugin().getMusiBoard().swapScoreboards(player);
-                player.sendMessage(replace("<mf-lang:command-scoreboard-success>"));
+                player.sendMessage(Lang.replace("<mf-lang:command-scoreboard-success>"));
                 return 1;
             }
 
-            player.sendMessage(replace("<mf-lang:command-scoreboard-no-support>"));
+            player.sendMessage(Lang.replace("<mf-lang:command-scoreboard-no-support>"));
             return 1;
         }
 
-        player.sendMessage(replace("<mf-lang:command-scoreboard-no-competition>"));
+        player.sendMessage(Lang.replace("<mf-lang:command-scoreboard-no-competition>"));
         return 1;
     }
 

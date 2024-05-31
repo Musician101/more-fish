@@ -6,6 +6,7 @@ import io.musician101.musiboard.scoreboard.MusiScoreboardManager;
 import io.papermc.paper.scoreboard.numbers.NumberFormat;
 import me.elsiff.morefish.command.argument.SortArgumentType.SortType;
 import me.elsiff.morefish.fishing.fishrecords.FishRecord;
+import me.elsiff.morefish.text.Lang;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -22,9 +23,6 @@ import java.util.UUID;
 import java.util.stream.IntStream;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.text.Lang.playerName;
-import static me.elsiff.morefish.text.Lang.replace;
-import static me.elsiff.morefish.text.Lang.tagResolver;
 import static net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.resolver;
 
 public class MusiBoardHooker implements PluginHooker {
@@ -94,7 +92,7 @@ public class MusiBoardHooker implements PluginHooker {
                 leaderboard.unregister();
             }
 
-            leaderboard = scoreboard.registerNewObjective("leaderboard", Criteria.DUMMY, replace("<mf-lang:scoreboard-display-name>"));
+            leaderboard = scoreboard.registerNewObjective("leaderboard", Criteria.DUMMY, Lang.replace("<mf-lang:scoreboard-display-name>"));
             leaderboard.setDisplaySlot(DisplaySlot.SIDEBAR);
             leaderboard.numberFormat(NumberFormat.blank());
             List<FishRecord> records = getPlugin().getCompetition().getRecords();
@@ -104,8 +102,8 @@ public class MusiBoardHooker implements PluginHooker {
                 OfflinePlayer player = Bukkit.getOfflinePlayer(record.fisher());
                 Score score = leaderboard.getScore(player);
                 score.setScore((int) (record.getLength() * 100));
-                score.customName(replace(player.getName() + " <red>" + record.getLength() + "cm"));
-                score.customName(replace("<mf-lang:scoreboard-entry>", resolver(playerName(player), tagResolver("record-length", record.getLength()))));
+                score.customName(Lang.replace(player.getName() + " <red>" + record.getLength() + "cm"));
+                score.customName(Lang.replace("<mf-lang:scoreboard-entry>", resolver(Lang.playerName(player), Lang.tagResolver("record-length", record.getLength()))));
             });
         }
     }

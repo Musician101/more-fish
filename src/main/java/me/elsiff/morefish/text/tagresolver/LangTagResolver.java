@@ -1,5 +1,6 @@
 package me.elsiff.morefish.text.tagresolver;
 
+import me.elsiff.morefish.text.Lang;
 import net.kyori.adventure.text.minimessage.Context;
 import net.kyori.adventure.text.minimessage.ParsingException;
 import net.kyori.adventure.text.minimessage.tag.Tag;
@@ -8,9 +9,6 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import static me.elsiff.morefish.text.Lang.raw;
-import static me.elsiff.morefish.text.Lang.replace;
 
 public class LangTagResolver implements TagResolver {
 
@@ -30,10 +28,10 @@ public class LangTagResolver implements TagResolver {
 
         StringBuilder sb = new StringBuilder();
         while (arguments.hasNext()) {
-            sb.append(raw(arguments.pop().value()));
+            sb.append(Lang.raw(arguments.pop().value()));
         }
 
-        return Tag.selfClosingInserting(replace(sb.toString(), tagResolver, player));
+        return Tag.selfClosingInserting(Lang.replace(sb.toString(), tagResolver, player));
     }
 
     @Override

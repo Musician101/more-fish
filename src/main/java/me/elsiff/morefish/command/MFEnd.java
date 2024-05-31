@@ -2,19 +2,18 @@ package me.elsiff.morefish.command;
 
 import com.mojang.brigadier.context.CommandContext;
 import io.musician101.bukkitier.command.LiteralCommand;
+import me.elsiff.morefish.text.Lang;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.text.Lang.raw;
-import static me.elsiff.morefish.text.Lang.replace;
 
 class MFEnd implements LiteralCommand {
 
     @NotNull
     @Override
     public String description(@NotNull CommandSender sender) {
-        return raw("command-end-description");
+        return Lang.raw("command-end-description");
     }
 
     @NotNull
@@ -33,10 +32,10 @@ class MFEnd implements LiteralCommand {
         CommandSender sender = context.getSource();
         if (getPlugin().getCompetition().isEnabled()) {
             getPlugin().getCompetitionHost().closeCompetition();
-            sender.sendMessage(replace("<mf-lang:contest-stop>"));
+            sender.sendMessage(Lang.replace("<mf-lang:contest-stop>"));
         }
         else {
-            sender.sendMessage(replace("<mf-lang:already-stopped>"));
+            sender.sendMessage(Lang.replace("<mf-lang:already-stopped>"));
         }
 
         return 1;

@@ -1,6 +1,7 @@
 package me.elsiff.morefish.fishing.competition;
 
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
+import me.elsiff.morefish.text.Lang;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.bossbar.BossBar.Color;
 import net.kyori.adventure.bossbar.BossBar.Overlay;
@@ -17,8 +18,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.TimeUnit;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.text.Lang.replace;
-import static me.elsiff.morefish.text.Lang.timeRemaining;
 
 public final class FishingCompetitionTimerBarHandler implements Listener {
 
@@ -59,7 +58,7 @@ public final class FishingCompetitionTimerBarHandler implements Listener {
     }
 
     private Component timerBarTitle(long remainingSeconds) {
-        return replace("<mf-lang:timer-bar-title>", timeRemaining(remainingSeconds));
+        return Lang.replace("<mf-lang:timer-bar-title>", Lang.timeRemaining(remainingSeconds));
     }
 
     @EventHandler

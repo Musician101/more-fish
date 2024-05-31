@@ -3,6 +3,7 @@ package me.elsiff.morefish.fishing.competition;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import me.elsiff.morefish.command.argument.SortArgumentType.SortType;
 import me.elsiff.morefish.fishing.fishrecords.FishRecord;
+import me.elsiff.morefish.text.Lang;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -14,8 +15,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.text.Lang.replace;
-import static me.elsiff.morefish.text.Lang.timeRemaining;
 
 public final class FishingCompetitionHost {
 
@@ -36,7 +35,7 @@ public final class FishingCompetitionHost {
             }
         }
 
-        Bukkit.broadcast(replace("<mf-lang:contest-stop>"));
+        Bukkit.broadcast(Lang.replace("<mf-lang:contest-stop>"));
         if (!suspend) {
             if (!getPrizes().isEmpty()) {
                 List<FishRecord> ranking = getCompetition().getRecords();
@@ -86,7 +85,7 @@ public final class FishingCompetitionHost {
         getCompetition().enable();
         timerTask = Bukkit.getAsyncScheduler().runDelayed(getPlugin(), task -> closeCompetition(), duration, TimeUnit.SECONDS);
         timerBarHandler.enableTimer(duration);
-        Bukkit.broadcast(replace("<mf-lang:contest-start>"));
-        Bukkit.broadcast(replace("<mf-lang:contest-start-timer>", timeRemaining(duration)));
+        Bukkit.broadcast(Lang.replace("<mf-lang:contest-start>"));
+        Bukkit.broadcast(Lang.replace("<mf-lang:contest-start-timer>", Lang.timeRemaining(duration)));
     }
 }

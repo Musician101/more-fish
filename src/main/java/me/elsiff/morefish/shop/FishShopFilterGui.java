@@ -2,6 +2,7 @@ package me.elsiff.morefish.shop;
 
 import me.elsiff.morefish.fishing.FishRarity;
 import me.elsiff.morefish.fishing.FishTypeTable;
+import me.elsiff.morefish.text.Lang;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -24,8 +25,6 @@ import java.util.stream.IntStream;
 import static io.musician101.musigui.paper.chest.PaperIconUtil.customName;
 import static io.musician101.musigui.paper.chest.PaperIconUtil.setLore;
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.text.Lang.replace;
-import static me.elsiff.morefish.text.Lang.tagResolver;
 import static net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.resolver;
 
 public class FishShopFilterGui extends AbstractFishShopGUI {
@@ -36,7 +35,7 @@ public class FishShopFilterGui extends AbstractFishShopGUI {
     private final List<FishRarity> selectedRarities;
 
     public FishShopFilterGui(int page, @NotNull Player user) {
-        super(replace("<mf-lang:sales-filter-title>"), user);
+        super(Lang.replace("<mf-lang:sales-filter-title>"), user);
         this.selectedRarities = FILTERS.computeIfAbsent(user.getUniqueId(), k -> getPlugin().getFishTypeTable().getRarities().stream().filter(FishRarity::filterDefaultEnabled).collect(Collectors.toList()));
         updateButtons(page);
         IntStream.of(45, 46, 47, 48, 50, 51, 52, 53).forEach(this::glassPaneButton);
@@ -57,14 +56,14 @@ public class FishShopFilterGui extends AbstractFishShopGUI {
             }
         });
 
-        setButton(49, customName(new ItemStack(Material.BARRIER), replace("<mf-lang:sales-filter-back-button>")), ClickType.LEFT, p -> {
+        setButton(49, customName(new ItemStack(Material.BARRIER), Lang.replace("<mf-lang:sales-filter-back-button>")), ClickType.LEFT, p -> {
             FILTERS.put(p.getUniqueId(), selectedRarities);
             new FishShopGui(p, 1);
         });
     }
 
     private void updateIcon(int slot, FishRarity fishRarity) {
-        Component name = replace("<mf-lang:sales-filter-name>", resolver(tagResolver("rarity-color", Tag.styling(builder -> {
+        Component name = Lang.replace("<mf-lang:sales-filter-name>", resolver(Lang.tagResolver("rarity-color", Tag.styling(builder -> {
             String color = fishRarity.color();
             TextColor textColor = NamedTextColor.NAMES.valueOr(color, NamedTextColor.WHITE);
             if (color.startsWith(TextColor.HEX_PREFIX)) {
@@ -72,8 +71,8 @@ public class FishShopFilterGui extends AbstractFishShopGUI {
             }
 
             builder.color(textColor);
-        })), tagResolver("fish-rarity", fishRarity.displayName())));
-        Component lore = replace("<mf-lang:sales-filter-icon-" + (selectedRarities.contains(fishRarity) ? "" : "not-") + "selected>");
+        })), Lang.tagResolver("fish-rarity", fishRarity.displayName())));
+        Component lore = Lang.replace("<mf-lang:sales-filter-icon-" + (selectedRarities.contains(fishRarity) ? "" : "not-") + "selected>");
         ItemStack itemStack = setLore(customName(new ItemStack(Material.COD), name), lore);
         setButton(slot, itemStack, ClickType.LEFT, p -> {
             if (selectedRarities.contains(fishRarity)) {
