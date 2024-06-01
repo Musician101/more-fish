@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -65,7 +66,11 @@ public class FishBags implements Listener {
     }
 
     public void load() {
-        Bukkit.getAsyncScheduler().runNow(getPlugin(), task -> {
+        Bukkit.getAsyncScheduler().runAtFixedRate(getPlugin(), task -> {
+            if (getPlugin().isConfigLoading()) {
+                return;
+            }
+
             Path bagsFolder = getPlugin().getDataFolder().toPath().resolve("fish_bags");
             try (Stream<Path> bags = Files.list(bagsFolder)) {
                 bags.filter(path -> path.getFileName().toString().endsWith(".yml")).forEach(path -> {
@@ -91,7 +96,9 @@ public class FishBags implements Listener {
             catch (IOException e) {
                 getPlugin().getSLF4JLogger().error("An error occurred while loading fish bags.", e);
             }
-        });
+
+            task.cancel();
+        }, 1, 1, TimeUnit.SECONDS);
     }
 
     @EventHandler

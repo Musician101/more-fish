@@ -45,7 +45,10 @@ public final class MoreFish extends JavaPlugin {
         return getPlugin(MoreFish.class);
     }
 
+    private boolean loadingConfig = false;
+
     public void applyConfig() {
+        loadingConfig = true;
         Bukkit.getAsyncScheduler().runNow(this, task -> {
             getServer().getOnlinePlayers().forEach(player -> {
                 Component title = player.getOpenInventory().title();
@@ -71,6 +74,7 @@ public final class MoreFish extends JavaPlugin {
 
             Lang.reload();
             getSLF4JLogger().info("Loaded language configuration file.");
+            loadingConfig = false;
         });
     }
 
@@ -148,5 +152,9 @@ public final class MoreFish extends JavaPlugin {
         pm.registerEvents(fishBags, this);
         Bukkitier.registerCommand(getPlugin(), new MFMain(), "mf");
         getSLF4JLogger().info("Plugin has been enabled.");
+    }
+
+    public boolean isConfigLoading() {
+        return loadingConfig;
     }
 }
