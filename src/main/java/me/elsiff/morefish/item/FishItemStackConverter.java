@@ -60,7 +60,7 @@ public interface FishItemStackConverter {
         ItemMeta itemMeta = itemStack.getItemMeta();
         PersistentDataContainer tags = itemMeta.getPersistentDataContainer();
         if (!TagKey.FISH.isPresent(itemStack)) {
-            throw new IllegalArgumentException("ItemStack is missing fish NBT data.");
+            updateFish(itemStack);
         }
 
         String typeName = tags.get(fishTypeKey(), PersistentDataType.STRING);
@@ -89,6 +89,8 @@ public interface FishItemStackConverter {
             Double length = tags.get(fishLengthKey(), PersistentDataType.DOUBLE);
             Fish fish = new Fish(type, length == null ? 0 : length);
             TagKey.FISH.setValue(tags, fish);
+            tags.remove(fishLengthKey());
+            tags.remove(fishTypeKey());
         });
     }
 
@@ -115,6 +117,6 @@ public interface FishItemStackConverter {
         }
 
         PersistentDataContainer tags = itemMeta.getPersistentDataContainer();
-        return tags.has(fishTypeKey(), PersistentDataType.STRING) && tags.has(fishLengthKey(), PersistentDataType.DOUBLE);
+        return (tags.has(fishTypeKey(), PersistentDataType.STRING) && tags.has(fishLengthKey(), PersistentDataType.DOUBLE)) || TagKey.FISH.isPresent(itemStack);
     }
 }
