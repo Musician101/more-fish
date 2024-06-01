@@ -148,7 +148,7 @@ public final class FishTypeTable {
                 double minLength = json.get("length-min").getAsDouble();
                 double maxLength = json.get("length-max").getAsDouble();
                 ItemStack itemStack = loadItemStack(name, json.getAsJsonObject("icon"), fishRarity.customModelData(), "fish-list." + fishRarity.name() + "." + name);
-                PlayerAnnouncement announcement = PlayerAnnouncement.fromConfigOrDefault(json, "catch-announce", fishRarity.catchAnnouncement());
+                PlayerAnnouncement announcement = PlayerAnnouncement.fromConfigOrDefault(json, "announcement", fishRarity.catchAnnouncement());
                 List<FishCondition> conditions = Stream.concat(FishCondition.loadFrom(json, "conditions").stream(), fishRarity.conditions().stream()).toList();
                 boolean skipItemFormat = getOrDefault(json, "skip-item-format", fishRarity.hasNotFishItemFormat());
                 boolean noDisplay = getOrDefault(json, "no-display", fishRarity.noDisplay());
@@ -191,7 +191,7 @@ public final class FishTypeTable {
         boolean isDefault = getOrDefaultFalse(json, "default");
         double chance = getOrDefaultZero(json, "chance") / 100D;
         String color = json.get("color").getAsString();
-        PlayerAnnouncement announcement = PlayerAnnouncement.fromConfigOrDefault(json, "catch-announce", PlayerAnnouncement.serverBroadcast());
+        PlayerAnnouncement announcement = PlayerAnnouncement.fromConfigOrDefault(json, "announcement", PlayerAnnouncement.serverBroadcast());
         boolean skipItemFormat = getOrDefaultFalse(json, "skip-item-format");
         boolean noDisplay = getOrDefaultFalse(json, "no-display");
         boolean firework = getOrDefaultFalse(json, "firework");
