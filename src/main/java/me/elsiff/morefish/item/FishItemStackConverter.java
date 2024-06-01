@@ -58,15 +58,12 @@ public interface FishItemStackConverter {
     @NotNull
     static Fish fish(@NotNull ItemStack itemStack) {
         ItemMeta itemMeta = itemStack.getItemMeta();
-        PersistentDataContainer tags = itemMeta.getPersistentDataContainer();
         if (!TagKey.FISH.isPresent(itemStack)) {
             updateFish(itemStack);
         }
 
-        String typeName = tags.get(fishTypeKey(), PersistentDataType.STRING);
-        FishType type = getPlugin().getFishTypeTable().getTypes().stream().filter(it -> it.name().equals(typeName)).findFirst().orElseThrow(() -> new IllegalStateException("Fish type doesn't exist"));
-        Double length = tags.get(fishLengthKey(), PersistentDataType.DOUBLE);
-        return new Fish(type, length == null ? 0 : length);
+        PersistentDataContainer tags = itemMeta.getPersistentDataContainer();
+        return TagKey.FISH.getValue(tags);
     }
 
     static void updateFish(@NotNull ItemStack itemStack) {
