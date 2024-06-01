@@ -158,7 +158,7 @@ public class Lang {
 
     @NotNull
     public static TagResolver fishName(@NotNull Fish fish) {
-        return Lang.tagResolver("fish-name", fish.name());
+        return Lang.tagResolver("fish-name", fish.type().displayName());
     }
 
     @NotNull
