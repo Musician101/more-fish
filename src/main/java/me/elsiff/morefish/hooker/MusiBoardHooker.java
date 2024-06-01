@@ -73,6 +73,7 @@ public class MusiBoardHooker implements PluginHooker {
             if (previousBoards.containsKey(player.getUniqueId())) {
                 MusiScoreboard scoreboard = getManager().getScoreboardOrDefaultOrVanilla(previousBoards.get(player.getUniqueId()));
                 getManager().setScoreboard(player, scoreboard);
+                previousBoards.remove(player.getUniqueId());
             }
         }
     }
