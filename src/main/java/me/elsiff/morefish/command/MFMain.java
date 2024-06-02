@@ -19,7 +19,7 @@ public class MFMain implements LiteralCommand {
     @NotNull
     @Override
     public List<Command<? extends ArgumentBuilder<CommandSender, ?>>> arguments() {
-        return List.of(new MFClear(), new MFContraband(), new MFEnd(), new MFFishingLogs(), new MFGive(), new MFHelp(this), new MFLang(), new MFReload(), new MFScoreboard(), new MFStart(), new MFShop(), new MFSuspend(), new MFTimes(), new MFTop());
+        return List.of(new MFClear(), new MFContraband(), new MFEnd(), new MFFishingLogs(), new MFGive(), new MFHelp(this), new MFLang(), new MFReload(), new MFScoreboard(), new MFSimulate(), new MFStart(), new MFShop(), new MFSuspend(), new MFTimes(), new MFTop());
     }
 
     @NotNull

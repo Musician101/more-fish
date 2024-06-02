@@ -9,9 +9,12 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import me.elsiff.morefish.announcement.PlayerAnnouncement;
+import me.elsiff.morefish.fishing.catchhandler.CatchBroadcaster;
 import me.elsiff.morefish.fishing.catchhandler.CatchCommandExecutor;
 import me.elsiff.morefish.fishing.catchhandler.CatchFireworkSpawner;
 import me.elsiff.morefish.fishing.catchhandler.CatchHandler;
+import me.elsiff.morefish.fishing.catchhandler.CompetitionRecordAdder;
+import me.elsiff.morefish.fishing.catchhandler.NewFirstBroadcaster;
 import me.elsiff.morefish.fishing.condition.FishCondition;
 import me.elsiff.morefish.text.Lang;
 import net.kyori.adventure.text.Component;
@@ -19,6 +22,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
+import org.bukkit.World;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -45,8 +49,8 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
+import static me.elsiff.morefish.item.FishItemStackConverter.createItemStack;
 
-//TODO put all fishtype and fishrarity data onto the itemstack for backwards compatibility
 public final class FishTypeTable {
 
     private static final Gson GSON = new Gson();
@@ -288,6 +292,50 @@ public final class FishTypeTable {
         }
 
         return getDefaultRarity().orElseThrow(() -> new IllegalStateException("Default rarity doesn't exist"));
+    }
+
+    public void simulateCatch(@NotNull Player player, @NotNull FishType fishType) {
+        Fish fish = fishType.generateFish();
+        Item item = player.getWorld().spawn(player.getLocation(), Item.class, i -> i.setItemStack(createItemStack(fish, player)));
+        if (fish.type().conditions().stream().allMatch(c -> c.check(item, player))) {
+            processCatchHandlers(player, fish, false);
+            return;
+        }
+
+        item.remove();
+    }
+
+    public void caughtFish(@NotNull Item caught, @NotNull Player player, boolean isCompetition) {
+        List<Fish> fishes = getPlugin().getFishTypeTable().pickRandomTypes(caught, player).stream().map(FishType::generateFish).toList();
+        fishes.forEach(fish -> processCatchHandlers(player, fish, isCompetition));
+        List<ItemStack> fishItems = fishes.stream().map(fish -> createItemStack(fish, player)).toList();
+        // There's always at least one fish
+        ItemStack fishItem = fishItems.getFirst();
+        caught.setItemStack(fishItem);
+        caught.setCanMobPickup(false);
+        caught.setCanPlayerPickup(false);
+        fishItems.stream().filter(item -> {
+            if (isCompetition) {
+                return !getPlugin().getFishBags().addFish(player, item);
+            }
+
+            return true;
+        }).forEach(item -> {
+            World world = player.getWorld();
+            world.dropItem(player.getLocation(), item);
+        });
+        caught.remove();
+    }
+
+    private void processCatchHandlers(Player player, Fish fish, boolean competition) {
+        List<World> contestDisabledWorlds = getPlugin().getConfig().getStringList("general.contest-disabled-worlds").stream().map(Bukkit::getWorld).filter(Objects::nonNull).toList();
+        Stream.concat(Stream.of(new CatchBroadcaster(), new NewFirstBroadcaster(), new CompetitionRecordAdder()), fish.type().catchHandlers().stream()).filter(c -> {
+            if (competition) {
+                return !contestDisabledWorlds.contains(player.getWorld()) || c instanceof CompetitionRecordAdder || c instanceof NewFirstBroadcaster;
+            }
+
+            return !(c instanceof CompetitionRecordAdder) && !(c instanceof NewFirstBroadcaster);
+        }).forEach(c -> c.handle(player, fish));
     }
 
     @NotNull
