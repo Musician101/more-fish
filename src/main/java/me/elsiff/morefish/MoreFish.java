@@ -40,12 +40,11 @@ public final class MoreFish extends JavaPlugin {
     private final MusiBoardHooker musiBoard = new MusiBoardHooker();
     @NotNull
     private final VaultHooker vault = new VaultHooker();
+    private boolean loadingConfig = false;
 
     public static MoreFish getPlugin() {
         return getPlugin(MoreFish.class);
     }
-
-    private boolean loadingConfig = false;
 
     public void applyConfig() {
         loadingConfig = true;
