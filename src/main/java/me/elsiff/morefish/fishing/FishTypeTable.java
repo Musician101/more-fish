@@ -343,7 +343,8 @@ public final class FishTypeTable {
         List<FishType> fish = new ArrayList<>();
         fish.add(pickRandomType(caught, fisher).orElseThrow(() -> new IllegalStateException("Well this isn't supposed to happen...")));
         ItemStack fishingRod = fisher.getInventory().getItemInMainHand();
-        int level = fishingRod.getEnchantmentLevel(Enchantment.LUCK_OF_THE_SEA);
+        //int level = fishingRod.getEnchantmentLevel(Enchantment.LUCK_OF_THE_SEA);
+        int level = fishingRod.getEnchantmentLevel(Enchantment.LUCK);
         IntStream.range(1, level + 1).mapToObj(i -> pickRandomType(caught, fisher, true, i)).filter(Optional::isPresent).map(Optional::get).forEach(fish::add);
         return fish;
     }
