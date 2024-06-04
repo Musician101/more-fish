@@ -108,9 +108,8 @@ public class MFLang implements LiteralCommand {
             return "edit";
         }
     }
-    
-    static class TestCommand implements LiteralCommand {
 
+    static class TestCommand implements LiteralCommand {
 
         @Override
         public @NotNull List<Command<? extends ArgumentBuilder<CommandSender, ?>>> arguments() {
@@ -137,10 +136,10 @@ public class MFLang implements LiteralCommand {
                 }
             });
         }
+
         @Override
         public @NotNull String name() {
             return "test";
         }
-
     }
 }
