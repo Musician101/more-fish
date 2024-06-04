@@ -23,6 +23,6 @@ public class TopPlayerTagResolver extends TopTagResolver {
 
     @Override
     public boolean has(@NotNull String name) {
-        return name.equals("top_player");
+        return name.equals("top-player");
     }
 }

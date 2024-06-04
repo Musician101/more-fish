@@ -18,6 +18,6 @@ public class TopFishTagResolver extends TopTagResolver {
 
     @Override
     public boolean has(@NotNull String name) {
-        return name.equals("top_fish");
+        return name.equals("top-fish");
     }
 }
