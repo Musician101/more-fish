@@ -38,7 +38,7 @@ repositories {
 }
 
 dependencies {
-    paperweight.paperDevBundle("1.20.6-R0.1-SNAPSHOT")
+    paperweight.paperDevBundle("1.20.4-R0.1-SNAPSHOT")
     compileOnlyApi("com.comphenix.protocol:ProtocolLib:5.1.0")
     compileOnlyApi("com.github.MilkBowl:VaultAPI:1.7.1")
     compileOnlyApi(files("lib/mcMMO.jar"))
@@ -79,7 +79,7 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("1.20.6")
+        minecraftVersion("1.20.4")
     }
 }
 
