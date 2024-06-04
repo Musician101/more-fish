@@ -15,14 +15,13 @@ import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
@@ -39,17 +38,19 @@ import static net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.reso
 
 public class Lang {
 
-    @NotNull
-    private static ConfigurationSection LANG = new MemoryConfiguration();
+    private static YamlConfiguration LANG = new YamlConfiguration();
 
     private Lang() {
 
     }
 
+    private static File getFile() {
+        return new File(getPlugin().getDataFolder(), "lang.yml");
+    }
+
     public static void reload() {
         getPlugin().saveResource("lang.yml", false);
-        File file = new File(getPlugin().getDataFolder(), "lang.yml");
-        LANG = YamlConfiguration.loadConfiguration(file);
+        LANG = YamlConfiguration.loadConfiguration(getFile());
     }
 
     @NotNull
@@ -176,5 +177,10 @@ public class Lang {
 
         builder.append(duration.getSeconds() % (long) 60).append("s");
         return Lang.tagResolver("time-remaining", builder.toString());
+    }
+
+    public static void update(@NotNull String key, @NotNull String message) throws IOException {
+        LANG.set(key, message);
+        LANG.save(getFile());
     }
 }
