@@ -2,6 +2,8 @@ package me.elsiff.morefish.fishing.competition;
 
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import me.elsiff.morefish.text.Lang;
+import net.kyori.adventure.text.minimessage.tag.resolver.Formatter;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
@@ -15,8 +17,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.resolver;
 
 public final class FishingCompetitionAutoRunner {
 
@@ -60,7 +60,7 @@ public final class FishingCompetitionAutoRunner {
                         sb.append(minutes).append(" minute").append((minutes > 1 ? "s" : ""));
                     }
 
-                    Bukkit.broadcast(Lang.replace("<mf-lang:pre-announcement>", resolver(Lang.tagResolver("time-remaining", sb.toString()), Lang.tagResolver("required-players", text(requiredPlayers)))));
+                    Bukkit.broadcast(Lang.replace("<mf-lang:pre-announcement>", TagResolver.resolver(Lang.tagResolver("time-remaining", sb.toString()), Formatter.number("required-players", requiredPlayers))));
                 });
             }
             else if (Bukkit.getOnlinePlayers().size() >= requiredPlayers) {

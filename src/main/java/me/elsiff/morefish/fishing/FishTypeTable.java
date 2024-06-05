@@ -16,6 +16,7 @@ import me.elsiff.morefish.fishing.catchhandler.CatchHandler;
 import me.elsiff.morefish.fishing.catchhandler.CompetitionRecordAdder;
 import me.elsiff.morefish.fishing.catchhandler.NewFirstBroadcaster;
 import me.elsiff.morefish.fishing.condition.FishCondition;
+import me.elsiff.morefish.item.FishItemStackConverter;
 import me.elsiff.morefish.text.Lang;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -49,7 +50,6 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.item.FishItemStackConverter.createItemStack;
 
 public final class FishTypeTable {
 
@@ -296,7 +296,7 @@ public final class FishTypeTable {
 
     public void simulateCatch(@NotNull Player player, @NotNull FishType fishType) {
         Fish fish = fishType.generateFish();
-        Item item = player.getWorld().spawn(player.getLocation(), Item.class, i -> i.setItemStack(createItemStack(fish, player)));
+        Item item = player.getWorld().spawn(player.getLocation(), Item.class, i -> i.setItemStack(FishItemStackConverter.createItemStack(fish, player)));
         if (fish.type().conditions().stream().allMatch(c -> c.check(item, player))) {
             processCatchHandlers(player, fish, false);
             return;
@@ -308,7 +308,7 @@ public final class FishTypeTable {
     public void caughtFish(@NotNull Item caught, @NotNull Player player, boolean isCompetition) {
         List<Fish> fishes = getPlugin().getFishTypeTable().pickRandomTypes(caught, player).stream().map(FishType::generateFish).toList();
         fishes.forEach(fish -> processCatchHandlers(player, fish, isCompetition));
-        List<ItemStack> fishItems = fishes.stream().map(fish -> createItemStack(fish, player)).toList();
+        List<ItemStack> fishItems = fishes.stream().map(fish -> FishItemStackConverter.createItemStack(fish, player)).toList();
         // There's always at least one fish
         ItemStack fishItem = fishItems.getFirst();
         caught.setItemStack(fishItem);

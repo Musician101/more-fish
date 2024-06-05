@@ -34,8 +34,6 @@ import java.util.stream.IntStream;
 import static io.musician101.musigui.paper.chest.PaperIconUtil.customName;
 import static io.musician101.musigui.paper.chest.PaperIconUtil.setLore;
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.item.FishItemStackConverter.fish;
-import static me.elsiff.morefish.item.FishItemStackConverter.isFish;
 
 public final class FishShopGui extends AbstractFishShopGUI {
 
@@ -69,7 +67,7 @@ public final class FishShopGui extends AbstractFishShopGUI {
     }
 
     private List<ItemStack> getFilteredFish() {
-        return IntStream.range(0, 45).mapToObj(inventory::getItem).filter(Objects::nonNull).filter(FishItemStackConverter::isFish).filter(itemStack -> price(fish(itemStack)) >= 0).filter(itemStack -> selectedRarities.contains(fish(itemStack).rarity())).collect(Collectors.toList());
+        return IntStream.range(0, 45).mapToObj(inventory::getItem).filter(Objects::nonNull).filter(FishItemStackConverter::isFish).filter(itemStack -> price(FishItemStackConverter.fish(itemStack)) >= 0).filter(itemStack -> selectedRarities.contains(FishItemStackConverter.fish(itemStack).rarity())).collect(Collectors.toList());
     }
 
     private double price(Fish fish) {
@@ -79,14 +77,14 @@ public final class FishShopGui extends AbstractFishShopGUI {
 
     private double getTotalPrice() {
         return BigDecimal.valueOf(getFilteredFish().stream().mapToDouble(itemStack -> {
-            Fish fish = fish(itemStack);
+            Fish fish = FishItemStackConverter.fish(itemStack);
             return price(fish) * itemStack.getAmount();
         }).sum()).setScale(2, RoundingMode.DOWN).doubleValue();
     }
 
     @Override
     protected void handleExtraClick(InventoryClickEvent event) {
-        if (!(isFish(event.getCurrentItem()) || isFish(event.getCursor()))) {
+        if (!(FishItemStackConverter.isFish(event.getCurrentItem()) || FishItemStackConverter.isFish(event.getCursor()))) {
             event.setCancelled(true);
             return;
         }
@@ -173,7 +171,7 @@ public final class FishShopGui extends AbstractFishShopGUI {
                     double totalPrice = getTotalPrice();
                     List<Fish> fishList = new ArrayList<>();
                     filteredFish.forEach(itemStack -> {
-                        Fish fish = fish(itemStack);
+                        Fish fish = FishItemStackConverter.fish(itemStack);
                         for (int i = 0; i < itemStack.getAmount(); i++) {
                             fishList.add(fish);
                         }

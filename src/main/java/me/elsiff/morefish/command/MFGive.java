@@ -11,6 +11,7 @@ import io.musician101.bukkitier.command.LiteralCommand;
 import me.elsiff.morefish.command.argument.FishLengthArgumentType;
 import me.elsiff.morefish.command.argument.FishTypeArgumentType;
 import me.elsiff.morefish.fishing.FishType;
+import me.elsiff.morefish.item.FishItemStackConverter;
 import me.elsiff.morefish.text.Lang;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -19,14 +20,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static me.elsiff.morefish.item.FishItemStackConverter.createItemStack;
-
 class MFGive implements LiteralCommand {
 
     @SuppressWarnings("SameReturnValue")
     private static int giveFish(CommandContext<CommandSender> context, FishType fishType, double length, int amount) {
         Player player = context.getArgument("player", Player.class);
-        ItemStack itemStack = createItemStack(fishType.generateFish(), length, player);
+        ItemStack itemStack = FishItemStackConverter.createItemStack(fishType.generateFish(), length, player);
         itemStack.setAmount(amount);
         player.getWorld().dropItem(player.getLocation(), itemStack);
         CommandSender sender = context.getSource();
