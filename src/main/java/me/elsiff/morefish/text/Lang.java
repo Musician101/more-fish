@@ -13,6 +13,7 @@ import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.Formatter;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -22,10 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -80,15 +78,14 @@ public class Lang {
         return tagResolver(name, Tag.selfClosingInserting(tag));
     }
 
-    @SuppressWarnings("PatternValidation")
     @NotNull
     public static TagResolver tagResolver(@NotNull String name, @NotNull Tag tag) {
-        return TagResolver.builder().tag(name, tag).build();
+        return TagResolver.resolver(name, tag);
     }
 
     @NotNull
     public static TagResolver tagResolver(@NotNull String name, double tag) {
-        return tagResolver(name, text(tag));
+        return Formatter.number(name, tag);
     }
 
     @NotNull
@@ -113,40 +110,27 @@ public class Lang {
             name = player.getUniqueId().toString();
         }
 
-        return Lang.tagResolver("player", name);
+        return tagResolver("player", name);
     }
 
     @NotNull
     public static TagResolver fishLength(@NotNull Fish fish) {
-        return Lang.tagResolver("length", fish.length());
+        return tagResolver("length", fish.length());
     }
 
     @NotNull
     public static TagResolver fishLength(@NotNull FishRecord record) {
-        return Lang.tagResolver("length", record.getLength());
-    }
-
-    @NotNull
-    public static TagResolver date(@NotNull FishRecord record) {
-        return resolver("date", (argumentQueue, context) -> {
-            Date date = new Date(record.timestamp());
-            DateFormat format = DateFormat.getDateInstance();
-            if (argumentQueue.hasNext()) {
-                format = new SimpleDateFormat(argumentQueue.pop().value());
-            }
-
-            return Tag.selfClosingInserting(text(format.format(date)));
-        });
+        return tagResolver("length", record.getLength());
     }
 
     @NotNull
     public static TagResolver fishRarity(@NotNull Fish fish) {
-        return Lang.tagResolver("rarity", fish.rarity().displayName().toUpperCase());
+        return tagResolver("rarity", fish.rarity().displayName().toUpperCase());
     }
 
     @NotNull
     public static TagResolver fishRarityColor(@NotNull Fish fish) {
-        return Lang.tagResolver("fish-rarity-color", Tag.styling(builder -> {
+        return tagResolver("fish-rarity-color", Tag.styling(builder -> {
             String color = fish.rarity().color();
             TextColor textColor = NamedTextColor.NAMES.valueOr(color, NamedTextColor.WHITE);
             if (color.startsWith(TextColor.HEX_PREFIX)) {
@@ -159,12 +143,7 @@ public class Lang {
 
     @NotNull
     public static TagResolver fishName(@NotNull Fish fish) {
-        return Lang.tagResolver("fish-name", fish.type().displayName());
-    }
-
-    @NotNull
-    public static TagResolver fishName(@NotNull FishRecord record) {
-        return Lang.tagResolver("fish-name", record.getFishName());
+        return tagResolver("fish-name", fish.type().displayName());
     }
 
     @NotNull
@@ -176,7 +155,7 @@ public class Lang {
         }
 
         builder.append(duration.getSeconds() % (long) 60).append("s");
-        return Lang.tagResolver("time-remaining", builder.toString());
+        return tagResolver("time-remaining", builder.toString());
     }
 
     public static void update(@NotNull String key, @NotNull String message) throws IOException {

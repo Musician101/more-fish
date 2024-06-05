@@ -14,13 +14,13 @@ import static me.elsiff.morefish.MoreFish.getPlugin;
 public record Prize(@NotNull List<String> commands) {
 
     public void giveTo(@NotNull OfflinePlayer player, int rankNumber, @NotNull Plugin plugin) {
+        String name = player.getName();
         if (!player.isOnline()) {
-            plugin.getSLF4JLogger().warn("{} fisher {} isn't online! Contest prizes may not be sent.", NumberUtils.ordinalOf(rankNumber), player.getName());
+            plugin.getSLF4JLogger().warn("{} fisher {} isn't online! Contest prizes may not be sent.", NumberUtils.ordinalOf(rankNumber), name);
             return;
         }
 
         Server server = plugin.getServer();
-        String name = player.getName();
         commands.forEach(command -> Bukkit.getGlobalRegionScheduler().run(getPlugin(), task -> server.dispatchCommand(server.getConsoleSender(), command.replace("@p", name == null ? "null" : name))));
     }
 }

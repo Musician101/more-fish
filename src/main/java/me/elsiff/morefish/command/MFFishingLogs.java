@@ -11,11 +11,15 @@ import me.elsiff.morefish.command.argument.SortArgumentType;
 import me.elsiff.morefish.command.argument.SortArgumentType.SortType;
 import me.elsiff.morefish.fishing.fishrecords.FishRecord;
 import me.elsiff.morefish.text.Lang;
+import net.kyori.adventure.text.minimessage.tag.resolver.Formatter;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,12 +43,12 @@ class MFFishingLogs implements LiteralCommand {
         int end = Math.min(start + 8, fullList.size());
         List<FishRecord> records = new ArrayList<>(fullList.subList(start, end));
         if (records.isEmpty()) {
-            player.sendMessage(Lang.replace("<mf-lang:command-fishinglogs-none>"));
+            player.sendMessage(Lang.replace("<mf-lang:command-fishing-logs-none>"));
             return;
         }
 
         records.sort(sortType.reversed());
-        records.forEach(record -> player.sendMessage(Lang.replace("<mf-lang:command-fishing-logs-record>", TagResolver.resolver(Lang.fishName(record), Lang.fishLength(record), Lang.date(record)))));
+        records.forEach(record -> player.sendMessage(Lang.replace("<mf-lang:command-fishing-logs-record>", TagResolver.resolver(Lang.tagResolver("fish-name", record.getFishName()), Lang.fishLength(record), Formatter.date("date", ZonedDateTime.ofInstant(Instant.ofEpochMilli(record.timestamp()), ZoneId.systemDefault()))))));
     }
 
     @NotNull

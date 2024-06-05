@@ -103,7 +103,6 @@ public class MusiBoardHooker implements PluginHooker {
                 OfflinePlayer player = Bukkit.getOfflinePlayer(record.fisher());
                 Score score = leaderboard.getScore(player);
                 score.setScore((int) (record.getLength() * 100));
-                score.customName(Lang.replace(player.getName() + " <red>" + record.getLength() + "cm"));
                 score.customName(Lang.replace("<mf-lang:scoreboard-entry>", resolver(Lang.playerName(player), Lang.tagResolver("record-length", record.getLength()))));
             });
         }
