@@ -12,7 +12,7 @@ public class TopFishLengthTagResolver extends TopTagResolver {
     @Nullable
     @Override
     public Tag resolve(@NotNull String name, @NotNull ArgumentQueue arguments, @NotNull Context ctx) throws ParsingException {
-        return resolve(name, arguments, record -> String.valueOf(record.getLength()));
+        return resolve(name, arguments, ctx, record -> String.valueOf(record.getLength()));
     }
 
     @Override

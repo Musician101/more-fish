@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 import static me.elsiff.morefish.MoreFish.getPlugin;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
-import static net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.resolver;
 
 public class Lang {
 
@@ -62,9 +61,9 @@ public class Lang {
     }
 
     @NotNull
-    public static Component replace(@NotNull String string, @NotNull TagResolver extraTagResolvers, @Nullable Player player) {
+    public static Component replace(@NotNull String string, @NotNull TagResolver extraTagResolver, @Nullable Player player) {
         UUID uuid = player == null ? null : player.getUniqueId();
-        TagResolver tagResolver = resolver(new LangTagResolver(extraTagResolvers, player), new FishTagResolver(uuid), new RankTagResolver(uuid), new TopFishTagResolver(), new TopFishLengthTagResolver(), new TopPlayerTagResolver(), extraTagResolvers);
+        TagResolver tagResolver = TagResolver.resolver(new LangTagResolver(), new FishTagResolver(uuid), new RankTagResolver(uuid), new TopFishTagResolver(), new TopFishLengthTagResolver(), new TopPlayerTagResolver(), extraTagResolver);
         return miniMessage().deserialize(string, tagResolver);
     }
 

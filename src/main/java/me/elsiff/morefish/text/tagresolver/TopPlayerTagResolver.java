@@ -14,7 +14,7 @@ public class TopPlayerTagResolver extends TopTagResolver {
     @Nullable
     @Override
     public Tag resolve(@NotNull String name, @NotNull ArgumentQueue arguments, @NotNull Context ctx) throws ParsingException {
-        return resolve(name, arguments, record -> {
+        return resolve(name, arguments, ctx, record -> {
             OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(record.fisher());
             String playerName = offlinePlayer.getName();
             return playerName == null ? offlinePlayer.getUniqueId().toString() : playerName;

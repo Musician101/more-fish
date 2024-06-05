@@ -13,7 +13,7 @@ public class TopFishTagResolver extends TopTagResolver {
     @Nullable
     @Override
     public Tag resolve(@NotNull String name, @NotNull ArgumentQueue arguments, @NotNull Context ctx) throws ParsingException {
-        return resolve(name, arguments, FishRecord::getFishName);
+        return resolve(name, arguments, ctx, FishRecord::getFishName);
     }
 
     @Override

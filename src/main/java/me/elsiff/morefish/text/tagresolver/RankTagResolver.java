@@ -22,7 +22,7 @@ public class RankTagResolver extends FisRecordTagResolver {
             return null;
         }
 
-        return recordOf().map(this.getCompetition()::rankNumberOf).map(String::valueOf).map(Component::text).map(Tag::selfClosingInserting).orElse(null);
+        return recordOf().map(getCompetition()::rankNumberOf).map(String::valueOf).map(ctx::deserialize).map(Tag::selfClosingInserting).orElse(null);
 
     }
 
