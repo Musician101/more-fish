@@ -1,6 +1,6 @@
 package me.elsiff.morefish.text.tagresolver;
 
-import me.elsiff.morefish.fishing.fishrecords.FishRecord;
+import me.elsiff.morefish.records.FishRecord;
 import net.kyori.adventure.text.minimessage.Context;
 import net.kyori.adventure.text.minimessage.ParsingException;
 import net.kyori.adventure.text.minimessage.tag.Tag;

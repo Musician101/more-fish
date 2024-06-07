@@ -1,9 +1,9 @@
 package me.elsiff.morefish.shop;
 
 import me.elsiff.morefish.MoreFish;
-import me.elsiff.morefish.fishing.Fish;
-import me.elsiff.morefish.fishing.FishBags;
-import me.elsiff.morefish.fishing.FishRarity;
+import me.elsiff.morefish.fish.Fish;
+import me.elsiff.morefish.bags.FishBags;
+import me.elsiff.morefish.fish.FishRarity;
 import me.elsiff.morefish.hooker.VaultHooker;
 import me.elsiff.morefish.item.FishItemStackConverter;
 import me.elsiff.morefish.text.Lang;

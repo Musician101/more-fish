@@ -1,6 +1,6 @@
 package me.elsiff.morefish.item;
 
-import me.elsiff.morefish.fishing.FishRarity;
+import me.elsiff.morefish.fish.FishRarity;
 import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;

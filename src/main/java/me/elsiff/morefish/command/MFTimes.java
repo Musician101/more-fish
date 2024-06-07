@@ -3,7 +3,7 @@ package me.elsiff.morefish.command;
 import com.google.common.collect.Lists;
 import com.mojang.brigadier.context.CommandContext;
 import io.musician101.bukkitier.command.LiteralCommand;
-import me.elsiff.morefish.fishing.competition.FishingCompetitionAutoRunner.CompetitionTimes;
+import me.elsiff.morefish.competition.FishingCompetitionAutoRunner.CompetitionTimes;
 import me.elsiff.morefish.text.Lang;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;

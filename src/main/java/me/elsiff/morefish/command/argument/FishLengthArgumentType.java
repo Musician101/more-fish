@@ -7,7 +7,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import me.elsiff.morefish.fishing.FishType;
+import me.elsiff.morefish.fish.FishType;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 

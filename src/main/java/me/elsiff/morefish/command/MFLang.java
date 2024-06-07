@@ -6,7 +6,7 @@ import com.mojang.brigadier.context.CommandContext;
 import io.musician101.bukkitier.command.ArgumentCommand;
 import io.musician101.bukkitier.command.Command;
 import io.musician101.bukkitier.command.LiteralCommand;
-import me.elsiff.morefish.MFTextInput;
+import me.elsiff.morefish.util.MFTextInput;
 import me.elsiff.morefish.command.argument.LangKeyArgumentType;
 import me.elsiff.morefish.command.argument.LangKeyValueArgumentType;
 import me.elsiff.morefish.text.Lang;

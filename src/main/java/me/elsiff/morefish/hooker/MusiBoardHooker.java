@@ -5,7 +5,7 @@ import io.musician101.musiboard.scoreboard.MusiScoreboard;
 import io.musician101.musiboard.scoreboard.MusiScoreboardManager;
 import io.papermc.paper.scoreboard.numbers.NumberFormat;
 import me.elsiff.morefish.command.argument.SortArgumentType.SortType;
-import me.elsiff.morefish.fishing.fishrecords.FishRecord;
+import me.elsiff.morefish.records.FishRecord;
 import me.elsiff.morefish.text.Lang;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;

@@ -7,7 +7,7 @@ import io.musician101.bukkitier.command.ArgumentCommand;
 import io.musician101.bukkitier.command.Command;
 import io.musician101.bukkitier.command.LiteralCommand;
 import me.elsiff.morefish.command.argument.FishTypeArgumentType;
-import me.elsiff.morefish.fishing.FishType;
+import me.elsiff.morefish.fish.FishType;
 import me.elsiff.morefish.text.Lang;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;

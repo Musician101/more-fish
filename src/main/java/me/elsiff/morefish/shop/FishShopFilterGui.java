@@ -1,7 +1,7 @@
 package me.elsiff.morefish.shop;
 
-import me.elsiff.morefish.fishing.FishRarity;
-import me.elsiff.morefish.fishing.FishTypeTable;
+import me.elsiff.morefish.fish.FishRarity;
+import me.elsiff.morefish.fish.FishTypeTable;
 import me.elsiff.morefish.text.Lang;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;

@@ -1,6 +1,6 @@
 package me.elsiff.morefish.text.tagresolver;
 
-import me.elsiff.morefish.fishing.competition.FishingCompetition;
+import me.elsiff.morefish.competition.FishingCompetition;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.jetbrains.annotations.NotNull;
 

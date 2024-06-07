@@ -1,8 +1,8 @@
 package me.elsiff.morefish.item;
 
-import me.elsiff.morefish.fishing.Fish;
-import me.elsiff.morefish.fishing.FishRarity;
-import me.elsiff.morefish.fishing.FishType;
+import me.elsiff.morefish.fish.Fish;
+import me.elsiff.morefish.fish.FishRarity;
+import me.elsiff.morefish.fish.FishType;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;

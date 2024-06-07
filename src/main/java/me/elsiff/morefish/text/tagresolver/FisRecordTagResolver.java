@@ -1,6 +1,6 @@
 package me.elsiff.morefish.text.tagresolver;
 
-import me.elsiff.morefish.fishing.fishrecords.FishRecord;
+import me.elsiff.morefish.records.FishRecord;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

@@ -8,7 +8,7 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import me.elsiff.morefish.command.argument.SortArgumentType.SortType;
-import me.elsiff.morefish.fishing.fishrecords.FishRecord;
+import me.elsiff.morefish.records.FishRecord;
 import me.elsiff.morefish.util.EnumUtils;
 import org.jetbrains.annotations.NotNull;
 

@@ -2,7 +2,7 @@ package me.elsiff.morefish.command;
 
 import com.mojang.brigadier.context.CommandContext;
 import io.musician101.bukkitier.command.LiteralCommand;
-import me.elsiff.morefish.fishing.FishBag;
+import me.elsiff.morefish.bags.FishBag;
 import me.elsiff.morefish.text.Lang;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;

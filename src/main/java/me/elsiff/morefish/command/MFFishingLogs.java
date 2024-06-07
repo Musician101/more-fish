@@ -9,7 +9,7 @@ import io.musician101.bukkitier.command.Command;
 import io.musician101.bukkitier.command.LiteralCommand;
 import me.elsiff.morefish.command.argument.SortArgumentType;
 import me.elsiff.morefish.command.argument.SortArgumentType.SortType;
-import me.elsiff.morefish.fishing.fishrecords.FishRecord;
+import me.elsiff.morefish.records.FishRecord;
 import me.elsiff.morefish.text.Lang;
 import net.kyori.adventure.text.minimessage.tag.resolver.Formatter;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;

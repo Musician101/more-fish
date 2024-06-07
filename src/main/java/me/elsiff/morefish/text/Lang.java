@@ -1,7 +1,7 @@
 package me.elsiff.morefish.text;
 
-import me.elsiff.morefish.fishing.Fish;
-import me.elsiff.morefish.fishing.fishrecords.FishRecord;
+import me.elsiff.morefish.fish.Fish;
+import me.elsiff.morefish.records.FishRecord;
 import me.elsiff.morefish.text.tagresolver.FishTagResolver;
 import me.elsiff.morefish.text.tagresolver.LangTagResolver;
 import me.elsiff.morefish.text.tagresolver.RankTagResolver;

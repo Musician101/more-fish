@@ -2,8 +2,8 @@ package me.elsiff.morefish.item;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import me.elsiff.morefish.fishing.Fish;
-import me.elsiff.morefish.fishing.FishType;
+import me.elsiff.morefish.fish.Fish;
+import me.elsiff.morefish.fish.FishType;
 import me.elsiff.morefish.text.Lang;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
