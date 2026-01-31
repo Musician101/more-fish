@@ -1,0 +1,8 @@
+display-name: Salmon
+length-max: 130
+length-min: 100
+icon:
+    schema_version: 1
+    DataVersion: 4671
+    id: minecraft:salmon
+name: Salmon

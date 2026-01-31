@@ -1,0 +1,8 @@
+display-name: Shrimp
+length-max: 8
+length-min: 3
+icon:
+    schema_version: 1
+    DataVersion: 4671
+    id: minecraft:cod
+name: Shrimp

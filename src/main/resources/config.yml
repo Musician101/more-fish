@@ -1,13 +1,17 @@
 general:
-  #The list of worlds where players can't participate the contest.
+  # The list of worlds where players can't participate the contest.
   # Example for using this:
   # contest-disabled-worlds:
   #   - 'world_nether'
   #   - 'world_the_end'
   contest-disabled-worlds: [ ]
-  #Keeps a record of all-time best catches for each user.
-  #You must type '/mf clear alltime' to clear all-time records.
+  # Keeps a record of all-time best catches for each user.
+  # You must type '/mf clear alltime' to clear all-time records.
   save-records: false
+  # Saves default fish files included in the plugin and loads them on start up.
+  # Set this to false if you want to further customize your fish.
+  # Keeping this set to true will not overwrite any files.
+  load-defaults: true
 
 # Configures prizes which will be given to rank owners when fishing contest ends.
 # The type of this property is similar to a map. Keys infer range of rank numbers, and Values are lists of commands to be sent for prizing.
@@ -31,7 +35,7 @@ contest-prizes:
 auto-running:
   # Toggles auto-running feature. Using it, fishing contest starts periodically with predetermined timer.
   enable: true
-  #The minimum amount of players required to start contest.
+  # The minimum amount of players required to start contest.
   required-players: 5
   # Time limit of the contest measured in seconds.
   timer: 300

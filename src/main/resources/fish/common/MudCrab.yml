@@ -1,0 +1,10 @@
+display-name: Mud Crab
+length-max: 15
+length-min: 10
+icon:
+    schema_version: 1
+    DataVersion: 4671
+    components:
+        minecraft:lore: '["<italic><dark_purple>I am become Death, destroyer of worlds!"]'
+    id: minecraft:cod
+name: MudCrab

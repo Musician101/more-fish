@@ -1,36 +1,26 @@
-import io.papermc.paperweight.userdev.ReobfArtifactConfiguration
 import xyz.jpenilla.resourcefactory.bukkit.Permission
 import xyz.jpenilla.resourcefactory.paper.PaperPluginYaml
 
-buildscript {
-    configurations {
-        classpath {
-            resolutionStrategy {
-                force("org.ow2.asm:asm:9.6")
-                force("org.ow2.asm:asm-commons:9.6")
-            }
-        }
-    }
-}
-
 plugins {
     `java-library`
-    id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("io.papermc.paperweight.userdev") version "1.7.1"
-    id("xyz.jpenilla.run-paper") version "2.2.4"
-    id("xyz.jpenilla.resource-factory-bukkit-convention") version "1.1.1"
-    id("xyz.jpenilla.resource-factory-paper-convention") version "1.1.1"
+    id("com.gradleup.shadow") version "9.3.0"
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.19"
+    id("xyz.jpenilla.run-paper") version "2.3.1"
+    id("xyz.jpenilla.resource-factory-paper-convention") version "1.3.1"
 }
 
 group = "me.elsiff"
-version = "4.3.2"
+version = "4.4.0"
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 repositories {
+    maven("https://libraries.minecraft.net")
     maven("https://papermc.io/repo/repository/maven-public/")
     maven("https://oss.sonatype.org/content/repositories/snapshots/")
-    maven("https://repo.dmulloy2.net/nexus/repository/public/")
+    maven("https://nexus.neetgames.com/repository/maven-releases/")
+    // mcMMO depends on WorldGuard, but Gradle failed to find it
+    maven("https://maven.enginehub.org/repo/")
     maven("https://jitpack.io")
     mavenCentral()
     //TODO testing
@@ -38,22 +28,25 @@ repositories {
 }
 
 dependencies {
-    paperweight.paperDevBundle("1.20.4-R0.1-SNAPSHOT")
-    compileOnlyApi("com.comphenix.protocol:ProtocolLib:5.1.0")
+    paperweight.paperDevBundle("1.21.11-R0.1-SNAPSHOT")
     compileOnlyApi("com.github.MilkBowl:VaultAPI:1.7.1")
-    compileOnlyApi(files("lib/mcMMO.jar"))
-    api("com.github.Musician101.MusiGui:paper:1.2.2")
+    compileOnlyApi("com.gmail.nossr50.mcMMO:mcMMO:2.2.048")
     //TODO testing
-    //api("io.musician101.musicommand:paper:1.0.0-SNAPSHOT")
-    api("io.musician101:bukkitier:2.1.0")
-    //api("com.github.Musician101:Bukkitier:2.0.0")
+    /*api("com.github.musician101.musigui:paper:1.2.2") {
+        exclude("io.papermc.paper")
+    }*/
+    api("io.musician101.musigui:paper:1.3.0") {
+        exclude("io.papermc.paper")
+    }
+    //TODO waiting for testing to complete before pushing a release
+    api("com.github.Musician101.MusiCommand:paper:be49f96ace")
     //TODO temp to fix package names
     //api("com.github.Musician101:MusiBoard:1.0.1")
     //api("com.github.musician101:musiboard:master-SNAPSHOT")
-    api("io.musician101:musiboard:1.1.0-SNAPSHOT")
+    api("io.musician101:musiboard:1.1.0-SNAPSHOT") {
+        exclude("io.papermc.paper")
+    }
 }
-
-paperweight.reobfArtifactConfiguration = ReobfArtifactConfiguration.MOJANG_PRODUCTION
 
 tasks {
     processResources {
@@ -66,45 +59,23 @@ tasks {
 
     shadowJar {
         dependencies {
-            include(dependency("io.musician101:bukkitier:"))
-            //include(dependency("com.github.Musician101:Bukkitier:"))
-            include(dependency("com.github.Musician101.MusiGui:"))
-            //include(dependency("io.musician101.musicommand:"))
+            include(dependency("io.musician101.musigui:.*"))
+            include(dependency("com.github.Musician101.MusiCommand:.*"))
         }
 
         archiveClassifier = ""
-        relocate("io.musician101.bukkitier", "me.elsiff.morefish.lib.io.musician101.bukkitier")
         relocate("io.musician101.musigui", "me.elsiff.morefish.lib.io.musician101.musigui")
-        //relocate("io.musician101.musicommand", "me.elsiff.morefish.lib.io.musician101.musigui")
+        relocate("io.musician101.musicommand", "me.elsiff.morefish.lib.io.musician101.musicommand")
     }
 
     runServer {
-        minecraftVersion("1.20.4")
+        minecraftVersion("1.21.11")
     }
-}
-
-bukkitPluginYaml {
-    main = "me.elsiff.morefish.MoreFish"
-    authors.addAll("elsiff", "Musician101")
-    apiVersion = "1.20"
-    softDepend.addAll("mcMMO", "Vault")
-    depend.add("MusiBoard")
-    commands.create("morefish") {
-        aliases.addAll("mf", "fish")
-        description = "Main command for MoreFish."
-        usage = "/morefish"
-    }
-    permissions.create("morefish.admin") {
-        default = Permission.Default.OP
-        description = "Gives the user the ability to control the fishing contest."
-    }
-
-    foliaSupported = true;
 }
 
 paperPluginYaml {
     main = "me.elsiff.morefish.MoreFish"
-    apiVersion = "1.20"
+    apiVersion = "1.21.11"
     authors.addAll("elsiff", "Musician101")
     foliaSupported = true
     dependencies.server {

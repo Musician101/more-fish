@@ -4,148 +4,146 @@ import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import io.musician101.bukkitier.command.ArgumentCommand;
-import io.musician101.bukkitier.command.Command;
-import io.musician101.bukkitier.command.LiteralCommand;
+import io.musician101.musicommand.core.command.CommandException;
+import io.musician101.musicommand.paper.command.PaperArgumentCommand;
+import io.musician101.musicommand.paper.command.PaperCommand;
+import io.musician101.musicommand.paper.command.PaperLiteralCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import me.elsiff.morefish.command.argument.FishLengthArgumentType;
 import me.elsiff.morefish.command.argument.FishTypeArgumentType;
+import me.elsiff.morefish.command.argument.PlayerArgumentType;
+import me.elsiff.morefish.fish.Fish;
 import me.elsiff.morefish.fish.FishType;
-import me.elsiff.morefish.item.FishItemStackConverter;
-import me.elsiff.morefish.text.Lang;
-import org.bukkit.command.CommandSender;
+import me.elsiff.morefish.lang.TagResolverUtil;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
+import org.spongepowered.configurate.NodePath;
 
 import java.util.List;
 
-class MFGive implements LiteralCommand {
+import static me.elsiff.morefish.MoreFish.lang;
 
-    @SuppressWarnings("SameReturnValue")
-    private static int giveFish(CommandContext<CommandSender> context, FishType fishType, double length, int amount) {
-        Player player = context.getArgument("player", Player.class);
-        ItemStack itemStack = FishItemStackConverter.createItemStack(fishType.generateFish(), length, player);
+@NullMarked
+class MFGive implements MFCommand, PaperLiteralCommand.AdventureFormat {
+
+    private static final NodePath GIVE_PATH = NodePath.path("command", "give");
+
+    private static void giveFish(CommandContext<CommandSourceStack> context, FishType fishType, double length, int amount) {
+        Player player = PlayerArgumentType.getPlayer(context, "player");
+        Fish fish = fishType.generateFish(length);
+        ItemStack itemStack = fishType.icon().createItemStack(fish, player);
         itemStack.setAmount(amount);
         player.getWorld().dropItem(player.getLocation(), itemStack);
-        CommandSender sender = context.getSource();
-        if (!(sender instanceof Player p && p.getUniqueId().equals(player.getUniqueId()))) {
-            context.getSource().sendMessage(Lang.replace("<mf-lang:command-give-sender>", Lang.tagResolver("fish-display-name", fishType.displayName())));
+        CommandSourceStack source = context.getSource();
+        if (!(source.getSender() instanceof Player p && p.getUniqueId().equals(player.getUniqueId()))) {
+            source.getSender().sendMessage(lang().getComponent(GIVE_PATH.withAppendedChild("sender"), fishType, TagResolverUtil.playerNameResolver(player)));
         }
 
-        player.sendMessage(Lang.replace("<mf-lang:command-give-receiver>", Lang.tagResolver("fish-display-name", fishType.displayName())));
-        return 1;
+        player.sendMessage(lang().getComponent(GIVE_PATH.withAppendedChild("receiver"), fishType));
     }
 
-    @NotNull
     @Override
-    public String description(@NotNull CommandSender sender) {
-        return Lang.raw("command-give-description");
+    public ComponentLike description(CommandSourceStack source) {
+        return lang().getComponent("command", "give", "description");
     }
 
-    @NotNull
     @Override
-    public String usage(@NotNull CommandSender sender) {
-        return "/mf give <player> <fish> [<length> [<amount>]]";
+    public ComponentLike usage(CommandSourceStack source) {
+        return Component.text("/mf give <player> <fish> [<length> [<amount>]]");
     }
 
-    @NotNull
     @Override
-    public List<Command<? extends ArgumentBuilder<CommandSender, ?>>> arguments() {
+    public List<PaperCommand<? extends ArgumentBuilder<CommandSourceStack, ?>, ComponentLike>> children() {
         return List.of(new MFPlayer());
     }
 
     @Override
-    public boolean canUse(@NotNull CommandSender sender) {
-        return sender.hasPermission("morefish.admin");
+    public boolean canUse(CommandSourceStack source) {
+        return hasPermission(source, "morefish.admin");
     }
 
-    @NotNull
     @Override
     public String name() {
         return "give";
     }
 
-    static class MFAmount implements ArgumentCommand<Integer> {
+    static class MFAmount implements PaperArgumentCommand.AdventureFormat<Integer> {
 
         @Override
-        public int execute(@NotNull CommandContext<CommandSender> context) throws CommandSyntaxException {
-            FishType fishType = FishTypeArgumentType.get(context);
-            return giveFish(context, fishType, FishLengthArgumentType.get(context, fishType), IntegerArgumentType.getInteger(context, "amount"));
+        public Integer execute(CommandContext<CommandSourceStack> context) throws CommandException {
+            FishType fishType = FishTypeArgumentType.getFishType(context);
+            giveFish(context, fishType, FishLengthArgumentType.getLength(context, fishType), IntegerArgumentType.getInteger(context, "amount"));
+            return 1;
         }
 
-        @NotNull
         @Override
         public String name() {
             return "amount";
         }
 
-        @NotNull
         @Override
         public ArgumentType<Integer> type() {
             return IntegerArgumentType.integer(0);
         }
     }
 
-    static class MFFish implements ArgumentCommand<FishType> {
+    static class MFFish implements PaperArgumentCommand.AdventureFormat<FishType> {
 
-        @NotNull
         @Override
-        public List<Command<? extends ArgumentBuilder<CommandSender, ?>>> arguments() {
+        public List<PaperCommand<? extends ArgumentBuilder<CommandSourceStack, ?>, ComponentLike>> children() {
             return List.of(new MFLength());
         }
 
         @Override
-        public int execute(@NotNull CommandContext<CommandSender> context) {
-            FishType fishType = FishTypeArgumentType.get(context);
-            return giveFish(context, fishType, fishType.lengthMin(), 1);
+        public Integer execute(CommandContext<CommandSourceStack> context) {
+            FishType fishType = FishTypeArgumentType.getFishType(context);
+            giveFish(context, fishType, fishType.minLength(), 1);
+            return 1;
         }
 
-        @NotNull
         @Override
         public String name() {
             return "fish";
         }
 
-        @NotNull
         @Override
         public ArgumentType<FishType> type() {
             return new FishTypeArgumentType();
         }
     }
 
-    static class MFLength implements ArgumentCommand<Double> {
+    static class MFLength implements PaperArgumentCommand.AdventureFormat<Float> {
 
-        @NotNull
         @Override
-        public List<Command<? extends ArgumentBuilder<CommandSender, ?>>> arguments() {
+        public List<PaperCommand<? extends ArgumentBuilder<CommandSourceStack, ?>, ComponentLike>> children() {
             return List.of(new MFAmount());
         }
 
         @Override
-        public int execute(@NotNull CommandContext<CommandSender> context) throws CommandSyntaxException {
-            FishType fishType = FishTypeArgumentType.get(context);
-            return giveFish(context, fishType, FishLengthArgumentType.get(context, fishType), 1);
+        public Integer execute(CommandContext<CommandSourceStack> context) throws CommandException {
+            FishType fishType = FishTypeArgumentType.getFishType(context);
+            giveFish(context, fishType, FishLengthArgumentType.getLength(context, fishType), 1);
+            return 1;
         }
 
-        @NotNull
         @Override
         public String name() {
             return "length";
         }
 
-        @NotNull
         @Override
-        public ArgumentType<Double> type() {
+        public ArgumentType<Float> type() {
             return new FishLengthArgumentType();
         }
     }
 
     static class MFPlayer extends AbstractMFPlayer {
 
-        @NotNull
         @Override
-        public List<Command<? extends ArgumentBuilder<CommandSender, ?>>> arguments() {
+        public List<PaperCommand<? extends ArgumentBuilder<CommandSourceStack, ?>, ComponentLike>> children() {
             return List.of(new MFFish());
         }
     }

@@ -1,13 +1,50 @@
 package me.elsiff.morefish.fish.condition;
 
-import me.elsiff.morefish.util.NumberUtils.Range;
+import me.elsiff.morefish.util.Range;
+import net.kyori.adventure.text.minimessage.Context;
+import net.kyori.adventure.text.minimessage.ParsingException;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.ArgumentQueue;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
-public record LocationYCondition(@NotNull Range<Double> range) implements FishCondition {
+@NullMarked
+public class LocationYCondition extends FishCondition<Range<Double>> {
 
-    public boolean check(@NotNull Item caught, @NotNull Player fisher) {
-        return range.containsDouble(fisher.getLocation().getY());
+	public LocationYCondition(Range<Double> value) {
+		super(value);
+	}
+
+
+    public boolean check(Item caught, Player fisher) {
+        return value.containsDouble(fisher.getLocation().getY());
+    }
+
+    @Override
+    public @Nullable Tag resolve(String name, ArgumentQueue arguments, Context ctx) throws ParsingException {
+        if (has(name)) {
+            if (arguments.hasNext()) {
+                String key = arguments.pop().value();
+                switch (key) {
+                    case "minimum" -> {
+                        return Tag.preProcessParsed(value.min() + "");
+                    }
+                    case "maximum" -> {
+                        return Tag.preProcessParsed(value.max() + "");
+                    }
+                }
+            }
+
+            return Tag.preProcessParsed(value.min() + "-" + value.max());
+        }
+
+        return null;
+    }
+
+    @Override
+    public boolean has(String name) {
+        return name.equals("location-y");
     }
 }

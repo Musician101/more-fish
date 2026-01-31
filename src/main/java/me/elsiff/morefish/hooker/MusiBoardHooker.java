@@ -5,8 +5,9 @@ import io.musician101.musiboard.scoreboard.MusiScoreboard;
 import io.musician101.musiboard.scoreboard.MusiScoreboardManager;
 import io.papermc.paper.scoreboard.numbers.NumberFormat;
 import me.elsiff.morefish.command.argument.SortArgumentType.SortType;
+import me.elsiff.morefish.lang.TagResolverUtil;
 import me.elsiff.morefish.records.FishRecord;
-import me.elsiff.morefish.text.Lang;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -14,7 +15,9 @@ import org.bukkit.scoreboard.Criteria;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+import org.spongepowered.configurate.NodePath;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,16 +26,19 @@ import java.util.UUID;
 import java.util.stream.IntStream;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.resolver;
+import static me.elsiff.morefish.MoreFish.lang;
 
+@NullMarked
 public class MusiBoardHooker implements PluginHooker {
 
     private final Map<UUID, String> previousBoards = new HashMap<>();
     private boolean hasHooked;
+    @Nullable
     private Objective leaderboard;
+    @Nullable
     private MusiScoreboard scoreboard;
 
-    public void addToLeaderboard(@NotNull Player player) {
+    public void addToLeaderboard(Player player) {
         if (hasHooked) {
             previousBoards.put(player.getUniqueId(), getManager().getScoreboard(player).getName());
             getManager().setScoreboard(player, scoreboard);
@@ -47,7 +53,6 @@ public class MusiBoardHooker implements PluginHooker {
         return MusiBoard.getPlugin().getManager();
     }
 
-    @NotNull
     @Override
     public String getPluginName() {
         return "MusiBoard";
@@ -68,7 +73,7 @@ public class MusiBoardHooker implements PluginHooker {
         }
     }
 
-    public void restorePreviousBoard(@NotNull Player player) {
+    public void restorePreviousBoard(Player player) {
         if (hasHooked) {
             if (previousBoards.containsKey(player.getUniqueId())) {
                 MusiScoreboard scoreboard = getManager().getScoreboardOrDefaultOrVanilla(previousBoards.get(player.getUniqueId()));
@@ -78,7 +83,7 @@ public class MusiBoardHooker implements PluginHooker {
         }
     }
 
-    public void swapScoreboards(@NotNull Player player) {
+    public void swapScoreboards(Player player) {
         if (previousBoards.containsKey(player.getUniqueId())) {
             restorePreviousBoard(player);
         }
@@ -93,7 +98,8 @@ public class MusiBoardHooker implements PluginHooker {
                 leaderboard.unregister();
             }
 
-            leaderboard = scoreboard.registerNewObjective("leaderboard", Criteria.DUMMY, Lang.replace("<mf-lang:scoreboard-display-name>"));
+            NodePath scoreboardPath = NodePath.path("main", "scoreboard");
+            leaderboard = scoreboard.registerNewObjective("leaderboard", Criteria.DUMMY, lang().getComponent(scoreboardPath.withAppendedChild("display-name")));
             leaderboard.setDisplaySlot(DisplaySlot.SIDEBAR);
             leaderboard.numberFormat(NumberFormat.blank());
             List<FishRecord> records = getPlugin().getCompetition().getRecords();
@@ -102,8 +108,9 @@ public class MusiBoardHooker implements PluginHooker {
                 FishRecord record = records.get(i);
                 OfflinePlayer player = Bukkit.getOfflinePlayer(record.fisher());
                 Score score = leaderboard.getScore(player);
-                score.setScore((int) (record.getLength() * 100));
-                score.customName(Lang.replace("<mf-lang:scoreboard-entry>", resolver(Lang.playerName(player), Lang.tagResolver("record-length", record.getLength()))));
+                score.setScore((int) (record.fish().length() * 100));
+                TagResolver resolver = TagResolver.resolver(TagResolverUtil.playerNameResolver(player), record);
+                score.customName(lang().getComponent(scoreboardPath.withAppendedChild("entry"), resolver));
             });
         }
     }

@@ -1,8 +1,8 @@
 package me.elsiff.morefish.bags;
 
-import me.elsiff.morefish.item.FishItemStackConverter;
+import me.elsiff.morefish.item.FishItemStackUtil;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,18 +11,18 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@NullMarked
 public class FishBag {
 
     private final Map<Integer, List<ItemStack>> pages = new HashMap<>();
-    @NotNull
     private final UUID uuid;
     private int maxAllowedPages = 0;
 
-    public FishBag(@NotNull UUID uuid) {
+    public FishBag(UUID uuid) {
         this.uuid = uuid;
     }
 
-    public boolean addFish(int page, @NotNull ItemStack fish) {
+    public boolean addFish(int page, ItemStack fish) {
         List<ItemStack> fishes = pages.getOrDefault(page, new ArrayList<>());
         if (fishes.size() < 45) {
             fishes.add(fish);
@@ -34,15 +34,13 @@ public class FishBag {
     }
 
     public void clearContraband() {
-        pages.forEach((k, v) -> v.removeIf(i -> !FishItemStackConverter.isFish(i)));
+        pages.forEach((k, v) -> v.removeIf(i -> !FishItemStackUtil.isFish(i)));
     }
 
-    @NotNull
     public List<ItemStack> getContraband() {
-        return pages.values().stream().flatMap(List::stream).filter(i -> !FishItemStackConverter.isFish(i)).collect(Collectors.toList());
+        return pages.values().stream().flatMap(List::stream).filter(i -> !FishItemStackUtil.isFish(i)).collect(Collectors.toList());
     }
 
-    @NotNull
     public List<ItemStack> getFish(int page) {
         return pages.containsKey(page) ? pages.get(page) : new ArrayList<>();
     }
@@ -55,12 +53,11 @@ public class FishBag {
         this.maxAllowedPages = maxAllowedPages;
     }
 
-    @NotNull
     public UUID getUUID() {
         return uuid;
     }
 
-    public void updatePage(int page, @NotNull List<ItemStack> fish) {
+    public void updatePage(int page, List<ItemStack> fish) {
         pages.put(page, fish);
     }
 }

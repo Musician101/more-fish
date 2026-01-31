@@ -1,0 +1,14 @@
+length-max: 240
+commands:
+    - minecraft:effect give @p minecraft:strength 120 1
+    - mcmmo:addxp @p Fishing 1000
+display-name: Blue Shark
+length-min: 160
+icon:
+    schema_version: 1
+    DataVersion: 4671
+    components:
+        minecraft:lore: '["<italic><gray>The Toughest Fish", "<gray>Get <blue>Strength I (2:00)", "<gray>when you eat it."]'
+        minecraft:potion_contents: '{potion:"minecraft:long_strength"}'
+    id: minecraft:salmon
+name: BlueShark

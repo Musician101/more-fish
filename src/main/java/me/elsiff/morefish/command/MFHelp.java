@@ -1,29 +1,32 @@
 package me.elsiff.morefish.command;
 
 import com.mojang.brigadier.context.CommandContext;
-import io.musician101.bukkitier.command.LiteralCommand;
+import io.musician101.musicommand.paper.command.PaperLiteralCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.plugin.configuration.PluginMeta;
-import me.elsiff.morefish.text.Lang;
+import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
+import org.spongepowered.configurate.NodePath;
 
 import java.util.List;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
+import static me.elsiff.morefish.MoreFish.lang;
 
-class MFHelp implements LiteralCommand {
+@NullMarked
+class MFHelp implements MFCommand, PaperLiteralCommand.AdventureFormat {
 
-    private final LiteralCommand root;
+    private final PaperLiteralCommand.AdventureFormat root;
 
-    public MFHelp(@NotNull LiteralCommand root) {
+    public MFHelp(PaperLiteralCommand.AdventureFormat root) {
         this.root = root;
     }
 
-    @SuppressWarnings("UnstableApiUsage")
     @Override
-    public int execute(@NotNull CommandContext<CommandSender> context) {
-        CommandSender sender = context.getSource();
+    public Integer execute(CommandContext<CommandSourceStack> context) {
+        CommandSourceStack source = context.getSource();
         PluginMeta meta = getPlugin().getPluginMeta();
         List<String> authors = meta.getAuthors();
         String authorsString = "";
@@ -36,18 +39,23 @@ class MFHelp implements LiteralCommand {
             };
         }
 
-        sender.sendMessage(Lang.replace("<mf-lang:command-help-header>", TagResolver.resolver(Lang.tagResolver("authors", authorsString), Lang.tagResolver("plugin-display-name", meta.getDisplayName()))));
-        root.arguments().stream().filter(cmd -> cmd.canUse(sender)).forEach(cmd -> sender.sendMessage(Lang.replace("<mf-lang:command-help-info>", TagResolver.resolver(Lang.tagResolver("command-usage", root.usage(sender) + " " + cmd.name()), Lang.tagResolver("command-description", cmd.description(sender))))));
+        NodePath path = NodePath.path("command", "help");
+        TagResolver headerResolver = TagResolver.resolver(Placeholder.parsed("authors", authorsString), Placeholder.parsed("plugin-display-name", meta.getDisplayName()));
+        sendMessage(context, lang().getComponent(path.withAppendedChild("header"), headerResolver));
+        root.children().stream().filter(cmd -> cmd.canUse(source)).forEach(cmd -> {
+            TagResolver commandResolver = TagResolver.resolver(Placeholder.component("command-usage", cmd.usage(source)), Placeholder.component("command-description", cmd.description(source)));
+            sendMessage(context, lang().getComponent(path.withAppendedChild("info"), commandResolver));
+        });
         return 1;
     }
 
     @Override
-    public @NotNull String name() {
+    public String name() {
         return "help";
     }
 
     @Override
-    public @NotNull String description(@NotNull CommandSender sender) {
-        return Lang.raw("command-help-description");
+    public ComponentLike description(CommandSourceStack source) {
+        return lang().getComponent("command", "help", "description");
     }
 }

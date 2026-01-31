@@ -1,0 +1,10 @@
+display-name: Fin Diesel
+length-max: 190
+length-min: 110
+icon:
+    schema_version: 1
+    DataVersion: 4671
+    components:
+        minecraft:lore: '["<italic><dark_purple>I live my life a quarter fathom at a time"]'
+    id: minecraft:cod
+name: FinDiesel

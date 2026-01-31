@@ -1,11 +1,12 @@
 package me.elsiff.morefish.competition;
 
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
-import me.elsiff.morefish.text.Lang;
+import me.elsiff.morefish.lang.TagResolverUtil;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.bossbar.BossBar.Color;
 import net.kyori.adventure.bossbar.BossBar.Overlay;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.EventHandler;
@@ -13,24 +14,36 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+import org.spongepowered.configurate.NodePath;
 
 import java.util.concurrent.TimeUnit;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
+import static me.elsiff.morefish.MoreFish.lang;
 
+@NullMarked
 public final class FishingCompetitionTimerBarHandler implements Listener {
 
+    @Nullable
     private ScheduledTask barUpdatingTask;
+    @Nullable
     private BossBar timerBar;
     private long remainingSeconds;
 
     public void disableTimer() {
-        barUpdatingTask.cancel();
-        barUpdatingTask = null;
-        timerBar.name(timerBarTitle(0));
-        timerBar.progress(0);
-        Bukkit.getOnlinePlayers().forEach(player -> player.hideBossBar(timerBar));
+        if (barUpdatingTask != null) {
+            barUpdatingTask.cancel();
+            barUpdatingTask = null;
+        }
+
+        if (timerBar != null) {
+            timerBar.name(timerBarTitle(0));
+            timerBar.progress(0);
+            Bukkit.getOnlinePlayers().forEach(player -> player.hideBossBar(timerBar));
+        }
+
         HandlerList.unregisterAll(this);
         Bukkit.removeBossBar(getTimerBarKey());
         timerBar = null;
@@ -54,20 +67,26 @@ public final class FishingCompetitionTimerBarHandler implements Listener {
     }
 
     private NamespacedKey getTimerBarKey() {
-        return new NamespacedKey(getPlugin(), "morefish-timer-bar");
+        return new NamespacedKey(getPlugin(), "competition-timer-bar");
     }
 
     private Component timerBarTitle(long remainingSeconds) {
-        return Lang.replace("<mf-lang:timer-bar-title>", Lang.timeRemaining(remainingSeconds));
+        NodePath path = NodePath.path("main", "timer-bar-title");
+        TagResolver resolver = TagResolverUtil.timeRemaining(remainingSeconds);
+        return lang().getComponent(path, resolver);
     }
 
     @EventHandler
-    public void onPlayerJoin(@NotNull PlayerJoinEvent event) {
-        event.getPlayer().showBossBar(timerBar);
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        if (timerBar != null) {
+            event.getPlayer().showBossBar(timerBar);
+        }
     }
 
     @EventHandler
-    public void onPlayerQuit(@NotNull PlayerQuitEvent event) {
-        event.getPlayer().hideBossBar(timerBar);
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        if (timerBar != null) {
+            event.getPlayer().hideBossBar(timerBar);
+        }
     }
 }

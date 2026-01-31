@@ -1,0 +1,8 @@
+display-name: Herring
+length-max: 30
+length-min: 20
+icon:
+    schema_version: 1
+    DataVersion: 4671
+    id: minecraft:cod
+name: Herring

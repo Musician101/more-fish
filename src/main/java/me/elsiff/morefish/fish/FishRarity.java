@@ -1,177 +1,98 @@
 package me.elsiff.morefish.fish;
 
-import me.elsiff.morefish.announcement.PlayerAnnouncement;
-import me.elsiff.morefish.fish.catchhandler.CatchHandler;
-import me.elsiff.morefish.fish.condition.FishCondition;
-import org.jetbrains.annotations.NotNull;
+import me.elsiff.morefish.lang.TagResolverUtil;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.minimessage.Context;
+import net.kyori.adventure.text.minimessage.ParsingException;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.ArgumentQueue;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+@NullMarked
+public final class FishRarity extends FishAbstract<FishRarity> {
 
-public final class FishRarity implements Comparable<FishRarity> {
+    private int weight = 1;
+    private TextColor color;
+    private boolean filterDefaultEnabled = false;
+    private LuckOfTheSeaModifier luckOfTheSeaModifier = LuckOfTheSeaModifier.NONE;
 
-    private final @NotNull String name;
-    private final @NotNull String displayName;
-    private final boolean isDefault;
-    private final double probability;
-    private final @NotNull String color;
-    private final @NotNull List<CatchHandler> catchHandlers;
-    private final @NotNull List<FishCondition> conditions;
-    private final @NotNull PlayerAnnouncement catchAnnouncement;
-    private final @NotNull Map<Integer, Double> luckOfTheSeaChances;
-    private final boolean hasNotFishItemFormat;
-    private final boolean noDisplay;
-    private final boolean hasCatchFirework;
-    private final double additionalPrice;
-    private final int customModelData;
-    private final boolean filterDefaultEnabled;
-
-    public FishRarity(@NotNull String name, @NotNull String displayName, boolean isDefault, double probability,
-                      @NotNull String color, @NotNull List<CatchHandler> catchHandlers,
-                      @NotNull List<FishCondition> conditions, @NotNull PlayerAnnouncement catchAnnouncement,
-                      @NotNull Map<Integer, Double> luckOfTheSeaChances,
-                      boolean hasNotFishItemFormat, boolean noDisplay, boolean hasCatchFirework,
-                      double additionalPrice, int customModelData, boolean filterDefaultEnabled) {
-        this.name = name;
-        this.displayName = displayName;
-        this.isDefault = isDefault;
-        this.probability = probability;
-        this.color = color;
-        this.catchHandlers = catchHandlers;
-        this.conditions = conditions;
-        this.catchAnnouncement = catchAnnouncement;
-        this.luckOfTheSeaChances = luckOfTheSeaChances;
-        this.hasNotFishItemFormat = hasNotFishItemFormat;
-        this.noDisplay = noDisplay;
-        this.hasCatchFirework = hasCatchFirework;
-        this.additionalPrice = additionalPrice;
-        this.customModelData = customModelData;
-        this.filterDefaultEnabled = filterDefaultEnabled;
+    public FishRarity(String name, String displayName) {
+        super("fish-rarity", name, displayName);
+        this.color = NamedTextColor.WHITE;
     }
 
-    public FishRarity(@NotNull String name, @NotNull String displayName, @NotNull String color, double additionalPrice) {
-        this(name, displayName, false, 0, color, List.of(), List.of(), PlayerAnnouncement.empty(), Map.of(), false, false, false, additionalPrice, 0, false);
+    public FishRarity(String name, String displayName, TextColor color, float priceMultiplier) {
+        super("fish-rarity", name, displayName, priceMultiplier);
+        this.color = color;
     }
 
     @Override
-    public int compareTo(@NotNull FishRarity o) {
-        if (isDefault) {
-            return 0;
+    public @Nullable Tag resolve(String name, ArgumentQueue arguments, Context ctx) throws ParsingException {
+        if (has(name)) {
+            String value = arguments.popOr("fish-rarity needs at least 1 argument.").value();
+            return switch (value) {
+                case "color" -> {
+                    if (arguments.hasNext() && arguments.pop().isTrue()) {
+                        yield Tag.selfClosingInserting(Component.text(color.asHexString(), color));
+                    }
+
+                    yield Tag.styling(b -> b.color(color));
+                }
+                case "filter-default-enabled" -> TagResolverUtil.booleanTag(filterDefaultEnabled);
+                case "luck-of-the-sea-modifier" -> TagResolverUtil.fromResolver(luckOfTheSeaModifier, value, arguments, ctx);
+                case "weight" -> TagResolverUtil.numberTag(value, weight, arguments, ctx);
+                default -> super.resolve(name, arguments, ctx);
+            };
         }
 
-        return Double.compare(this.probability, o.probability);
+        return null;
     }
 
-    public @NotNull String name() {
-        return name;
+    public void weight(int weight) {
+        this.weight = weight;
     }
 
-    public @NotNull String displayName() {
-        return displayName;
+    public int modifiedWeight(int luckOfTheSeaLevel) {
+        float modifier = luckOfTheSeaModifier.amount() * luckOfTheSeaLevel;
+        return switch (luckOfTheSeaModifier.type()) {
+            case FLAT -> weight + (int) modifier;
+            case PERCENTAGE -> (int) Math.ceil(weight + (weight * modifier));
+        };
     }
 
-    public boolean isDefault() {
-        return isDefault;
+    public void color(TextColor color) {
+        this.color = color;
     }
 
-    public double probability() {
-        return probability;
+    public void filterDefaultEnabled(boolean filterDefaultEnabled) {
+        this.filterDefaultEnabled = filterDefaultEnabled;
     }
 
-    public @NotNull String color() {
+    @Override
+    public int compareTo(FishRarity o) {
+        return Integer.compare(this.weight, o.weight);
+    }
+
+    public int weight() {
+        return weight;
+    }
+
+    public TextColor color() {
         return color;
-    }
-
-    public @NotNull List<CatchHandler> catchHandlers() {
-        return catchHandlers;
-    }
-
-    public @NotNull List<FishCondition> conditions() {
-        return conditions;
-    }
-
-    public @NotNull PlayerAnnouncement catchAnnouncement() {
-        return catchAnnouncement;
-    }
-
-    public @NotNull Map<Integer, Double> luckOfTheSeaChances() {
-        return luckOfTheSeaChances;
-    }
-
-    public boolean hasNotFishItemFormat() {
-        return hasNotFishItemFormat;
-    }
-
-    public boolean noDisplay() {
-        return noDisplay;
-    }
-
-    public boolean hasCatchFirework() {
-        return hasCatchFirework;
-    }
-
-    public double additionalPrice() {
-        return additionalPrice;
-    }
-
-    public int customModelData() {
-        return customModelData;
     }
 
     public boolean filterDefaultEnabled() {
         return filterDefaultEnabled;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this) {
-            return true;
-        }
-        if (obj == null || obj.getClass() != this.getClass()) {
-            return false;
-        }
-        var that = (FishRarity) obj;
-        return Objects.equals(this.name, that.name) &&
-                Objects.equals(this.displayName, that.displayName) &&
-                this.isDefault == that.isDefault &&
-                Double.doubleToLongBits(this.probability) == Double.doubleToLongBits(that.probability) &&
-                Objects.equals(this.color, that.color) &&
-                Objects.equals(this.catchHandlers, that.catchHandlers) &&
-                Objects.equals(this.conditions, that.conditions) &&
-                Objects.equals(this.catchAnnouncement, that.catchAnnouncement) &&
-                Objects.equals(this.luckOfTheSeaChances, that.luckOfTheSeaChances) &&
-                this.hasNotFishItemFormat == that.hasNotFishItemFormat &&
-                this.noDisplay == that.noDisplay &&
-                this.hasCatchFirework == that.hasCatchFirework &&
-                Double.doubleToLongBits(this.additionalPrice) == Double.doubleToLongBits(that.additionalPrice) &&
-                this.customModelData == that.customModelData &&
-                this.filterDefaultEnabled == that.filterDefaultEnabled;
+    public LuckOfTheSeaModifier luckOfTheSeaModifier() {
+        return luckOfTheSeaModifier;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, displayName, isDefault, probability, color, catchHandlers, conditions, catchAnnouncement, luckOfTheSeaChances, hasNotFishItemFormat, noDisplay, hasCatchFirework, additionalPrice, customModelData, filterDefaultEnabled);
+    public void luckOfTheSeaModifier(LuckOfTheSeaModifier luckOfTheSeaModifier) {
+        this.luckOfTheSeaModifier = luckOfTheSeaModifier;
     }
-
-    @Override
-    public String toString() {
-        return "FishRarity[" +
-                "name=" + name + ", " +
-                "displayName=" + displayName + ", " +
-                "isDefault=" + isDefault + ", " +
-                "probability=" + probability + ", " +
-                "color=" + color + ", " +
-                "catchHandlers=" + catchHandlers + ", " +
-                "conditions=" + conditions + ", " +
-                "catchAnnouncement=" + catchAnnouncement + ", " +
-                "luckOfTheSeaChances=" + luckOfTheSeaChances + ", " +
-                "hasNotFishItemFormat=" + hasNotFishItemFormat + ", " +
-                "noDisplay=" + noDisplay + ", " +
-                "hasCatchFirework=" + hasCatchFirework + ", " +
-                "additionalPrice=" + additionalPrice + ", " +
-                "customModelData=" + customModelData + ", " +
-                "filterDefaultEnabled=" + filterDefaultEnabled + ']';
-    }
-
 }

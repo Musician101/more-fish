@@ -1,0 +1,10 @@
+display-name: Chub
+length-max: 15
+length-min: 5
+icon:
+    schema_version: 1
+    DataVersion: 4671
+    id: minecraft:cod
+    components:
+        minecraft:lore: '["<italic><dark_purple>Wider than it is long"]'
+name: Chub

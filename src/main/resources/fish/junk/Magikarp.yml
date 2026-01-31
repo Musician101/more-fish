@@ -1,0 +1,10 @@
+display-name: Magikarp
+length-max: 35
+length-min: 25
+icon:
+    schema_version: 1
+    DataVersion: 4671
+    components:
+        minecraft:lore: '["<gray>Magikarp used Splash!"]'
+    id: minecraft:cod
+name: Magikarp

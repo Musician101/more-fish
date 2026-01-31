@@ -1,54 +1,57 @@
 package me.elsiff.morefish.command;
 
 import com.mojang.brigadier.context.CommandContext;
-import io.musician101.bukkitier.command.LiteralCommand;
+import io.musician101.musicommand.paper.command.PaperLiteralCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import me.elsiff.morefish.hooker.MusiBoardHooker;
-import me.elsiff.morefish.text.Lang;
-import org.bukkit.command.CommandSender;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
+import org.spongepowered.configurate.NodePath;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
+import static me.elsiff.morefish.MoreFish.lang;
 
-class MFScoreboard implements LiteralCommand {
+@NullMarked
+class MFScoreboard implements MFCommand, PaperLiteralCommand.AdventureFormat {
 
-    @NotNull
+    private final static NodePath SCOREBOARD_PATH = NodePath.path("command", "scoreboard");
+
     @Override
-    public String usage(@NotNull CommandSender sender) {
-        return "/mf scoreboard";
+    public ComponentLike usage(CommandSourceStack source) {
+        return Component.text("/mf scoreboard");
     }
 
     @Override
-    public boolean canUse(@NotNull CommandSender sender) {
-        return sender instanceof Player;
-    }
-
-    @NotNull
-    @Override
-    public String description(@NotNull CommandSender sender) {
-        return Lang.raw("command-scoreboard-description");
+    public boolean canUse(CommandSourceStack source) {
+        return isPlayer(source);
     }
 
     @Override
-    public int execute(@NotNull CommandContext<CommandSender> context) {
-        Player player = (Player) context.getSource();
+    public ComponentLike description(CommandSourceStack source) {
+        return lang().getComponent(SCOREBOARD_PATH.withAppendedChild("description"));
+    }
+
+    @Override
+    public Integer execute(CommandContext<CommandSourceStack> context) {
+        Player player = (Player) context.getSource().getSender();
         if (getPlugin().getCompetition().isEnabled()) {
             MusiBoardHooker musiBoard = getPlugin().getMusiBoard();
             if (musiBoard.hasHooked()) {
                 getPlugin().getMusiBoard().swapScoreboards(player);
-                player.sendMessage(Lang.replace("<mf-lang:command-scoreboard-success>"));
+                player.sendMessage(lang().getComponent(SCOREBOARD_PATH.withAppendedChild("success")));
                 return 1;
             }
 
-            player.sendMessage(Lang.replace("<mf-lang:command-scoreboard-no-support>"));
+            player.sendMessage(lang().getComponent(SCOREBOARD_PATH.withAppendedChild("no-support")));
             return 1;
         }
 
-        player.sendMessage(Lang.replace("<mf-lang:command-scoreboard-no-competition>"));
+        player.sendMessage(lang().getComponent(SCOREBOARD_PATH.withAppendedChild("no-competition")));
         return 1;
     }
 
-    @NotNull
     @Override
     public String name() {
         return "scoreboard";

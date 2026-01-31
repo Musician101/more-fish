@@ -3,88 +3,88 @@ package me.elsiff.morefish.command;
 import com.mojang.brigadier.arguments.LongArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import io.musician101.bukkitier.command.ArgumentCommand;
-import io.musician101.bukkitier.command.Command;
-import io.musician101.bukkitier.command.LiteralCommand;
+import io.musician101.musicommand.paper.command.PaperArgumentCommand;
+import io.musician101.musicommand.paper.command.PaperCommand;
+import io.musician101.musicommand.paper.command.PaperLiteralCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import me.elsiff.morefish.competition.FishingCompetition;
 import me.elsiff.morefish.competition.FishingCompetitionHost;
-import me.elsiff.morefish.text.Lang;
-import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
+import org.jspecify.annotations.NullMarked;
+import org.spongepowered.configurate.NodePath;
 
 import java.util.List;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
+import static me.elsiff.morefish.MoreFish.lang;
 
-class MFStart implements LiteralCommand {
+@NullMarked
+class MFStart implements MFCommand, PaperLiteralCommand.AdventureFormat {
 
-    private static void start(CommandSender sender, long runningTime) {
+    private static final NodePath START_PATH = NodePath.path("command", "start");
+
+    private void start(CommandSourceStack source, long runningTime) {
         if (getCompetition().isEnabled()) {
-            sender.sendMessage(Lang.replace("<mf-lang:command-start-ongoing>"));
+            sendMessage(source, lang().getComponent(START_PATH.withAppendedChild("on-going")));
         }
         else {
             getCompetitionHost().openCompetitionFor(runningTime * 20L);
         }
     }
 
-    private static FishingCompetition getCompetition() {
+    private FishingCompetition getCompetition() {
         return getPlugin().getCompetition();
     }
 
-    private static FishingCompetitionHost getCompetitionHost() {
+    private FishingCompetitionHost getCompetitionHost() {
         return getPlugin().getCompetitionHost();
     }
 
-    @NotNull
     @Override
-    public String description(@NotNull CommandSender sender) {
-        return Lang.raw("command-start-description");
+    public ComponentLike description(CommandSourceStack source) {
+        return lang().getComponent(START_PATH.withAppendedChild("description"));
     }
 
-    @NotNull
     @Override
-    public String usage(@NotNull CommandSender sender) {
-        return "/mf start [<seconds>]";
+    public ComponentLike usage(CommandSourceStack source) {
+        return Component.text("/mf start [<seconds>]");
     }
 
-    @NotNull
     @Override
-    public List<Command<? extends ArgumentBuilder<CommandSender, ?>>> arguments() {
+    public List<PaperCommand<? extends ArgumentBuilder<CommandSourceStack, ?>, ComponentLike>> children() {
         return List.of(new MFSeconds());
     }
 
     @Override
-    public boolean canUse(@NotNull CommandSender sender) {
-        return sender.hasPermission("morefish.admin");
+    public boolean canUse(CommandSourceStack source) {
+        return hasPermission(source, "morefish.admin");
     }
 
     @Override
-    public int execute(@NotNull CommandContext<CommandSender> context) {
+    public Integer execute(CommandContext<CommandSourceStack> context) {
         start(context.getSource(), getPlugin().getConfig().getInt("auto-running.timer"));
         return 1;
     }
 
-    @NotNull
     @Override
     public String name() {
         return "start";
     }
 
-    static class MFSeconds implements ArgumentCommand<Long> {
+    class MFSeconds implements PaperArgumentCommand.AdventureFormat<Long> {
 
         @Override
-        public int execute(@NotNull CommandContext<CommandSender> context) {
+        public Integer execute(CommandContext<CommandSourceStack> context) {
             start(context.getSource(), context.getArgument("seconds", Long.class));
             return 1;
         }
 
-        @NotNull
         @Override
         public String name() {
             return "seconds";
         }
 
-        @NotNull
         @Override
         public LongArgumentType type() {
             return LongArgumentType.longArg(0);

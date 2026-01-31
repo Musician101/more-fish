@@ -7,114 +7,32 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
 
+@NullMarked
 public interface TagKey<P, C> {
 
-    TagKey<Double, Double> ADDITIONAL_PRICE = new TagKey<>() {
-        @Override
-        public @NotNull NamespacedKey key() {
-            return new NamespacedKey(getPlugin(), "additional-price");
-        }
+    TagKey<Float, Float> PRICE_MULTIPLIER = tagKey("price-multiplier", PersistentDataType.FLOAT);
+    TagKey<Double, Double> LENGTH = tagKey("length", PersistentDataType.DOUBLE);
+    TagKey<String, String> DISPLAY_NAME = tagKey("display-name", PersistentDataType.STRING);
+    TagKey<String, String> NAME = tagKey("name", PersistentDataType.STRING);
+    TagKey<PersistentDataContainer, FishRarity> FISH_RARITY = tagKey("rarity", new FishRarityTagType());
+    TagKey<PersistentDataContainer, FishType> FISH_TYPE = tagKey("type", new FishTypeTagType());
+    TagKey<String, String> COLOR = tagKey("color", PersistentDataType.STRING);
+    TagKey<PersistentDataContainer, Fish> FISH = tagKey("fish", new FishTagType());
 
-        @Override
-        public @NotNull PersistentDataType<Double, Double> dataType() {
-            return PersistentDataType.DOUBLE;
-        }
-    };
-    TagKey<Double, Double> LENGTH = new TagKey<>() {
-        @Override
-        public @NotNull NamespacedKey key() {
-            return new NamespacedKey(getPlugin(), "length");
-        }
-
-        @Override
-        public @NotNull PersistentDataType<Double, Double> dataType() {
-            return PersistentDataType.DOUBLE;
-        }
-    };
-    TagKey<String, String> DISPLAY_NAME = new TagKey<>() {
-        @Override
-        public @NotNull NamespacedKey key() {
-            return new NamespacedKey(getPlugin(), "display-name");
-        }
-
-        @Override
-        public @NotNull PersistentDataType<String, String> dataType() {
-            return PersistentDataType.STRING;
-        }
-    };
-    TagKey<String, String> NAME = new TagKey<>() {
-        @Override
-        public @NotNull NamespacedKey key() {
-            return new NamespacedKey(getPlugin(), "name");
-        }
-
-        @Override
-        public @NotNull PersistentDataType<String, String> dataType() {
-            return PersistentDataType.STRING;
-        }
-    };
-    TagKey<PersistentDataContainer, FishRarity> FISH_RARITY = new TagKey<>() {
-        @Override
-        public @NotNull NamespacedKey key() {
-            return new NamespacedKey(getPlugin(), "rarity");
-        }
-
-        @Override
-        public @NotNull PersistentDataType<PersistentDataContainer, FishRarity> dataType() {
-            return new FishRarityTagType();
-        }
-    };
-    TagKey<PersistentDataContainer, FishType> FISH_TYPE = new TagKey<>() {
-        @Override
-        public @NotNull NamespacedKey key() {
-            return new NamespacedKey(getPlugin(), "type");
-        }
-
-        @Override
-        public @NotNull PersistentDataType<PersistentDataContainer, FishType> dataType() {
-            return new FishTypeTagType();
-        }
-    };
-    TagKey<String, String> COLOR = new TagKey<>() {
-        @Override
-        public @NotNull NamespacedKey key() {
-            return new NamespacedKey(getPlugin(), "color");
-        }
-
-        @Override
-        public @NotNull PersistentDataType<String, String> dataType() {
-            return PersistentDataType.STRING;
-        }
-    };
-    TagKey<PersistentDataContainer, Fish> FISH = new TagKey<>() {
-        @Override
-        public @NotNull NamespacedKey key() {
-            return new NamespacedKey(getPlugin(), "fish");
-        }
-
-        @Override
-        public @NotNull PersistentDataType<PersistentDataContainer, Fish> dataType() {
-            return new FishTagType();
-        }
-    };
-
-    @NotNull
     NamespacedKey key();
 
-    @NotNull
     PersistentDataType<P, C> dataType();
 
-    default void setValue(@NotNull PersistentDataContainer container, @NotNull C value) {
+    default void setValue(PersistentDataContainer container, C value) {
         container.set(key(), dataType(), value);
     }
 
-    @NotNull
-    default C getValue(@NotNull PersistentDataContainer container) {
+    default C getValue(PersistentDataContainer container) {
         C value = container.get(key(), dataType());
         if (value == null) {
             throw new IllegalArgumentException("Malformed NBT: " + container);
@@ -129,5 +47,20 @@ public interface TagKey<P, C> {
         }
 
         return itemStack.getItemMeta().getPersistentDataContainer().has(key(), dataType());
+    }
+
+    private static <P, C> TagKey<P, C> tagKey(String key, PersistentDataType<P, C> dataType) {
+        return new TagKey<>() {
+
+            @Override
+            public NamespacedKey key() {
+                return new NamespacedKey(getPlugin(), key);
+            }
+
+            @Override
+            public PersistentDataType<P, C> dataType() {
+                return dataType;
+            }
+        };
     }
 }

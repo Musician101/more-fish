@@ -1,0 +1,9 @@
+skip-item-format: true
+display-name: Pie
+length-max: 3.14
+length-min: 3.14
+icon:
+    schema_version: 1
+    DataVersion: 4671
+    id: minecraft:pumpkin_pie
+name: Pie

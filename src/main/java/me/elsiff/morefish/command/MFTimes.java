@@ -2,44 +2,47 @@ package me.elsiff.morefish.command;
 
 import com.google.common.collect.Lists;
 import com.mojang.brigadier.context.CommandContext;
-import io.musician101.bukkitier.command.LiteralCommand;
+import io.musician101.musicommand.paper.command.PaperLiteralCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import me.elsiff.morefish.competition.FishingCompetitionAutoRunner.CompetitionTimes;
-import me.elsiff.morefish.text.Lang;
-import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import org.jspecify.annotations.NullMarked;
+import org.spongepowered.configurate.NodePath;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.stream.Collectors;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
+import static me.elsiff.morefish.MoreFish.lang;
 
-class MFTimes implements LiteralCommand {
+@NullMarked
+class MFTimes implements MFCommand, PaperLiteralCommand.AdventureFormat {
+
+    private static final NodePath TIMES = NodePath.path("command", "times");
 
     @Override
-    public int execute(@NotNull CommandContext<CommandSender> context) {
-        CommandSender sender = context.getSource();
+    public Integer execute(CommandContext<CommandSourceStack> context) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm z");
         String times = Lists.partition(getPlugin().getAutoRunner().getCompetitionTimes(), 6).stream().map(list -> list.stream().map(CompetitionTimes::getStartTime).map(ZonedDateTime.now()::with).map(l -> l.format(formatter)).collect(Collectors.joining(", "))).collect(Collectors.joining("<newline>"));
-        sender.sendMessage(Lang.replace("<mf-lang:command-times-message>", Lang.tagResolver("times", Lang.replace(times))));
+        sendMessage(context, lang().getComponent(TIMES.withAppendedChild("message"), Placeholder.parsed("times", times)));
         return 1;
     }
 
-    @NotNull
     @Override
     public String name() {
         return "times";
     }
 
-    @NotNull
     @Override
-    public String description(@NotNull CommandSender sender) {
-        return Lang.raw("command-times-description");
+    public ComponentLike description(CommandSourceStack source) {
+        return lang().getComponent(TIMES.withAppendedChild("description"));
     }
 
-    @NotNull
     @Override
-    public String usage(@NotNull CommandSender sender) {
-        return "/mf clear [alltime|competition [<player>]]";
+    public ComponentLike usage(CommandSourceStack source) {
+        return Component.text("/mf clear [alltime|competition [<player>]]");
     }
 }

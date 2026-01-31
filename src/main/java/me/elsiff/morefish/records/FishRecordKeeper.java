@@ -1,14 +1,24 @@
 package me.elsiff.morefish.records;
 
 import me.elsiff.morefish.command.argument.SortArgumentType.SortType;
-import me.elsiff.morefish.text.Lang;
-import me.elsiff.morefish.util.NumberUtils;
+import me.elsiff.morefish.fish.Fish;
+import me.elsiff.morefish.fish.FishRarity;
+import me.elsiff.morefish.fish.FishType;
+import me.elsiff.morefish.lang.TagResolverUtil;
+import me.elsiff.morefish.serialize.fish.FishRaritySerializer;
+import me.elsiff.morefish.serialize.record.FishRecordSerializer;
+import me.elsiff.morefish.serialize.record.FishSerializer;
+import me.elsiff.morefish.serialize.record.FishTypeRecordSerializer;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+import org.spongepowered.configurate.ConfigurationOptions;
+import org.spongepowered.configurate.NodePath;
+import org.spongepowered.configurate.yaml.NodeStyle;
+import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.nio.file.Path;
 import java.util.AbstractMap.SimpleEntry;
@@ -19,19 +29,39 @@ import java.util.Map.Entry;
 import java.util.UUID;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
+import static me.elsiff.morefish.MoreFish.lang;
 
+@NullMarked
 public abstract class FishRecordKeeper {
 
-    @NotNull
+    @Nullable
+    protected YamlConfigurationLoader loader;
+    protected boolean loading = false;
+
+    protected void initLoader() {
+        ConfigurationOptions options = ConfigurationOptions.defaults().serializers(b -> {
+            b.register(FishRecord.class, new FishRecordSerializer());
+            b.register(Fish.class, new FishSerializer());
+            b.register(FishType.class, new FishTypeRecordSerializer());
+            b.register(FishRarity.class, new FishRaritySerializer());
+        });
+        loader = YamlConfigurationLoader.builder().path(getPath()).nodeStyle(NodeStyle.BLOCK).defaultOptions(options).build();
+    }
+
     protected final List<FishRecord> records = new ArrayList<>();
 
-    public void informAboutRanking(@NotNull CommandSender receiver) {
+    public void informAboutRanking(CommandSender receiver) {
         informAboutRanking(receiver, records);
     }
 
-    public void informAboutRanking(@NotNull CommandSender receiver, @NotNull List<FishRecord> fishRecords) {
+    public void informAboutRanking(CommandSender receiver, List<FishRecord> fishRecords) {
+        if (loading) {
+            return;
+        }
+
+        NodePath topPath = NodePath.path("main", "top");
         if (fishRecords.isEmpty()) {
-            receiver.sendMessage(Lang.replace("<mf-lang:top-no-catches>"));
+            receiver.sendMessage(lang().getComponent(topPath.withAppendedChild("no-catches")));
         }
         else {
             int topSize = getPlugin().getConfig().getInt("messages.top-number", 1);
@@ -39,20 +69,20 @@ public abstract class FishRecordKeeper {
             List<FishRecord> top = fishRecords.subList(0, Math.min(topSize, fishRecords.size()));
             top.forEach(record -> {
                 int number = top.indexOf(record) + 1;
-                OfflinePlayer player = Bukkit.getOfflinePlayer(record.fisher());
-                TagResolver tagResolver = TagResolver.resolver(Lang.tagResolver("player", player.getName() == null ? player.getUniqueId().toString() : player.getName()), Lang.tagResolver("ordinal", NumberUtils.ordinalOf(number)), Lang.tagResolver("record-length", record.getLength()), Lang.tagResolver("record-fish-name", record.getFishName()));
-                receiver.sendMessage(Lang.replace("<mf-lang:top-ranked-record>", tagResolver));
+                TagResolver resolver = TagResolver.resolver(TagResolverUtil.ordinal(number), record);
+                receiver.sendMessage(lang().getComponent(topPath.withAppendedChild("ranked-record"), resolver));
             });
 
+            NodePath playerPath = topPath.withAppendedChild("player");
             if (receiver instanceof Player player) {
                 if (contains(player.getUniqueId())) {
                     Entry<Integer, FishRecord> entry = rankedRecordOf(player, fishRecords);
                     FishRecord record = entry.getValue();
-                    TagResolver tagResolver = TagResolver.resolver(Lang.tagResolver("ordinal", NumberUtils.ordinalOf(entry.getKey() + 1)), Lang.tagResolver("record-length", record.getLength()), Lang.tagResolver("record-fish-name", record.getFishName()));
-                    receiver.sendMessage(Lang.replace("<mf-lang:top-player-record>", tagResolver));
+                    TagResolver resolver = TagResolver.resolver(record, TagResolverUtil.ordinal(entry.getKey() + 1));
+                    receiver.sendMessage(lang().getComponent(playerPath.withAppendedChild("record"), resolver));
                 }
                 else {
-                    receiver.sendMessage(Lang.replace("<mf-lang:top-player-no-catch>"));
+                    receiver.sendMessage(lang().getComponent(playerPath.withAppendedChild("no-catch")));
                 }
             }
         }
@@ -61,23 +91,36 @@ public abstract class FishRecordKeeper {
     public abstract void save();
 
     public void clear() {
-        records.clear();
+        if (!loading) {
+            records.clear();
+        }
     }
 
-    public void clearRecordHolder(@NotNull UUID holder) {
-        records.removeIf(record -> holder.equals(record.fisher()));
+    public void clearRecordHolder(UUID holder) {
+        if (!loading) {
+            records.removeIf(record -> holder.equals(record.fisher()));
+        }
     }
 
-    @NotNull
     public List<FishRecord> getRecords() {
+        if (loading) {
+            return List.of();
+        }
+
         return new ArrayList<>(records);
     }
 
-    public void add(@NotNull FishRecord record) {
-        records.add(record);
+    public void add(FishRecord record) {
+        if (!loading) {
+            records.add(record);
+        }
     }
 
-    public boolean contains(@NotNull UUID uuid) {
+    public boolean contains(UUID uuid) {
+        if (loading) {
+            return false;
+        }
+
         return records.stream().anyMatch(r -> r.fisher().equals(uuid));
     }
 

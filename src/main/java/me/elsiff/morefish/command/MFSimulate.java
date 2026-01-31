@@ -3,41 +3,47 @@ package me.elsiff.morefish.command;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import io.musician101.bukkitier.command.ArgumentCommand;
-import io.musician101.bukkitier.command.Command;
-import io.musician101.bukkitier.command.LiteralCommand;
+import io.musician101.musicommand.paper.command.PaperArgumentCommand;
+import io.musician101.musicommand.paper.command.PaperCommand;
+import io.musician101.musicommand.paper.command.PaperLiteralCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import me.elsiff.morefish.command.argument.FishTypeArgumentType;
 import me.elsiff.morefish.fish.FishType;
-import me.elsiff.morefish.text.Lang;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Material;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
+import org.spongepowered.configurate.NodePath;
 
 import java.util.List;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
+import static me.elsiff.morefish.MoreFish.lang;
 
-public class MFSimulate implements LiteralCommand {
+@NullMarked
+public class MFSimulate implements MFCommand, PaperLiteralCommand.AdventureFormat {
+
+    private static final NodePath SIMULATE_PATH = NodePath.path("command", "simulate");
 
     @Override
-    public boolean canUse(@NotNull CommandSender sender) {
-        return sender.hasPermission("morefish.admin") && sender instanceof Player;
+    public boolean canUse(CommandSourceStack source) {
+        return isPlayerAndHasPermission(source, "morefish.admin");
     }
 
     @Override
-    public @NotNull String description(@NotNull CommandSender sender) {
-        return Lang.raw("command-simulate-description");
+    public ComponentLike description(CommandSourceStack source) {
+        return lang().getComponent(SIMULATE_PATH.withAppendedChild("description"));
     }
 
     @Override
-    public int execute(@NotNull CommandContext<CommandSender> context) {
-        Player player = (Player) context.getSource();
+    public Integer execute(CommandContext<CommandSourceStack> context) {
+        Player player = (Player) context.getSource().getSender();
         ItemStack fishingRod = player.getInventory().getItemInMainHand();
         if (fishingRod.getType() != Material.FISHING_ROD) {
-            player.sendMessage(Lang.replace("<mf-lang:command-simulate-no-rod>"));
+            player.sendMessage(lang().getComponent(SIMULATE_PATH.withAppendedChild("no-rod")));
             return 0;
         }
 
@@ -47,34 +53,34 @@ public class MFSimulate implements LiteralCommand {
     }
 
     @Override
-    public @NotNull String name() {
+    public String name() {
         return "simulate";
     }
 
     @Override
-    public @NotNull String usage(@NotNull CommandSender sender) {
-        return "/mf simulate [<fish>]";
+    public ComponentLike usage(CommandSourceStack source) {
+        return Component.text("/mf simulate [<fish>]");
     }
 
     @Override
-    public @NotNull List<Command<? extends ArgumentBuilder<CommandSender, ?>>> arguments() {
-        return List.of(new ArgumentCommand<FishType>() {
+    public List<PaperCommand<? extends ArgumentBuilder<CommandSourceStack, ?>, ComponentLike>> children() {
+        return List.of(new PaperArgumentCommand.AdventureFormat<FishType>() {
 
             @Override
-            public int execute(@NotNull CommandContext<CommandSender> context) {
-                Player player = (Player) context.getSource();
-                FishType fishType = FishTypeArgumentType.get(context);
+            public Integer execute(CommandContext<CommandSourceStack> context) {
+                Player player = (Player) context.getSource().getSender();
+                FishType fishType = FishTypeArgumentType.getFishType(context);
                 getPlugin().getFishTypeTable().simulateCatch(player, fishType);
                 return 1;
             }
 
             @Override
-            public @NotNull String name() {
+            public String name() {
                 return "fish";
             }
 
             @Override
-            public @NotNull ArgumentType<FishType> type() {
+            public ArgumentType<FishType> type() {
                 return new FishTypeArgumentType();
             }
         });

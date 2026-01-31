@@ -3,139 +3,141 @@ package me.elsiff.morefish.command;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import io.musician101.bukkitier.command.ArgumentCommand;
-import io.musician101.bukkitier.command.Command;
-import io.musician101.bukkitier.command.LiteralCommand;
+import io.musician101.musicommand.paper.command.PaperArgumentCommand;
+import io.musician101.musicommand.paper.command.PaperCommand;
+import io.musician101.musicommand.paper.command.PaperLiteralCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import me.elsiff.morefish.command.argument.FishRecordsTypeArgumentType;
 import me.elsiff.morefish.command.argument.FishRecordsTypeArgumentType.FishRecordsType;
 import me.elsiff.morefish.command.argument.UUIDArgumentType;
 import me.elsiff.morefish.competition.FishingCompetition;
+import me.elsiff.morefish.lang.TagResolverUtil;
 import me.elsiff.morefish.records.FishingLogs;
-import me.elsiff.morefish.text.Lang;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
+import org.bukkit.OfflinePlayer;
+import org.jspecify.annotations.NullMarked;
+import org.spongepowered.configurate.NodePath;
 
 import java.util.List;
 import java.util.UUID;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
+import static me.elsiff.morefish.MoreFish.lang;
 
-class MFClear implements LiteralCommand {
+@NullMarked
+class MFClear implements MFCommand, PaperLiteralCommand.AdventureFormat {
 
-    private static void clearAll(CommandSender sender, FishRecordsType recordsType) {
+    private static final NodePath CLEAR_PATH = NodePath.path("command", "clear");
+    private static final NodePath COMPETITION_PATH = CLEAR_PATH.withAppendedChild("competition");
+    private static final NodePath ALL_TIME_PATH = CLEAR_PATH.withAppendedChild("alltime");
+    private static final NodePath SUCCESS_PATH = NodePath.path("success");
+    private static final NodePath PLAYER_SUCCESS_PATH = NodePath.path("player").plus(SUCCESS_PATH);
+
+    private void clearAll(CommandSourceStack source, FishRecordsType recordsType) {
         if (recordsType == FishRecordsType.COMPETITION) {
             getCompetition().clear();
-            sender.sendMessage(Lang.replace("<mf-lang:command-clear-competition-success>"));
+            sendMessage(source, lang().getComponent(COMPETITION_PATH.plus(SUCCESS_PATH)));
         }
         else if (recordsType == FishRecordsType.ALLTIME) {
             getFishingLogs().clear();
-            sender.sendMessage(Lang.replace("<mf-lang:command-clear-alltime-success>"));
+            sendMessage(source, lang().getComponent(ALL_TIME_PATH.plus(SUCCESS_PATH)));
         }
     }
 
-    private static FishingCompetition getCompetition() {
+    private FishingCompetition getCompetition() {
         return getPlugin().getCompetition();
     }
 
-    private static FishingLogs getFishingLogs() {
+    private FishingLogs getFishingLogs() {
         return getPlugin().getFishingLogs();
     }
 
-    @NotNull
     @Override
-    public List<Command<? extends ArgumentBuilder<CommandSender, ?>>> arguments() {
+    public List<PaperCommand<? extends ArgumentBuilder<CommandSourceStack, ?>, ComponentLike>> children() {
         return List.of(new RecordsArgument());
     }
 
     @Override
-    public boolean canUse(@NotNull CommandSender sender) {
-        return sender.hasPermission("morefish.admin");
+    public boolean canUse(CommandSourceStack source) {
+        return hasPermission(source, "morefish.admin");
     }
 
     @Override
-    public int execute(@NotNull CommandContext<CommandSender> context) {
-        clearAll(context.getSource(), FishRecordsType.COMPETITION);
-        CommandSender sender = context.getSource();
+    public ComponentLike description(CommandSourceStack source) {
+        return lang().getComponent(CLEAR_PATH.withAppendedChild("description"));
+    }
+
+    @Override
+    public Integer execute(CommandContext<CommandSourceStack> context) {
+        CommandSourceStack source = context.getSource();
+        clearAll(source, FishRecordsType.COMPETITION);
         getCompetition().clear();
-        sender.sendMessage(Lang.replace("<mf-lang:command-clear-success>"));
+        sendMessage(source, lang().getComponent(CLEAR_PATH.plus(SUCCESS_PATH)));
         return 1;
     }
 
-    @NotNull
     @Override
     public String name() {
         return "clear";
     }
 
-    @NotNull
     @Override
-    public String description(@NotNull CommandSender sender) {
-        return Lang.raw("command-clear-description");
+    public ComponentLike usage(CommandSourceStack source) {
+        return Component.text("/mf clear [alltime|competition [<player>]]");
     }
 
-    @NotNull
-    @Override
-    public String usage(@NotNull CommandSender sender) {
-        return "/mf clear [alltime|competition [<player>]]";
-    }
-
-    public static class RecordsArgument implements ArgumentCommand<FishRecordsType> {
+    @NullMarked
+public class RecordsArgument implements PaperArgumentCommand.AdventureFormat<FishRecordsType> {
 
         @Override
-        public int execute(@NotNull CommandContext<CommandSender> context) {
-            clearAll(context.getSource(), context.getArgument(name(), FishRecordsType.class));
+        public Integer execute(CommandContext<CommandSourceStack> context) {
+            clearAll(context.getSource(), FishRecordsTypeArgumentType.getRecordType(context, name()));
             return 1;
         }
 
-        @NotNull
         @Override
         public String name() {
             return "recordsType";
         }
 
-        @NotNull
         @Override
         public ArgumentType<FishRecordsType> type() {
             return new FishRecordsTypeArgumentType();
         }
 
         @Override
-        public @NotNull List<Command<? extends ArgumentBuilder<CommandSender, ?>>> arguments() {
+        public List<PaperCommand<? extends ArgumentBuilder<CommandSourceStack, ?>, ComponentLike>> children() {
             return List.of(new FishRecordHolderArgument());
         }
     }
 
-    static class FishRecordHolderArgument implements ArgumentCommand<UUID> {
+    class FishRecordHolderArgument implements PaperArgumentCommand.AdventureFormat<UUID> {
 
         @Override
-        public int execute(@NotNull CommandContext<CommandSender> context) {
-            CommandSender sender = context.getSource();
-            FishRecordsType recordsType = context.getArgument("recordsType", FishRecordsType.class);
-            UUID uuid = context.getArgument(name(), UUID.class);
-            String name = Bukkit.getOfflinePlayer(uuid).getName();
-            if (name == null) {
-                name = uuid.toString();
-            }
-
+        public Integer execute(CommandContext<CommandSourceStack> context) {
+            CommandSourceStack source = context.getSource();
+            FishRecordsType recordsType = FishRecordsTypeArgumentType.getRecordType(context, "recordsType");
+            UUID uuid = UUIDArgumentType.getUUID(context, name());
+            OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
             if (recordsType == FishRecordsType.COMPETITION) {
                 getCompetition().clearRecordHolder(uuid);
-                sender.sendMessage(Lang.replace("<mf-lang:command-clear-competition-player-success>", Lang.tagResolver("player", name)));
+                sendMessage(source, lang().getComponent(COMPETITION_PATH.plus(PLAYER_SUCCESS_PATH), TagResolverUtil.playerNameResolver(player)));
             }
             else if (recordsType == FishRecordsType.ALLTIME) {
                 getFishingLogs().clearRecordHolder(uuid);
-                sender.sendMessage(Lang.replace("<mf-lang:command-clear-alltime-player-success>", Lang.tagResolver("player", name)));
+                sendMessage(source, lang().getComponent(ALL_TIME_PATH.plus(PLAYER_SUCCESS_PATH), TagResolverUtil.playerNameResolver(player)));
             }
+
             return 1;
         }
 
-        @NotNull
         @Override
         public String name() {
             return "player";
         }
 
-        @NotNull
         @Override
         public ArgumentType<UUID> type() {
             return new UUIDArgumentType();

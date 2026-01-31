@@ -2,12 +2,14 @@ package me.elsiff.morefish.competition;
 
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import me.elsiff.morefish.command.argument.SortArgumentType.SortType;
+import me.elsiff.morefish.lang.TagResolverUtil;
 import me.elsiff.morefish.records.FishRecord;
-import me.elsiff.morefish.text.Lang;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+import org.spongepowered.configurate.NodePath;
 
 import java.util.List;
 import java.util.Map;
@@ -15,11 +17,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
+import static me.elsiff.morefish.MoreFish.lang;
 
+@NullMarked
 public final class FishingCompetitionHost {
 
-    @NotNull
+    private static final NodePath CONTEST_PATH = NodePath.path("main", "contest");
     private final FishingCompetitionTimerBarHandler timerBarHandler = new FishingCompetitionTimerBarHandler();
+    @Nullable
     private ScheduledTask timerTask;
 
     public void closeCompetition() {
@@ -35,7 +40,7 @@ public final class FishingCompetitionHost {
             }
         }
 
-        Bukkit.broadcast(Lang.replace("<mf-lang:contest-stop>"));
+        Bukkit.broadcast(lang().getComponent(CONTEST_PATH.withAppendedChild("stop")));
         if (!suspend) {
             if (!getPrizes().isEmpty()) {
                 List<FishRecord> ranking = getCompetition().getRecords();
@@ -44,7 +49,7 @@ public final class FishingCompetitionHost {
                     getPrizes().forEach((place, prize) -> {
                         if (ranking.size() > place) {
                             FishRecord record = ranking.get(place);
-                            prize.giveTo(Bukkit.getOfflinePlayer(record.fisher()), getCompetition().rankNumberOf(record), getPlugin());
+                            prize.giveTo(Bukkit.getOfflinePlayer(record.fisher()), getPlugin());
                         }
                     });
                 }
@@ -60,19 +65,16 @@ public final class FishingCompetitionHost {
         getCompetition().clear();
     }
 
-    @NotNull
     public FishingCompetition getCompetition() {
         return getPlugin().getCompetition();
     }
 
-    @NotNull
     private FileConfiguration getConfig() {
         return getPlugin().getConfig();
     }
 
-    @NotNull
     private Map<Integer, Prize> getPrizes() {
-        ConfigurationSection cs = getConfig().getConfigurationSection("contest-prizes");
+        ConfigurationSection cs = getConfig().getConfigurationSection("contest.prizes");
         if (cs == null) {
             return Map.of();
         }
@@ -85,7 +87,7 @@ public final class FishingCompetitionHost {
         getCompetition().enable();
         timerTask = Bukkit.getAsyncScheduler().runDelayed(getPlugin(), task -> closeCompetition(), duration, TimeUnit.SECONDS);
         timerBarHandler.enableTimer(duration);
-        Bukkit.broadcast(Lang.replace("<mf-lang:contest-start>"));
-        Bukkit.broadcast(Lang.replace("<mf-lang:contest-start-timer>", Lang.timeRemaining(duration)));
+        Bukkit.broadcast(lang().getComponent(CONTEST_PATH.withAppendedChild("start")));
+        Bukkit.broadcast(lang().getComponent(CONTEST_PATH.withAppendedChild("timer"), TagResolverUtil.timeRemaining(duration)));
     }
 }

@@ -1,123 +1,150 @@
 package me.elsiff.morefish;
 
-import io.musician101.bukkitier.Bukkitier;
-import me.elsiff.morefish.command.MFMain;
+import io.musician101.musicommand.paper.PaperMusiCommand;
 import me.elsiff.morefish.bags.FishBags;
-import me.elsiff.morefish.fish.FishTypeTable;
-import me.elsiff.morefish.fish.FishingListener;
+import me.elsiff.morefish.command.MFMain;
 import me.elsiff.morefish.competition.FishingCompetition;
 import me.elsiff.morefish.competition.FishingCompetitionAutoRunner;
 import me.elsiff.morefish.competition.FishingCompetitionHost;
-import me.elsiff.morefish.records.FishingLogs;
+import me.elsiff.morefish.fish.FishTypeTable;
+import me.elsiff.morefish.fish.FishingListener;
 import me.elsiff.morefish.hooker.McmmoHooker;
 import me.elsiff.morefish.hooker.MusiBoardHooker;
 import me.elsiff.morefish.hooker.VaultHooker;
-import me.elsiff.morefish.text.Lang;
+import me.elsiff.morefish.lang.Lang;
+import me.elsiff.morefish.lang.TagResolverUtil;
+import me.elsiff.morefish.records.FishingLogs;
+import me.elsiff.morefish.shop.FishShopFilterDialog;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
+import net.kyori.adventure.text.minimessage.tag.resolver.Formatter;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Server;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
+import org.spongepowered.configurate.NodePath;
 
+import java.io.IOException;
+import java.util.List;
+
+@NullMarked
 public final class MoreFish extends JavaPlugin {
 
-    @NotNull
     private final FishingLogs fishingLogs = new FishingLogs();
-    @NotNull
     private final FishingCompetitionAutoRunner autoRunner = new FishingCompetitionAutoRunner();
-    @NotNull
     private final FishingCompetition competition = new FishingCompetition();
-    @NotNull
     private final FishingCompetitionHost competitionHost = new FishingCompetitionHost();
-    @NotNull
     private final FishBags fishBags = new FishBags();
-    @NotNull
     private final FishTypeTable fishTypeTable = new FishTypeTable();
-    @NotNull
     private final McmmoHooker mcmmo = new McmmoHooker();
-    @NotNull
     private final MusiBoardHooker musiBoard = new MusiBoardHooker();
-    @NotNull
     private final VaultHooker vault = new VaultHooker();
-    private boolean loadingConfig = false;
+    private final Lang lang = new Lang();
 
     public static MoreFish getPlugin() {
         return getPlugin(MoreFish.class);
     }
 
-    public void applyConfig() {
-        loadingConfig = true;
-        Bukkit.getAsyncScheduler().runNow(this, task -> {
-            getServer().getOnlinePlayers().forEach(player -> {
-                Component title = player.getOpenInventory().title();
-                if (title.equals(Lang.replace("<mf-lang:shop-gui-title>")) || title.equals(Lang.replace("<mf-lang:sales-filter-title>"))) {
-                    player.getScheduler().run(this, t -> {
-                        player.closeInventory();
-                        player.sendMessage(Lang.replace("<mf-lang:gui-closed-config-update>"));
-                    }, null);
-                }
-            });
+    public static Lang lang() {
+        return getPlugin().lang;
+    }
 
-            saveDefaultConfig();
-            reloadConfig();
-            fishTypeTable.load();
-            getSLF4JLogger().info("Loaded {} rarities and {} fish types", fishTypeTable.getRarities().size(), fishTypeTable.getTypes().size());
-            if (autoRunner.isEnabled()) {
-                autoRunner.disable();
+    private void closeGUI() {
+        getServer().getOnlinePlayers().forEach(player -> {
+            if (FishShopFilterDialog.FILTERS.containsKey(player.getUniqueId())) {
+                player.getScheduler().run(this, t -> player.closeDialog(), null);
             }
 
-            if (getConfig().getBoolean("auto-running.enable")) {
-                autoRunner.enable();
+            Component title = player.getOpenInventory().title();
+            if (title.equals(lang.getComponent("main", "shop", "gui-title"))) {
+                player.getScheduler().run(this, t -> {
+                    player.closeInventory();
+                    player.sendMessage(lang.getComponent("gui", "closed-config-update"));
+                }, null);
             }
 
-            Lang.reload();
-            getSLF4JLogger().info("Loaded language configuration file.");
-            loadingConfig = false;
         });
     }
 
-    @NotNull
+    public void applyMainConfig() {
+        if (autoRunner.isEnabled()) {
+            autoRunner.disable();
+        }
+
+        closeGUI();
+        saveDefaultConfig();
+        reloadConfig();
+        if (getConfig().getBoolean("auto-running.enable")) {
+            autoRunner.enable();
+        }
+
+        getComponentLogger().info(lang.getComponent(NodePath.path("main", "config", "config", "success")));
+    }
+
+    public void applyFishConfig() {
+        closeGUI();
+        NodePath path = NodePath.path("main", "config", "fish");
+        try {
+            fishTypeTable.load();
+            TagResolver rarityCount = Formatter.number("rarity-count", fishTypeTable.getRarities().size());
+            TagResolver typeCount = Formatter.number("type-count", fishTypeTable.getTypes().size());
+            TagResolver resolver = TagResolver.resolver(rarityCount, typeCount);
+            getComponentLogger().info(lang.getComponent(path.withAppendedChild("success"), resolver));
+        }
+        catch (IOException e) {
+            getComponentLogger().info(lang.getComponent(path.withAppendedChild("error"), TagResolverUtil.error(e.getMessage())), e);
+        }
+    }
+
+    public void applyLangConfig() {
+        NodePath path = NodePath.path("main", "config", "lang");
+        try {
+            lang.load();
+            getComponentLogger().info(lang.getComponent(path.withAppendedChild("success")));
+        }
+        catch (Exception e) {
+            getComponentLogger().info(lang.getComponent(path.withAppendedChild("error"), TagResolverUtil.error(e.getMessage())), e);
+        }
+    }
+
+    public void applyConfig() {
+        applyLangConfig();
+        applyMainConfig();
+        applyFishConfig();
+    }
+
     public FishingLogs getFishingLogs() {
         return fishingLogs;
     }
 
-    @NotNull
     public FishingCompetition getCompetition() {
         return competition;
     }
 
-    @NotNull
     public FishingCompetitionHost getCompetitionHost() {
         return competitionHost;
     }
 
-    @NotNull
     public FishingCompetitionAutoRunner getAutoRunner() {
         return autoRunner;
     }
 
-    @NotNull
     public FishBags getFishBags() {
         return fishBags;
     }
 
-    @NotNull
     public FishTypeTable getFishTypeTable() {
         return fishTypeTable;
     }
 
-    @NotNull
     public McmmoHooker getMcmmo() {
         return mcmmo;
     }
 
-    @NotNull
     public MusiBoardHooker getMusiBoard() {
         return musiBoard;
     }
 
-    @NotNull
     public VaultHooker getVault() {
         return vault;
     }
@@ -134,7 +161,7 @@ public final class MoreFish extends JavaPlugin {
             autoRunner.disable();
         }
 
-        getSLF4JLogger().info("Plugin has been disabled.");
+        getComponentLogger().info(lang.getComponent("main", "plugin", "disabled"));
     }
 
     @Override
@@ -149,11 +176,8 @@ public final class MoreFish extends JavaPlugin {
         PluginManager pm = server.getPluginManager();
         pm.registerEvents(new FishingListener(), this);
         pm.registerEvents(fishBags, this);
-        Bukkitier.registerCommand(getPlugin(), new MFMain(), "mf");
-        getSLF4JLogger().info("Plugin has been enabled.");
-    }
-
-    public boolean isConfigLoading() {
-        return loadingConfig;
+        //Bukkitier.registerCommand(getPlugin(), new MFMain(), "mf");
+        PaperMusiCommand.newAdventureInstance(this).registerCommand(new MFMain(), List.of("mf", "fish"));
+        getComponentLogger().info(lang.getComponent("main", "plugin", "enabled"));
     }
 }

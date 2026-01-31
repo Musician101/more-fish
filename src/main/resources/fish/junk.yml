@@ -1,0 +1,7 @@
+color: gray
+display-name: JUNK
+weight: 100
+no-display: true
+name: junk
+do-not-sell: true
+price-multiplier: 1

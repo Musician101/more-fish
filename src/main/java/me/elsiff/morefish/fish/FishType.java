@@ -1,58 +1,55 @@
 package me.elsiff.morefish.fish;
 
-import me.elsiff.morefish.announcement.PlayerAnnouncement;
-import me.elsiff.morefish.fish.catchhandler.CatchHandler;
-import me.elsiff.morefish.fish.condition.FishCondition;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
+import me.elsiff.morefish.lang.TagResolverUtil;
+import net.kyori.adventure.text.minimessage.Context;
+import net.kyori.adventure.text.minimessage.ParsingException;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.ArgumentQueue;
+import org.bukkit.inventory.ItemType;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.Random;
 
-public final class FishType implements Comparable<FishType> {
+@NullMarked
+public final class FishType extends FishAbstract<FishType> {
 
-    private final @NotNull String name;
-    private final @NotNull FishRarity rarity;
-    private final @NotNull String displayName;
-    private final double lengthMin;
-    private final double lengthMax;
-    private final @NotNull ItemStack icon;
-    private final @NotNull List<CatchHandler> catchHandlers;
-    private final @NotNull PlayerAnnouncement catchAnnouncement;
-    private final @NotNull List<FishCondition> conditions;
-    private final @NotNull Map<Integer, Double> luckOfTheSeaChances;
-    private final boolean hasNotFishItemFormat;
-    private final boolean noDisplay;
-    private final boolean hasCatchFirework;
-    private final double additionalPrice;
+    private FishRarity rarity;
+    private double minLength = 0.1;
+    private double maxLength = 1;
+    private FishIcon icon;
 
-    public FishType(@NotNull String name, @NotNull FishRarity rarity, @NotNull String displayName, double additionalPrice) {
-        this(name, rarity, displayName, 0, 1, new ItemStack(Material.SALMON), List.of(), PlayerAnnouncement.empty(), List.of(), Map.of(), false, false, false, additionalPrice);
+    @SuppressWarnings("UnstableApiUsage")
+    public FishType(String name, FishRarity rarity) {
+        this(name, rarity, name, new FishIcon(ItemType.SALMON.createItemStack()));
     }
 
-    public FishType(@NotNull String name, @NotNull FishRarity rarity, @NotNull String displayName, double lengthMin,
-                    double lengthMax, @NotNull ItemStack icon, @NotNull List<CatchHandler> catchHandlers,
-                    @NotNull PlayerAnnouncement catchAnnouncement, @NotNull List<FishCondition> conditions,
-                    @NotNull Map<Integer, Double> luckOfTheSeaChances,
-                    boolean hasNotFishItemFormat, boolean noDisplay, boolean hasCatchFirework,
-                    double additionalPrice) {
-        this.name = name;
+    public FishType(String name, FishRarity rarity, String displayName, FishIcon icon) {
+        super("fish-type", name, displayName);
         this.rarity = rarity;
-        this.displayName = displayName;
-        this.lengthMin = lengthMin;
-        this.lengthMax = lengthMax;
         this.icon = icon;
-        this.catchHandlers = catchHandlers;
-        this.catchAnnouncement = catchAnnouncement;
-        this.conditions = conditions;
-        this.luckOfTheSeaChances = luckOfTheSeaChances;
-        this.hasNotFishItemFormat = hasNotFishItemFormat;
-        this.noDisplay = noDisplay;
-        this.hasCatchFirework = hasCatchFirework;
-        this.additionalPrice = additionalPrice;
+    }
+
+    public FishType(String name, FishRarity rarity, String displayName, float priceMultiplier, FishIcon icon) {
+        super("fish-type", name, displayName, priceMultiplier);
+        this.rarity = rarity;
+        this.icon = icon;
+    }
+
+    public void maxLength(double maxLength) {
+        this.maxLength = maxLength;
+    }
+
+    public void minLength(double minLength) {
+        this.minLength = minLength;
+    }
+
+    public void icon(FishIcon icon) {
+        this.icon = icon;
+    }
+
+    public void rarity(FishRarity rarity) {
+        this.rarity = rarity;
     }
 
     private double clamp(double value, double min, double max) {
@@ -61,129 +58,63 @@ public final class FishType implements Comparable<FishType> {
     }
 
     private double floorToTwoDecimalPlaces(double value) {
-        double var3 = value * (double) 10;
-        return Math.floor(var3) / (double) 10;
+        double var3 = value * 10;
+        return Math.floor(var3) / 10;
     }
 
-    @NotNull
+    public Fish generateFish(double length) {
+        if (minLength > length && length > maxLength) {
+            throw new IllegalArgumentException("Length is outside the min/max range for " + name());
+        }
+
+        return new Fish(this, length);
+    }
+
     public Fish generateFish() {
-        if (lengthMin > lengthMax) {
+        if (minLength > maxLength) {
             throw new IllegalStateException("Max-length must not be smaller than min-length");
         }
 
-        double rawLength = lengthMin + new Random().nextDouble() * (lengthMax - lengthMin);
-        double length = clamp(floorToTwoDecimalPlaces(rawLength), lengthMin, lengthMax);
+        double rawLength = minLength + new Random().nextDouble() * (maxLength - minLength);
+        double length = clamp(floorToTwoDecimalPlaces(rawLength), minLength, maxLength);
         return new Fish(this, length);
     }
 
     @Override
-    public int compareTo(@NotNull FishType o) {
-        return name.compareTo(o.name);
+    public int compareTo(FishType o) {
+        return name().compareTo(o.name());
     }
 
-    public @NotNull String name() {
-        return name;
-    }
-
-    public @NotNull FishRarity rarity() {
+    public FishRarity rarity() {
         return rarity;
     }
 
-    public @NotNull String displayName() {
-        return displayName;
+    public double minLength() {
+        return minLength;
     }
 
-    public double lengthMin() {
-        return lengthMin;
+    public double maxLength() {
+        return maxLength;
     }
 
-    public double lengthMax() {
-        return lengthMax;
-    }
-
-    public @NotNull ItemStack icon() {
+    public FishIcon icon() {
         return icon;
     }
 
-    public @NotNull List<CatchHandler> catchHandlers() {
-        return catchHandlers;
-    }
-
-    public @NotNull PlayerAnnouncement catchAnnouncement() {
-        return catchAnnouncement;
-    }
-
-    public @NotNull List<FishCondition> conditions() {
-        return conditions;
-    }
-
-    public @NotNull Map<Integer, Double> luckOfTheSeaChances() {
-        return luckOfTheSeaChances;
-    }
-
-    public boolean hasNotFishItemFormat() {
-        return hasNotFishItemFormat;
-    }
-
-    public boolean noDisplay() {
-        return noDisplay;
-    }
-
-    public boolean hasCatchFirework() {
-        return hasCatchFirework;
-    }
-
-    public double additionalPrice() {
-        return additionalPrice;
-    }
-
     @Override
-    public boolean equals(Object obj) {
-        if (obj == this) {
-            return true;
+    public @Nullable Tag resolve(String name, ArgumentQueue arguments, Context ctx) throws ParsingException {
+        if (has(name)) {
+            String value = arguments.popOr("fish-type needs at least 1 argument.").value();
+            return switch (value) {
+                case "fish-rarity" -> Tag.preProcessParsed(rarity.name());
+                case "max-length" -> TagResolverUtil.numberTag("max-length", maxLength, arguments, ctx);
+                case "min-length" -> TagResolverUtil.numberTag("min-length", minLength, arguments, ctx);
+                case "name-with-rarity" ->
+                        Tag.preProcessParsed((noDisplay() ? "" : rarity().displayName().toUpperCase() + " ") + displayName());
+                default -> super.resolve(name, arguments, ctx);
+            };
         }
-        if (obj == null || obj.getClass() != this.getClass()) {
-            return false;
-        }
-        var that = (FishType) obj;
-        return Objects.equals(this.name, that.name) &&
-                Objects.equals(this.rarity, that.rarity) &&
-                Objects.equals(this.displayName, that.displayName) &&
-                Double.doubleToLongBits(this.lengthMin) == Double.doubleToLongBits(that.lengthMin) &&
-                Double.doubleToLongBits(this.lengthMax) == Double.doubleToLongBits(that.lengthMax) &&
-                Objects.equals(this.icon, that.icon) &&
-                Objects.equals(this.catchHandlers, that.catchHandlers) &&
-                Objects.equals(this.catchAnnouncement, that.catchAnnouncement) &&
-                Objects.equals(this.conditions, that.conditions) &&
-                Objects.equals(this.luckOfTheSeaChances, that.luckOfTheSeaChances) &&
-                this.hasNotFishItemFormat == that.hasNotFishItemFormat &&
-                this.noDisplay == that.noDisplay &&
-                this.hasCatchFirework == that.hasCatchFirework &&
-                Double.doubleToLongBits(this.additionalPrice) == Double.doubleToLongBits(that.additionalPrice);
-    }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, rarity, displayName, lengthMin, lengthMax, icon, catchHandlers, catchAnnouncement, conditions, luckOfTheSeaChances, hasNotFishItemFormat, noDisplay, hasCatchFirework, additionalPrice);
+        return null;
     }
-
-    @Override
-    public String toString() {
-        return "FishType[" +
-                "name=" + name + ", " +
-                "rarity=" + rarity + ", " +
-                "displayName=" + displayName + ", " +
-                "lengthMin=" + lengthMin + ", " +
-                "lengthMax=" + lengthMax + ", " +
-                "icon=" + icon + ", " +
-                "catchHandlers=" + catchHandlers + ", " +
-                "catchAnnouncement=" + catchAnnouncement + ", " +
-                "conditions=" + conditions + ", " +
-                "luckOfTheSeaChances=" + luckOfTheSeaChances + ", " +
-                "hasNotFishItemFormat=" + hasNotFishItemFormat + ", " +
-                "noDisplay=" + noDisplay + ", " +
-                "hasCatchFirework=" + hasCatchFirework + ", " +
-                "additionalPrice=" + additionalPrice + ']';
-    }
-
 }

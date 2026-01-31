@@ -1,47 +1,47 @@
 package me.elsiff.morefish.command;
 
 import com.mojang.brigadier.context.CommandContext;
-import io.musician101.bukkitier.command.LiteralCommand;
-import me.elsiff.morefish.text.Lang;
-import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
+import io.musician101.musicommand.paper.command.PaperLiteralCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
+import org.jspecify.annotations.NullMarked;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
+import static me.elsiff.morefish.MoreFish.lang;
 
-public class MFSuspend implements LiteralCommand {
+@NullMarked
+public class MFSuspend implements MFCommand, PaperLiteralCommand.AdventureFormat {
 
-    @NotNull
     @Override
-    public String description(@NotNull CommandSender sender) {
-        return Lang.raw("command-suspend-description");
-    }
-
-    @NotNull
-    @Override
-    public String usage(@NotNull CommandSender sender) {
-        return "/mf suspend";
+    public ComponentLike description(CommandSourceStack source) {
+        return lang().getComponent("command", "suspend", "description");
     }
 
     @Override
-    public boolean canUse(@NotNull CommandSender sender) {
-        return sender.hasPermission("morefish.admin");
+    public ComponentLike usage(CommandSourceStack source) {
+        return Component.text("/mf suspend");
     }
 
     @Override
-    public int execute(@NotNull CommandContext<CommandSender> context) {
-        CommandSender sender = context.getSource();
+    public boolean canUse(CommandSourceStack source) {
+        return hasPermission(source, "morefish.admin");
+    }
+
+    @Override
+    public Integer execute(CommandContext<CommandSourceStack> context) {
+        CommandSourceStack source = context.getSource();
         if (getPlugin().getCompetition().isEnabled()) {
             getPlugin().getCompetitionHost().closeCompetition(true);
-            sender.sendMessage(Lang.replace("<mf-lang:contest-stop>"));
+            sendMessage(source, lang().getComponent("main", "contest", "stop"));
         }
         else {
-            sender.sendMessage(Lang.replace("<mf-lang:already-stopped>"));
+            sendMessage(source, lang().getComponent("main", "already-stopped"));
         }
 
         return 1;
     }
 
-    @NotNull
     @Override
     public String name() {
         return "suspend";
