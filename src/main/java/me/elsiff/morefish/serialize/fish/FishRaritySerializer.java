@@ -4,8 +4,8 @@ import me.elsiff.morefish.fish.FishRarity;
 import me.elsiff.morefish.fish.LuckOfTheSeaModifier;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
-import org.jspecify.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 

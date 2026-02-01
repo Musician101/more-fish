@@ -44,8 +44,8 @@ public final class FishShopGui extends MoreFishGUI implements PaperPagedChestGUI
 
     private final FishBags fishBags;
     private final List<FishRarity> selectedRarities;
-    private int page = 1;
     private final NodePath shopPath;
+    private int page = 1;
 
     public FishShopGui(Player user) {
         super(user, title(), 54);

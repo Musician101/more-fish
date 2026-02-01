@@ -13,8 +13,8 @@ import java.util.Objects;
 
 import static me.elsiff.morefish.MoreFish.lang;
 
-@SuppressWarnings("UnstableApiUsage")
 @NullMarked
+@SuppressWarnings("UnstableAPIUsage")
 public class ThunderingConditionDialog extends FishConditionDialog<ThunderingCondition> {
 
     private static final String THUNDERING = "thundering";

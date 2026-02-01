@@ -12,9 +12,9 @@ import org.jspecify.annotations.NullMarked;
 @NullMarked
 public class LuckOfTheSeaModifier implements TagResolver {
 
+    public static final LuckOfTheSeaModifier NONE = new LuckOfTheSeaModifier(Type.FLAT, 0);
     private Type type;
     private float amount;
-    public static final LuckOfTheSeaModifier NONE = new LuckOfTheSeaModifier(Type.FLAT, 0);
 
     public LuckOfTheSeaModifier(Type type, float amount) {
         this.type = type;

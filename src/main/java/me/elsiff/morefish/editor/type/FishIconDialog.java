@@ -27,18 +27,22 @@ import java.util.Map;
 import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
-@SuppressWarnings("UnstableApiUsage")
+@SuppressWarnings("UnstableAPIUsage")
 public class FishIconDialog extends MusiDialog {
 
     private static final String ITEM_ID = "item_id";
     private static final String AMOUNT = "amount";
-    private final FishTypeDialog fishTypeDialog;
     final Map<String, String> dataComponents;
+    private final FishTypeDialog fishTypeDialog;
 
     public FishIconDialog(FishTypeDialog fishTypeDialog) {
         super(lang().getComponent(path().withAppendedChild("label")));
         this.fishTypeDialog = fishTypeDialog;
         this.dataComponents = dataComponents();
+    }
+
+    private static NodePath path() {
+        return NodePath.path("editor", "type", "selected", "icon");
     }
 
     private FishType fishType() {
@@ -59,10 +63,6 @@ public class FishIconDialog extends MusiDialog {
         }
 
         return dataComponents;
-    }
-
-    private static NodePath path() {
-        return NodePath.path("editor", "type", "selected", "icon");
     }
 
     @Override

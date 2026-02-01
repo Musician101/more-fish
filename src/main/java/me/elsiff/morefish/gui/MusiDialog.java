@@ -22,7 +22,7 @@ import java.util.function.Predicate;
 import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
-@SuppressWarnings("UnstableApiUsage")
+@SuppressWarnings("UnstableAPIUsage")
 public abstract class MusiDialog {
 
     public static final ClickCallback.Options DEFAULT_CALLBACK_OPTIONS = ClickCallback.Options.builder().uses(1).lifetime(ClickCallback.DEFAULT_LIFETIME).build();

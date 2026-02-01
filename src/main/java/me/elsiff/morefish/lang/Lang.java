@@ -29,8 +29,8 @@ import static me.elsiff.morefish.MoreFish.getPlugin;
 @NullMarked
 public class Lang implements TagResolver {
 
-    private final ConfigurationNode node = CommentedConfigurationNode.root();
     private final static List<String> langFileNames = List.of("command", "editor", "gui", "main");
+    private final ConfigurationNode node = CommentedConfigurationNode.root();
 
     public String readablePath(NodePath path, CharSequence delimiter) {
         return Arrays.stream(path.array()).map(Object::toString).collect(Collectors.joining(delimiter));

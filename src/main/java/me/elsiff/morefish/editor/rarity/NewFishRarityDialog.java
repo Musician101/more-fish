@@ -3,9 +3,9 @@ package me.elsiff.morefish.editor.rarity;
 import io.papermc.paper.registry.data.dialog.ActionButton;
 import io.papermc.paper.registry.data.dialog.input.DialogInput;
 import io.papermc.paper.registry.data.dialog.type.DialogType;
+import me.elsiff.morefish.editor.ErrorDialog;
 import me.elsiff.morefish.fish.FishRarity;
 import me.elsiff.morefish.fish.FishTypeTable;
-import me.elsiff.morefish.editor.ErrorDialog;
 import me.elsiff.morefish.gui.MusiDialog;
 import net.kyori.adventure.text.Component;
 import org.jspecify.annotations.NullMarked;
@@ -18,7 +18,7 @@ import static me.elsiff.morefish.MoreFish.getPlugin;
 import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
-@SuppressWarnings("UnstableApiUsage")
+@SuppressWarnings("UnstableAPIUsage")
 public class NewFishRarityDialog extends MusiDialog {
 
     private static final String NAME = "name";

@@ -21,9 +21,9 @@ import java.util.Map;
 @NullMarked
 public class EnchantmentsCondition extends FishCondition<Map<Enchantment, Integer>> {
 
-	public EnchantmentsCondition(Map<Enchantment, Integer> value) {
-		super(value);
-	}
+    public EnchantmentsCondition(Map<Enchantment, Integer> value) {
+        super(value);
+    }
 
     public boolean check(Item caught, Player fisher) {
         ItemStack fishingRod = fisher.getInventory().getItemInMainHand();

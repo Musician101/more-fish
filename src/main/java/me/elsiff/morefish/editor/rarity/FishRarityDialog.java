@@ -23,8 +23,8 @@ import java.util.List;
 import static me.elsiff.morefish.MoreFish.getPlugin;
 import static me.elsiff.morefish.MoreFish.lang;
 
-@SuppressWarnings("UnstableApiUsage")
 @NullMarked
+@SuppressWarnings("UnstableAPIUsage")
 public class FishRarityDialog extends FishAbstractDialog<FishRarity> {
 
     private static final String FILTER_DEFAULT = "filter_default";
@@ -32,6 +32,14 @@ public class FishRarityDialog extends FishAbstractDialog<FishRarity> {
 
     public FishRarityDialog(FishRarity rarity) {
         super(label(rarity), rarity);
+    }
+
+    private static NodePath path() {
+        return NodePath.path("editor", "rarity", "selected");
+    }
+
+    private static Component label(FishRarity rarity) {
+        return lang().getComponent(path().plus(NodePath.path("label", "internal")), rarity);
     }
 
     @Override
@@ -49,14 +57,6 @@ public class FishRarityDialog extends FishAbstractDialog<FishRarity> {
     protected Component generalErrorMessage(Throwable throwable) {
         TagResolver tagResolver = TagResolver.resolver(fishAbstract, TagResolverUtil.error(throwable.getMessage()));
         return lang().getComponent(path().withAppendedChild("save-failed"), tagResolver);
-    }
-
-    private static NodePath path() {
-        return NodePath.path("editor", "rarity", "selected");
-    }
-
-    private static Component label(FishRarity rarity) {
-        return lang().getComponent(path().plus(NodePath.path("label", "internal")), rarity);
     }
 
     @Override

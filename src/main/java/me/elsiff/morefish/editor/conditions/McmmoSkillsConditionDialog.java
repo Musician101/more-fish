@@ -3,8 +3,8 @@ package me.elsiff.morefish.editor.conditions;
 import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
 import io.papermc.paper.dialog.DialogResponseView;
 import io.papermc.paper.registry.data.dialog.input.DialogInput;
-import me.elsiff.morefish.fish.condition.McmmoSkillsCondition;
 import me.elsiff.morefish.editor.ErrorDialog;
+import me.elsiff.morefish.fish.condition.McmmoSkillsCondition;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
@@ -21,8 +21,8 @@ import java.util.Map;
 
 import static me.elsiff.morefish.MoreFish.lang;
 
-@SuppressWarnings("UnstableApiUsage")
 @NullMarked
+@SuppressWarnings("UnstableAPIUsage")
 public class McmmoSkillsConditionDialog extends FishConditionDialog<McmmoSkillsCondition> {
 
     public McmmoSkillsConditionDialog(FishConditionsDialog fishConditionsDialog) {

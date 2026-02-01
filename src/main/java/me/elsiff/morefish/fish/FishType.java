@@ -19,7 +19,7 @@ public final class FishType extends FishAbstract<FishType> {
     private double maxLength = 1;
     private FishIcon icon;
 
-    @SuppressWarnings("UnstableApiUsage")
+    @SuppressWarnings("UnstableAPIUsage")
     public FishType(String name, FishRarity rarity) {
         this(name, rarity, name, new FishIcon(ItemType.SALMON.createItemStack()));
     }

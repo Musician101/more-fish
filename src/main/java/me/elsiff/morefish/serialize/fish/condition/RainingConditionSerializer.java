@@ -1,8 +1,8 @@
 package me.elsiff.morefish.serialize.fish.condition;
 
 import me.elsiff.morefish.fish.condition.RainingCondition;
-import org.jspecify.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 

@@ -28,8 +28,8 @@ import java.util.Optional;
 import static me.elsiff.morefish.MoreFish.getPlugin;
 import static me.elsiff.morefish.MoreFish.lang;
 
-@SuppressWarnings("UnstableApiUsage")
 @NullMarked
+@SuppressWarnings("UnstableAPIUsage")
 public class FishTypeDialog extends FishAbstractDialog<FishType> {
 
     private static final String MAX_LENGTH = "max_length";
@@ -45,14 +45,14 @@ public class FishTypeDialog extends FishAbstractDialog<FishType> {
         return lang().getComponent(path().plus(NodePath.path("label", "internal")), resolver);
     }
 
+    private static NodePath path() {
+        return NodePath.path("editor", "type", "selected");
+    }
+
     @Override
     protected DialogBase base() {
         Component externalLabel = lang().getComponent(path().plus(NodePath.path("label", "external")), fishAbstract);
         return DialogBase.builder(label).externalTitle(externalLabel).inputs(inputs()).body(body()).build();
-    }
-
-    private static NodePath path() {
-        return NodePath.path("editor", "type", "selected");
     }
 
     @Override

@@ -19,9 +19,9 @@ import static me.elsiff.morefish.MoreFish.getPlugin;
 @NullMarked
 public class McmmoSkillsCondition extends FishCondition<Map<PrimarySkillType, Integer>> {
 
-	public McmmoSkillsCondition(Map<PrimarySkillType, Integer> value) {
-		super(value);
-	}
+    public McmmoSkillsCondition(Map<PrimarySkillType, Integer> value) {
+        super(value);
+    }
 
 
     public boolean check(Item caught, Player fisher) {

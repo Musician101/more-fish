@@ -19,8 +19,8 @@ import java.util.UUID;
 import static me.elsiff.morefish.MoreFish.getPlugin;
 import static me.elsiff.morefish.MoreFish.lang;
 
-@SuppressWarnings("UnstableApiUsage")
 @NullMarked
+@SuppressWarnings("UnstableAPIUsage")
 public class FishShopFilterDialog extends MusiDialog {
 
     public static final Map<UUID, List<FishRarity>> FILTERS = new HashMap<>();

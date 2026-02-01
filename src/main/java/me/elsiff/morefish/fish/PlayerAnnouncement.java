@@ -27,7 +27,8 @@ public record PlayerAnnouncement(PlayerAnnouncement.Type type, double radius) im
             case NONE -> List.of();
             case SERVER -> new ArrayList<>(catcher.getServer().getOnlinePlayers());
             case PLAYER -> List.of(catcher);
-            default -> catcher.getWorld().getPlayers().stream().filter(player -> player.getLocation().distance(catcher.getLocation()) <= radius).toList();
+            default ->
+                    catcher.getWorld().getPlayers().stream().filter(player -> player.getLocation().distance(catcher.getLocation()) <= radius).toList();
         };
     }
 

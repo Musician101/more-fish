@@ -21,8 +21,8 @@ import java.util.List;
 
 import static me.elsiff.morefish.MoreFish.lang;
 
-@SuppressWarnings("UnstableApiUsage")
 @NullMarked
+@SuppressWarnings("UnstableAPIUsage")
 public class LuckOfTheSeaModifierDialog extends MusiDialog {
 
     private static final String TYPE = "type";

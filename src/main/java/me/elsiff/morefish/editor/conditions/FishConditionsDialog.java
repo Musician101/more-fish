@@ -15,8 +15,8 @@ import java.util.List;
 import static me.elsiff.morefish.MoreFish.getPlugin;
 import static me.elsiff.morefish.MoreFish.lang;
 
-@SuppressWarnings("UnstableApiUsage")
 @NullMarked
+@SuppressWarnings("UnstableAPIUsage")
 public class FishConditionsDialog extends MusiDialog {
 
     final FishAbstractDialog<?> fishAbstractDialog;

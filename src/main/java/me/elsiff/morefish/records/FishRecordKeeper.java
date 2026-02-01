@@ -34,6 +34,7 @@ import static me.elsiff.morefish.MoreFish.lang;
 @NullMarked
 public abstract class FishRecordKeeper {
 
+    protected final List<FishRecord> records = new ArrayList<>();
     @Nullable
     protected YamlConfigurationLoader loader;
     protected boolean loading = false;
@@ -47,8 +48,6 @@ public abstract class FishRecordKeeper {
         });
         loader = YamlConfigurationLoader.builder().path(getPath()).nodeStyle(NodeStyle.BLOCK).defaultOptions(options).build();
     }
-
-    protected final List<FishRecord> records = new ArrayList<>();
 
     public void informAboutRanking(CommandSender receiver) {
         informAboutRanking(receiver, records);

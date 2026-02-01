@@ -24,6 +24,21 @@ public interface TagKey<P, C> {
     TagKey<String, String> COLOR = tagKey("color", PersistentDataType.STRING);
     TagKey<PersistentDataContainer, Fish> FISH = tagKey("fish", new FishTagType());
 
+    private static <P, C> TagKey<P, C> tagKey(String key, PersistentDataType<P, C> dataType) {
+        return new TagKey<>() {
+
+            @Override
+            public NamespacedKey key() {
+                return new NamespacedKey(getPlugin(), key);
+            }
+
+            @Override
+            public PersistentDataType<P, C> dataType() {
+                return dataType;
+            }
+        };
+    }
+
     NamespacedKey key();
 
     PersistentDataType<P, C> dataType();
@@ -47,20 +62,5 @@ public interface TagKey<P, C> {
         }
 
         return itemStack.getItemMeta().getPersistentDataContainer().has(key(), dataType());
-    }
-
-    private static <P, C> TagKey<P, C> tagKey(String key, PersistentDataType<P, C> dataType) {
-        return new TagKey<>() {
-
-            @Override
-            public NamespacedKey key() {
-                return new NamespacedKey(getPlugin(), key);
-            }
-
-            @Override
-            public PersistentDataType<P, C> dataType() {
-                return dataType;
-            }
-        };
     }
 }

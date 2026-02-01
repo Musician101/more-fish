@@ -2,8 +2,8 @@ package me.elsiff.morefish.editor.conditions;
 
 import io.papermc.paper.dialog.DialogResponseView;
 import io.papermc.paper.registry.data.dialog.input.DialogInput;
-import me.elsiff.morefish.fish.condition.XpLevelCondition;
 import me.elsiff.morefish.editor.ErrorDialog;
+import me.elsiff.morefish.fish.condition.XpLevelCondition;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import org.jspecify.annotations.NullMarked;
@@ -13,8 +13,8 @@ import java.util.List;
 
 import static me.elsiff.morefish.MoreFish.lang;
 
-@SuppressWarnings("UnstableApiUsage")
 @NullMarked
+@SuppressWarnings("UnstableAPIUsage")
 public class XpLevelConditionDialog extends FishConditionDialog<XpLevelCondition> {
 
     private static final String XP_LEVEL = "xp_level";

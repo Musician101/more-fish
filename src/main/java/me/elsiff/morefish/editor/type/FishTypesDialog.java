@@ -13,7 +13,7 @@ import static me.elsiff.morefish.MoreFish.getPlugin;
 import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
-@SuppressWarnings("UnstableApiUsage")
+@SuppressWarnings("UnstableAPIUsage")
 public class FishTypesDialog extends MusiDialog {
 
     public FishTypesDialog() {

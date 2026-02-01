@@ -17,9 +17,9 @@ import java.util.stream.Stream;
 @NullMarked
 public class TimeCondition extends FishCondition<TimeState> {
 
-	public TimeCondition(TimeState value) {
-		super(value);
-	}
+    public TimeCondition(TimeState value) {
+        super(value);
+    }
 
 
     public boolean check(Item caught, Player fisher) {

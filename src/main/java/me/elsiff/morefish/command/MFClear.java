@@ -89,7 +89,7 @@ class MFClear implements MFCommand, PaperLiteralCommand.AdventureFormat {
     }
 
     @NullMarked
-public class RecordsArgument implements PaperArgumentCommand.AdventureFormat<FishRecordsType> {
+    public class RecordsArgument implements PaperArgumentCommand.AdventureFormat<FishRecordsType> {
 
         @Override
         public Integer execute(CommandContext<CommandSourceStack> context) {

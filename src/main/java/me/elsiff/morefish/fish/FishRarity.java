@@ -42,7 +42,8 @@ public final class FishRarity extends FishAbstract<FishRarity> {
                     yield Tag.styling(b -> b.color(color));
                 }
                 case "filter-default-enabled" -> TagResolverUtil.booleanTag(filterDefaultEnabled);
-                case "luck-of-the-sea-modifier" -> TagResolverUtil.fromResolver(luckOfTheSeaModifier, value, arguments, ctx);
+                case "luck-of-the-sea-modifier" ->
+                        TagResolverUtil.fromResolver(luckOfTheSeaModifier, value, arguments, ctx);
                 case "weight" -> TagResolverUtil.numberTag(value, weight, arguments, ctx);
                 default -> super.resolve(name, arguments, ctx);
             };

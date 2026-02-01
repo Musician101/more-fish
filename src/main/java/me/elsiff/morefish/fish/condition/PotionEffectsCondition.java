@@ -19,9 +19,9 @@ import java.util.Map;
 @NullMarked
 public class PotionEffectsCondition extends FishCondition<Map<PotionEffectType, Integer>> {
 
-	public PotionEffectsCondition(Map<PotionEffectType, Integer> value) {
-		super(value);
-	}
+    public PotionEffectsCondition(Map<PotionEffectType, Integer> value) {
+        super(value);
+    }
 
 
     public boolean check(Item caught, Player fisher) {

@@ -2,8 +2,8 @@ package me.elsiff.morefish.serialize.fish;
 
 import me.elsiff.morefish.fish.PlayerAnnouncement;
 import me.elsiff.morefish.util.EnumUtils;
-import org.jspecify.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.serialize.TypeSerializer;

@@ -9,8 +9,6 @@ import java.util.function.Function;
 @NullMarked
 public interface CheckedConsumer<V, E extends Throwable> {
 
-    void accept(V value) throws E;
-
     @SuppressWarnings("unchecked")
     static <E extends Exception, V> Function<V, @Nullable E> asFunction(CheckedConsumer<V, E> consumer) {
         return v -> {
@@ -23,4 +21,6 @@ public interface CheckedConsumer<V, E extends Throwable> {
             }
         };
     }
+
+    void accept(V value) throws E;
 }

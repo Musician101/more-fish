@@ -2,8 +2,8 @@ package me.elsiff.morefish.serialize.fish.condition;
 
 import com.gmail.nossr50.mcMMO;
 import me.elsiff.morefish.fish.condition.McmmoSkillsCondition;
-import org.jspecify.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 

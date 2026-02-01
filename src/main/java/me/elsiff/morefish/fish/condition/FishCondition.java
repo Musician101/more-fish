@@ -19,5 +19,5 @@ public abstract class FishCondition<V> implements TagResolver {
     }
 
     @NullMarked
-public abstract boolean check(Item caught, Player fisher);
+    public abstract boolean check(Item caught, Player fisher);
 }

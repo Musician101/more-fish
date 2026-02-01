@@ -32,6 +32,7 @@ import static me.elsiff.morefish.MoreFish.lang;
 @NullMarked
 public class FishBags implements Listener {
 
+    private static final NodePath FISH_BAGS_PATH = NodePath.path("main", "fish-bags");
     private final List<FishBag> bags = new ArrayList<>();
 
     public boolean addFish(Player player, ItemStack itemStack) {
@@ -125,8 +126,6 @@ public class FishBags implements Listener {
             getPlugin().getComponentLogger().error(lang().getComponent(FISH_BAGS_PATH.withAppendedChild("save-error"), Placeholder.parsed("uuid", uuid.toString())), e);
         }
     }
-
-    private static final NodePath FISH_BAGS_PATH = NodePath.path("main", "fish-bags");
 
     public void save() {
         bags.forEach(this::save);

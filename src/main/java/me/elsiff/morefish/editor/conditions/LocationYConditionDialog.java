@@ -3,8 +3,8 @@ package me.elsiff.morefish.editor.conditions;
 import io.papermc.paper.dialog.DialogResponseView;
 import io.papermc.paper.registry.data.dialog.body.DialogBody;
 import io.papermc.paper.registry.data.dialog.input.DialogInput;
-import me.elsiff.morefish.fish.condition.LocationYCondition;
 import me.elsiff.morefish.editor.ErrorDialog;
+import me.elsiff.morefish.fish.condition.LocationYCondition;
 import me.elsiff.morefish.util.Range;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
@@ -17,8 +17,8 @@ import java.util.function.Predicate;
 
 import static me.elsiff.morefish.MoreFish.lang;
 
-@SuppressWarnings("UnstableApiUsage")
 @NullMarked
+@SuppressWarnings("UnstableAPIUsage")
 public class LocationYConditionDialog extends FishConditionDialog<LocationYCondition> {
 
     private static final String MAX = "max";

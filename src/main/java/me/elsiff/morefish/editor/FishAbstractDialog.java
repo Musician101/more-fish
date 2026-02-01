@@ -18,12 +18,10 @@ import java.util.function.Consumer;
 import static me.elsiff.morefish.MoreFish.getPlugin;
 import static me.elsiff.morefish.MoreFish.lang;
 
-@SuppressWarnings("UnstableApiUsage")
 @NullMarked
+@SuppressWarnings("UnstableAPIUsage")
 public abstract class FishAbstractDialog<F extends FishAbstract<F>> extends MusiDialog {
 
-    protected final F fishAbstract;
-    protected final NodePath sharedPath = NodePath.path("editor", "shared");
     protected static final String COMMANDS = "commands";
     protected static final String DISPLAY_NAME = "display_name";
     protected static final String DO_NOT_SELL = "do_not_sell";
@@ -31,6 +29,8 @@ public abstract class FishAbstractDialog<F extends FishAbstract<F>> extends Musi
     protected static final String NO_DISPLAY_NAME = "no_display_name";
     protected static final String PRICE_MULTIPLIER = "price_multiplier";
     protected static final String SKIP_ITEM_FORMAT = "skip_item_format";
+    protected final F fishAbstract;
+    protected final NodePath sharedPath = NodePath.path("editor", "shared");
 
     public FishAbstractDialog(Component label, F fishAbstract) {
         super(label);

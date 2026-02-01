@@ -13,9 +13,9 @@ import org.jspecify.annotations.Nullable;
 @NullMarked
 public class LocationYCondition extends FishCondition<Range<Double>> {
 
-	public LocationYCondition(Range<Double> value) {
-		super(value);
-	}
+    public LocationYCondition(Range<Double> value) {
+        super(value);
+    }
 
 
     public boolean check(Item caught, Player fisher) {

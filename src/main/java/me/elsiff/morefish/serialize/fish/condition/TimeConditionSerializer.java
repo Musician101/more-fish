@@ -3,8 +3,8 @@ package me.elsiff.morefish.serialize.fish.condition;
 import me.elsiff.morefish.fish.condition.TimeCondition;
 import me.elsiff.morefish.fish.condition.TimeCondition.TimeState;
 import me.elsiff.morefish.util.EnumUtils;
-import org.jspecify.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
