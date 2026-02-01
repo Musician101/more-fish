@@ -14,7 +14,7 @@ import static me.elsiff.morefish.MoreFish.getPlugin;
 import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
-@SuppressWarnings("UnstableAPIUsage")
+@SuppressWarnings("UnstableApiUsage")
 public class FishRaritiesDialog extends MusiDialog {
 
     public FishRaritiesDialog() {

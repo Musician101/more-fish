@@ -14,7 +14,7 @@ import java.util.List;
 import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
-@SuppressWarnings("UnstableAPIUsage")
+@SuppressWarnings("UnstableApiUsage")
 public class DataComponentDialog extends MusiDialog {
 
     private static final String COMPONENT = "component";

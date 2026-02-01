@@ -17,7 +17,7 @@ import java.util.List;
 import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
-@SuppressWarnings("UnstableAPIUsage")
+@SuppressWarnings("UnstableApiUsage")
 public class TimeConditionDialog extends FishConditionDialog<TimeCondition> {
 
     private static final String TIME = "time";

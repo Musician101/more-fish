@@ -21,7 +21,7 @@ import java.util.Map;
 import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
-@SuppressWarnings("UnstableAPIUsage")
+@SuppressWarnings("UnstableApiUsage")
 public class EnchantmentsConditionDialog extends FishConditionDialog<EnchantmentsCondition> {
 
     public EnchantmentsConditionDialog(FishConditionsDialog fishConditionsDialog) {

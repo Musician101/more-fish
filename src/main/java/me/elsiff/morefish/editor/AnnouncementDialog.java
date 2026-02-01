@@ -19,7 +19,7 @@ import java.util.List;
 import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
-@SuppressWarnings("UnstableAPIUsage")
+@SuppressWarnings("UnstableApiUsage")
 public class AnnouncementDialog extends MusiDialog {
 
     private static final String TYPE = "type";

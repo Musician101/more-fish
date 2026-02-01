@@ -11,7 +11,7 @@ import java.util.List;
 import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
-@SuppressWarnings("UnstableAPIUsage")
+@SuppressWarnings("UnstableApiUsage")
 public class ErrorDialog extends MusiDialog {
 
     private final Component errorMessage;

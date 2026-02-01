@@ -14,7 +14,7 @@ import java.util.List;
 import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
-@SuppressWarnings("UnstableAPIUsage")
+@SuppressWarnings("UnstableApiUsage")
 public class XpLevelConditionDialog extends FishConditionDialog<XpLevelCondition> {
 
     private static final String XP_LEVEL = "xp_level";

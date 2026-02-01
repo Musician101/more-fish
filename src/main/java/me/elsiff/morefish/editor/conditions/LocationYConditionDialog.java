@@ -18,7 +18,7 @@ import java.util.function.Predicate;
 import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
-@SuppressWarnings("UnstableAPIUsage")
+@SuppressWarnings("UnstableApiUsage")
 public class LocationYConditionDialog extends FishConditionDialog<LocationYCondition> {
 
     private static final String MAX = "max";

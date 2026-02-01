@@ -19,7 +19,7 @@ import static me.elsiff.morefish.MoreFish.getPlugin;
 import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
-@SuppressWarnings("UnstableAPIUsage")
+@SuppressWarnings("UnstableApiUsage")
 public abstract class FishAbstractDialog<F extends FishAbstract<F>> extends MusiDialog {
 
     protected static final String COMMANDS = "commands";

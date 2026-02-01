@@ -20,7 +20,7 @@ import java.util.Objects;
 import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
-@SuppressWarnings("UnstableAPIUsage")
+@SuppressWarnings("UnstableApiUsage")
 public class BiomesConditionDialog extends FishConditionDialog<BiomesCondition> {
 
     public BiomesConditionDialog(FishConditionsDialog fishConditionsDialog) {

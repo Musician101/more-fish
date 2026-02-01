@@ -24,7 +24,7 @@ import static me.elsiff.morefish.MoreFish.getPlugin;
 import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
-@SuppressWarnings("UnstableAPIUsage")
+@SuppressWarnings("UnstableApiUsage")
 public class FishRarityDialog extends FishAbstractDialog<FishRarity> {
 
     private static final String FILTER_DEFAULT = "filter_default";

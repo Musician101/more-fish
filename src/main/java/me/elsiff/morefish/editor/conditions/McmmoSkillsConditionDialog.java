@@ -22,7 +22,7 @@ import java.util.Map;
 import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
-@SuppressWarnings("UnstableAPIUsage")
+@SuppressWarnings("UnstableApiUsage")
 public class McmmoSkillsConditionDialog extends FishConditionDialog<McmmoSkillsCondition> {
 
     public McmmoSkillsConditionDialog(FishConditionsDialog fishConditionsDialog) {

@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
-@SuppressWarnings("UnstableAPIUsage")
+@SuppressWarnings("UnstableApiUsage")
 public abstract class FishConditionDialog<C extends FishCondition<?>> extends MusiDialog {
 
     protected final FishConditionsDialog fishConditionsDialog;

@@ -22,7 +22,7 @@ import java.util.List;
 import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
-@SuppressWarnings("UnstableAPIUsage")
+@SuppressWarnings("UnstableApiUsage")
 public class ColorDialog extends MusiDialog {
 
     private final FishRarityDialog rarityDialog;
