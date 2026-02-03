@@ -22,6 +22,7 @@ import me.elsiff.morefish.serialize.fish.ItemStackSerializer;
 import me.elsiff.morefish.serialize.fish.LuckOfTheSeaModifierSerializer;
 import me.elsiff.morefish.serialize.fish.LuckOfTheSeaModifierSerializer.ModifierTypeSerializer;
 import me.elsiff.morefish.serialize.fish.PlayerAnnouncementSerializer;
+import me.elsiff.morefish.serialize.fish.PlayerAnnouncementSerializer.PlayerAnnouncementTypeSerializer;
 import me.elsiff.morefish.serialize.fish.TextColorSerializer;
 import me.elsiff.morefish.serialize.fish.condition.BiomeConditionSerializer;
 import me.elsiff.morefish.serialize.fish.condition.EnchantmentsConditionSerializer;
@@ -80,6 +81,7 @@ public final class FishTypeTable {
     private final TypeSerializerCollection tsc = TypeSerializerCollection.defaults().childBuilder()
             .register(FishRarity.class, new FishRaritySerializer())
             .register(PlayerAnnouncement.class, new PlayerAnnouncementSerializer())
+            .register(PlayerAnnouncement.Type.class, new PlayerAnnouncementTypeSerializer())
             .register(FishConditions.class, new FishConditionsSerializer())
             .register(BiomesCondition.class, new BiomeConditionSerializer())
             .register(EnchantmentsCondition.class, new EnchantmentsConditionSerializer())

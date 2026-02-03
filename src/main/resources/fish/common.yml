@@ -1,4 +1,6 @@
-announcement: 0
+announcement:
+  type: none
+  radius: 0.1
 no-display: true
 weight: 6977
 display-name: COMMON

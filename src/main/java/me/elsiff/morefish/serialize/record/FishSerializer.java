@@ -2,6 +2,8 @@ package me.elsiff.morefish.serialize.record;
 
 import me.elsiff.morefish.fish.Fish;
 import me.elsiff.morefish.fish.FishType;
+import me.elsiff.morefish.serialize.ConfigKey;
+import me.elsiff.morefish.serialize.ConfigKey.RequiredKey;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -13,10 +15,13 @@ import java.lang.reflect.Type;
 @NullMarked
 public class FishSerializer implements TypeSerializer<Fish> {
 
+    private static final RequiredKey<FishType> TYPE = ConfigKey.requiredKey("type", FishType.class);
+    private static final RequiredKey<Double> LENGTH = ConfigKey.requiredKey("length", Double.class);
+
     @Override
     public Fish deserialize(Type type, ConfigurationNode node) throws SerializationException {
-        FishType fishType = node.node("type").require(FishType.class);
-        double length = node.node("length").require(Double.class);
+        FishType fishType = TYPE.get(node);
+        double length = LENGTH.get(node);
         if (length <= 0) {
             throw new SerializationException("'length' record in " + node.path() + " must be greater than 0.");
         }
@@ -30,7 +35,7 @@ public class FishSerializer implements TypeSerializer<Fish> {
             return;
         }
 
-        node.node("type").set(obj.type());
-        node.node("length").set(obj.length());
+        TYPE.set(node, obj.type());
+        LENGTH.set(node, obj.length());
     }
 }

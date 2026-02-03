@@ -16,6 +16,8 @@ import java.util.List;
 @NullMarked
 public record PlayerAnnouncement(PlayerAnnouncement.Type type, double radius) implements TagResolver {
 
+    public static final PlayerAnnouncement DEFAULT = new PlayerAnnouncement(Type.SERVER, 0.1);
+
     public PlayerAnnouncement {
         if (type == Type.RANGED) {
             Preconditions.checkArgument(radius >= 0, "Announcement radius must be a number greater than 0.");
@@ -27,7 +29,7 @@ public record PlayerAnnouncement(PlayerAnnouncement.Type type, double radius) im
             case NONE -> List.of();
             case SERVER -> new ArrayList<>(catcher.getServer().getOnlinePlayers());
             case PLAYER -> List.of(catcher);
-            default ->
+            case RANGED ->
                     catcher.getWorld().getPlayers().stream().filter(player -> player.getLocation().distance(catcher.getLocation()) <= radius).toList();
         };
     }

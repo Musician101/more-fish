@@ -14,8 +14,8 @@ import java.lang.reflect.Type;
 public class TextColorSerializer implements TypeSerializer<TextColor> {
 
     @Override
-    public @Nullable TextColor deserialize(Type type, ConfigurationNode node) {
-        String string = node.getString("white");
+    public @Nullable TextColor deserialize(Type type, ConfigurationNode node) throws SerializationException {
+        String string = node.require(String.class);
         TextColor color = NamedTextColor.NAMES.valueOr(string, NamedTextColor.WHITE);
         if (string.startsWith("#")) {
             color = TextColor.fromHexString(string);

@@ -12,6 +12,9 @@ general:
   # Set this to false if you want to further customize your fish.
   # Keeping this set to true will not overwrite any files.
   load-defaults: true
+  # If true, fish configs will not save non required data if the data is equal to the default data.
+  # i.e. "announcement" is set to "server" by default and will not be saved to the file.
+  trim-fish-configs: true
 
 # Configures prizes which will be given to rank owners when fishing contest ends.
 # The type of this property is similar to a map. Keys infer range of rank numbers, and Values are lists of commands to be sent for prizing.

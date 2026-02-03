@@ -16,7 +16,7 @@ import java.util.function.Predicate;
 @NullMarked
 public interface EnumUtils {
 
-    static <E extends Enum<E>, X extends Throwable> E getOrThrow(String name, Class<E> clazz, X exception) throws X {
+    static <E extends Enum<E>, X extends Throwable> E getOrThrow(@Nullable String name, Class<E> clazz, X exception) throws X {
         return get(name, clazz).orElseThrow(() -> exception);
     }
 
@@ -24,8 +24,8 @@ public interface EnumUtils {
         return get(e -> e.toString().equalsIgnoreCase(name), clazz, defaultValue);
     }
 
-    static <E extends Enum<E>> Optional<E> get(String name, Class<E> clazz) {
-        return get(e -> name.equalsIgnoreCase(e.toString()), clazz);
+    static <E extends Enum<E>> Optional<E> get(@Nullable String name, Class<E> clazz) {
+        return get(e -> e.toString().equalsIgnoreCase(name), clazz);
     }
 
     static <E extends Enum<E>> E get(Predicate<E> filter, Class<E> clazz, E defaultValue) {

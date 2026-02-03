@@ -1,8 +1,12 @@
 package me.elsiff.morefish.serialize.fish;
 
+import io.leangen.geantyref.TypeFactory;
 import me.elsiff.morefish.fish.FishAbstract;
 import me.elsiff.morefish.fish.PlayerAnnouncement;
 import me.elsiff.morefish.fish.condition.FishConditions;
+import me.elsiff.morefish.serialize.ConfigKey;
+import me.elsiff.morefish.serialize.ConfigKey.NonRequiredKey;
+import me.elsiff.morefish.serialize.ConfigKey.RequiredKey;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -16,42 +20,45 @@ import java.util.function.BiFunction;
 @NullMarked
 public abstract class FishAbstractSerializer<F extends FishAbstract<F>> implements TypeSerializer<F> {
 
+    private static final NonRequiredKey<PlayerAnnouncement> ANNOUNCEMENT = ConfigKey.nonRequiredKey("announcement", PlayerAnnouncement.class, PlayerAnnouncement.DEFAULT);
+    private static final NonRequiredKey<List<String>> COMMANDS = ConfigKey.nonRequiredKey("commands", TypeFactory.parameterizedClass(List.class, String.class), List.of());
+    private static final NonRequiredKey<FishConditions> CONDITIONS = ConfigKey.nonRequiredKey("conditions", FishConditions.class, new FishConditions());
+    private static final RequiredKey<String> DISPLAY_NAME = ConfigKey.requiredKey("display-name", String.class);
+    private static final NonRequiredKey<Boolean> DO_NOT_SELL = ConfigKey.nonRequiredKey("do-not-sell", Boolean.class, false);
+    private static final NonRequiredKey<Boolean> FIREWORK = ConfigKey.nonRequiredKey("firework", Boolean.class, false);
+    private static final RequiredKey<String> NAME = ConfigKey.requiredKey("name", String.class);
+    private static final NonRequiredKey<Boolean> NO_DISPLAY = ConfigKey.nonRequiredKey("no-display", Boolean.class, false);
+    private static final NonRequiredKey<Float> PRICE_MULTIPLIER = ConfigKey.nonRequiredKey("priceMultiplier", Float.class, 1F);
+    private static final NonRequiredKey<Boolean> SKIP_ITEM_FORMAT = ConfigKey.nonRequiredKey("skip-item-format", Boolean.class, false);
+
     protected F deserialize(ConfigurationNode node, BiFunction<String, String, F> construct) throws SerializationException {
-        String name = node.node("name").getString();
-        if (name == null) {
-            throw new SerializationException("name is missing from " + node.path());
-        }
-
-        String displayName = node.node("display-name").getString();
-        if (displayName == null) {
-            throw new SerializationException("display-name is missing from " + name);
-        }
-
+        String name = NAME.get(node);
+        String displayName = DISPLAY_NAME.get(node);
         F fishAbstract = construct.apply(name, displayName);
-        fishAbstract.priceMultiplier(node.node("price-multiplier").getFloat(1));
-        fishAbstract.announcement(node.node("announcement").get(PlayerAnnouncement.class, new PlayerAnnouncement(PlayerAnnouncement.Type.SERVER, 0.1)));
-        fishAbstract.commands(node.node("commands").getList(String.class, List.of()));
-        fishAbstract.conditions(node.node("conditions").get(FishConditions.class, new FishConditions()));
-        fishAbstract.firework(node.node("firework").getBoolean());
-        fishAbstract.noDisplay(node.node("no-display").getBoolean());
-        fishAbstract.skipItemFormat(node.node("skip-item-format").getBoolean());
-        fishAbstract.doNotSell(node.node("do-not-sell").getBoolean());
+        fishAbstract.announcement(ANNOUNCEMENT.get(node));
+        fishAbstract.commands(COMMANDS.get(node));
+        fishAbstract.conditions(CONDITIONS.get(node));
+        fishAbstract.doNotSell(DO_NOT_SELL.get(node));
+        fishAbstract.firework(FIREWORK.get(node));
+        fishAbstract.noDisplay(NO_DISPLAY.get(node));
+        fishAbstract.priceMultiplier(PRICE_MULTIPLIER.get(node));
+        fishAbstract.skipItemFormat(SKIP_ITEM_FORMAT.get(node));
         return fishAbstract;
     }
 
     @Override
     public void serialize(Type type, @Nullable F obj, ConfigurationNode node) throws SerializationException {
         if (obj != null) {
-            node.node("price-multiplier").set(obj.priceMultiplier());
-            node.node("announcement").set(obj.announcement());
-            node.node("commands").set(obj.commands());
-            node.node("conditions").set(obj.conditions());
-            node.node("display-name").set(obj.displayName());
-            node.node("firework").set(obj.firework());
-            node.node("name").set(obj.name());
-            node.node("no-display").set(obj.noDisplay());
-            node.node("skip-item-format").set(obj.skipItemFormat());
-            node.node("do-not-sell").set(obj.doNotSell());
+            ANNOUNCEMENT.set(node, obj.announcement());
+            COMMANDS.set(node, obj.commands());
+            CONDITIONS.set(node, obj.conditions());
+            DISPLAY_NAME.set(node, obj.displayName());
+            DO_NOT_SELL.set(node, obj.doNotSell());
+            FIREWORK.set(node, obj.firework());
+            NAME.set(node, obj.name());
+            NO_DISPLAY.set(node, obj.noDisplay());
+            SKIP_ITEM_FORMAT.set(node, obj.skipItemFormat());
+            PRICE_MULTIPLIER.set(node, obj.priceMultiplier());
         }
     }
 }
