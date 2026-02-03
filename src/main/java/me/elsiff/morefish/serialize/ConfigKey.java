@@ -85,7 +85,7 @@ public sealed abstract class ConfigKey<V> permits NonRequiredKey, RequiredKey {
 
         @Override
         public void set(ConfigurationNode parent, @Nullable V value) throws SerializationException {
-            if (getPlugin().getConfig().getBoolean("trim-fish-configs") && Objects.equals(defaultValue, value)) {
+            if (getPlugin().getConfig().getBoolean("general.trim-fish-configs") && Objects.equals(defaultValue, value)) {
                 parent.node(key).set(null);
                 return;
             }
