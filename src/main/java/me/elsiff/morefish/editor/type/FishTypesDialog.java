@@ -23,7 +23,7 @@ public class FishTypesDialog extends MusiDialog {
     @Override
     protected DialogType type() {
         List<ActionButton> buttons = new ArrayList<>();
-        getPlugin().getFishTypeTable().getTypes().stream().sorted(FishType::compareTo).forEach(t -> buttons.add(button(t)));
+        getPlugin().types().stream().sorted(FishType::compareTo).forEach(t -> buttons.add(button(t)));
         buttons.add(actionButton(lang().getComponent("editor", "type", "selector", "new"), showDialog(new NewFishTypeDialog())));
         return DialogType.multiAction(buttons, backButton(), 2);
     }

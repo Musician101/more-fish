@@ -6,8 +6,9 @@ import me.elsiff.morefish.command.MFMain;
 import me.elsiff.morefish.competition.FishingCompetition;
 import me.elsiff.morefish.competition.FishingCompetitionAutoRunner;
 import me.elsiff.morefish.competition.FishingCompetitionHost;
-import me.elsiff.morefish.fish.registry.FishTypeTable;
 import me.elsiff.morefish.fish.FishingListener;
+import me.elsiff.morefish.fish.registry.FishRarities;
+import me.elsiff.morefish.fish.registry.FishTypes;
 import me.elsiff.morefish.hooker.McmmoHooker;
 import me.elsiff.morefish.hooker.MusiBoardHooker;
 import me.elsiff.morefish.hooker.VaultHooker;
@@ -35,7 +36,8 @@ public final class MoreFish extends JavaPlugin {
     private final FishingCompetition competition = new FishingCompetition();
     private final FishingCompetitionHost competitionHost = new FishingCompetitionHost();
     private final FishBags fishBags = new FishBags();
-    private final FishTypeTable fishTypeTable = new FishTypeTable();
+    private final FishRarities rarities = new FishRarities();
+    private final FishTypes types = new FishTypes();
     private final McmmoHooker mcmmo = new McmmoHooker();
     private final MusiBoardHooker musiBoard = new MusiBoardHooker();
     private final VaultHooker vault = new VaultHooker();
@@ -88,9 +90,10 @@ public final class MoreFish extends JavaPlugin {
         closeGUI();
         NodePath path = NodePath.path("main", "config", "fish");
         try {
-            fishTypeTable.load();
-            TagResolver rarityCount = Formatter.number("rarity-count", fishTypeTable.getRarities().size());
-            TagResolver typeCount = Formatter.number("type-count", fishTypeTable.getTypes().size());
+            rarities.load();
+            types.load();
+            TagResolver rarityCount = Formatter.number("rarity-count", rarities.values().size());
+            TagResolver typeCount = Formatter.number("type-count", types.values().size());
             TagResolver resolver = TagResolver.resolver(rarityCount, typeCount);
             getComponentLogger().info(lang.getComponent(path.withAppendedChild("success"), resolver));
         }
@@ -136,8 +139,12 @@ public final class MoreFish extends JavaPlugin {
         return fishBags;
     }
 
-    public FishTypeTable getFishTypeTable() {
-        return fishTypeTable;
+    public FishRarities rarities() {
+        return rarities;
+    }
+
+    public FishTypes types() {
+        return types;
     }
 
     public McmmoHooker getMcmmo() {

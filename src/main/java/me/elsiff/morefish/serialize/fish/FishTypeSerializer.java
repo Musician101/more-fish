@@ -25,7 +25,7 @@ public class FishTypeSerializer extends FishAbstractSerializer<FishType> {
     @Override
     public FishType deserialize(Type type, ConfigurationNode node) throws SerializationException {
         FishIcon icon = ICON.get(node);
-        FishRarity rarity = getPlugin().getFishTypeTable().getRarity(node.node("rarity").require(NamespacedKey.class)).orElseThrow(() -> new SerializationException(node.path() + " does not have a valid Rarity."));
+        FishRarity rarity = getPlugin().rarities().get(node.node("rarity").require(NamespacedKey.class)).orElseThrow(() -> new SerializationException(node.path() + " does not have a valid Rarity."));
         FishType fishType = deserialize(node, (key, displayName) -> new FishType(key, rarity, displayName, icon));
         fishType.maxLength(LENGTH_MAX.get(node));
         fishType.minLength(LENGTH_MIN.get(node));

@@ -6,6 +6,7 @@ import me.elsiff.morefish.fish.FishType;
 import me.elsiff.morefish.serialize.fish.FishIconSerializer;
 import me.elsiff.morefish.serialize.fish.FishTypeSerializer;
 import me.elsiff.morefish.serialize.fish.ItemStackSerializer;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -21,7 +22,9 @@ import static me.elsiff.morefish.MoreFish.getPlugin;
 @NullMarked
 public final class FishTypes extends FishAbstracts<FishType> {
 
-    FishTypes() {
+    private final Random random = new Random();
+
+    public FishTypes() {
         super("Type", "Types", FishType.class);
     }
 
@@ -41,8 +44,13 @@ public final class FishTypes extends FishAbstracts<FishType> {
         return values.stream().filter(type -> rarity.equals(type.rarity())).toList();
     }
 
+    public void caughtFish(Item caught, Player player) {
+        int luckOfTheSeaLevel = player.getInventory().getItemInMainHand().getEnchantmentLevel(Enchantment.LUCK_OF_THE_SEA);
+        pickRandomType(caught, player, luckOfTheSeaLevel, random).caught(caught, player);
+    }
+
     public FishType pickRandomType(Item caught, Player fisher, int luckOfTheSeaLevel, Random random) {
-        FishRarity rarity = getPlugin().getFishTypeTable().rarities().pickRandomRarity(luckOfTheSeaLevel, random);
+        FishRarity rarity = getPlugin().rarities().pickRandomRarity(luckOfTheSeaLevel, random);
         List<FishType> types = values.stream().filter(type -> rarity.equals(type.rarity()) && checkConditions(type, caught, fisher)).toList();
         return types.get(random.nextInt(types.size()));
     }

@@ -19,7 +19,7 @@ import static me.elsiff.morefish.MoreFish.getPlugin;
 @NullMarked
 public final class FishRarities extends FishAbstracts<FishRarity> {
 
-    FishRarities() {
+    public FishRarities() {
         super("Rarity", "Rarities", FishRarity.class);
     }
 
@@ -38,7 +38,7 @@ public final class FishRarities extends FishAbstracts<FishRarity> {
 
     @Override
     public void delete(FishRarity value) throws IOException {
-        if (getPlugin().getFishTypeTable().getTypes(value).isEmpty()) {
+        if (getPlugin().types().get(value).isEmpty()) {
             super.delete(value);
         }
 

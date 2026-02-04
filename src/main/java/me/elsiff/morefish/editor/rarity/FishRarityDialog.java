@@ -50,7 +50,7 @@ public class FishRarityDialog extends FishAbstractDialog<FishRarity> {
 
     @Override
     public void save() throws IOException {
-        getPlugin().getFishTypeTable().saveRarity(fishAbstract);
+        getPlugin().rarities().save(fishAbstract);
     }
 
     @Override
@@ -118,7 +118,7 @@ public class FishRarityDialog extends FishAbstractDialog<FishRarity> {
     private ActionButton deleteButton() {
         return deleteButton((view, audience) -> {
             try {
-                getPlugin().getFishTypeTable().deleteRarity(fishAbstract);
+                getPlugin().rarities().delete(fishAbstract);
                 audience.showDialog(new FishRaritiesDialog().build());
             }
             catch (IOException e) {

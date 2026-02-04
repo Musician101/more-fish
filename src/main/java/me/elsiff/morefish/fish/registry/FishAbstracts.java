@@ -39,6 +39,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.jar.JarEntry;
@@ -48,7 +49,7 @@ import java.util.stream.Stream;
 import static me.elsiff.morefish.MoreFish.getPlugin;
 
 @NullMarked
-public abstract sealed class FishAbstracts<F extends FishAbstract<F>> permits FishRarities, FishTypes {
+public abstract sealed class FishAbstracts<F extends FishAbstract<F>> implements Iterable<F> permits FishRarities, FishTypes {
 
     protected final List<F> values = new ArrayList<>();
     private final String pluralName;
@@ -149,5 +150,14 @@ public abstract sealed class FishAbstracts<F extends FishAbstract<F>> permits Fi
         catch (IOException e) {
             return Optional.of(e);
         }
+    }
+
+    @Override
+    public Iterator<F> iterator() {
+        return values.iterator();
+    }
+
+    public Stream<F> stream() {
+        return values.stream();
     }
 }

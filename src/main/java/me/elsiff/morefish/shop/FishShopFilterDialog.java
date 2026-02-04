@@ -3,7 +3,6 @@ package me.elsiff.morefish.shop;
 import io.papermc.paper.registry.data.dialog.input.DialogInput;
 import io.papermc.paper.registry.data.dialog.type.DialogType;
 import me.elsiff.morefish.fish.FishRarity;
-import me.elsiff.morefish.fish.registry.FishTypeTable;
 import me.elsiff.morefish.gui.MusiDialog;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
@@ -31,14 +30,10 @@ public class FishShopFilterDialog extends MusiDialog {
         this.filters = filters;
     }
 
-    private FishTypeTable fishTypeTable() {
-        return getPlugin().getFishTypeTable();
-    }
-
     @Override
     protected List<DialogInput> inputs() {
         List<DialogInput> list = new ArrayList<>();
-        fishTypeTable().getRarities().stream().filter(r -> !r.doNotSell()).sorted(Comparator.reverseOrder()).forEach(r -> {
+        getPlugin().rarities().stream().filter(r -> !r.doNotSell()).sorted(Comparator.reverseOrder()).forEach(r -> {
             Component label = lang().getComponent(r, "main", "sales-filter", "rarity");
             list.add(boolInput(asDialogInputId(r), label, filters.contains(r)));
         });
@@ -53,7 +48,7 @@ public class FishShopFilterDialog extends MusiDialog {
     protected DialogType type() {
         return DialogType.notice(backButton((view, audience) -> {
             List<FishRarity> filters = new ArrayList<>();
-            fishTypeTable().getRarities().forEach(r -> {
+            getPlugin().rarities().forEach(r -> {
                 Boolean bool = view.getBoolean(asDialogInputId(r));
                 if (bool != null && bool) {
                     filters.add(r);

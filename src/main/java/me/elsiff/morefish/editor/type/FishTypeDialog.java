@@ -12,7 +12,6 @@ import me.elsiff.morefish.editor.conditions.FishConditionsDialog;
 import me.elsiff.morefish.editor.rarity.FishRaritiesDialog;
 import me.elsiff.morefish.fish.FishRarity;
 import me.elsiff.morefish.fish.FishType;
-import me.elsiff.morefish.fish.registry.FishTypeTable;
 import me.elsiff.morefish.lang.TagResolverUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -74,7 +73,7 @@ public class FishTypeDialog extends FishAbstractDialog<FishType> {
     private DialogInput rarity() {
         NodePath rarityPath = path().withAppendedChild("rarity");
         List<OptionEntry> entries = new ArrayList<>();
-        getPlugin().getFishTypeTable().getRarities().stream().sorted(Comparator.reverseOrder()).forEach(r -> {
+        getPlugin().rarities().stream().sorted(Comparator.reverseOrder()).forEach(r -> {
             FishRarity rarity = fishAbstract.rarity();
             Component label = lang().getComponent(rarityPath.withAppendedChild("rarity"), rarity);
             entries.add(OptionEntry.create(r.getKey().asString(), label, rarity.equals(r)));
@@ -114,14 +113,13 @@ public class FishTypeDialog extends FishAbstractDialog<FishType> {
                 return;
             }
 
-            FishTypeTable ftt = getPlugin().getFishTypeTable();
             String rarityString = view.getText(RARITY);
             NamespacedKey rarityKey = null;
             if (rarityString != null) {
                 rarityKey = NamespacedKey.fromString(rarityString);
             }
 
-            Optional<FishRarity> rarity = ftt.getRarity(rarityKey);
+            Optional<FishRarity> rarity = rarityKey == null ? Optional.empty() : getPlugin().rarities().get(rarityKey);
             if (rarity.isEmpty()) {
                 Component errorMessage = lang().getComponent(path().withAppendedChild("rarity-error"));
                 audience.showDialog(new ErrorDialog(errorMessage, this).build());
@@ -135,7 +133,7 @@ public class FishTypeDialog extends FishAbstractDialog<FishType> {
             fishAbstract.minLength(minLength);
             fishAbstract.maxLength(maxLength);
             try {
-                ftt.saveType(fishAbstract);
+                getPlugin().types().save(fishAbstract);
                 audience.showDialog(new FishTypesDialog().build());
             }
             catch (IOException e) {
@@ -153,7 +151,7 @@ public class FishTypeDialog extends FishAbstractDialog<FishType> {
     private ActionButton deleteButton() {
         return deleteButton((view, audience) -> {
             try {
-                getPlugin().getFishTypeTable().deleteType(fishAbstract);
+                getPlugin().types().delete(fishAbstract);
                 audience.showDialog(new FishTypesDialog().build());
             }
             catch (IOException e) {
@@ -171,7 +169,7 @@ public class FishTypeDialog extends FishAbstractDialog<FishType> {
 
     @Override
     protected void save() throws IOException {
-        getPlugin().getFishTypeTable().saveType(fishAbstract);
+        getPlugin().types().save(fishAbstract);
     }
 
     @Override

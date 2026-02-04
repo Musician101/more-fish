@@ -25,8 +25,8 @@ public class FishTypeArgumentType implements CustomArgumentType.Converted<FishTy
         return context.getArgument("fish", FishType.class);
     }
 
-    private Stream<FishType> fishes() {
-        return getPlugin().getFishTypeTable().getTypes().stream();
+    private Stream<FishType> types() {
+        return getPlugin().types().stream();
     }
 
     @Override
@@ -36,12 +36,12 @@ public class FishTypeArgumentType implements CustomArgumentType.Converted<FishTy
 
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-        fishes().map(FishType::getKey).map(NamespacedKey::asString).filter(key -> key.startsWith(builder.getRemaining())).forEach(builder::suggest);
+        types().map(FishType::getKey).map(NamespacedKey::asString).filter(key -> key.startsWith(builder.getRemaining())).forEach(builder::suggest);
         return builder.buildFuture();
     }
 
     @Override
     public FishType convert(NamespacedKey nativeType) throws CommandSyntaxException {
-        return getPlugin().getFishTypeTable().types().get(nativeType).orElseThrow(() -> new SimpleCommandExceptionType(() -> nativeType + " is not a valid fish type.").create());
+        return getPlugin().types().get(nativeType).orElseThrow(() -> new SimpleCommandExceptionType(() -> nativeType + " is not a valid fish type.").create());
     }
 }

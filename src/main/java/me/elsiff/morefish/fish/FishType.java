@@ -1,16 +1,39 @@
 package me.elsiff.morefish.fish;
 
+import me.elsiff.morefish.competition.FishingCompetition;
 import me.elsiff.morefish.lang.TagResolverUtil;
+import me.elsiff.morefish.records.FishRecord;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.Context;
 import net.kyori.adventure.text.minimessage.ParsingException;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.ArgumentQueue;
+import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
+import org.bukkit.FireworkEffect.Type;
+import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Server;
+import org.bukkit.World;
+import org.bukkit.entity.Firework;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ItemType;
+import org.bukkit.inventory.meta.FireworkMeta;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
+import org.spongepowered.configurate.NodePath;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.Random;
+import java.util.stream.Stream;
+
+import static me.elsiff.morefish.MoreFish.getPlugin;
+import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
 public final class FishType extends FishAbstract<FishType> {
@@ -100,6 +123,69 @@ public final class FishType extends FishAbstract<FishType> {
 
     public FishIcon icon() {
         return icon;
+    }
+
+    public void caught(Item caught, Player player) {
+        caught.setCanMobPickup(false);
+        caught.setCanPlayerPickup(false);
+        caught.setInvulnerable(true);
+        Fish fish = generateFish();
+        processCatchHandlers(player, fish);
+        Stream.concat(fish.type().commands().stream(), fish.rarity().commands().stream()).forEach(c -> processCommand(player, c));
+        if (fish.type().firework()) {
+            player.getWorld().spawn(player.getLocation(), Firework.class, firework -> {
+                FireworkMeta meta = firework.getFireworkMeta();
+                meta.addEffect(FireworkEffect.builder().with(Type.BALL_LARGE).withColor(Color.AQUA).withFade(Color.BLUE).withTrail().withFlicker().build());
+                meta.setPower(1);
+                firework.setFireworkMeta(meta);
+            });
+        }
+
+        ItemStack fishItem = icon().createItemStack(fish, player);
+        caught.setItemStack(fishItem);
+        if (!getPlugin().getFishBags().addFish(player, fishItem)) {
+            World world = player.getWorld();
+            world.dropItem(player.getLocation(), fishItem);
+        }
+
+        caught.remove();
+    }
+
+    private void processCommand(Player player, String command) {
+        Server server = player.getServer();
+        command = command.replace("@p", player.getName());
+        Location location = player.getLocation();
+        command = command.replace("!playerLocation", location.x() + " " + location.y() + " " + location.z());
+        server.dispatchCommand(server.getConsoleSender(), command);
+    }
+
+    @SuppressWarnings("NullableProblems")
+    private void processCatchHandlers(Player player, Fish fish) {
+        List<World> contestDisabledWorlds = getPlugin().getConfig().getStringList("general.contest-disabled-worlds").stream().map(Bukkit::getWorld).filter(Objects::nonNull).toList();
+        if (contestDisabledWorlds.contains(player.getWorld())) {
+            return;
+        }
+
+        NodePath announcementPath = NodePath.path("main", "announcement");
+        FishingCompetition fc = getPlugin().getCompetition();
+        if (fc.isEnabled()) {
+            if (fc.willBeNewFirst(player, fish)) {
+                broadcastCatch(announcementPath.withAppendedChild("new-1st"), player, fish);
+            }
+
+            FishRecord record = new FishRecord(player.getUniqueId(), fish, System.currentTimeMillis());
+            fc.add(record);
+            getPlugin().getFishingLogs().add(record);
+        }
+
+        if (fish.type().announcement().type() != PlayerAnnouncement.Type.NONE) {
+            broadcastCatch(announcementPath.withAppendedChild("catch"), player, fish);
+        }
+    }
+
+    private void broadcastCatch(NodePath path, Player player, Fish fish) {
+        Component msg = lang().getComponent(path, TagResolverUtil.catcher(player, fish));
+        Audience.audience(fish.type().announcement().receiversOf(player)).sendMessage(msg);
     }
 
     @Override

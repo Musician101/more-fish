@@ -7,7 +7,6 @@ import io.papermc.paper.registry.data.dialog.type.DialogType;
 import me.elsiff.morefish.editor.ErrorDialog;
 import me.elsiff.morefish.fish.FishRarity;
 import me.elsiff.morefish.fish.FishType;
-import me.elsiff.morefish.fish.registry.FishTypeTable;
 import me.elsiff.morefish.gui.MusiDialog;
 import net.kyori.adventure.text.Component;
 import org.bukkit.NamespacedKey;
@@ -48,8 +47,7 @@ public class NewFishTypeDialog extends MusiDialog {
 
     private DialogInput rarity() {
         List<OptionEntry> entries = new ArrayList<>();
-        FishTypeTable ftt = getPlugin().getFishTypeTable();
-        List<FishRarity> rarities = ftt.getRarities();
+        List<FishRarity> rarities = getPlugin().rarities().values();
         rarities.sort(Comparator.reverseOrder());
         FishRarity initial = rarities.getFirst();
         rarities.stream().sorted(Comparator.reverseOrder()).forEach(r -> {
@@ -78,8 +76,7 @@ public class NewFishTypeDialog extends MusiDialog {
                 return;
             }
 
-            FishTypeTable ftt = getPlugin().getFishTypeTable();
-            if (ftt.getTypes().stream().anyMatch(t -> typeKey.equals(t.getKey()))) {
+            if (getPlugin().types().get(typeKey).isPresent()) {
                 Component alreadyExistsMessage = lang().getComponent(path().plus(NodePath.path("id", "error", "already-exists")));
                 audience.showDialog(new ErrorDialog(alreadyExistsMessage, this).build());
                 return;
@@ -91,7 +88,7 @@ public class NewFishTypeDialog extends MusiDialog {
                 rarityKey = NamespacedKey.fromString(rarityString);
             }
 
-            Optional<FishRarity> rarity = ftt.getRarity(rarityKey);
+            Optional<FishRarity> rarity = rarityKey == null ? Optional.empty() : getPlugin().rarities().get(rarityKey);
             if (rarity.isEmpty()) {
                 Component rarityError = lang().getComponent(path().plus(NodePath.path("rarity", "error")));
                 audience.showDialog(new ErrorDialog(rarityError, this).build());
@@ -107,7 +104,7 @@ public class NewFishTypeDialog extends MusiDialog {
 
             try {
                 FishType fishType = new FishType(typeKey, displayName, rarity.get());
-                ftt.saveType(fishType);
+                getPlugin().types().save(fishType);
                 audience.showDialog(fishTypesDialog.build());
             }
             catch (IOException e) {

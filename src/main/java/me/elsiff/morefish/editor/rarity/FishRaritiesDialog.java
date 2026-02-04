@@ -24,7 +24,7 @@ public class FishRaritiesDialog extends MusiDialog {
     @Override
     protected DialogType type() {
         List<ActionButton> buttons = new ArrayList<>();
-        getPlugin().getFishTypeTable().getRarities().stream().sorted(Comparator.reverseOrder()).forEach(r -> buttons.add(button(r)));
+        getPlugin().rarities().stream().sorted(Comparator.reverseOrder()).forEach(r -> buttons.add(button(r)));
         buttons.add(actionButton(lang().getComponent("editor", "rarity", "selector", "new"), showDialog(new NewFishRarityDialog())));
         return DialogType.multiAction(buttons, backButton(), 2);
     }

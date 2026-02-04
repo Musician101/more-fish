@@ -49,7 +49,7 @@ public class MFSimulate implements MFCommand, PaperLiteralCommand.AdventureForma
         }
 
         Item item = player.getWorld().spawn(player.getLocation(), Item.class, i -> i.setItemStack(new ItemStack(Material.DIRT)));
-        getPlugin().getFishTypeTable().caughtFish(item, player);
+        getPlugin().types().caughtFish(item, player);
         return 1;
     }
 
@@ -73,7 +73,7 @@ public class MFSimulate implements MFCommand, PaperLiteralCommand.AdventureForma
                 FishType fishType = FishTypeArgumentType.getFishType(context);
                 Fish fish = fishType.generateFish();
                 Item item = player.getWorld().spawn(player.getLocation(), Item.class, i -> i.setItemStack(fish.type().icon().createItemStack(fish, player)));
-                getPlugin().getFishTypeTable().caughtFish(item, player, fishType);
+                fishType.caught(item, player);
                 return 1;
             }
 

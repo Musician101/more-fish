@@ -5,7 +5,6 @@ import io.papermc.paper.registry.data.dialog.input.DialogInput;
 import io.papermc.paper.registry.data.dialog.type.DialogType;
 import me.elsiff.morefish.editor.ErrorDialog;
 import me.elsiff.morefish.fish.FishRarity;
-import me.elsiff.morefish.fish.registry.FishTypeTable;
 import me.elsiff.morefish.gui.MusiDialog;
 import net.kyori.adventure.text.Component;
 import org.bukkit.NamespacedKey;
@@ -58,8 +57,7 @@ public class NewFishRarityDialog extends MusiDialog {
                 return;
             }
 
-            FishTypeTable ftt = getPlugin().getFishTypeTable();
-            if (ftt.getRarities().stream().anyMatch(r -> r.getKey().equals(rarityKey))) {
+            if (getPlugin().rarities().get(rarityKey).isPresent()) {
                 Component message = lang().getComponent(path().withAppendedChild("error"));
                 audience.showDialog(new ErrorDialog(message, this).build());
                 return;
@@ -73,7 +71,7 @@ public class NewFishRarityDialog extends MusiDialog {
             }
 
             try {
-                getPlugin().getFishTypeTable().saveRarity(new FishRarity(rarityKey, displayName));
+                getPlugin().rarities().save(new FishRarity(rarityKey, displayName));
                 audience.showDialog(fishRaritiesDialog.build());
             }
             catch (IOException e) {
