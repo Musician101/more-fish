@@ -9,6 +9,7 @@ import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.argument.CustomArgumentType;
 import me.elsiff.morefish.command.argument.RecordsArgumentType.Holder;
 import me.elsiff.morefish.records.FishRecord;
+import org.bukkit.NamespacedKey;
 import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
@@ -26,7 +27,7 @@ public class RecordsArgumentType implements CustomArgumentType.Converted<Holder,
 
     @Override
     public Holder convert(String nativeType) {
-        return () -> getRecords().stream().filter(r -> r.fish().type().name().equals(nativeType)).collect(Collectors.toList());
+        return () -> getRecords().stream().filter(r -> r.fish().type().getKey().equals(nativeType)).collect(Collectors.toList());
     }
 
     @Override
@@ -40,7 +41,7 @@ public class RecordsArgumentType implements CustomArgumentType.Converted<Holder,
 
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-        getRecords().stream().map(r -> r.fish().type().name()).filter(s -> s.startsWith(builder.getRemaining())).forEach(builder::suggest);
+        getRecords().stream().map(r -> r.fish().type().getKey()).map(NamespacedKey::asString).filter(s -> s.startsWith(builder.getRemaining())).forEach(builder::suggest);
         return builder.buildFuture();
     }
 

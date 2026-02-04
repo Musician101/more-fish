@@ -1,0 +1,12 @@
+display-name: Slaughterfish
+length-max: 50
+length-min: 30
+icon:
+    schema_version: 1
+    DataVersion: 4671
+    components:
+        minecraft:lore: '["<italic><dark_purple>You cannot fast travel, you are in
+            combat"]'
+    id: minecraft:cod
+id: morefish:rare/slaughterfish
+rarity: morefish:rare

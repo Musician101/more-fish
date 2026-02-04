@@ -1,9 +1,0 @@
-weight: 3
-firework: true
-color: light_purple
-display-name: MYTHIC
-conditions:
-    mcmmo-skills:
-        Fishing: 200
-price-multiplier: 15
-name: mythic

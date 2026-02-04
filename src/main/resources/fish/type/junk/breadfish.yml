@@ -1,0 +1,11 @@
+display-name: Breadfish
+length-max: 30
+length-min: 10
+icon:
+    schema_version: 1
+    DataVersion: 4671
+    components:
+        minecraft:lore: '["<gray>Tell me have you seen","<gray>the marvellous breadfish"]'
+    id: minecraft:bread
+id: morefish:junk/breadfish
+rarity: morefish:junk

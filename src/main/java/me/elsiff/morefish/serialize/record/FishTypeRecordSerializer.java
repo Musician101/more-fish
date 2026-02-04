@@ -24,8 +24,8 @@ public class FishTypeRecordSerializer extends FishAbstractSerializer<FishType> {
     @Override
     public FishType deserialize(Type type, ConfigurationNode node) throws SerializationException {
         FishIcon icon = ICON.get(node);
-        FishType fishType = deserialize(node, (name, displayName) -> new FishType(name, new FishRarity("INVALID_RARITY", "INVALID RARITY"), displayName, icon));
-        fishType.rarity(RARITY.get(node));
+        FishRarity rarity = RARITY.get(node);
+        FishType fishType = deserialize(node, (name, displayName) -> new FishType(name, rarity, displayName, icon));
         fishType.maxLength(LENGTH_MAX.get(node));
         fishType.minLength(LENGTH_MIN.get(node));
         return fishType;

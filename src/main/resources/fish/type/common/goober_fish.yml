@@ -1,0 +1,11 @@
+display-name: Goober Fish
+length-max: 18
+length-min: 7
+icon:
+    schema_version: 1
+    DataVersion: 4671
+    id: minecraft:cod
+    components:
+        minecraft:lore: '["<italic><dark_purple>Just a goofy Goober Fish!"]'
+id: morefish:common/goober_fish
+rarity: morefish:common

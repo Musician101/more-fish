@@ -54,7 +54,7 @@ public class SortArgumentType implements CustomArgumentType.Converted<SortType, 
         public Comparator<FishRecord> natural() {
             return switch (this) {
                 case LENGTH -> FishRecord::compareTo;
-                case NAME -> Comparator.comparing(r -> r.fish().type().name());
+                case NAME -> Comparator.comparing(r -> r.fish().type().getKey());
                 case RARITY -> Comparator.<FishRecord, FishRarity>comparing(r -> r.fish().rarity()).reversed();
                 case TIMESTAMP -> Comparator.comparingLong(FishRecord::timestamp);
                 case PLAYER -> Comparator.comparing(FishRecord::fisher);

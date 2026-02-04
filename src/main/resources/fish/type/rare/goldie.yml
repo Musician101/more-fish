@@ -1,0 +1,11 @@
+commands:
+- tellraw @p [{"text":"[MoreFish]","color":"aqua"},{"text":" You have found Goldie!","color":"white"}]
+length-max: 140
+display-name: Goldie
+icon:
+    schema_version: 1
+    DataVersion: 4671
+    id: minecraft:pufferfish
+length-min: 20
+id: morefish:rare/goldie
+rarity: morefish:rare

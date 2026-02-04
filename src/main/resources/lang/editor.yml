@@ -96,7 +96,20 @@ type:
       internal: "<gold>Editing <fish-rarity:color><fish-type:display-name>"
   selector:
     label: "<gold>Select A Fish To Edit"
-    new: "<gradient:#55ff55:#00aa00:#55ff55>New Fish"
+    new:
+      label: "<gradient:#55ff55:#00aa00:#55ff55>New Fish"
+      display-name:
+        error: "Display Name is null or empty. Make sure you typed it correctly."
+        label: "Display Name"
+      id:
+        error:
+          format: "ID is malformed or null. Make sure you typed it correctly."
+          already-exists: "ID is malformed or null. Make sure you typed it correctly."
+        label: "ID"
+      rarity:
+        error: "The selected rarity is either null or isn't a registered rarity."
+        label: "Rarity"
+        rarity: "<fish-rarity:color><fish-rarity:display-name>"
 rarity:
   selected:
     color:

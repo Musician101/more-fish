@@ -1,0 +1,9 @@
+display-name: Mackerel
+length-max: 30
+length-min: 15
+icon:
+    schema_version: 1
+    DataVersion: 4671
+    id: minecraft:cod
+id: morefish:common/mackerel
+rarity: morefish:common

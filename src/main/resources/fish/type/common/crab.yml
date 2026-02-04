@@ -1,0 +1,9 @@
+display-name: Crab
+length-max: 15
+length-min: 10
+icon:
+    schema_version: 1
+    DataVersion: 4671
+    id: minecraft:cod
+id: morefish:common/crab
+rarity: morefish:common

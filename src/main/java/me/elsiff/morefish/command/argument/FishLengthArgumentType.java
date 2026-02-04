@@ -24,7 +24,7 @@ public class FishLengthArgumentType implements CustomArgumentType<Float, Float> 
             return length;
         }
 
-        throw new CommandException(length + " is outside the bounds of " + fishType.name());
+        throw new CommandException(length + " is outside the bounds of " + fishType.getKey());
     }
 
     @Override

@@ -20,7 +20,7 @@ public final class FishingListener implements Listener {
             if (getPlugin().getCompetition().isEnabled()) {
                 Player player = event.getPlayer();
                 getPlugin().getMusiBoard().addToLeaderboard(player);
-                getPlugin().getFishTypeTable().caughtFish(caught, player, true);
+                getPlugin().getFishTypeTable().caughtFish(caught, player);
             }
         }
     }

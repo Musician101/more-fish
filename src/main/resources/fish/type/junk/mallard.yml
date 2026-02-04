@@ -1,0 +1,11 @@
+display-name: Mallard
+length-max: 18
+length-min: 18
+icon:
+    schema_version: 1
+    DataVersion: 4671
+    components:
+        minecraft:lore: '["Hate to break it to you", "but this is not a fish"]'
+    id: minecraft:feather
+id: morefish:junk/mallard
+rarity: morefish:junk

@@ -18,7 +18,7 @@ public interface TagKey<P, C> {
     TagKey<Float, Float> PRICE_MULTIPLIER = tagKey("price-multiplier", PersistentDataType.FLOAT);
     TagKey<Double, Double> LENGTH = tagKey("length", PersistentDataType.DOUBLE);
     TagKey<String, String> DISPLAY_NAME = tagKey("display-name", PersistentDataType.STRING);
-    TagKey<String, String> NAME = tagKey("name", PersistentDataType.STRING);
+    TagKey<String, String> ID = tagKey("id", PersistentDataType.STRING);
     TagKey<PersistentDataContainer, FishRarity> FISH_RARITY = tagKey("rarity", new FishRarityTagType());
     TagKey<PersistentDataContainer, FishType> FISH_TYPE = tagKey("type", new FishTypeTagType());
     TagKey<String, String> COLOR = tagKey("color", PersistentDataType.STRING);

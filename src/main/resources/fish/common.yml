@@ -1,9 +1,0 @@
-announcement:
-  type: none
-  radius: 0.1
-no-display: true
-weight: 6977
-display-name: COMMON
-color: white
-price-multiplier: 1
-name: common

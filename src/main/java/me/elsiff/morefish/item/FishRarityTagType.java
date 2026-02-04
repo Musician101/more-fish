@@ -3,6 +3,7 @@ package me.elsiff.morefish.item;
 import me.elsiff.morefish.fish.FishRarity;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.NamespacedKey;
 import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
@@ -24,7 +25,7 @@ public class FishRarityTagType implements PersistentDataType<PersistentDataConta
     @Override
     public PersistentDataContainer toPrimitive(FishRarity complex, PersistentDataAdapterContext context) {
         PersistentDataContainer main = context.newPersistentDataContainer();
-        TagKey.NAME.setValue(main, complex.name());
+        TagKey.ID.setValue(main, complex.getKey().asString());
         TagKey.DISPLAY_NAME.setValue(main, complex.displayName());
         TagKey.COLOR.setValue(main, complex.color().asHexString());
         TagKey.PRICE_MULTIPLIER.setValue(main, complex.priceMultiplier());
@@ -33,7 +34,7 @@ public class FishRarityTagType implements PersistentDataType<PersistentDataConta
 
     @Override
     public FishRarity fromPrimitive(PersistentDataContainer primitive, PersistentDataAdapterContext context) {
-        String name = TagKey.NAME.getValue(primitive);
+        String id = TagKey.ID.getValue(primitive);
         String displayName = TagKey.DISPLAY_NAME.getValue(primitive);
         String color = TagKey.COLOR.getValue(primitive);
         TextColor textColor = TextColor.fromHexString(color);
@@ -42,6 +43,8 @@ public class FishRarityTagType implements PersistentDataType<PersistentDataConta
         }
 
         float additionalPrice = TagKey.PRICE_MULTIPLIER.getValue(primitive);
-        return new FishRarity(name, displayName, textColor, additionalPrice);
+        // If this is ever null, then someone touched the NBT data
+        //noinspection DataFlowIssue
+        return new FishRarity(NamespacedKey.fromString(id), displayName, textColor, additionalPrice);
     }
 }

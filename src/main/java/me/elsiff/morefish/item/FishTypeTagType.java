@@ -4,6 +4,7 @@ import me.elsiff.morefish.fish.FishIcon;
 import me.elsiff.morefish.fish.FishRarity;
 import me.elsiff.morefish.fish.FishType;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -26,7 +27,7 @@ public class FishTypeTagType implements PersistentDataType<PersistentDataContain
     @Override
     public PersistentDataContainer toPrimitive(FishType complex, PersistentDataAdapterContext context) {
         PersistentDataContainer main = context.newPersistentDataContainer();
-        TagKey.NAME.setValue(main, complex.name());
+        TagKey.ID.setValue(main, complex.getKey().asString());
         TagKey.DISPLAY_NAME.setValue(main, complex.displayName());
         TagKey.PRICE_MULTIPLIER.setValue(main, complex.priceMultiplier());
         TagKey.PRICE_MULTIPLIER.setValue(main, complex.priceMultiplier());
@@ -36,10 +37,12 @@ public class FishTypeTagType implements PersistentDataType<PersistentDataContain
 
     @Override
     public FishType fromPrimitive(PersistentDataContainer primitive, PersistentDataAdapterContext context) {
-        String name = TagKey.NAME.getValue(primitive);
+        String id = TagKey.ID.getValue(primitive);
         String displayName = TagKey.DISPLAY_NAME.getValue(primitive);
         float additionalPrice = TagKey.PRICE_MULTIPLIER.getValue(primitive);
         FishRarity rarity = TagKey.FISH_RARITY.getValue(primitive);
-        return new FishType(name, rarity, displayName, additionalPrice, new FishIcon(new ItemStack(Material.SALMON)));
+        // If this is ever null, then someone touched the NBT data
+        //noinspection DataFlowIssue
+        return new FishType(NamespacedKey.fromString(id), rarity, displayName, additionalPrice, new FishIcon(new ItemStack(Material.SALMON)));
     }
 }

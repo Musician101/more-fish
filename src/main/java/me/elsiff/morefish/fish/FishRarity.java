@@ -8,6 +8,7 @@ import net.kyori.adventure.text.minimessage.Context;
 import net.kyori.adventure.text.minimessage.ParsingException;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.ArgumentQueue;
+import org.bukkit.NamespacedKey;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
@@ -19,13 +20,13 @@ public final class FishRarity extends FishAbstract<FishRarity> {
     private boolean filterDefaultEnabled = false;
     private LuckOfTheSeaModifier luckOfTheSeaModifier = LuckOfTheSeaModifier.NONE;
 
-    public FishRarity(String name, String displayName) {
-        super("fish-rarity", name, displayName);
+    public FishRarity(NamespacedKey key, String displayName) {
+        super("fish-rarity", key, displayName);
         this.color = NamedTextColor.WHITE;
     }
 
-    public FishRarity(String name, String displayName, TextColor color, float priceMultiplier) {
-        super("fish-rarity", name, displayName, priceMultiplier);
+    public FishRarity(NamespacedKey key, String displayName, TextColor color, float priceMultiplier) {
+        super("fish-rarity", key, displayName, priceMultiplier);
         this.color = color;
     }
 
@@ -95,5 +96,14 @@ public final class FishRarity extends FishAbstract<FishRarity> {
 
     public void luckOfTheSeaModifier(LuckOfTheSeaModifier luckOfTheSeaModifier) {
         this.luckOfTheSeaModifier = luckOfTheSeaModifier;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof FishRarity rarity) {
+            return key.equals(rarity.getKey());
+        }
+
+        return false;
     }
 }

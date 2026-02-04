@@ -8,16 +8,18 @@ import net.kyori.adventure.text.minimessage.ParsingException;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.ArgumentQueue;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import org.bukkit.Keyed;
+import org.bukkit.NamespacedKey;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
 @NullMarked
-public abstract class FishAbstract<F extends FishAbstract<F>> implements Comparable<F>, TagResolver {
+public abstract class FishAbstract<F extends FishAbstract<F>> implements Comparable<F>, Keyed, TagResolver {
 
     private final String tagKey;
-    private final String name;
+    protected final NamespacedKey key;
     private String displayName;
     private PlayerAnnouncement announcement = new PlayerAnnouncement(Type.SERVER, 0.1);
     private FishConditions conditions = new FishConditions();
@@ -28,19 +30,20 @@ public abstract class FishAbstract<F extends FishAbstract<F>> implements Compara
     private boolean doNotSell = false;
     private float priceMultiplier;
 
-    protected FishAbstract(String tagKey, String name, String displayName) {
-        this(tagKey, name, displayName, 0);
+    protected FishAbstract(String tagKey, NamespacedKey key, String displayName) {
+        this(tagKey, key, displayName, 0);
     }
 
-    protected FishAbstract(String tagKey, String name, String displayName, float priceMultiplier) {
+    protected FishAbstract(String tagKey, NamespacedKey key, String displayName, float priceMultiplier) {
         this.tagKey = tagKey;
-        this.name = name;
+        this.key = key;
         this.displayName = displayName;
         this.priceMultiplier = priceMultiplier;
     }
 
-    public String name() {
-        return name;
+    @Override
+    public NamespacedKey getKey() {
+        return key;
     }
 
     public String displayName() {
@@ -120,7 +123,7 @@ public abstract class FishAbstract<F extends FishAbstract<F>> implements Compara
                 case "display-name" -> Tag.selfClosingInserting(ctx.deserialize(displayName));
                 case "do-not-sell" -> TagResolverUtil.booleanTag(doNotSell);
                 case "firework" -> TagResolverUtil.booleanTag(firework);
-                case "name" -> Tag.preProcessParsed(this.name);
+                case "id" -> Tag.preProcessParsed(key.asString());
                 case "no-display" -> TagResolverUtil.booleanTag(noDisplay);
                 case "price-multiplier" -> TagResolverUtil.numberTag(value, priceMultiplier, arguments, ctx);
                 case "skip-item-format" -> TagResolverUtil.booleanTag(skipItemFormat);

@@ -5,12 +5,15 @@ import me.elsiff.morefish.fish.FishRarity;
 import me.elsiff.morefish.fish.FishType;
 import me.elsiff.morefish.serialize.ConfigKey;
 import me.elsiff.morefish.serialize.ConfigKey.RequiredKey;
+import org.bukkit.NamespacedKey;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
 import java.lang.reflect.Type;
+
+import static me.elsiff.morefish.MoreFish.getPlugin;
 
 @NullMarked
 public class FishTypeSerializer extends FishAbstractSerializer<FishType> {
@@ -19,16 +22,11 @@ public class FishTypeSerializer extends FishAbstractSerializer<FishType> {
     private static final RequiredKey<Double> LENGTH_MAX = ConfigKey.requiredKey("length-max", Double.class);
     private static final RequiredKey<Double> LENGTH_MIN = ConfigKey.requiredKey("length-min", Double.class);
 
-    private final FishRarity rarity;
-
-    public FishTypeSerializer(FishRarity rarity) {
-        this.rarity = rarity;
-    }
-
     @Override
     public FishType deserialize(Type type, ConfigurationNode node) throws SerializationException {
         FishIcon icon = ICON.get(node);
-        FishType fishType = deserialize(node, (name, displayName) -> new FishType(name, rarity, displayName, icon));
+        FishRarity rarity = getPlugin().getFishTypeTable().getRarity(node.node("rarity").require(NamespacedKey.class)).orElseThrow(() -> new SerializationException(node.path() + " does not have a valid Rarity."));
+        FishType fishType = deserialize(node, (key, displayName) -> new FishType(key, rarity, displayName, icon));
         fishType.maxLength(LENGTH_MAX.get(node));
         fishType.minLength(LENGTH_MIN.get(node));
         return fishType;

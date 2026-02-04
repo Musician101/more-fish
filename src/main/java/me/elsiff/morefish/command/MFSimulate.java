@@ -8,6 +8,7 @@ import io.musician101.musicommand.paper.command.PaperCommand;
 import io.musician101.musicommand.paper.command.PaperLiteralCommand;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import me.elsiff.morefish.command.argument.FishTypeArgumentType;
+import me.elsiff.morefish.fish.Fish;
 import me.elsiff.morefish.fish.FishType;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
@@ -48,7 +49,7 @@ public class MFSimulate implements MFCommand, PaperLiteralCommand.AdventureForma
         }
 
         Item item = player.getWorld().spawn(player.getLocation(), Item.class, i -> i.setItemStack(new ItemStack(Material.DIRT)));
-        getPlugin().getFishTypeTable().caughtFish(item, player, false);
+        getPlugin().getFishTypeTable().caughtFish(item, player);
         return 1;
     }
 
@@ -70,7 +71,9 @@ public class MFSimulate implements MFCommand, PaperLiteralCommand.AdventureForma
             public Integer execute(CommandContext<CommandSourceStack> context) {
                 Player player = (Player) context.getSource().getSender();
                 FishType fishType = FishTypeArgumentType.getFishType(context);
-                getPlugin().getFishTypeTable().simulateCatch(player, fishType);
+                Fish fish = fishType.generateFish();
+                Item item = player.getWorld().spawn(player.getLocation(), Item.class, i -> i.setItemStack(fish.type().icon().createItemStack(fish, player)));
+                getPlugin().getFishTypeTable().caughtFish(item, player, fishType);
                 return 1;
             }
 

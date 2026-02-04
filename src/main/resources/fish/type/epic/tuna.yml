@@ -1,0 +1,9 @@
+display-name: Tuna
+length-max: 180
+length-min: 130
+icon:
+    schema_version: 1
+    DataVersion: 4671
+    id: minecraft:cod
+id: morefish:epic/tuna
+rarity: morefish:epic

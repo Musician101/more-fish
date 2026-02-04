@@ -1,8 +1,0 @@
-display-name: Sea Bass
-length-max: 100
-length-min: 60
-icon:
-    schema_version: 1
-    DataVersion: 4671
-    id: minecraft:cod
-name: SeaBass

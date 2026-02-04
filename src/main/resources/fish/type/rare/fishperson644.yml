@@ -1,0 +1,11 @@
+display-name: FishPerson644
+length-max: 100
+length-min: 80
+icon:
+    schema_version: 1
+    DataVersion: 4671
+    components:
+        minecraft:lore: '["<italic><dark_purple>Claimed to be a genius among fish"]'
+    id: minecraft:cod
+id: morefish:rare/fishperson644
+rarity: morefish:rare

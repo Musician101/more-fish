@@ -5,6 +5,7 @@ import net.kyori.adventure.text.minimessage.Context;
 import net.kyori.adventure.text.minimessage.ParsingException;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.ArgumentQueue;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemType;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -20,18 +21,18 @@ public final class FishType extends FishAbstract<FishType> {
     private FishIcon icon;
 
     @SuppressWarnings("UnstableApiUsage")
-    public FishType(String name, FishRarity rarity) {
-        this(name, rarity, name, new FishIcon(ItemType.SALMON.createItemStack()));
+    public FishType(NamespacedKey key, String displayName, FishRarity rarity) {
+        this(key, rarity, displayName, new FishIcon(ItemType.SALMON.createItemStack()));
     }
 
-    public FishType(String name, FishRarity rarity, String displayName, FishIcon icon) {
-        super("fish-type", name, displayName);
+    public FishType(NamespacedKey key, FishRarity rarity, String displayName, FishIcon icon) {
+        super("fish-type", key, displayName);
         this.rarity = rarity;
         this.icon = icon;
     }
 
-    public FishType(String name, FishRarity rarity, String displayName, float priceMultiplier, FishIcon icon) {
-        super("fish-type", name, displayName, priceMultiplier);
+    public FishType(NamespacedKey key, FishRarity rarity, String displayName, float priceMultiplier, FishIcon icon) {
+        super("fish-type", key, displayName, priceMultiplier);
         this.rarity = rarity;
         this.icon = icon;
     }
@@ -64,7 +65,7 @@ public final class FishType extends FishAbstract<FishType> {
 
     public Fish generateFish(double length) {
         if (minLength > length && length > maxLength) {
-            throw new IllegalArgumentException("Length is outside the min/max range for " + name());
+            throw new IllegalArgumentException("Length is outside the min/max range for " + getKey());
         }
 
         return new Fish(this, length);
@@ -82,7 +83,7 @@ public final class FishType extends FishAbstract<FishType> {
 
     @Override
     public int compareTo(FishType o) {
-        return name().compareTo(o.name());
+        return getKey().compareTo(o.getKey());
     }
 
     public FishRarity rarity() {
@@ -106,7 +107,7 @@ public final class FishType extends FishAbstract<FishType> {
         if (has(name)) {
             String value = arguments.popOr("fish-type needs at least 1 argument.").value();
             return switch (value) {
-                case "fish-rarity" -> Tag.preProcessParsed(rarity.name());
+                case "fish-rarity" -> Tag.preProcessParsed(rarity.getKey().asString());
                 case "max-length" -> TagResolverUtil.numberTag("max-length", maxLength, arguments, ctx);
                 case "min-length" -> TagResolverUtil.numberTag("min-length", minLength, arguments, ctx);
                 case "name-with-rarity" ->

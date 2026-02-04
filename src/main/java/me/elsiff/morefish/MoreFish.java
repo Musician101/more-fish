@@ -6,7 +6,7 @@ import me.elsiff.morefish.command.MFMain;
 import me.elsiff.morefish.competition.FishingCompetition;
 import me.elsiff.morefish.competition.FishingCompetitionAutoRunner;
 import me.elsiff.morefish.competition.FishingCompetitionHost;
-import me.elsiff.morefish.fish.FishTypeTable;
+import me.elsiff.morefish.fish.registry.FishTypeTable;
 import me.elsiff.morefish.fish.FishingListener;
 import me.elsiff.morefish.hooker.McmmoHooker;
 import me.elsiff.morefish.hooker.MusiBoardHooker;
@@ -52,7 +52,10 @@ public final class MoreFish extends JavaPlugin {
     private void closeGUI() {
         getServer().getOnlinePlayers().forEach(player -> {
             if (FishShopFilterDialog.FILTERS.containsKey(player.getUniqueId())) {
-                player.getScheduler().run(this, t -> player.closeDialog(), null);
+                player.getScheduler().run(this, t -> {
+                    player.sendMessage(lang.getComponent("gui", "closed-config-update"));
+                    player.closeDialog();
+                }, null);
             }
 
             Component title = player.getOpenInventory().title();

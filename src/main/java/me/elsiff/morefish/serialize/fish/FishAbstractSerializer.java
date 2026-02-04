@@ -7,6 +7,7 @@ import me.elsiff.morefish.fish.condition.FishConditions;
 import me.elsiff.morefish.serialize.ConfigKey;
 import me.elsiff.morefish.serialize.ConfigKey.NonRequiredKey;
 import me.elsiff.morefish.serialize.ConfigKey.RequiredKey;
+import org.bukkit.NamespacedKey;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -26,15 +27,15 @@ public abstract class FishAbstractSerializer<F extends FishAbstract<F>> implemen
     private static final RequiredKey<String> DISPLAY_NAME = ConfigKey.requiredKey("display-name", String.class);
     private static final NonRequiredKey<Boolean> DO_NOT_SELL = ConfigKey.nonRequiredKey("do-not-sell", Boolean.class, false);
     private static final NonRequiredKey<Boolean> FIREWORK = ConfigKey.nonRequiredKey("firework", Boolean.class, false);
-    private static final RequiredKey<String> NAME = ConfigKey.requiredKey("name", String.class);
+    private static final RequiredKey<NamespacedKey> ID = ConfigKey.requiredKey("id", NamespacedKey.class);
     private static final NonRequiredKey<Boolean> NO_DISPLAY = ConfigKey.nonRequiredKey("no-display", Boolean.class, false);
     private static final NonRequiredKey<Float> PRICE_MULTIPLIER = ConfigKey.nonRequiredKey("priceMultiplier", Float.class, 1F);
     private static final NonRequiredKey<Boolean> SKIP_ITEM_FORMAT = ConfigKey.nonRequiredKey("skip-item-format", Boolean.class, false);
 
-    protected F deserialize(ConfigurationNode node, BiFunction<String, String, F> construct) throws SerializationException {
-        String name = NAME.get(node);
+    protected F deserialize(ConfigurationNode node, BiFunction<NamespacedKey, String, F> construct) throws SerializationException {
+        NamespacedKey key = ID.get(node);
         String displayName = DISPLAY_NAME.get(node);
-        F fishAbstract = construct.apply(name, displayName);
+        F fishAbstract = construct.apply(key, displayName);
         fishAbstract.announcement(ANNOUNCEMENT.get(node));
         fishAbstract.commands(COMMANDS.get(node));
         fishAbstract.conditions(CONDITIONS.get(node));
@@ -55,7 +56,7 @@ public abstract class FishAbstractSerializer<F extends FishAbstract<F>> implemen
             DISPLAY_NAME.set(node, obj.displayName());
             DO_NOT_SELL.set(node, obj.doNotSell());
             FIREWORK.set(node, obj.firework());
-            NAME.set(node, obj.name());
+            ID.set(node, obj.getKey());
             NO_DISPLAY.set(node, obj.noDisplay());
             SKIP_ITEM_FORMAT.set(node, obj.skipItemFormat());
             PRICE_MULTIPLIER.set(node, obj.priceMultiplier());

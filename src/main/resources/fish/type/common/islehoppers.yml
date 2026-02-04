@@ -1,0 +1,11 @@
+display-name: Islehopper
+length-max: 25
+length-min: 20
+icon:
+    schema_version: 1
+    DataVersion: 4671
+    id: minecraft:pufferfish
+    components:
+        minecraft:lore: '["<red>Ay! I''m hoppin here!"]'
+id: morefish:common/islehoppers
+rarity: morefish:common

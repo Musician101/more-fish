@@ -12,10 +12,11 @@ import me.elsiff.morefish.editor.conditions.FishConditionsDialog;
 import me.elsiff.morefish.editor.rarity.FishRaritiesDialog;
 import me.elsiff.morefish.fish.FishRarity;
 import me.elsiff.morefish.fish.FishType;
-import me.elsiff.morefish.fish.FishTypeTable;
+import me.elsiff.morefish.fish.registry.FishTypeTable;
 import me.elsiff.morefish.lang.TagResolverUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import org.bukkit.NamespacedKey;
 import org.jspecify.annotations.NullMarked;
 import org.spongepowered.configurate.NodePath;
 
@@ -76,7 +77,7 @@ public class FishTypeDialog extends FishAbstractDialog<FishType> {
         getPlugin().getFishTypeTable().getRarities().stream().sorted(Comparator.reverseOrder()).forEach(r -> {
             FishRarity rarity = fishAbstract.rarity();
             Component label = lang().getComponent(rarityPath.withAppendedChild("rarity"), rarity);
-            entries.add(OptionEntry.create(r.name(), label, rarity.equals(r)));
+            entries.add(OptionEntry.create(r.getKey().asString(), label, rarity.equals(r)));
         });
         Component label = lang().getComponent(rarityPath.withAppendedChild("label"));
         return singleOptionInput(RARITY, label, entries);
@@ -113,9 +114,14 @@ public class FishTypeDialog extends FishAbstractDialog<FishType> {
                 return;
             }
 
-            String rarityString = view.getText(RARITY);
             FishTypeTable ftt = getPlugin().getFishTypeTable();
-            Optional<FishRarity> rarity = ftt.getRarities().stream().filter(r -> r.name().equals(rarityString)).findFirst();
+            String rarityString = view.getText(RARITY);
+            NamespacedKey rarityKey = null;
+            if (rarityString != null) {
+                rarityKey = NamespacedKey.fromString(rarityString);
+            }
+
+            Optional<FishRarity> rarity = ftt.getRarity(rarityKey);
             if (rarity.isEmpty()) {
                 Component errorMessage = lang().getComponent(path().withAppendedChild("rarity-error"));
                 audience.showDialog(new ErrorDialog(errorMessage, this).build());
@@ -123,12 +129,19 @@ public class FishTypeDialog extends FishAbstractDialog<FishType> {
             }
 
             FishRarity oldRarity = fishAbstract.rarity();
+            double oldMinLength = fishAbstract.minLength();
+            double oldMaxLength = fishAbstract.maxLength();
             fishAbstract.rarity(rarity.get());
+            fishAbstract.minLength(minLength);
+            fishAbstract.maxLength(maxLength);
             try {
-                ftt.saveType(fishAbstract, oldRarity);
+                ftt.saveType(fishAbstract);
                 audience.showDialog(new FishTypesDialog().build());
             }
             catch (IOException e) {
+                fishAbstract.rarity(oldRarity);
+                fishAbstract.minLength(oldMinLength);
+                fishAbstract.maxLength(oldMaxLength);
                 TagResolver tagResolver = TagResolver.resolver(fishAbstract, TagResolverUtil.error(e.getMessage()));
                 Component message = lang().getComponent(path().withAppendedChild("save-failed"), tagResolver);
                 getPlugin().getComponentLogger().error(message, e);

@@ -7,9 +7,10 @@ import io.papermc.paper.registry.data.dialog.type.DialogType;
 import me.elsiff.morefish.editor.ErrorDialog;
 import me.elsiff.morefish.fish.FishRarity;
 import me.elsiff.morefish.fish.FishType;
-import me.elsiff.morefish.fish.FishTypeTable;
+import me.elsiff.morefish.fish.registry.FishTypeTable;
 import me.elsiff.morefish.gui.MusiDialog;
 import net.kyori.adventure.text.Component;
+import org.bukkit.NamespacedKey;
 import org.jspecify.annotations.NullMarked;
 import org.spongepowered.configurate.NodePath;
 
@@ -26,21 +27,23 @@ import static me.elsiff.morefish.MoreFish.lang;
 @SuppressWarnings("UnstableApiUsage")
 public class NewFishTypeDialog extends MusiDialog {
 
-    private static final String NAME = "name";
-    private static final String RARITY = "RARITY";
+    private static final String DISPLAY_NAME = "display_name";
+    private static final String ID = "type_id";
+    private static final String RARITY = "rarity";
 
     public NewFishTypeDialog() {
-        super(lang().getComponent(path().withAppendedChild("new")));
+        super(lang().getComponent(path().withAppendedChild("label")));
     }
 
     private static NodePath path() {
-        return NodePath.path("editor", "type", "selector");
+        return NodePath.path("editor", "type", "selector", "new");
     }
 
     @Override
     protected List<DialogInput> inputs() {
-        DialogInput name = textInput(NAME, lang().getComponent(path().withAppendedChild("name")));
-        return List.of(name, rarity());
+        DialogInput id = textInput(ID, lang().getComponent(path().plus(NodePath.path("id", "label"))));
+        DialogInput displayName = textInput(DISPLAY_NAME, lang().getComponent(path().plus(NodePath.path("display-name", "label"))));
+        return List.of(id, displayName, rarity());
     }
 
     private DialogInput rarity() {
@@ -51,7 +54,7 @@ public class NewFishTypeDialog extends MusiDialog {
         FishRarity initial = rarities.getFirst();
         rarities.stream().sorted(Comparator.reverseOrder()).forEach(r -> {
             Component label = lang().getComponent(r, "main", "item-format", "display-name");
-            entries.add(OptionEntry.create(r.name(), label, initial.equals(r)));
+            entries.add(OptionEntry.create(r.getKey().asString(), label, initial.equals(r)));
         });
         Component label = lang().getComponent(path().withAppendedChild("rarity"));
         return singleOptionInput(RARITY, label, entries);
@@ -61,29 +64,49 @@ public class NewFishTypeDialog extends MusiDialog {
     protected DialogType type() {
         FishTypesDialog fishTypesDialog = new FishTypesDialog();
         ActionButton confirm = confirmButton((view, audience) -> {
-            String name = view.getText(NAME);
-            if (name == null) {
-                audience.showDialog(fishTypesDialog.build());
+            String keyString = view.getText(ID);
+            Component errorMessage = lang().getComponent(path().plus(NodePath.path("id", "error", "format")));
+            ErrorDialog errorDialog = new ErrorDialog(errorMessage, this);
+            if (keyString == null) {
+                audience.showDialog(errorDialog.build());
+                return;
+            }
+
+            NamespacedKey typeKey = NamespacedKey.fromString(keyString);
+            if (typeKey == null) {
+                audience.showDialog(errorDialog.build());
                 return;
             }
 
             FishTypeTable ftt = getPlugin().getFishTypeTable();
-            if (ftt.getTypes().stream().anyMatch(t -> t.name().equals(name))) {
-                Component message = lang().getComponent(path().withAppendedChild("error"));
-                audience.showDialog(new ErrorDialog(message, this).build());
+            if (ftt.getTypes().stream().anyMatch(t -> typeKey.equals(t.getKey()))) {
+                Component alreadyExistsMessage = lang().getComponent(path().plus(NodePath.path("id", "error", "already-exists")));
+                audience.showDialog(new ErrorDialog(alreadyExistsMessage, this).build());
                 return;
             }
 
             String rarityString = view.getText(RARITY);
-            Optional<FishRarity> rarity = ftt.getRarities().stream().filter(r -> r.name().equals(rarityString)).findFirst();
+            NamespacedKey rarityKey = null;
+            if (rarityString != null) {
+                rarityKey = NamespacedKey.fromString(rarityString);
+            }
+
+            Optional<FishRarity> rarity = ftt.getRarity(rarityKey);
             if (rarity.isEmpty()) {
-                Component errorMessage = lang().getComponent(path().withAppendedChild("rarity-error"));
-                audience.showDialog(new ErrorDialog(errorMessage, this).build());
+                Component rarityError = lang().getComponent(path().plus(NodePath.path("rarity", "error")));
+                audience.showDialog(new ErrorDialog(rarityError, this).build());
+                return;
+            }
+
+            String displayName = view.getText(DISPLAY_NAME);
+            if (displayName == null || displayName.isBlank()) {
+                Component displayNameError = lang().getComponent(path().plus(NodePath.path("display-name", "error")));
+                audience.showDialog(new ErrorDialog(displayNameError, this).build());
                 return;
             }
 
             try {
-                FishType fishType = new FishType(name, rarity.get());
+                FishType fishType = new FishType(typeKey, displayName, rarity.get());
                 ftt.saveType(fishType);
                 audience.showDialog(fishTypesDialog.build());
             }
