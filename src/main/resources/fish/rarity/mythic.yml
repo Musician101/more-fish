@@ -3,7 +3,7 @@ firework: true
 color: light_purple
 display-name: MYTHIC
 conditions:
-    mcmmo-skills:
-        Fishing: 200
+  mcmmo-skills:
+    Fishing: 200
 price-multiplier: 15
 id: morefish:mythic

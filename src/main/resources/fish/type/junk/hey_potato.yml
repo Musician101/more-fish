@@ -2,10 +2,10 @@ display-name: HeyPotato
 length-max: 15
 length-min: 10
 icon:
-    schema_version: 1
-    DataVersion: 4671
-    id: minecraft:potato
-    components:
-        minecraft:lore: '["<gold>What''s Dwight doing here?"]'
+  schema_version: 1
+  DataVersion: 4671
+  id: minecraft:potato
+  components:
+    minecraft:lore: '["<gold>What''s Dwight doing here?"]'
 id: morefish:junk/hey_potato
 rarity: morefish:junk

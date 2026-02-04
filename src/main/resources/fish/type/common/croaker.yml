@@ -2,8 +2,8 @@ display-name: Croaker
 length-max: 15
 length-min: 12
 icon:
-    schema_version: 1
-    DataVersion: 4671
-    id: minecraft:cod
+  schema_version: 1
+  DataVersion: 4671
+  id: minecraft:cod
 id: morefish:common/croaker
 rarity: morefish:common

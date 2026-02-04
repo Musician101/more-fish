@@ -2,11 +2,11 @@ display-name: Ecdysiast
 length-max: 169
 length-min: 124
 icon:
-    schema_version: 1
-    DataVersion: 4671
-    components:
-        minecraft:lore: '["<italic><dark_purple>All great things come with a hidden
+  schema_version: 1
+  DataVersion: 4671
+  components:
+    minecraft:lore: '["<italic><dark_purple>All great things come with a hidden
             meaning"]'
-    id: minecraft:cod
+  id: minecraft:cod
 id: morefish:epic/ecdysiast
 rarity: morefish:epic

@@ -51,10 +51,6 @@ import static me.elsiff.morefish.MoreFish.getPlugin;
 @NullMarked
 public abstract sealed class FishAbstracts<F extends FishAbstract<F>> implements Iterable<F> permits FishRarities, FishTypes {
 
-    protected final List<F> values = new ArrayList<>();
-    private final String pluralName;
-    private final String singularName;
-    protected Class<F> valueClass;
     private static final TypeSerializerCollection tsc = TypeSerializerCollection.defaults().childBuilder()
             .register(PlayerAnnouncement.class, new PlayerAnnouncementSerializer())
             .register(Type.class, new PlayerAnnouncementTypeSerializer())
@@ -70,6 +66,10 @@ public abstract sealed class FishAbstracts<F extends FishAbstract<F>> implements
             .register(XpLevelCondition.class, new XpLevelConditionSerializer())
             .register(NamespacedKey.class, new NamespacedKeySerializer())
             .build();
+    protected final List<F> values = new ArrayList<>();
+    private final String pluralName;
+    private final String singularName;
+    protected Class<F> valueClass;
 
     public FishAbstracts(String singularName, String pluralName, Class<F> valueClass) {
         this.singularName = singularName;

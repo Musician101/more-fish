@@ -3,10 +3,10 @@ display-name: Fishing Rod That Someone Dropped Hitting 'Q' By Mistake
 length-max: 16
 length-min: 16
 icon:
-    schema_version: 1
-    DataVersion: 4671
-    id: minecraft:fishing_rod
-    components:
-        minecraft:damage: '30'
+  schema_version: 1
+  DataVersion: 4671
+  id: minecraft:fishing_rod
+  components:
+    minecraft:damage: '30'
 id: morefish:junk/fishing_rod
 rarity: morefish:junk

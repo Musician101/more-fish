@@ -2,10 +2,10 @@ display-name: Crush the Turtle
 length-max: 110
 length-min: 70
 icon:
-    schema_version: 1
-    DataVersion: 4671
-    id: minecraft:turtle_spawn_egg
-    components:
-        minecraft:lore: '["<italic><dark_purple>Suh Dude"]'
+  schema_version: 1
+  DataVersion: 4671
+  id: minecraft:turtle_spawn_egg
+  components:
+    minecraft:lore: '["<italic><dark_purple>Suh Dude"]'
 id: morefish:rare/crush_the_turtle
 rarity: morefish:rare

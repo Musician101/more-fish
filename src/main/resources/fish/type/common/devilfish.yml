@@ -2,8 +2,8 @@ display-name: Devilfish
 length-max: 15
 length-min: 9
 icon:
-    schema_version: 1
-    DataVersion: 4671
-    id: minecraft:tropical_fish
+  schema_version: 1
+  DataVersion: 4671
+  id: minecraft:tropical_fish
 id: morefish:common/devilfish
 rarity: morefish:common

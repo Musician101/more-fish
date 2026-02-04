@@ -2,8 +2,8 @@ display-name: Sea Bream
 length-max: 70
 length-min: 50
 icon:
-    schema_version: 1
-    DataVersion: 4671
-    id: minecraft:cod
+  schema_version: 1
+  DataVersion: 4671
+  id: minecraft:cod
 id: morefish:rare/sea_bream
 rarity: morefish:rare

@@ -2,10 +2,10 @@ display-name: Big Puffy Boi
 length-max: 43
 length-min: 15
 icon:
-    schema_version: 1
-    DataVersion: 4671
-    id: minecraft:pufferfish
-    components:
-        minecraft:lore: '["<italic><dark_purple>Do not squeeze"]'
+  schema_version: 1
+  DataVersion: 4671
+  id: minecraft:pufferfish
+  components:
+    minecraft:lore: '["<italic><dark_purple>Do not squeeze"]'
 id: morefish:rare/big_puffy_boi
 rarity: morefish:rare

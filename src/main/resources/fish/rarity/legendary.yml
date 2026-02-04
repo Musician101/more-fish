@@ -3,7 +3,7 @@ firework: true
 color: gold
 display-name: LEGENDARY
 conditions:
-    mcmmo-skills:
-        Fishing: 100
+  mcmmo-skills:
+    Fishing: 100
 price-multiplier: 10
 id: morefish:legendary

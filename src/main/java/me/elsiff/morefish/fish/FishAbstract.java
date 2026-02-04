@@ -18,8 +18,8 @@ import java.util.List;
 @NullMarked
 public abstract class FishAbstract<F extends FishAbstract<F>> implements Comparable<F>, Keyed, TagResolver {
 
-    private final String tagKey;
     protected final NamespacedKey key;
+    private final String tagKey;
     private String displayName;
     private PlayerAnnouncement announcement = new PlayerAnnouncement(Type.SERVER, 0.1);
     private FishConditions conditions = new FishConditions();

@@ -5,12 +5,12 @@ durability: 1
 display-name: Gyarados
 length-min: 600
 commands:
-- minecraft:effect give @p minecraft:strength 120 2
-- mcmmo:addxp @p Fishing 1000
+  - minecraft:effect give @p minecraft:strength 120 2
+  - mcmmo:addxp @p Fishing 1000
 icon:
-    schema_version: 1
-    DataVersion: 4671
-    id: minecraft:salmon
-    components:
-        minecraft:lore: '["<italic><dark_purple>I can''t believe it''s Magikarp!",
+  schema_version: 1
+  DataVersion: 4671
+  id: minecraft:salmon
+  components:
+    minecraft:lore: '["<italic><dark_purple>I can''t believe it''s Magikarp!",
             "<blue>You feel strong just being near it"]'

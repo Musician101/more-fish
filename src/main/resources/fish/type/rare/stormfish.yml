@@ -2,13 +2,13 @@ display-name: Stormfish
 length-max: 40
 length-min: 30
 icon:
-    schema_version: 1
-    DataVersion: 4671
-    id: minecraft:tropical_fish
-    components:
-        minecraft:lore: '["<dark_gray>I am the storm that is approaching!"]'
+  schema_version: 1
+  DataVersion: 4671
+  id: minecraft:tropical_fish
+  components:
+    minecraft:lore: '["<dark_gray>I am the storm that is approaching!"]'
 commands:
-- playsound minecraft:entity.lightning_bolt.impact master @p !playerLocation
-- playsound minecraft:entity.lightning_bolt.thunder master @p !playerLocation
+  - playsound minecraft:entity.lightning_bolt.impact master @p !playerLocation
+  - playsound minecraft:entity.lightning_bolt.thunder master @p !playerLocation
 id: morefish:rare/stormfish
 rarity: morefish:rare
