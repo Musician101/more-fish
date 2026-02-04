@@ -8,6 +8,7 @@ import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.ArgumentQueue;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.spongepowered.configurate.CommentedConfigurationNode;
@@ -147,7 +148,7 @@ public class Lang implements TagResolver {
     }
 
     public List<Component> parseComponents(List<Component> message, TagResolver resolver) {
-        return message.stream().map(MiniMessage.miniMessage()::serialize).map(s -> parse(s, resolver)).collect(Collectors.toList());
+        return message.stream().map(PlainTextComponentSerializer.plainText()::serialize).map(s -> parse(s, resolver)).collect(Collectors.toList());
     }
 
     @Nullable
