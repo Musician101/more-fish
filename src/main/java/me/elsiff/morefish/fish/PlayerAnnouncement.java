@@ -1,6 +1,7 @@
 package me.elsiff.morefish.fish;
 
 import com.google.common.base.Preconditions;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.minimessage.Context;
 import net.kyori.adventure.text.minimessage.ParsingException;
 import net.kyori.adventure.text.minimessage.tag.Tag;
@@ -9,9 +10,6 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @NullMarked
 public record PlayerAnnouncement(PlayerAnnouncement.Type type, double radius) implements TagResolver {
@@ -24,13 +22,13 @@ public record PlayerAnnouncement(PlayerAnnouncement.Type type, double radius) im
         }
     }
 
-    public List<Player> receiversOf(Player catcher) {
+    public Audience receiversOf(Player catcher) {
         return switch (type) {
-            case NONE -> List.of();
-            case SERVER -> new ArrayList<>(catcher.getServer().getOnlinePlayers());
-            case PLAYER -> List.of(catcher);
+            case NONE -> Audience.empty();
+            case SERVER -> Audience.audience(catcher.getServer().getOnlinePlayers());
+            case PLAYER -> catcher;
             case RANGED ->
-                    catcher.getWorld().getPlayers().stream().filter(player -> player.getLocation().distance(catcher.getLocation()) <= radius).toList();
+                    catcher.getWorld().getPlayers().stream().filter(player -> player.getLocation().distance(catcher.getLocation()) <= radius).collect(Audience.toAudience());
         };
     }
 

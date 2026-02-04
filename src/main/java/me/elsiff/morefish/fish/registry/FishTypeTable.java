@@ -4,6 +4,7 @@ import me.elsiff.morefish.competition.FishingCompetition;
 import me.elsiff.morefish.fish.Fish;
 import me.elsiff.morefish.fish.FishRarity;
 import me.elsiff.morefish.fish.FishType;
+import me.elsiff.morefish.fish.PlayerAnnouncement;
 import me.elsiff.morefish.lang.TagResolverUtil;
 import me.elsiff.morefish.records.FishRecord;
 import net.kyori.adventure.audience.Audience;
@@ -125,8 +126,8 @@ public final class FishTypeTable {
             fc.add(record);
             getPlugin().getFishingLogs().add(record);
         }
-        
-        if (!fish.type().announcement().receiversOf(player).isEmpty()) {
+
+        if (fish.type().announcement().type() != PlayerAnnouncement.Type.NONE) {
             broadcastCatch(announcementPath.withAppendedChild("catch"), player, fish);
         }
     }
