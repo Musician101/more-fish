@@ -23,29 +23,15 @@ repositories {
     maven("https://maven.enginehub.org/repo/")
     maven("https://jitpack.io")
     mavenCentral()
-    //TODO testing
-    mavenLocal()
 }
 
 dependencies {
     paperweight.paperDevBundle("1.21.11-R0.1-SNAPSHOT")
     compileOnlyApi("com.github.MilkBowl:VaultAPI:1.7.1")
     compileOnlyApi("com.gmail.nossr50.mcMMO:mcMMO:2.2.048")
-    //TODO testing
-    /*api("com.github.musician101.musigui:paper:1.2.2") {
-        exclude("io.papermc.paper")
-    }*/
-    api("io.musician101.musigui:paper:1.3.0") {
-        exclude("io.papermc.paper")
-    }
-    //TODO waiting for testing to complete before pushing a release
+    api("com.github.Musician101.MusiGUI:paper:3fb38265d4")
     api("com.github.Musician101.MusiCommand:paper:be49f96ace")
-    //TODO temp to fix package names
-    //api("com.github.Musician101:MusiBoard:1.0.1")
-    //api("com.github.musician101:musiboard:master-SNAPSHOT")
-    api("io.musician101:musiboard:1.1.0-SNAPSHOT") {
-        exclude("io.papermc.paper")
-    }
+    api("com.github.Musician101:MusiBoard:e5951243ac")
 }
 
 tasks {
