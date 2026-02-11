@@ -15,6 +15,7 @@ version = "4.4.0"
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 repositories {
+    mavenCentral()
     maven("https://libraries.minecraft.net")
     maven("https://papermc.io/repo/repository/maven-public/")
     maven("https://oss.sonatype.org/content/repositories/snapshots/")
@@ -22,7 +23,6 @@ repositories {
     // mcMMO depends on WorldGuard, but Gradle failed to find it
     maven("https://maven.enginehub.org/repo/")
     maven("https://jitpack.io")
-    mavenCentral()
 }
 
 dependencies {
@@ -45,7 +45,7 @@ tasks {
 
     shadowJar {
         dependencies {
-            include(dependency("io.musician101.musigui:.*"))
+            include(dependency("com.github.Musician101.MusiGUI:.*"))
             include(dependency("com.github.Musician101.MusiCommand:.*"))
         }
 
