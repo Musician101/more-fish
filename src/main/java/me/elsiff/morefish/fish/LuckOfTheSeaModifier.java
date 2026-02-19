@@ -41,7 +41,8 @@ public class LuckOfTheSeaModifier implements ComponentLike, TagResolver {
 
         String value = arguments.popOr(name + " needs at least 1 argument").value();
         return switch (value) {
-            case "type" -> Tag.preProcessParsed(type.toString());
+            case "type" ->
+                    Tag.selfClosingInserting(Component.translatable("morefish.editor.rarity.selected.luck-of-the-sea-modifier.modifier-type", Argument.string("modifier-type", type.toString())));
             case "amount" -> TagResolverUtil.numberTag(value, amount, arguments, ctx);
             default -> null;
         };

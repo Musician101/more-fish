@@ -1,5 +1,6 @@
 package me.elsiff.morefish.fish.condition;
 
+import me.elsiff.morefish.lang.TagResolverUtil;
 import net.kyori.adventure.text.minimessage.Context;
 import net.kyori.adventure.text.minimessage.ParsingException;
 import net.kyori.adventure.text.minimessage.tag.Tag;
@@ -23,7 +24,7 @@ public class XpLevelCondition extends FishCondition<Integer> {
     @Override
     public @Nullable Tag resolve(String name, ArgumentQueue arguments, Context ctx) throws ParsingException {
         if (has(name)) {
-            return Tag.preProcessParsed(value + "");
+            return TagResolverUtil.numberTag(name, value, arguments, ctx);
         }
 
         return null;

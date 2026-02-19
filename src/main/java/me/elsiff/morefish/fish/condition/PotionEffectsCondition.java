@@ -2,6 +2,7 @@ package me.elsiff.morefish.fish.condition;
 
 import me.elsiff.morefish.lang.TagResolverUtil;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.Context;
 import net.kyori.adventure.text.minimessage.ParsingException;
 import net.kyori.adventure.text.minimessage.tag.Tag;
@@ -38,7 +39,7 @@ public class PotionEffectsCondition extends FishCondition<Map<PotionEffectType, 
             return TagResolverUtil.fromMap(value, arguments, ctx, 0, s -> {
                 Key key = Key.key(s);
                 return Registry.POTION_EFFECT_TYPE.get(key);
-            }, i -> Tag.preProcessParsed(i + ""));
+            }, i -> Tag.selfClosingInserting(Component.text(i)));
         }
 
         return null;

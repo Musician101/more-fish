@@ -1,6 +1,7 @@
 package me.elsiff.morefish.fish;
 
 import me.elsiff.morefish.competition.FishingCompetition;
+import me.elsiff.morefish.lang.ArgumentUtil;
 import me.elsiff.morefish.lang.TagResolverUtil;
 import me.elsiff.morefish.records.FishRecord;
 import net.kyori.adventure.audience.Audience;
@@ -9,7 +10,6 @@ import net.kyori.adventure.text.minimessage.Context;
 import net.kyori.adventure.text.minimessage.ParsingException;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.ArgumentQueue;
-import net.kyori.adventure.text.minimessage.translation.Argument;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
@@ -179,7 +179,7 @@ public final class FishType extends FishAbstract<FishType> {
     }
 
     private void broadcastCatch(String key, Player player, Fish fish) {
-        Component msg = Component.translatable(key, Argument.tagResolver(TagResolverUtil.catcher(player, fish)));
+        Component msg = Component.translatable(key, ArgumentUtil.player(player), ArgumentUtil.fish(fish));
         Audience.audience(fish.type().announcement().receiversOf(player)).sendMessage(msg);
     }
 
@@ -188,7 +188,7 @@ public final class FishType extends FishAbstract<FishType> {
         if (has(name)) {
             String value = arguments.popOr("fish-type needs at least 1 argument.").value();
             return switch (value) {
-                case "fish-rarity" -> Tag.preProcessParsed(rarity.getKey().asString());
+                case "fish-rarity" -> Tag.selfClosingInserting(Component.text(rarity.getKey().asString()));
                 case "max-length" -> TagResolverUtil.numberTag("max-length", maxLength, arguments, ctx);
                 case "min-length" -> TagResolverUtil.numberTag("min-length", minLength, arguments, ctx);
                 case "name-with-rarity" ->

@@ -4,6 +4,7 @@ import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
 import me.elsiff.morefish.lang.TagResolverUtil;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.Context;
 import net.kyori.adventure.text.minimessage.ParsingException;
 import net.kyori.adventure.text.minimessage.tag.Tag;
@@ -41,7 +42,7 @@ public class EnchantmentsCondition extends FishCondition<Map<Enchantment, Intege
             return TagResolverUtil.fromMap(value, arguments, ctx, s -> {
                 Key key = Key.key(s);
                 return RegistryAccess.registryAccess().getRegistry(RegistryKey.ENCHANTMENT).get(key);
-            }, i -> Tag.preProcessParsed(i + ""));
+            }, i -> Tag.selfClosingInserting(Component.text(i)));
         }
 
         return null;

@@ -2,6 +2,7 @@ package me.elsiff.morefish.fish.condition;
 
 import me.elsiff.morefish.fish.condition.TimeCondition.TimeState;
 import me.elsiff.morefish.util.Range;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.Context;
 import net.kyori.adventure.text.minimessage.ParsingException;
 import net.kyori.adventure.text.minimessage.tag.Tag;
@@ -29,7 +30,7 @@ public class TimeCondition extends FishCondition<TimeState> {
     @Override
     public @Nullable Tag resolve(String name, ArgumentQueue arguments, Context ctx) throws ParsingException {
         if (has(name)) {
-            return Tag.preProcessParsed(value.toString());
+            return Tag.selfClosingInserting(Component.text(value.toString()));
         }
 
         return null;

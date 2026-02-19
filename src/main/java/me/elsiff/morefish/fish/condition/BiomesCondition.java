@@ -1,6 +1,7 @@
 package me.elsiff.morefish.fish.condition;
 
 import me.elsiff.morefish.lang.TagResolverUtil;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.Context;
 import net.kyori.adventure.text.minimessage.ParsingException;
 import net.kyori.adventure.text.minimessage.tag.Tag;
@@ -32,7 +33,7 @@ public class BiomesCondition extends FishCondition<List<Biome>> {
     @Override
     public @Nullable Tag resolve(String name, ArgumentQueue arguments, Context ctx) throws ParsingException {
         if (has(name)) {
-            return TagResolverUtil.fromList(value, arguments, ctx, b -> Tag.preProcessParsed(b.getKey().asString()));
+            return TagResolverUtil.fromList(value, arguments, ctx, b -> Tag.selfClosingInserting(Component.translatable(b.translationKey())));
         }
 
         return null;

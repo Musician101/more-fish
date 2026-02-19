@@ -1,6 +1,5 @@
 package me.elsiff.morefish.lang;
 
-import me.elsiff.morefish.fish.Fish;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.Context;
 import net.kyori.adventure.text.minimessage.ParsingException;
@@ -21,10 +20,11 @@ import java.util.function.Function;
 @NullMarked
 public interface TagResolverUtil {
 
+    @Nullable
     static <V> Tag fromList(List<V> values, ArgumentQueue argumentQueue, Context context, Function<V, Tag> tagMapper) {
         Argument arg = argumentQueue.popOr("Not enough arguments");
         if (arg.value().equals("size")) {
-            return Tag.preProcessParsed(values.size() + "");
+            return numberTag("size", values.size(), argumentQueue, context);
         }
 
         ParsingException ex = context.newException("index must be a number greater than 0.");
@@ -45,7 +45,7 @@ public interface TagResolverUtil {
         Argument arg = argumentQueue.popOr("Not enough arguments");
         String key = arg.value();
         if (key.equals("size")) {
-            return Tag.preProcessParsed(map.size() + "");
+            return numberTag("size", map.size(), argumentQueue, context);
         }
 
         K mappedKey = keyMapper.apply(key);
@@ -66,7 +66,7 @@ public interface TagResolverUtil {
         Argument arg = argumentQueue.popOr("Not enough arguments");
         String key = arg.value();
         if (key.equals("size")) {
-            return Tag.preProcessParsed(map.size() + "");
+            return numberTag("size", map.size(), argumentQueue, context);
         }
 
         V value = map.getOrDefault(keyMapper.apply(key), defaultValue);
@@ -104,10 +104,6 @@ public interface TagResolverUtil {
 
             return playerNameTag(player);
         });
-    }
-
-    static TagResolver catcher(OfflinePlayer player, Fish fish) {
-        return TagResolver.resolver(playerResolver(player), fish, fish.rarity(), fish.type());
     }
 
     static Tag playerNameTag(OfflinePlayer player) {

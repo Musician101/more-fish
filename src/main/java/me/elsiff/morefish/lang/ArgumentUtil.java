@@ -1,5 +1,6 @@
 package me.elsiff.morefish.lang;
 
+import me.elsiff.morefish.fish.Fish;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -40,6 +41,10 @@ public interface ArgumentUtil {
 
     static ComponentLike player(OfflinePlayer player) {
         return Argument.tagResolver(TagResolverUtil.playerResolver(player));
+    }
+
+    static ComponentLike fish(Fish fish) {
+        return Argument.tagResolver(TagResolver.resolver(fish, fish.rarity(), fish.type()));
     }
 
     static ComponentLike ordinal(int number) {

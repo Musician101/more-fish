@@ -1,6 +1,7 @@
 package me.elsiff.morefish.fish;
 
 import com.google.common.base.Preconditions;
+import me.elsiff.morefish.lang.TagResolverUtil;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
@@ -41,10 +42,11 @@ public record PlayerAnnouncement(PlayerAnnouncement.Type type, double radius) im
         if (has(name)) {
             String key = arguments.popOr(name + " has missing argument").value();
             return switch (key) {
-                case "type" -> Tag.preProcessParsed(type.toString().toLowerCase());
+                case "type" ->
+                        Tag.selfClosingInserting(Component.translatable("<lang:morefish.editor.shared.announcement." + type.toString().toLowerCase()));
                 case "radius" -> {
                     if (type == Type.RANGED) {
-                        yield Tag.preProcessParsed(radius + "");
+                        yield TagResolverUtil.numberTag("radius", radius, arguments, ctx);
                     }
 
                     yield null;

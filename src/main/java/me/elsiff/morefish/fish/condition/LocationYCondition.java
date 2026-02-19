@@ -1,6 +1,8 @@
 package me.elsiff.morefish.fish.condition;
 
+import me.elsiff.morefish.lang.TagResolverUtil;
 import me.elsiff.morefish.util.Range;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.Context;
 import net.kyori.adventure.text.minimessage.ParsingException;
 import net.kyori.adventure.text.minimessage.tag.Tag;
@@ -28,16 +30,14 @@ public class LocationYCondition extends FishCondition<Range<Double>> {
             if (arguments.hasNext()) {
                 String key = arguments.pop().value();
                 switch (key) {
-                    case "minimum" -> {
-                        return Tag.preProcessParsed(value.min() + "");
-                    }
-                    case "maximum" -> {
-                        return Tag.preProcessParsed(value.max() + "");
-                    }
+                    case "minimum":
+                        return TagResolverUtil.numberTag(key, value.min(), arguments, ctx);
+                    case "maximum":
+                        return TagResolverUtil.numberTag(key, value.max(), arguments, ctx);
                 }
             }
 
-            return Tag.preProcessParsed(value.min() + "-" + value.max());
+            return Tag.selfClosingInserting(Component.text(value.min() + "-" + value.max()));
         }
 
         return null;

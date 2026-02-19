@@ -30,6 +30,7 @@ public final class FishRarity extends FishAbstract<FishRarity> {
         this.color = color;
     }
 
+    @SuppressWarnings("PatternValidation")
     @Override
     public @Nullable Tag resolve(String name, ArgumentQueue arguments, Context ctx) throws ParsingException {
         if (has(name)) {
@@ -44,8 +45,7 @@ public final class FishRarity extends FishAbstract<FishRarity> {
                 }
                 case "filter-default-enabled" ->
                         TagResolverUtil.booleanTag(value, filterDefaultEnabled, arguments, ctx);
-                case "luck-of-the-sea-modifier" ->
-                        TagResolverUtil.fromResolver(luckOfTheSeaModifier, value, arguments, ctx);
+                case "luck-of-the-sea-modifier" -> luckOfTheSeaModifier.resolve(value, arguments, ctx);
                 case "weight" -> TagResolverUtil.numberTag(value, weight, arguments, ctx);
                 default -> super.resolve(name, arguments, ctx);
             };

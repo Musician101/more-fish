@@ -122,12 +122,13 @@ public abstract class FishAbstract<F extends FishAbstract<F>> implements Compara
             String value = arguments.popOr(tagKey + " needs at least 1 argument.").value();
             return switch (value) {
                 case "announcement" -> announcement.resolve(value, arguments, ctx);
-                case "commands" -> TagResolverUtil.fromList(commands, arguments, ctx, Tag::preProcessParsed);
+                case "commands" ->
+                        TagResolverUtil.fromList(commands, arguments, ctx, s -> Tag.selfClosingInserting(Component.text(s)));
                 case "conditions" -> conditions.resolve(value, arguments, ctx);
                 case "display-name" -> Tag.selfClosingInserting(ctx.deserialize(displayName));
                 case "do-not-sell" -> TagResolverUtil.booleanTag(value, doNotSell, arguments, ctx);
                 case "firework" -> TagResolverUtil.booleanTag(value, firework, arguments, ctx);
-                case "id" -> Tag.preProcessParsed(key.asString());
+                case "id" -> Tag.selfClosingInserting(Component.text(key.asString()));
                 case "no-display" -> TagResolverUtil.booleanTag(value, noDisplay, arguments, ctx);
                 case "price-multiplier" -> TagResolverUtil.numberTag(value, priceMultiplier, arguments, ctx);
                 case "skip-item-format" -> TagResolverUtil.booleanTag(value, skipItemFormat, arguments, ctx);
