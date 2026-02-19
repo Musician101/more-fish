@@ -14,24 +14,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 
 @NullMarked
-public class LuckOfTheSeaModifier implements ComponentLike, TagResolver {
+public record LuckOfTheSeaModifier(Type type, float amount) implements ComponentLike, TagResolver {
 
     public static final LuckOfTheSeaModifier NONE = new LuckOfTheSeaModifier(Type.FLAT, 0);
-    private final Type type;
-    private final float amount;
-
-    public LuckOfTheSeaModifier(Type type, float amount) {
-        this.type = type;
-        this.amount = amount;
-    }
-
-    public Type type() {
-        return type;
-    }
-
-    public float amount() {
-        return amount;
-    }
 
     @Override
     public @Nullable Tag resolve(String name, ArgumentQueue arguments, Context ctx) throws ParsingException {
