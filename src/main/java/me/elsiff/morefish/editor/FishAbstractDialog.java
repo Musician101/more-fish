@@ -7,16 +7,15 @@ import me.elsiff.morefish.fish.FishAbstract;
 import me.elsiff.morefish.gui.MusiDialog;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.UnknownNullability;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-import org.spongepowered.configurate.NodePath;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.function.Consumer;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
 @SuppressWarnings("UnstableApiUsage")
@@ -30,7 +29,6 @@ public abstract class FishAbstractDialog<F extends FishAbstract<F>> extends Musi
     protected static final String PRICE_MULTIPLIER = "price_multiplier";
     protected static final String SKIP_ITEM_FORMAT = "skip_item_format";
     protected final F fishAbstract;
-    protected final NodePath sharedPath = NodePath.path("editor", "shared");
 
     public FishAbstractDialog(Component label, F fishAbstract) {
         super(label);
@@ -42,45 +40,45 @@ public abstract class FishAbstractDialog<F extends FishAbstract<F>> extends Musi
     }
 
     protected DialogInput commands() {
-        Component label = lang().getComponent(sharedPath.withAppendedChild(COMMANDS));
+        Component label = Component.translatable("morefish.editor.shared.commands");
         String initial = String.join("\n", fishAbstract.commands());
         return DialogInput.text(COMMANDS, label).initial(initial).maxLength(Integer.MAX_VALUE).multiline(MultilineOptions.create(Integer.MAX_VALUE, 100)).build();
     }
 
     protected DialogInput displayName() {
-        Component label = lang().getComponent(sharedPath.withAppendedChild("display-name"));
+        Component label = Component.translatable("morefish.editor.shared.display-name");
         return textInput(DISPLAY_NAME, label, fishAbstract.displayName());
     }
 
     protected DialogInput doNotSell() {
-        Component label = lang().getComponent(sharedPath.withAppendedChild("do-not-sell"));
+        Component label = Component.translatable("morefish.editor.shared.do-not-sell");
         return boolInput(DO_NOT_SELL, label, fishAbstract.doNotSell());
     }
 
     protected DialogInput firework() {
-        Component label = lang().getComponent(sharedPath.withAppendedChild(FIREWORK));
+        Component label = Component.translatable("morefish.editor.shared.firework");
         return boolInput(FIREWORK, label, fishAbstract.noDisplay());
     }
 
     protected DialogInput noDisplay() {
-        Component label = lang().getComponent(sharedPath.withAppendedChild("no-display"));
+        Component label = Component.translatable("morefish.editor.shared.no-display");
         return boolInput(NO_DISPLAY_NAME, label, fishAbstract.noDisplay());
     }
 
     protected DialogInput priceMultiplier() {
-        Component label = lang().getComponent(sharedPath.plus(NodePath.path("price-multiplier", "label")));
+        Component label = Component.translatable("morefish.editor.shared.price-multiplier.label");
         return textInput(PRICE_MULTIPLIER, label, fishAbstract.priceMultiplier());
     }
 
     protected DialogInput skipItemFormat() {
-        Component label = lang().getComponent(sharedPath.withAppendedChild("skip-item-format"));
+        Component label = Component.translatable("morefish.editor.shared.skip-item-format");
         return boolInput(SKIP_ITEM_FORMAT, label, fishAbstract.noDisplay());
     }
 
     protected boolean saveInternal(DialogResponseView view, Audience audience) {
         Float priceMultiplier = parseNumber(view.getText(PRICE_MULTIPLIER), Float::parseFloat, f -> f > 0);
         if (priceMultiplier == null) {
-            Component errorMessage = lang().getComponent(sharedPath.plus(NodePath.path("price-multiplier", "error")));
+            Component errorMessage = Component.translatable("morefish.editor.shared.price-multiplier.error");
             audience.showDialog(new ErrorDialog(errorMessage, this).build());
             return false;
         }
@@ -104,7 +102,7 @@ public abstract class FishAbstractDialog<F extends FishAbstract<F>> extends Musi
 
     protected abstract void save() throws IOException;
 
-    public <V> boolean attemptSave(Audience audience, @Nullable V newValue, @Nullable V oldValue, Consumer<@Nullable V> applier) {
+    public <V> boolean attemptSave(Audience audience, @Nullable V newValue, @Nullable V oldValue, Consumer<@UnknownNullability V> applier) {
         applier.accept(newValue);
         try {
             save();

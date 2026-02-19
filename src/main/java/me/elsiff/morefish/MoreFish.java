@@ -12,18 +12,17 @@ import me.elsiff.morefish.fish.registry.FishTypes;
 import me.elsiff.morefish.hooker.McmmoHooker;
 import me.elsiff.morefish.hooker.MusiBoardHooker;
 import me.elsiff.morefish.hooker.VaultHooker;
+import me.elsiff.morefish.lang.ArgumentUtil;
 import me.elsiff.morefish.lang.Lang;
-import me.elsiff.morefish.lang.TagResolverUtil;
 import me.elsiff.morefish.records.FishingLogs;
 import me.elsiff.morefish.shop.FishShopFilterDialog;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.tag.resolver.Formatter;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.minimessage.translation.Argument;
 import org.bukkit.Server;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jspecify.annotations.NullMarked;
-import org.spongepowered.configurate.NodePath;
 
 import java.io.IOException;
 import java.util.List;
@@ -55,16 +54,16 @@ public final class MoreFish extends JavaPlugin {
         getServer().getOnlinePlayers().forEach(player -> {
             if (FishShopFilterDialog.FILTERS.containsKey(player.getUniqueId())) {
                 player.getScheduler().run(this, t -> {
-                    player.sendMessage(lang.getComponent("gui", "closed-config-update"));
                     player.closeDialog();
+                    player.sendMessage(Component.translatable("morefish.gui.closed-config-update"));
                 }, null);
             }
 
             Component title = player.getOpenInventory().title();
-            if (title.equals(lang.getComponent("main", "shop", "gui-title"))) {
+            if (title.equals(Component.translatable("morefish.main.shop.gui-title"))) {
                 player.getScheduler().run(this, t -> {
                     player.closeInventory();
-                    player.sendMessage(lang.getComponent("gui", "closed-config-update"));
+                    player.sendMessage(Component.translatable("morefish.gui.closed-config-update"));
                 }, null);
             }
 
@@ -83,33 +82,33 @@ public final class MoreFish extends JavaPlugin {
             autoRunner.enable();
         }
 
-        getComponentLogger().info(lang.getComponent(NodePath.path("main", "config", "config", "success")));
+
+        getComponentLogger().info(Component.translatable("morefish.main.config.config.success"));
     }
 
     public void applyFishConfig() {
         closeGUI();
-        NodePath path = NodePath.path("main", "config", "fish");
         try {
             rarities.load();
             types.load();
-            TagResolver rarityCount = Formatter.number("rarity-count", rarities.values().size());
-            TagResolver typeCount = Formatter.number("type-count", types.values().size());
-            TagResolver resolver = TagResolver.resolver(rarityCount, typeCount);
-            getComponentLogger().info(lang.getComponent(path.withAppendedChild("success"), resolver));
+            ComponentLike rarityCount = Argument.numeric("rarity-count", rarities.values().size());
+            ComponentLike typeCount = Argument.numeric("type-count", types.values().size());
+            Component message = Component.translatable("morefish.main.config.fish.success", rarityCount, typeCount);
+            getComponentLogger().info(message);
         }
         catch (IOException e) {
-            getComponentLogger().info(lang.getComponent(path.withAppendedChild("error"), TagResolverUtil.error(e.getMessage())), e);
+            Component message = Component.translatable("morefish.main.config.fish.success", ArgumentUtil.error(e.getMessage()));
+            getComponentLogger().info(message, e);
         }
     }
 
     public void applyLangConfig() {
-        NodePath path = NodePath.path("main", "config", "lang");
         try {
             lang.load();
-            getComponentLogger().info(lang.getComponent(path.withAppendedChild("success")));
+            getComponentLogger().info(Component.translatable("morefish.main.config.lang.success"));
         }
-        catch (Exception e) {
-            getComponentLogger().info(lang.getComponent(path.withAppendedChild("error"), TagResolverUtil.error(e.getMessage())), e);
+        catch (IOException e) {
+            getSLF4JLogger().error("An error occurred while trying to load language files.", e);
         }
     }
 
@@ -171,7 +170,7 @@ public final class MoreFish extends JavaPlugin {
             autoRunner.disable();
         }
 
-        getComponentLogger().info(lang.getComponent("main", "plugin", "disabled"));
+        getComponentLogger().info(Component.translatable("morefish.main.plugin.disabled"));
     }
 
     @Override
@@ -186,8 +185,7 @@ public final class MoreFish extends JavaPlugin {
         PluginManager pm = server.getPluginManager();
         pm.registerEvents(new FishingListener(), this);
         pm.registerEvents(fishBags, this);
-        //Bukkitier.registerCommand(getPlugin(), new MFMain(), "mf");
         PaperMusiCommand.newAdventureInstance(this).registerCommand(new MFMain(), List.of("mf", "fish"));
-        getComponentLogger().info(lang.getComponent("main", "plugin", "enabled"));
+        getComponentLogger().info(Component.translatable("morefish.main.plugin.enabled"));
     }
 }

@@ -11,38 +11,30 @@ import me.elsiff.morefish.command.argument.FishRecordsTypeArgumentType;
 import me.elsiff.morefish.command.argument.FishRecordsTypeArgumentType.FishRecordsType;
 import me.elsiff.morefish.command.argument.UUIDArgumentType;
 import me.elsiff.morefish.competition.FishingCompetition;
-import me.elsiff.morefish.lang.TagResolverUtil;
+import me.elsiff.morefish.lang.ArgumentUtil;
 import me.elsiff.morefish.records.FishingLogs;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jspecify.annotations.NullMarked;
-import org.spongepowered.configurate.NodePath;
 
 import java.util.List;
 import java.util.UUID;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
 class MFClear implements MFCommand, PaperLiteralCommand.AdventureFormat {
 
-    private static final NodePath CLEAR_PATH = NodePath.path("command", "clear");
-    private static final NodePath COMPETITION_PATH = CLEAR_PATH.withAppendedChild("competition");
-    private static final NodePath ALL_TIME_PATH = CLEAR_PATH.withAppendedChild("alltime");
-    private static final NodePath SUCCESS_PATH = NodePath.path("success");
-    private static final NodePath PLAYER_SUCCESS_PATH = NodePath.path("player").plus(SUCCESS_PATH);
-
     private void clearAll(CommandSourceStack source, FishRecordsType recordsType) {
         if (recordsType == FishRecordsType.COMPETITION) {
             getCompetition().clear();
-            sendMessage(source, lang().getComponent(COMPETITION_PATH.plus(SUCCESS_PATH)));
+            sendMessage(source, Component.translatable("morefish.command.clear.competition.player-success"));
         }
         else if (recordsType == FishRecordsType.ALLTIME) {
             getFishingLogs().clear();
-            sendMessage(source, lang().getComponent(ALL_TIME_PATH.plus(SUCCESS_PATH)));
+            sendMessage(source, Component.translatable("morefish.command.clear.alltime.success"));
         }
     }
 
@@ -66,7 +58,7 @@ class MFClear implements MFCommand, PaperLiteralCommand.AdventureFormat {
 
     @Override
     public ComponentLike description(CommandSourceStack source) {
-        return lang().getComponent(CLEAR_PATH.withAppendedChild("description"));
+        return Component.translatable("morefish.command.clear.description");
     }
 
     @Override
@@ -74,7 +66,7 @@ class MFClear implements MFCommand, PaperLiteralCommand.AdventureFormat {
         CommandSourceStack source = context.getSource();
         clearAll(source, FishRecordsType.COMPETITION);
         getCompetition().clear();
-        sendMessage(source, lang().getComponent(CLEAR_PATH.plus(SUCCESS_PATH)));
+        sendMessage(source, Component.translatable("morefish.command.clear.success"));
         return 1;
     }
 
@@ -123,11 +115,11 @@ class MFClear implements MFCommand, PaperLiteralCommand.AdventureFormat {
             OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
             if (recordsType == FishRecordsType.COMPETITION) {
                 getCompetition().clearRecordHolder(uuid);
-                sendMessage(source, lang().getComponent(COMPETITION_PATH.plus(PLAYER_SUCCESS_PATH), TagResolverUtil.playerNameResolver(player)));
+                sendMessage(source, Component.translatable("morefish.command.clear.competition.player-success", ArgumentUtil.player(player)));
             }
             else if (recordsType == FishRecordsType.ALLTIME) {
                 getFishingLogs().clearRecordHolder(uuid);
-                sendMessage(source, lang().getComponent(ALL_TIME_PATH.plus(PLAYER_SUCCESS_PATH), TagResolverUtil.playerNameResolver(player)));
+                sendMessage(source, Component.translatable("morefish.command.clear.alltime.player-success", ArgumentUtil.player(player)));
             }
 
             return 1;

@@ -1,10 +1,14 @@
 package me.elsiff.morefish.fish.condition;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.VirtualComponent;
 import net.kyori.adventure.text.minimessage.Context;
 import net.kyori.adventure.text.minimessage.ParsingException;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.ArgumentQueue;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.minimessage.translation.Argument;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NullMarked;
@@ -13,7 +17,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.Optional;
 
 @NullMarked
-public class FishConditions implements TagResolver {
+public class FishConditions implements ComponentLike, TagResolver {
 
     @Nullable
     private BiomesCondition biomes;
@@ -181,5 +185,10 @@ public class FishConditions implements TagResolver {
     @Override
     public boolean has(String name) {
         return name.equals("conditions");
+    }
+
+    @Override
+    public Component asComponent() {
+        return (VirtualComponent) Argument.tagResolver(this);
     }
 }

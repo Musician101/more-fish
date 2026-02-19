@@ -24,7 +24,7 @@ public class RainingCondition extends FishCondition<Boolean> {
     @Override
     public @Nullable Tag resolve(String name, ArgumentQueue arguments, Context ctx) throws ParsingException {
         if (has(name)) {
-            return TagResolverUtil.booleanTag(value);
+            return TagResolverUtil.booleanTag(name, value, arguments, ctx);
         }
 
         return null;

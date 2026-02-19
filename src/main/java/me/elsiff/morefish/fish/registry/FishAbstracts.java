@@ -67,9 +67,9 @@ public abstract sealed class FishAbstracts<F extends FishAbstract<F>> implements
             .register(NamespacedKey.class, new NamespacedKeySerializer())
             .build();
     protected final List<F> values = new ArrayList<>();
+    protected final Class<F> valueClass;
     private final String pluralName;
     private final String singularName;
-    protected Class<F> valueClass;
 
     public FishAbstracts(String singularName, String pluralName, Class<F> valueClass) {
         this.singularName = singularName;

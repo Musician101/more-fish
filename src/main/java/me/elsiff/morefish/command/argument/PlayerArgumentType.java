@@ -3,7 +3,6 @@ package me.elsiff.morefish.command.argument;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
@@ -34,7 +33,7 @@ public class PlayerArgumentType implements CustomArgumentType.Converted<Player, 
     }
 
     @Override
-    public @Nullable Player convert(String nativeType) throws CommandSyntaxException {
+    public @Nullable Player convert(String nativeType) {
         return Bukkit.getPlayerExact(nativeType);
     }
 }

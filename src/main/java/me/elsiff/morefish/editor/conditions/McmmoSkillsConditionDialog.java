@@ -7,8 +7,8 @@ import me.elsiff.morefish.editor.ErrorDialog;
 import me.elsiff.morefish.fish.condition.McmmoSkillsCondition;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.tag.Tag;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.minimessage.translation.Argument;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
@@ -18,8 +18,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
 @SuppressWarnings("UnstableApiUsage")
@@ -35,8 +33,8 @@ public class McmmoSkillsConditionDialog extends FishConditionDialog<McmmoSkillsC
         Arrays.stream(PrimarySkillType.values()).sorted(Comparator.comparing(PrimarySkillType::toString)).forEach(s -> {
             int level = condition().value().getOrDefault(s, 0);
             String skillName = s.toString().toLowerCase();
-            TagResolver resolver = TagResolver.resolver("mcmmo-skill", Tag.preProcessParsed(s.toString()));
-            Component label = lang().getComponent(conditionPath.withAppendedChild("mcmmo-skill"), resolver);
+            ComponentLike argument = Argument.string("mcmmo-skill", s.toString());
+            Component label = Component.translatable(conditionPath + "mcmmo-skill", argument);
             list.add(textInput(skillName, label, level));
         });
         return list;
@@ -48,7 +46,7 @@ public class McmmoSkillsConditionDialog extends FishConditionDialog<McmmoSkillsC
         for (PrimarySkillType s : PrimarySkillType.values()) {
             Integer level = parseNumber(s.toString(), Integer::parseInt, i -> i >= 0);
             if (level == null) {
-                Component errorMessage = lang().getComponent(conditionPath.withAppendedChild("error"));
+                Component errorMessage = Component.translatable(conditionPath + "error");
                 audience.showDialog(new ErrorDialog(errorMessage, this).build());
                 return;
             }

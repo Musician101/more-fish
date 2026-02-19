@@ -9,9 +9,9 @@ import me.elsiff.morefish.fish.FishRarity;
 import me.elsiff.morefish.fish.FishType;
 import me.elsiff.morefish.gui.MusiDialog;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.translation.Argument;
 import org.bukkit.NamespacedKey;
 import org.jspecify.annotations.NullMarked;
-import org.spongepowered.configurate.NodePath;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
 @SuppressWarnings("UnstableApiUsage")
@@ -31,17 +30,13 @@ public class NewFishTypeDialog extends MusiDialog {
     private static final String RARITY = "rarity";
 
     public NewFishTypeDialog() {
-        super(lang().getComponent(path().withAppendedChild("label")));
-    }
-
-    private static NodePath path() {
-        return NodePath.path("editor", "type", "selector", "new");
+        super(Component.translatable("morefish.editor.type.selector.new.label"));
     }
 
     @Override
     protected List<DialogInput> inputs() {
-        DialogInput id = textInput(ID, lang().getComponent(path().plus(NodePath.path("id", "label"))));
-        DialogInput displayName = textInput(DISPLAY_NAME, lang().getComponent(path().plus(NodePath.path("display-name", "label"))));
+        DialogInput id = textInput(ID, Component.translatable("morefish.editor.type.selector.new.id.label"));
+        DialogInput displayName = textInput(DISPLAY_NAME, Component.translatable("morefish.editor.type.selector.new.display-name.label"));
         return List.of(id, displayName, rarity());
     }
 
@@ -51,10 +46,10 @@ public class NewFishTypeDialog extends MusiDialog {
         rarities.sort(Comparator.reverseOrder());
         FishRarity initial = rarities.getFirst();
         rarities.stream().sorted(Comparator.reverseOrder()).forEach(r -> {
-            Component label = lang().getComponent(r, "main", "item-format", "display-name");
+            Component label = Component.translatable("morefish.main.item-format.display-name", r);
             entries.add(OptionEntry.create(r.getKey().asString(), label, initial.equals(r)));
         });
-        Component label = lang().getComponent(path().withAppendedChild("rarity"));
+        Component label = Component.translatable("morefish.editor.type.selector.new.rarity.label");
         return singleOptionInput(RARITY, label, entries);
     }
 
@@ -63,7 +58,7 @@ public class NewFishTypeDialog extends MusiDialog {
         FishTypesDialog fishTypesDialog = new FishTypesDialog();
         ActionButton confirm = confirmButton((view, audience) -> {
             String keyString = view.getText(ID);
-            Component errorMessage = lang().getComponent(path().plus(NodePath.path("id", "error", "format")));
+            Component errorMessage = Component.translatable("morefish.editor.type.selector.new.id.error.format");
             ErrorDialog errorDialog = new ErrorDialog(errorMessage, this);
             if (keyString == null) {
                 audience.showDialog(errorDialog.build());
@@ -77,7 +72,7 @@ public class NewFishTypeDialog extends MusiDialog {
             }
 
             if (getPlugin().types().get(typeKey).isPresent()) {
-                Component alreadyExistsMessage = lang().getComponent(path().plus(NodePath.path("id", "error", "already-exists")));
+                Component alreadyExistsMessage = Component.translatable("morefish.editor.type.selector.new.id.error.already-exists");
                 audience.showDialog(new ErrorDialog(alreadyExistsMessage, this).build());
                 return;
             }
@@ -90,14 +85,14 @@ public class NewFishTypeDialog extends MusiDialog {
 
             Optional<FishRarity> rarity = rarityKey == null ? Optional.empty() : getPlugin().rarities().get(rarityKey);
             if (rarity.isEmpty()) {
-                Component rarityError = lang().getComponent(path().plus(NodePath.path("rarity", "error")));
+                Component rarityError = Component.translatable("morefish.editor.type.selector.new.rarity.error");
                 audience.showDialog(new ErrorDialog(rarityError, this).build());
                 return;
             }
 
             String displayName = view.getText(DISPLAY_NAME);
             if (displayName == null || displayName.isBlank()) {
-                Component displayNameError = lang().getComponent(path().plus(NodePath.path("display-name", "error")));
+                Component displayNameError = Component.translatable("morefish.editor.type.selector.new.display-name.error");
                 audience.showDialog(new ErrorDialog(displayNameError, this).build());
                 return;
             }
@@ -108,8 +103,9 @@ public class NewFishTypeDialog extends MusiDialog {
                 audience.showDialog(fishTypesDialog.build());
             }
             catch (IOException e) {
-                Component message = lang().getComponent(path().withAppendedChild("save-failed"));
+                Component message = Component.translatable("morefish.editor.type.selector.new.save-failed", Argument.string("name", keyString));
                 audience.showDialog(new ErrorDialog(message, fishTypesDialog).build());
+                getPlugin().getComponentLogger().error(message, e);
             }
         });
         return DialogType.confirmation(confirm, backButton((v, a) -> a.showDialog(fishTypesDialog.build())));

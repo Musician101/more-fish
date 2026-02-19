@@ -3,11 +3,15 @@ package me.elsiff.morefish.fish;
 import me.elsiff.morefish.fish.PlayerAnnouncement.Type;
 import me.elsiff.morefish.fish.condition.FishConditions;
 import me.elsiff.morefish.lang.TagResolverUtil;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.VirtualComponent;
 import net.kyori.adventure.text.minimessage.Context;
 import net.kyori.adventure.text.minimessage.ParsingException;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.ArgumentQueue;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.minimessage.translation.Argument;
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
 import org.jspecify.annotations.NullMarked;
@@ -16,7 +20,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.List;
 
 @NullMarked
-public abstract class FishAbstract<F extends FishAbstract<F>> implements Comparable<F>, Keyed, TagResolver {
+public abstract class FishAbstract<F extends FishAbstract<F>> implements Comparable<F>, ComponentLike, Keyed, TagResolver {
 
     protected final NamespacedKey key;
     private final String tagKey;
@@ -121,12 +125,12 @@ public abstract class FishAbstract<F extends FishAbstract<F>> implements Compara
                 case "commands" -> TagResolverUtil.fromList(commands, arguments, ctx, Tag::preProcessParsed);
                 case "conditions" -> conditions.resolve(value, arguments, ctx);
                 case "display-name" -> Tag.selfClosingInserting(ctx.deserialize(displayName));
-                case "do-not-sell" -> TagResolverUtil.booleanTag(doNotSell);
-                case "firework" -> TagResolverUtil.booleanTag(firework);
+                case "do-not-sell" -> TagResolverUtil.booleanTag(value, doNotSell, arguments, ctx);
+                case "firework" -> TagResolverUtil.booleanTag(value, firework, arguments, ctx);
                 case "id" -> Tag.preProcessParsed(key.asString());
-                case "no-display" -> TagResolverUtil.booleanTag(noDisplay);
+                case "no-display" -> TagResolverUtil.booleanTag(value, noDisplay, arguments, ctx);
                 case "price-multiplier" -> TagResolverUtil.numberTag(value, priceMultiplier, arguments, ctx);
-                case "skip-item-format" -> TagResolverUtil.booleanTag(skipItemFormat);
+                case "skip-item-format" -> TagResolverUtil.booleanTag(value, skipItemFormat, arguments, ctx);
                 default -> null;
             };
         }
@@ -145,5 +149,10 @@ public abstract class FishAbstract<F extends FishAbstract<F>> implements Compara
 
     public void doNotSell(boolean doNotSell) {
         this.doNotSell = doNotSell;
+    }
+
+    @Override
+    public Component asComponent() {
+        return (VirtualComponent) Argument.tagResolver(this);
     }
 }

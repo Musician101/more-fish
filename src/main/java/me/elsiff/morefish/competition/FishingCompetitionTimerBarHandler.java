@@ -1,12 +1,11 @@
 package me.elsiff.morefish.competition;
 
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
-import me.elsiff.morefish.lang.TagResolverUtil;
+import me.elsiff.morefish.lang.ArgumentUtil;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.bossbar.BossBar.Color;
 import net.kyori.adventure.bossbar.BossBar.Overlay;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.EventHandler;
@@ -16,12 +15,10 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-import org.spongepowered.configurate.NodePath;
 
 import java.util.concurrent.TimeUnit;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
 public final class FishingCompetitionTimerBarHandler implements Listener {
@@ -71,9 +68,7 @@ public final class FishingCompetitionTimerBarHandler implements Listener {
     }
 
     private Component timerBarTitle(long remainingSeconds) {
-        NodePath path = NodePath.path("main", "timer-bar-title");
-        TagResolver resolver = TagResolverUtil.timeRemaining(remainingSeconds);
-        return lang().getComponent(path, resolver);
+        return Component.translatable("morefish.main.timer-bar-title", ArgumentUtil.timeRemaining(remainingSeconds));
     }
 
     @EventHandler

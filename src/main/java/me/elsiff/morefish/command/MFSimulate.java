@@ -17,17 +17,13 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
-import org.spongepowered.configurate.NodePath;
 
 import java.util.List;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
 public class MFSimulate implements MFCommand, PaperLiteralCommand.AdventureFormat {
-
-    private static final NodePath SIMULATE_PATH = NodePath.path("command", "simulate");
 
     @Override
     public boolean canUse(CommandSourceStack source) {
@@ -36,7 +32,7 @@ public class MFSimulate implements MFCommand, PaperLiteralCommand.AdventureForma
 
     @Override
     public ComponentLike description(CommandSourceStack source) {
-        return lang().getComponent(SIMULATE_PATH.withAppendedChild("description"));
+        return Component.translatable("morefish.command.simulate.description");
     }
 
     @Override
@@ -44,7 +40,7 @@ public class MFSimulate implements MFCommand, PaperLiteralCommand.AdventureForma
         Player player = (Player) context.getSource().getSender();
         ItemStack fishingRod = player.getInventory().getItemInMainHand();
         if (fishingRod.getType() != Material.FISHING_ROD) {
-            player.sendMessage(lang().getComponent(SIMULATE_PATH.withAppendedChild("no-rod")));
+            player.sendMessage(Component.translatable("morefish.command.simulate.no-rod"));
             return 0;
         }
 

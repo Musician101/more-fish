@@ -11,8 +11,6 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
-import static me.elsiff.morefish.MoreFish.lang;
-
 @NullMarked
 @SuppressWarnings("UnstableApiUsage")
 public class XpLevelConditionDialog extends FishConditionDialog<XpLevelCondition> {
@@ -27,7 +25,7 @@ public class XpLevelConditionDialog extends FishConditionDialog<XpLevelCondition
     protected void callback(DialogResponseView view, Audience audience) {
         Integer level = parseNumber(view.getText(XP_LEVEL), Integer::parseInt, i -> i >= 0);
         if (level == null) {
-            Component errorMessage = lang().getComponent(conditionPath.withAppendedChild("error"));
+            Component errorMessage = Component.translatable(conditionPath + ".error");
             audience.showDialog(new ErrorDialog(errorMessage, this).build());
             return;
         }
@@ -37,7 +35,7 @@ public class XpLevelConditionDialog extends FishConditionDialog<XpLevelCondition
 
     @Override
     protected List<DialogInput> inputs() {
-        Component label = lang().getComponent(conditionPath.withAppendedChild("level"));
+        Component label = Component.translatable(conditionPath + ".level");
         return List.of(textInput(XP_LEVEL, label, condition().value()));
     }
 

@@ -14,22 +14,17 @@ import me.elsiff.morefish.command.argument.FishTypeArgumentType;
 import me.elsiff.morefish.command.argument.PlayerArgumentType;
 import me.elsiff.morefish.fish.Fish;
 import me.elsiff.morefish.fish.FishType;
-import me.elsiff.morefish.lang.TagResolverUtil;
+import me.elsiff.morefish.lang.ArgumentUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
-import org.spongepowered.configurate.NodePath;
 
 import java.util.List;
 
-import static me.elsiff.morefish.MoreFish.lang;
-
 @NullMarked
 class MFGive implements MFCommand, PaperLiteralCommand.AdventureFormat {
-
-    private static final NodePath GIVE_PATH = NodePath.path("command", "give");
 
     private static void giveFish(CommandContext<CommandSourceStack> context, FishType fishType, double length, int amount) {
         Player player = PlayerArgumentType.getPlayer(context, "player");
@@ -39,15 +34,17 @@ class MFGive implements MFCommand, PaperLiteralCommand.AdventureFormat {
         player.getWorld().dropItem(player.getLocation(), itemStack);
         CommandSourceStack source = context.getSource();
         if (!(source.getSender() instanceof Player p && p.getUniqueId().equals(player.getUniqueId()))) {
-            source.getSender().sendMessage(lang().getComponent(GIVE_PATH.withAppendedChild("sender"), fishType, TagResolverUtil.playerNameResolver(player)));
+            Component message = Component.translatable("morefish.command.give.sender", fishType, ArgumentUtil.player(player));
+            source.getSender().sendMessage(message);
         }
 
-        player.sendMessage(lang().getComponent(GIVE_PATH.withAppendedChild("receiver"), fishType));
+        Component message = Component.translatable("morefish.command.give.receiver", fishType);
+        player.sendMessage(message);
     }
 
     @Override
     public ComponentLike description(CommandSourceStack source) {
-        return lang().getComponent("command", "give", "description");
+        return Component.translatable("morefish.command.give.description");
     }
 
     @Override

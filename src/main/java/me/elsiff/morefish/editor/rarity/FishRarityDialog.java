@@ -10,18 +10,15 @@ import me.elsiff.morefish.editor.FishAbstractDialog;
 import me.elsiff.morefish.editor.LuckOfTheSeaModifierDialog;
 import me.elsiff.morefish.editor.conditions.FishConditionsDialog;
 import me.elsiff.morefish.fish.FishRarity;
-import me.elsiff.morefish.lang.TagResolverUtil;
+import me.elsiff.morefish.lang.ArgumentUtil;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.jspecify.annotations.NullMarked;
-import org.spongepowered.configurate.NodePath;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
 @SuppressWarnings("UnstableApiUsage")
@@ -31,20 +28,12 @@ public class FishRarityDialog extends FishAbstractDialog<FishRarity> {
     private static final String WEIGHT = "weight";
 
     public FishRarityDialog(FishRarity rarity) {
-        super(label(rarity), rarity);
-    }
-
-    private static NodePath path() {
-        return NodePath.path("editor", "rarity", "selected");
-    }
-
-    private static Component label(FishRarity rarity) {
-        return lang().getComponent(path().plus(NodePath.path("label", "internal")), rarity);
+        super(Component.translatable("morefish.editor.rarity.selected.label.internal", rarity), rarity);
     }
 
     @Override
     protected DialogBase base() {
-        Component externalLabel = lang().getComponent(path().plus(NodePath.path("label", "external")), fishAbstract);
+        Component externalLabel = Component.translatable("morefish.editor.rarity.selected.label.external", fishAbstract);
         return DialogBase.builder(label).externalTitle(externalLabel).inputs(inputs()).body(body()).build();
     }
 
@@ -55,8 +44,7 @@ public class FishRarityDialog extends FishAbstractDialog<FishRarity> {
 
     @Override
     protected Component generalErrorMessage(Throwable throwable) {
-        TagResolver tagResolver = TagResolver.resolver(fishAbstract, TagResolverUtil.error(throwable.getMessage()));
-        return lang().getComponent(path().withAppendedChild("save-failed"), tagResolver);
+        return Component.translatable("morefish.editor.rarity.selected.save-failed", ArgumentUtil.error(throwable.getMessage()), fishAbstract);
     }
 
     @Override
@@ -65,12 +53,12 @@ public class FishRarityDialog extends FishAbstractDialog<FishRarity> {
     }
 
     private DialogInput filterDefault() {
-        Component label = lang().getComponent(path().withAppendedChild("filter-default"));
+        Component label = Component.translatable("morefish.editor.rarity.selected.filter-default");
         return boolInput(FILTER_DEFAULT, label, fishAbstract.filterDefaultEnabled());
     }
 
     private DialogInput weight() {
-        Component label = lang().getComponent(path().plus(NodePath.path(WEIGHT, "label")));
+        Component label = Component.translatable("morefish.editor.rarity.selected.weight.label");
         return textInput(WEIGHT, label, fishAbstract.weight());
     }
 
@@ -95,7 +83,7 @@ public class FishRarityDialog extends FishAbstractDialog<FishRarity> {
 
             Integer weight = parseNumber(view.getText(WEIGHT), Integer::parseInt, i -> i > 0);
             if (weight == null) {
-                Component errorMessage = lang().getComponent(path().plus(NodePath.path(WEIGHT, "error")));
+                Component errorMessage = Component.translatable("morefish.editor.rarity.selected.weight.error");
                 audience.showDialog(new ErrorDialog(errorMessage, this).build());
                 return;
             }
@@ -107,8 +95,7 @@ public class FishRarityDialog extends FishAbstractDialog<FishRarity> {
                 audience.showDialog(new FishRaritiesDialog().build());
             }
             catch (IOException e) {
-                TagResolver tagResolver = TagResolver.resolver(fishAbstract, TagResolverUtil.error(e.getMessage()));
-                Component message = lang().getComponent(path().withAppendedChild("save-failed"), tagResolver);
+                Component message = Component.translatable("morefish.editor.rarity.selected.save-failed", ArgumentUtil.error(e.getMessage()), fishAbstract);
                 getPlugin().getComponentLogger().error(message, e);
                 audience.showDialog(new ErrorDialog(message, this).build());
             }
@@ -122,8 +109,7 @@ public class FishRarityDialog extends FishAbstractDialog<FishRarity> {
                 audience.showDialog(new FishRaritiesDialog().build());
             }
             catch (IOException e) {
-                TagResolver tagResolver = TagResolver.resolver(fishAbstract, TagResolverUtil.error(e.getMessage()));
-                Component message = lang().getComponent(path().withAppendedChild("delete-failed"), tagResolver);
+                Component message = Component.translatable("morefish.editor.rarity.selected.delete-failed", ArgumentUtil.error(e.getMessage()), fishAbstract);
                 getPlugin().getComponentLogger().error(message, e);
                 audience.showDialog(new ErrorDialog(message, this).build());
             }

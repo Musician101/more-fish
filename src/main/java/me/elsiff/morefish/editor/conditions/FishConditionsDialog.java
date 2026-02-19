@@ -6,14 +6,13 @@ import io.papermc.paper.registry.data.dialog.type.DialogType;
 import io.papermc.paper.registry.set.RegistrySet;
 import me.elsiff.morefish.editor.FishAbstractDialog;
 import me.elsiff.morefish.gui.MusiDialog;
+import net.kyori.adventure.text.Component;
 import org.jspecify.annotations.NullMarked;
-import org.spongepowered.configurate.NodePath;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
 @SuppressWarnings("UnstableApiUsage")
@@ -22,12 +21,8 @@ public class FishConditionsDialog extends MusiDialog {
     final FishAbstractDialog<?> fishAbstractDialog;
 
     public FishConditionsDialog(FishAbstractDialog<?> fishAbstractDialog) {
-        super(lang().getComponent(path().withAppendedChild("label")));
+        super(Component.translatable("morefish.editor.shared.conditions.label"));
         this.fishAbstractDialog = fishAbstractDialog;
-    }
-
-    private static NodePath path() {
-        return NodePath.path("editor", "shared", "conditions");
     }
 
     @Override

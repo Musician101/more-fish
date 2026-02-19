@@ -15,33 +15,29 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NullMarked;
-import org.spongepowered.configurate.NodePath;
 
 import java.util.List;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
 class MFFishingLogs implements MFCommand, PaperLiteralCommand.AdventureFormat {
-
-    private static final NodePath FISHING_LOGS_PATH = NodePath.path("command", "fishing-logs");
 
     private static void showRecords(CommandSourceStack source, int page, SortType sortType) {
         Player player = (Player) source.getSender();
         List<FishRecord> fullList = getPlugin().getFishingLogs().getFisher(player.getUniqueId());
         List<FishRecord> records = fullList.stream().skip((page - 1) * 8L).limit(8).sorted(sortType.reversed()).toList();
         if (records.isEmpty()) {
-            player.sendMessage(lang().getComponent(FISHING_LOGS_PATH.withAppendedChild("none")));
+            player.sendMessage(Component.translatable("morefish.command.fishing-logs.none"));
             return;
         }
 
-        records.forEach(record -> player.sendMessage(lang().getComponent(FISHING_LOGS_PATH.withAppendedChild("record"), record)));
+        records.forEach(record -> player.sendMessage(Component.translatable("morefish.command.fishing-logs.record", record)));
     }
 
     @Override
     public ComponentLike description(CommandSourceStack source) {
-        return lang().getComponent("command", "fishing_logs", "description");
+        return Component.translatable("morefish.command.fishing-logs.description");
     }
 
     @Override

@@ -5,9 +5,9 @@ import io.musician101.musiboard.scoreboard.MusiScoreboard;
 import io.musician101.musiboard.scoreboard.MusiScoreboardManager;
 import io.papermc.paper.scoreboard.numbers.NumberFormat;
 import me.elsiff.morefish.command.argument.SortArgumentType.SortType;
-import me.elsiff.morefish.lang.TagResolverUtil;
+import me.elsiff.morefish.lang.ArgumentUtil;
 import me.elsiff.morefish.records.FishRecord;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -15,9 +15,9 @@ import org.bukkit.scoreboard.Criteria;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
+import org.jetbrains.annotations.UnknownNullability;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-import org.spongepowered.configurate.NodePath;
 
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +26,6 @@ import java.util.UUID;
 import java.util.stream.IntStream;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
 public class MusiBoardHooker implements PluginHooker {
@@ -35,7 +34,7 @@ public class MusiBoardHooker implements PluginHooker {
     private boolean hasHooked;
     @Nullable
     private Objective leaderboard;
-    @Nullable
+    @UnknownNullability
     private MusiScoreboard scoreboard;
 
     public void addToLeaderboard(Player player) {
@@ -50,7 +49,7 @@ public class MusiBoardHooker implements PluginHooker {
     }
 
     private MusiScoreboardManager getManager() {
-        return MusiBoard.getPlugin().getManager();
+        return MusiBoard.getManager();
     }
 
     @Override
@@ -98,8 +97,7 @@ public class MusiBoardHooker implements PluginHooker {
                 leaderboard.unregister();
             }
 
-            NodePath scoreboardPath = NodePath.path("main", "scoreboard");
-            leaderboard = scoreboard.registerNewObjective("leaderboard", Criteria.DUMMY, lang().getComponent(scoreboardPath.withAppendedChild("display-name")));
+            leaderboard = scoreboard.registerNewObjective("leaderboard", Criteria.DUMMY, Component.translatable("morefish.main.scoreboard.display-name"));
             leaderboard.setDisplaySlot(DisplaySlot.SIDEBAR);
             leaderboard.numberFormat(NumberFormat.blank());
             List<FishRecord> records = getPlugin().getCompetition().getRecords();
@@ -109,8 +107,7 @@ public class MusiBoardHooker implements PluginHooker {
                 OfflinePlayer player = Bukkit.getOfflinePlayer(record.fisher());
                 Score score = leaderboard.getScore(player);
                 score.setScore((int) (record.fish().length() * 100));
-                TagResolver resolver = TagResolver.resolver(TagResolverUtil.playerNameResolver(player), record);
-                score.customName(lang().getComponent(scoreboardPath.withAppendedChild("entry"), resolver));
+                score.customName(Component.translatable("morefish.main.scoreboard.entry", ArgumentUtil.player(player), record));
             });
         }
     }

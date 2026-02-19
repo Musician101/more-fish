@@ -7,7 +7,8 @@ import me.elsiff.morefish.editor.ErrorDialog;
 import me.elsiff.morefish.fish.condition.PotionEffectsCondition;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.minimessage.translation.Argument;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.potion.PotionEffectType;
 import org.jspecify.annotations.NullMarked;
@@ -17,8 +18,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
 @SuppressWarnings("UnstableApiUsage")
@@ -34,7 +33,7 @@ public class PotionEffectsConditionDialog extends FishConditionDialog<PotionEffe
         for (PotionEffectType p : registryValues(RegistryKey.MOB_EFFECT).toList()) {
             Integer level = parseNumber(dialogKey(p), Integer::parseInt, i -> i >= 0);
             if (level == null) {
-                Component errorMessage = lang().getComponent(conditionPath.withAppendedChild("error"));
+                Component errorMessage = Component.translatable(conditionPath + "error");
                 audience.showDialog(new ErrorDialog(errorMessage, this).build());
                 return;
             }
@@ -58,10 +57,11 @@ public class PotionEffectsConditionDialog extends FishConditionDialog<PotionEffe
     @Override
     protected List<DialogInput> inputs() {
         List<DialogInput> list = new ArrayList<>();
-        registryValues(RegistryKey.MOB_EFFECT).sorted(this::sort).forEach(p -> {
-            int level = condition().value().getOrDefault(p, 0);
-            Component label = lang().getComponent(conditionPath.withAppendedChild("potion-effect"), Placeholder.component("potion-effect", Component.translatable(p)));
-            list.add(textInput(dialogKey(p), label, level));
+        registryValues(RegistryKey.MOB_EFFECT).sorted(this::sort).forEach(potionEffectType -> {
+            int level = condition().value().getOrDefault(potionEffectType, 0);
+            ComponentLike argument = Argument.component("potion-effect", Component.translatable(potionEffectType));
+            Component label = Component.translatable(conditionPath + "potion-effect", argument);
+            list.add(textInput(dialogKey(potionEffectType), label, level));
         });
         return list;
     }

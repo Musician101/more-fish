@@ -6,16 +6,16 @@ import io.papermc.paper.registry.data.dialog.type.DialogType;
 import me.elsiff.morefish.editor.ErrorDialog;
 import me.elsiff.morefish.fish.FishRarity;
 import me.elsiff.morefish.gui.MusiDialog;
+import me.elsiff.morefish.lang.ArgumentUtil;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.translation.Argument;
 import org.bukkit.NamespacedKey;
 import org.jspecify.annotations.NullMarked;
-import org.spongepowered.configurate.NodePath;
 
 import java.io.IOException;
 import java.util.List;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
 @SuppressWarnings("UnstableApiUsage")
@@ -25,17 +25,13 @@ public class NewFishRarityDialog extends MusiDialog {
     private static final String ID = "rarity_id";
 
     public NewFishRarityDialog() {
-        super(lang().getComponent(path().withAppendedChild("new")));
-    }
-
-    private static NodePath path() {
-        return NodePath.path("editor", "rarity", "selector");
+        super(Component.translatable("morefish.editor.rarity.selector.new.label"));
     }
 
     @Override
     protected List<DialogInput> inputs() {
-        DialogInput id = textInput(ID, lang().getComponent(path().plus(NodePath.path("id", "label"))));
-        DialogInput displayName = textInput(DISPLAY_NAME, lang().getComponent(path().plus(NodePath.path("display-name", "label"))));
+        DialogInput id = textInput(ID, Component.translatable("morefish.editor.rarity.new.id.label"));
+        DialogInput displayName = textInput(DISPLAY_NAME, Component.translatable("morefish.editor.rarity.new.display-name.label"));
         return List.of(id, displayName);
     }
 
@@ -44,7 +40,7 @@ public class NewFishRarityDialog extends MusiDialog {
         FishRaritiesDialog fishRaritiesDialog = new FishRaritiesDialog();
         ActionButton confirm = confirmButton((view, audience) -> {
             String keyString = view.getText(ID);
-            Component errorMessage = lang().getComponent(path().plus(NodePath.path("id", "error", "format")));
+            Component errorMessage = Component.translatable("morefish.editor.rarity.new.id.error.format");
             ErrorDialog errorDialog = new ErrorDialog(errorMessage, this);
             if (keyString == null) {
                 audience.showDialog(errorDialog.build());
@@ -58,25 +54,27 @@ public class NewFishRarityDialog extends MusiDialog {
             }
 
             if (getPlugin().rarities().get(rarityKey).isPresent()) {
-                Component message = lang().getComponent(path().withAppendedChild("error"));
+                Component message = Component.translatable("morefish.editor.rarity.new.id.error.already-exists", Argument.string("id", keyString));
                 audience.showDialog(new ErrorDialog(message, this).build());
                 return;
             }
 
             String displayName = view.getText(DISPLAY_NAME);
             if (displayName == null || displayName.isBlank()) {
-                Component displayNameError = lang().getComponent(path().plus(NodePath.path("display-name", "error")));
+                Component displayNameError = Component.translatable("morefish.editor.rarity.new.display-name.error");
                 audience.showDialog(new ErrorDialog(displayNameError, this).build());
                 return;
             }
 
+            FishRarity newRarity = new FishRarity(rarityKey, displayName);
             try {
-                getPlugin().rarities().save(new FishRarity(rarityKey, displayName));
+                getPlugin().rarities().save(newRarity);
                 audience.showDialog(fishRaritiesDialog.build());
             }
             catch (IOException e) {
-                Component message = lang().getComponent(path().withAppendedChild("save-failed"));
+                Component message = Component.translatable("morefish.editor.rarity.selector.save-failed", newRarity, ArgumentUtil.error(e.getMessage()));
                 audience.showDialog(new ErrorDialog(message, fishRaritiesDialog).build());
+                getPlugin().getComponentLogger().error(message, e);
             }
         });
         return DialogType.confirmation(confirm, backButton(showDialog(fishRaritiesDialog)));

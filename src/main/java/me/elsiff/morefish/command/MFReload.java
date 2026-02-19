@@ -12,25 +12,21 @@ import me.elsiff.morefish.command.argument.ConfigTypeArgumentType.ConfigType;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import org.jspecify.annotations.NullMarked;
-import org.spongepowered.configurate.NodePath;
 
 import java.util.List;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
 class MFReload implements MFCommand, PaperLiteralCommand.AdventureFormat {
 
-    private static final NodePath RELOAD_PATH = NodePath.path("command", "reload");
-
     private void execute(CommandSourceStack source, Runnable runnable) {
         try {
             runnable.run();
-            sendMessage(source, lang().getComponent(RELOAD_PATH.withAppendedChild("success")));
+            sendMessage(source, Component.translatable("morefish.command.reload.success"));
         }
         catch (Exception e) {
-            Component message = lang().getComponent(RELOAD_PATH.withAppendedChild("fail"));
+            Component message = Component.translatable("morefish.command.reload.fail");
             getPlugin().getComponentLogger().error(message, e);
             sendMessage(source, message);
         }
@@ -38,7 +34,7 @@ class MFReload implements MFCommand, PaperLiteralCommand.AdventureFormat {
 
     @Override
     public ComponentLike description(CommandSourceStack source) {
-        return lang().getComponent(RELOAD_PATH.withAppendedChild("description"));
+        return Component.translatable("morefish.command.reload.description");
     }
 
     @Override

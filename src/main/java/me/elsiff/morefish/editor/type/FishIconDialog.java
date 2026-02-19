@@ -10,21 +10,18 @@ import me.elsiff.morefish.fish.FishType;
 import me.elsiff.morefish.gui.MusiDialog;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.tag.Tag;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.minimessage.translation.Argument;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ItemType;
 import org.codehaus.plexus.util.StringUtils;
 import org.jspecify.annotations.NullMarked;
-import org.spongepowered.configurate.NodePath;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
 @SuppressWarnings("UnstableApiUsage")
@@ -36,13 +33,9 @@ public class FishIconDialog extends MusiDialog {
     private final FishTypeDialog fishTypeDialog;
 
     public FishIconDialog(FishTypeDialog fishTypeDialog) {
-        super(lang().getComponent(path().withAppendedChild("label")));
+        super(Component.translatable("morefish.editor.type.selected.icon.label"));
         this.fishTypeDialog = fishTypeDialog;
         this.dataComponents = dataComponents();
-    }
-
-    private static NodePath path() {
-        return NodePath.path("editor", "type", "selected", "icon");
     }
 
     private FishType fishType() {
@@ -68,8 +61,8 @@ public class FishIconDialog extends MusiDialog {
     @Override
     protected List<DialogInput> inputs() {
         ItemStack itemStack = itemStack();
-        DialogInput itemId = textInput(ITEM_ID, lang().getComponent(path().plus(NodePath.path("id", "label"))), itemStack.getType().key().asString());
-        DialogInput amount = textInput(AMOUNT, lang().getComponent(path().plus(NodePath.path(AMOUNT, "label"))), itemStack.getAmount());
+        DialogInput itemId = textInput(ITEM_ID, Component.translatable("morefish.editor.type.selected.icon.id.label"), itemStack.getType().key().asString());
+        DialogInput amount = textInput(AMOUNT, Component.translatable("morefish.editor.type.selected.icon.amount.label"), itemStack.getAmount());
         return List.of(itemId, amount);
     }
 
@@ -78,10 +71,10 @@ public class FishIconDialog extends MusiDialog {
     protected DialogType type() {
         List<ActionButton> buttons = new ArrayList<>();
         Arrays.stream(DataComponents.values()).forEach(d -> buttons.add(button(d)));
-        //Arrays.stream(DataComponents.values()).forEach(d -> buttons.add(d.button(this)));
         buttons.add(saveButton((view, audience) -> {
             String id = view.getText(ITEM_ID);
-            ErrorDialog idErrorDialog = new ErrorDialog(lang().getComponent(path().plus(NodePath.path("ID", "error"))), this);
+            Component idErrorLabel = Component.translatable("morefish.editor.type.selected.icon.id.error");
+            ErrorDialog idErrorDialog = new ErrorDialog(idErrorLabel, this);
             if (id == null) {
                 audience.showDialog(idErrorDialog.build());
                 return;
@@ -95,7 +88,7 @@ public class FishIconDialog extends MusiDialog {
 
             Integer amount = parseNumber(view.getText(AMOUNT), Integer::parseInt, i -> i > 0);
             if (amount == null) {
-                Component message = lang().getComponent(path().plus(NodePath.path(AMOUNT, "label")));
+                Component message = Component.translatable("morefish.editor.type.selected.icon.amount.error");
                 audience.showDialog(new ErrorDialog(message, this).build());
                 return;
             }
@@ -116,8 +109,8 @@ public class FishIconDialog extends MusiDialog {
         String dataComponentString = dataComponent.toString();
         String component = dataComponents.get(dataComponentString);
         String name = StringUtils.capitaliseAllWords(dataComponentString.replaceAll("_", " "));
-        TagResolver resolver = TagResolver.resolver("data-component", Tag.preProcessParsed(name));
-        Component label = lang().getComponent(path().plus(NodePath.path("data-component", "label")), resolver);
+        ComponentLike argument = Argument.string("data-component", name);
+        Component label = Component.translatable("morefish.editor.type.selected.icon.data-component.label", argument);
         return dialogButton(new DataComponentDialog(label, this, dataComponentString, component));
     }
 

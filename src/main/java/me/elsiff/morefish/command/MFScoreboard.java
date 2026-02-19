@@ -8,15 +8,11 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NullMarked;
-import org.spongepowered.configurate.NodePath;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
 class MFScoreboard implements MFCommand, PaperLiteralCommand.AdventureFormat {
-
-    private final static NodePath SCOREBOARD_PATH = NodePath.path("command", "scoreboard");
 
     @Override
     public ComponentLike usage(CommandSourceStack source) {
@@ -30,7 +26,7 @@ class MFScoreboard implements MFCommand, PaperLiteralCommand.AdventureFormat {
 
     @Override
     public ComponentLike description(CommandSourceStack source) {
-        return lang().getComponent(SCOREBOARD_PATH.withAppendedChild("description"));
+        return Component.translatable("morefish.command.scoreboard.description");
     }
 
     @Override
@@ -40,15 +36,15 @@ class MFScoreboard implements MFCommand, PaperLiteralCommand.AdventureFormat {
             MusiBoardHooker musiBoard = getPlugin().getMusiBoard();
             if (musiBoard.hasHooked()) {
                 getPlugin().getMusiBoard().swapScoreboards(player);
-                player.sendMessage(lang().getComponent(SCOREBOARD_PATH.withAppendedChild("success")));
+                player.sendMessage(Component.translatable("morefish.command.scoreboard.success"));
                 return 1;
             }
 
-            player.sendMessage(lang().getComponent(SCOREBOARD_PATH.withAppendedChild("no-support")));
+            player.sendMessage(Component.translatable("morefish.command.scoreboard.no-support"));
             return 1;
         }
 
-        player.sendMessage(lang().getComponent(SCOREBOARD_PATH.withAppendedChild("no-competition")));
+        player.sendMessage(Component.translatable("morefish.command.scoreboard.no-competition"));
         return 1;
     }
 

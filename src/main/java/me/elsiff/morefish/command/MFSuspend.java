@@ -8,14 +8,13 @@ import net.kyori.adventure.text.ComponentLike;
 import org.jspecify.annotations.NullMarked;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
 public class MFSuspend implements MFCommand, PaperLiteralCommand.AdventureFormat {
 
     @Override
     public ComponentLike description(CommandSourceStack source) {
-        return lang().getComponent("command", "suspend", "description");
+        return Component.translatable("morefish.command.suspend.description");
     }
 
     @Override
@@ -33,10 +32,10 @@ public class MFSuspend implements MFCommand, PaperLiteralCommand.AdventureFormat
         CommandSourceStack source = context.getSource();
         if (getPlugin().getCompetition().isEnabled()) {
             getPlugin().getCompetitionHost().closeCompetition(true);
-            sendMessage(source, lang().getComponent("main", "contest", "stop"));
+            sendMessage(source, Component.translatable("morefish.main.contest.stop"));
         }
         else {
-            sendMessage(source, lang().getComponent("main", "already-stopped"));
+            sendMessage(source, Component.translatable("morefish.main.already-stopped"));
         }
 
         return 1;

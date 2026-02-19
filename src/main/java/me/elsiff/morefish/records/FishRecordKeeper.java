@@ -4,19 +4,17 @@ import me.elsiff.morefish.command.argument.SortArgumentType.SortType;
 import me.elsiff.morefish.fish.Fish;
 import me.elsiff.morefish.fish.FishRarity;
 import me.elsiff.morefish.fish.FishType;
-import me.elsiff.morefish.lang.TagResolverUtil;
+import me.elsiff.morefish.lang.ArgumentUtil;
 import me.elsiff.morefish.serialize.fish.FishRaritySerializer;
 import me.elsiff.morefish.serialize.record.FishRecordSerializer;
 import me.elsiff.morefish.serialize.record.FishSerializer;
 import me.elsiff.morefish.serialize.record.FishTypeRecordSerializer;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.Component;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NullMarked;
-import org.jspecify.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurationOptions;
-import org.spongepowered.configurate.NodePath;
 import org.spongepowered.configurate.yaml.NodeStyle;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
@@ -29,24 +27,21 @@ import java.util.Map.Entry;
 import java.util.UUID;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
 public abstract class FishRecordKeeper {
 
     protected final List<FishRecord> records = new ArrayList<>();
-    @Nullable
-    protected YamlConfigurationLoader loader;
     protected boolean loading = false;
 
-    protected void initLoader() {
+    protected YamlConfigurationLoader loader() {
         ConfigurationOptions options = ConfigurationOptions.defaults().serializers(b -> {
             b.register(FishRecord.class, new FishRecordSerializer());
             b.register(Fish.class, new FishSerializer());
             b.register(FishType.class, new FishTypeRecordSerializer());
             b.register(FishRarity.class, new FishRaritySerializer());
         });
-        loader = YamlConfigurationLoader.builder().path(getPath()).nodeStyle(NodeStyle.BLOCK).defaultOptions(options).build();
+        return YamlConfigurationLoader.builder().path(getPath()).nodeStyle(NodeStyle.BLOCK).defaultOptions(options).build();
     }
 
     public void informAboutRanking(CommandSender receiver) {
@@ -58,9 +53,8 @@ public abstract class FishRecordKeeper {
             return;
         }
 
-        NodePath topPath = NodePath.path("main", "top");
         if (fishRecords.isEmpty()) {
-            receiver.sendMessage(lang().getComponent(topPath.withAppendedChild("no-catches")));
+            receiver.sendMessage(Component.translatable("morefish.main.top.no-catches"));
         }
         else {
             int topSize = getPlugin().getConfig().getInt("messages.top-number", 1);
@@ -68,20 +62,17 @@ public abstract class FishRecordKeeper {
             List<FishRecord> top = fishRecords.subList(0, Math.min(topSize, fishRecords.size()));
             top.forEach(record -> {
                 int number = top.indexOf(record) + 1;
-                TagResolver resolver = TagResolver.resolver(TagResolverUtil.ordinal(number), record);
-                receiver.sendMessage(lang().getComponent(topPath.withAppendedChild("ranked-record"), resolver));
+                receiver.sendMessage(Component.translatable("morefish.main.top.ranked-record", ArgumentUtil.ordinal(number), record));
             });
 
-            NodePath playerPath = topPath.withAppendedChild("player");
             if (receiver instanceof Player player) {
                 if (contains(player.getUniqueId())) {
                     Entry<Integer, FishRecord> entry = rankedRecordOf(player, fishRecords);
                     FishRecord record = entry.getValue();
-                    TagResolver resolver = TagResolver.resolver(record, TagResolverUtil.ordinal(entry.getKey() + 1));
-                    receiver.sendMessage(lang().getComponent(playerPath.withAppendedChild("record"), resolver));
+                    receiver.sendMessage(Component.translatable("morefish.main.top.player.record", ArgumentUtil.ordinal(entry.getKey() + 1), record));
                 }
                 else {
-                    receiver.sendMessage(lang().getComponent(playerPath.withAppendedChild("no-catch")));
+                    receiver.sendMessage(Component.translatable("morefish.main.top.player.no-catch"));
                 }
             }
         }

@@ -14,8 +14,6 @@ import org.jspecify.annotations.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
-import static me.elsiff.morefish.MoreFish.lang;
-
 @NullMarked
 @SuppressWarnings("UnstableApiUsage")
 public class TimeConditionDialog extends FishConditionDialog<TimeCondition> {
@@ -35,14 +33,14 @@ public class TimeConditionDialog extends FishConditionDialog<TimeCondition> {
 
     @Override
     protected List<DialogInput> inputs() {
-        Component label = lang().getComponent(conditionPath.withAppendedChild("label"));
+        Component label = Component.translatable(conditionPath + ".label");
         List<OptionEntry> options = Arrays.stream(TimeState.values()).map(this::option).toList();
         return List.of(singleOptionInput(TIME, label, options));
     }
 
     private OptionEntry option(TimeState timeState) {
         String s = timeState.toString().toLowerCase();
-        return OptionEntry.create(s, lang().getComponent(conditionPath.withAppendedChild(s)), condition().value() == timeState);
+        return OptionEntry.create(s, Component.translatable(conditionPath + "." + s), condition().value() == timeState);
     }
 
     @Override

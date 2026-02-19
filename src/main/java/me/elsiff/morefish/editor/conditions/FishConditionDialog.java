@@ -8,31 +8,25 @@ import io.papermc.paper.registry.data.dialog.type.DialogType;
 import me.elsiff.morefish.fish.condition.FishCondition;
 import me.elsiff.morefish.gui.MusiDialog;
 import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Keyed;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-import org.spongepowered.configurate.NodePath;
 
 import java.util.List;
 import java.util.stream.Stream;
-
-import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
 @SuppressWarnings("UnstableApiUsage")
 public abstract class FishConditionDialog<C extends FishCondition<?>> extends MusiDialog {
 
     protected final FishConditionsDialog fishConditionsDialog;
-    protected final NodePath conditionPath;
+    protected final String conditionPath;
 
     protected FishConditionDialog(String conditionType, FishConditionsDialog fishConditionsDialog) {
-        super(lang().getComponent(path(conditionType).withAppendedChild("label")));
+        super(Component.translatable("morefish.editor.shared.conditions." + conditionType + ".label"));
         this.fishConditionsDialog = fishConditionsDialog;
-        this.conditionPath = path(conditionType);
-    }
-
-    private static NodePath path(String conditionType) {
-        return NodePath.path("editor", "shared", "conditions", conditionType);
+        this.conditionPath = "morefish.editor.shared.conditions." + conditionType + ".";
     }
 
     protected <V extends Keyed> Stream<V> registryValues(RegistryKey<V> registry) {

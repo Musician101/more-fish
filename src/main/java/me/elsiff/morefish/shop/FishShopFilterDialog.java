@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
 @SuppressWarnings("UnstableApiUsage")
@@ -26,7 +25,7 @@ public class FishShopFilterDialog extends MusiDialog {
     private final List<FishRarity> filters;
 
     public FishShopFilterDialog(List<FishRarity> filters) {
-        super(lang().getComponent("main", "sales-filter", "label"));
+        super(Component.translatable("morefish.main.sales-filter.label"));
         this.filters = filters;
     }
 
@@ -34,7 +33,7 @@ public class FishShopFilterDialog extends MusiDialog {
     protected List<DialogInput> inputs() {
         List<DialogInput> list = new ArrayList<>();
         getPlugin().rarities().stream().filter(r -> !r.doNotSell()).sorted(Comparator.reverseOrder()).forEach(r -> {
-            Component label = lang().getComponent(r, "main", "sales-filter", "rarity");
+            Component label = Component.translatable("morefish.main.sales-filter.rarity");
             list.add(boolInput(asDialogInputId(r), label, filters.contains(r)));
         });
         return list;

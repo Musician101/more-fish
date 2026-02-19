@@ -1,0 +1,153 @@
+morefish:
+  editor:
+    apply: "Apply"
+    confirm: "Confirm"
+    delete: "Delete"
+    enabled: "Enable?"
+    discard: "Discard"
+    edit: "<yellow>Left Click <gray>to edit."
+    error: "<red>An error has occurred!"
+    save: "Save"
+    select: "<yellow>Left Click <gray>to select."
+    test: "Test"
+    shared:
+      announcement:
+        label: "<gradient:#ff5900:#5555ff>Announcement"
+        type: "<color:#ff0033>Type"
+        radius:
+          label: "<aqua>Radius"
+          error: "Failed to parse radius. Make sure you typed it in correctly and that it is greater than 0."
+        none: "<white>No Announcement"
+        player: "<gold>Player Announcement"
+        ranged: "<aqua>Ranged Announcement"
+        server: "<blue>Server Announcement"
+      commands: "<gradient:#FF001B:#E43A96>Comm<gradient:#E43A96:#FF001B>ands"
+      conditions:
+        label: "<color:#ffaa00>Conditions"
+        biome:
+          label: "<green>Biomes"
+          biome: "<green><biome>"
+        enchantments:
+          label: "<aqua>Enchantments"
+          enchantment: "<aqua><enchantment>"
+          error: "Failed to parse enchantment level. Make sure you typed it in correctly and that it is equal to or greater than 0."
+        location-y:
+          label: "<color:#FF0000>Location Y"
+          warning: "Saving while minimum is <gold><b>greater</b></gold> than maximum will not work."
+          max:
+            label: "<gradient:#FF0000:#00FF00>Maximum"
+            error: "Failed to parse maximum range. Make sure you typed it in correctly and that it is equal to or greater than minimum range."
+          min:
+            label: "<gradient:#FF0000:#00FF00>Minimum"
+            error: "Failed to parse minimum range. Make sure you typed it in correctly."
+        mcmmo-skills:
+          label: "<color:#00FF00>Mcmmo Skills"
+          mcmmo-skill: "<gradient:#55ffff:#aa00aa><mcmmo-skill>"
+          error: "Failed to parse skill level. Make sure you typed it in correctly and that it is equal to or greater than 0."
+        potion-effects:
+          potion-effect: "<color:#00FF00><potion-effect>"
+          label: "<color:#00FF00>Potion Effects"
+          error: "Failed to parse skill level. Make sure you typed it in correctly and that it is equal to or greater than 0."
+        raining:
+          label: "<aqua>Raining"
+        thundering:
+          label: "<yellow>Thundering"
+        time:
+          label: "<light_purple>Time"
+          any: "Any"
+          day: "Day"
+          night: "Night"
+        xp-level:
+          label: "<gradient:#55ffff:#aa00aa>Experience Level"
+          level: "<green>Level"
+          error: "Failed to parse skill level. Make sure you typed it in correctly and that it is equal to or greater than 0."
+      display-name: "<color:#0033ff>Display Name"
+      do-not-sell: "<gray>Don't sell?"
+      firework: "<color:#215cff>Firework"
+      no-display: "<color:#8000ff>No Display"
+      price-multiplier:
+        label: "<gold>Price Multiplier"
+        error: "Failed to parse price multiplier. Make sure you typed it in correctly and that it is greater than 0."
+      skip-item-format: "<color:#ffffff>Skip Item Format"
+    type:
+      selected:
+        delete-failed: "One or more errors occurred while deleting <fish-type:display-name>: <error><newline>More info may be in the console."
+        icon:
+          amount:
+            label: "Amount"
+            error: "Failed to parse item amount. Make sure you typed it in correctly and that it is greater than 0."
+          data-component:
+            label: "<data-component>"
+          id:
+            label: "Item ID"
+            error: "An error occurred while trying to parse item ID. Make sure it is typed correctly."
+          label: "Icon"
+        max-length:
+          label: "Maximum Length"
+          error: "Failed to parse maximum length. Make sure you typed it in correctly and that it is greater than 0."
+        min-length:
+          label: "Minimum Length"
+          error: "Failed to parse minimum length. Make sure you typed it in correctly, that it is between 0 and maximum length."
+        rarity:
+          error: "The selected rarity is either null or isn't a registered rarity."
+          label: "Rarity"
+          rarity: "<fish-rarity:color><fish-rarity:display-name>"
+        label:
+          external: "<gold>Edit <fish-rarity:color><fish-type:display-name>"
+          internal: "<gold>Editing <fish-rarity:color><fish-type:display-name>"
+        save-failed: "<white>One or more errors occurred while saving <fish-type:display-name>: <error><newline><lang:morefish.main.prefix> <white>More info may be in the console."
+      selector:
+        label: "<gold>Select A Fish To Edit"
+        new:
+          label: "<gradient:#55ff55:#00aa00:#55ff55>New Fish"
+          display-name:
+            error: "Display Name is null or empty. Make sure you typed it correctly."
+            label: "Display Name"
+          id:
+            error:
+              format: "ID is malformed or null. Make sure you typed it correctly."
+              already-exists: "ID is malformed or null. Make sure you typed it correctly."
+            label: "ID"
+          rarity:
+            error: "The selected rarity is either null or isn't a registered rarity."
+            label: "Rarity"
+            rarity: "<fish-rarity:color><fish-rarity:display-name>"
+    rarity:
+      new:
+        label: "<gradient:#55ff55:#00aa00:#55ff55>New Rarity"
+        id:
+          label: "ID"
+          error:
+            format: "An error occurred while trying to parse new rarity id. Make sure it's not null and is typed correctly."
+            already-exists: "A rarity with <id> already exists."
+        display-name:
+          label: "Display Name"
+          error: "Display name is null or blank. Make sure it's typed correctly."
+      selected:
+        color:
+          label: "<rainbow>Color"
+          test-phrase: "The quick brown fox jumps over the lazy dog."
+          red: "<red>Red"
+          blue: "<blue>Blue"
+          green: "<green>Green"
+          preset-color: "<named-color:true>"
+        delete-failed: "One or more errors occurred while deleting <fish-rarity:display-name>: <error><newline>More info may be in the console."
+        filter-default: "<color:#ff55ff>Default Filter"
+        label:
+          external: "<color:#ff9500>Edit <fish-rarity:color><fish-rarity:display-name>"
+          internal: "<color:#ff9500>Editing <fish-rarity:color><fish-rarity:display-name>"
+        luck-of-the-sea-modifier:
+          amount: "Amount"
+          error: "Modifier amount must be greater or equal to 0."
+          label: "<aqua>Luck of the Sea Modifier"
+          modifier-type: "<modifier-type>"
+          type: "Type"
+        save-failed: "One or more errors occurred while saving <fish-rarity:display-name>: <error>. More info may be in the console."
+        weight:
+          label: "<color:#5e84ff>Weight"
+          error: "Failed to parse weight. Make sure you typed it in correctly and that it is greater than 0."
+      selector:
+        name: "Name"
+        error: "<white>A rarity with that name already exists."
+        save-failed: "<white>One or more errors occurred while saving <fish-rarity:display-name>: <error><newline><lang:morefish.main.prefix> <white>More info may be in the console."
+        label: "<gradient:#ff5900:#5555ff>Select A Rarity To Edit"

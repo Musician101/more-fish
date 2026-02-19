@@ -2,14 +2,14 @@ package me.elsiff.morefish.competition;
 
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import me.elsiff.morefish.command.argument.SortArgumentType.SortType;
-import me.elsiff.morefish.lang.TagResolverUtil;
+import me.elsiff.morefish.lang.ArgumentUtil;
 import me.elsiff.morefish.records.FishRecord;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-import org.spongepowered.configurate.NodePath;
 
 import java.util.List;
 import java.util.Map;
@@ -17,12 +17,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
 public final class FishingCompetitionHost {
 
-    private static final NodePath CONTEST_PATH = NodePath.path("main", "contest");
     private final FishingCompetitionTimerBarHandler timerBarHandler = new FishingCompetitionTimerBarHandler();
     @Nullable
     private ScheduledTask timerTask;
@@ -40,7 +38,7 @@ public final class FishingCompetitionHost {
             }
         }
 
-        Bukkit.broadcast(lang().getComponent(CONTEST_PATH.withAppendedChild("stop")));
+        Bukkit.broadcast(Component.translatable("morefish.main.contest.stop"));
         if (!suspend) {
             if (!getPrizes().isEmpty()) {
                 List<FishRecord> ranking = getCompetition().getRecords();
@@ -87,7 +85,7 @@ public final class FishingCompetitionHost {
         getCompetition().enable();
         timerTask = Bukkit.getAsyncScheduler().runDelayed(getPlugin(), task -> closeCompetition(), duration, TimeUnit.SECONDS);
         timerBarHandler.enableTimer(duration);
-        Bukkit.broadcast(lang().getComponent(CONTEST_PATH.withAppendedChild("start")));
-        Bukkit.broadcast(lang().getComponent(CONTEST_PATH.withAppendedChild("timer"), TagResolverUtil.timeRemaining(duration)));
+        Bukkit.broadcast(Component.translatable("morefish.main.contest.start"));
+        Bukkit.broadcast(Component.translatable("morefish.main.contenst.timer", ArgumentUtil.timeRemaining(duration)));
     }
 }

@@ -6,8 +6,8 @@ import io.papermc.paper.registry.data.dialog.input.DialogInput;
 import me.elsiff.morefish.fish.condition.BiomesCondition;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.minimessage.translation.Argument;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.block.Biome;
 import org.jspecify.annotations.NullMarked;
@@ -16,8 +16,6 @@ import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
 @SuppressWarnings("UnstableApiUsage")
@@ -50,8 +48,8 @@ public class BiomesConditionDialog extends FishConditionDialog<BiomesCondition> 
     protected List<DialogInput> inputs() {
         List<DialogInput> list = new ArrayList<>();
         registryValues(RegistryKey.BIOME).sorted(this::sort).forEach(biome -> {
-            TagResolver resolver = Placeholder.component("biome", Component.translatable(biome.translationKey()));
-            Component label = lang().getComponent(conditionPath.withAppendedChild("biome"), resolver);
+            ComponentLike argument = Argument.component("biome", Component.translatable(biome.translationKey()));
+            Component label = Component.translatable(conditionPath + "biome", argument);
             BiomesCondition condition = condition();
             boolean initial = condition != null && condition.value().contains(biome);
             list.add(boolInput(dialogKey(biome), label, initial));

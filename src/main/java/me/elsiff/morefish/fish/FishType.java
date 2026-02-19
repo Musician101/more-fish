@@ -9,6 +9,7 @@ import net.kyori.adventure.text.minimessage.Context;
 import net.kyori.adventure.text.minimessage.ParsingException;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.ArgumentQueue;
+import net.kyori.adventure.text.minimessage.translation.Argument;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
@@ -25,7 +26,6 @@ import org.bukkit.inventory.ItemType;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-import org.spongepowered.configurate.NodePath;
 
 import java.util.List;
 import java.util.Objects;
@@ -33,15 +33,14 @@ import java.util.Random;
 import java.util.stream.Stream;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
 public final class FishType extends FishAbstract<FishType> {
 
+    private final FishIcon icon;
     private FishRarity rarity;
     private double minLength = 0.1;
     private double maxLength = 1;
-    private FishIcon icon;
 
     @SuppressWarnings("UnstableApiUsage")
     public FishType(NamespacedKey key, String displayName, FishRarity rarity) {
@@ -66,10 +65,6 @@ public final class FishType extends FishAbstract<FishType> {
 
     public void minLength(double minLength) {
         this.minLength = minLength;
-    }
-
-    public void icon(FishIcon icon) {
-        this.icon = icon;
     }
 
     public void rarity(FishRarity rarity) {
@@ -166,11 +161,11 @@ public final class FishType extends FishAbstract<FishType> {
             return;
         }
 
-        NodePath announcementPath = NodePath.path("main", "announcement");
+        String announcementPath = "morefish.main.announcement.";
         FishingCompetition fc = getPlugin().getCompetition();
         if (fc.isEnabled()) {
             if (fc.willBeNewFirst(player, fish)) {
-                broadcastCatch(announcementPath.withAppendedChild("new-1st"), player, fish);
+                broadcastCatch(announcementPath + "new-1st", player, fish);
             }
 
             FishRecord record = new FishRecord(player.getUniqueId(), fish, System.currentTimeMillis());
@@ -179,12 +174,12 @@ public final class FishType extends FishAbstract<FishType> {
         }
 
         if (fish.type().announcement().type() != PlayerAnnouncement.Type.NONE) {
-            broadcastCatch(announcementPath.withAppendedChild("catch"), player, fish);
+            broadcastCatch(announcementPath + "catch", player, fish);
         }
     }
 
-    private void broadcastCatch(NodePath path, Player player, Fish fish) {
-        Component msg = lang().getComponent(path, TagResolverUtil.catcher(player, fish));
+    private void broadcastCatch(String key, Player player, Fish fish) {
+        Component msg = Component.translatable(key, Argument.tagResolver(TagResolverUtil.catcher(player, fish)));
         Audience.audience(fish.type().announcement().receiversOf(player)).sendMessage(msg);
     }
 

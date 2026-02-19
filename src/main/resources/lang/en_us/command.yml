@@ -1,0 +1,60 @@
+morefish:
+  command:
+    clear:
+      alltime:
+        player-success: "<lang:morefish.main.prefix> <white>The all time records for <player> have been cleared successfully."
+        success: "<lang:morefish.main.prefix> <white>The all time records have been cleared successfully."
+      competition:
+        player-success: "<lang:morefish.main.prefix> <white>The records for <player> have been cleared successfully."
+        success: "<lang:morefish.main.prefix> <white>The records have been cleared successfully."
+      description: "Clears the records."
+      success: "<lang:morefish.main.prefix> <white>The records has been cleared successfully."
+    contraband:
+      description: "Reclaim contraband in your fish bags."
+      success: "<lang:morefish.main.prefix> <white>All contraband has been dropped from your bag. Make sure you get it all."
+    edit:
+      competition-running: "<lang:morefish.main.prefix> <white>A competition is currently running. Please try again later."
+      description: "Edit the fish."
+    end:
+      description: "Ends the competition."
+    fishing-logs:
+      description: "Shows all the fish you've caught."
+      none: "<lang:morefish.main.prefix> <white>You have not caught any fish yet."
+      record: "<color:#ff312e><fish-record:length:#.##>cm <fish-record:name> <color:#ffe100><fish-record:date:'MMMMM d, yyyy @ h:mm z'>"
+    give:
+      description: "Give a player a fish."
+      receiver: "<lang:morefish.main.prefix> <white>You just received a <fish-type:display-name>."
+      sender: "<lang:morefish.main.prefix> <white><fish-type:display-name> given to <player>."
+    help:
+      description: "Shows the help info for /morefish"
+      header: "<gradient:#555555:#FF5300:#555555>> ===== <hover:show_text:'<color:#BDB76B>Developed by <authors>'><plugin-display-name></hover> ===== <"
+      command:
+        description: "<gray><command-description>"
+        usage: "<color:#FF5300><command-usage>"
+      info: "<lang:morefish.command.help.command.description> <dark_gray>- <lang:morefish.command.help.command.usage>"
+    reload:
+      description: "Reloads the config, fish, and language data from disk."
+      fail: "<lang:morefish.main.prefix> <white>Failed to reload: Please check your console."
+      success: "<lang:morefish.main.prefix> <white>Reloaded all successfully."
+    scoreboard:
+      description: "Shows the competition scoreboard."
+      no-competition: "<lang:morefish.main.prefix> <white>There is no competition running."
+      no-support: "<lang:morefish.main.prefix> <white>Scoreboard support is not enabled."
+      success: "<lang:morefish.main.prefix> <white>Scoreboard swapped."
+    shop:
+      description: "Opens the fish shop."
+      disabled: "<lang:morefish.main.prefix> <white>Fish Shop is disabled now."
+      forced: "<lang:morefish.main.prefix> <white>Forced <player> to open Shop GUI."
+    simulate:
+      description: "Simulates catching a fish."
+      no-rod: "<lang:morefish.main.prefix> You must have a fishing rod in your hand to simulate catching random fish."
+    start:
+      description: "Start a competition."
+      on-going: "<lang:morefish.main.prefix> <white>The contest is already ongoing."
+    suspend:
+      description: "Suspend the competition."
+    times:
+      description: "Shows the start times for the competition."
+      message: "<lang:morefish.main.prefix> <white>Here are the start times for competitions:<newline><times>"
+    top:
+      description: "Show the top catches."

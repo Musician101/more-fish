@@ -8,8 +8,6 @@ import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
 
-import static me.elsiff.morefish.MoreFish.lang;
-
 @NullMarked
 @SuppressWarnings("UnstableApiUsage")
 public class ErrorDialog extends MusiDialog {
@@ -18,7 +16,7 @@ public class ErrorDialog extends MusiDialog {
     private final MusiDialog previousDialog;
 
     public ErrorDialog(Component errorMessage, MusiDialog previousDialog) {
-        super(lang().getComponent("editor", "error"));
+        super(Component.translatable("morefish.editor.error"));
         this.errorMessage = errorMessage;
         this.previousDialog = previousDialog;
     }

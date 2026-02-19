@@ -2,12 +2,16 @@ package me.elsiff.morefish.records;
 
 import me.elsiff.morefish.fish.Fish;
 import me.elsiff.morefish.lang.TagResolverUtil;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.VirtualComponent;
 import net.kyori.adventure.text.minimessage.Context;
 import net.kyori.adventure.text.minimessage.ParsingException;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.ArgumentQueue;
 import net.kyori.adventure.text.minimessage.tag.resolver.Formatter;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.minimessage.translation.Argument;
 import org.bukkit.Bukkit;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -18,7 +22,8 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @NullMarked
-public record FishRecord(UUID fisher, Fish fish, long timestamp) implements Comparable<FishRecord>, TagResolver {
+public record FishRecord(UUID fisher, Fish fish,
+                         long timestamp) implements Comparable<FishRecord>, ComponentLike, TagResolver {
 
     public int compareTo(FishRecord other) {
         return Double.compare(fish.length(), other.fish.length());
@@ -46,5 +51,10 @@ public record FishRecord(UUID fisher, Fish fish, long timestamp) implements Comp
     @Override
     public boolean has(String name) {
         return name.equals("fish-record");
+    }
+
+    @Override
+    public Component asComponent() {
+        return (VirtualComponent) Argument.tagResolver(this);
     }
 }

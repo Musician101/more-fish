@@ -6,27 +6,23 @@ import io.musician101.musicommand.paper.command.PaperCommand;
 import io.musician101.musicommand.paper.command.PaperLiteralCommand;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import me.elsiff.morefish.command.argument.PlayerArgumentType;
-import me.elsiff.morefish.lang.TagResolverUtil;
+import me.elsiff.morefish.lang.ArgumentUtil;
 import me.elsiff.morefish.shop.FishShopGui;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NullMarked;
-import org.spongepowered.configurate.NodePath;
 
 import java.util.List;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
 class MFShop implements MFCommand, PaperLiteralCommand.AdventureFormat {
 
-    private static final NodePath SHOP_PATH = NodePath.path("command", "shop");
-
     @Override
     public ComponentLike description(CommandSourceStack source) {
-        return lang().getComponent(SHOP_PATH.withAppendedChild("description"));
+        return Component.translatable("morefish.command.shop.description");
     }
 
     @Override
@@ -52,12 +48,12 @@ class MFShop implements MFCommand, PaperLiteralCommand.AdventureFormat {
 
     private void shop(CommandSourceStack source, Player guiUser) {
         if (!getPlugin().getConfig().getBoolean("fish-shop.enable") || !getPlugin().getVault().hasEconomy()) {
-            sendMessage(source, lang().getComponent(SHOP_PATH.withAppendedChild("disabled")));
+            sendMessage(source, Component.translatable("morefish.command.shop.disabled"));
         }
         else {
             new FishShopGui(guiUser);
             if (!guiUser.getUniqueId().equals(((Player) source.getSender()).getUniqueId())) {
-                sendMessage(source, lang().getComponent(SHOP_PATH.withAppendedChild("forced"), TagResolverUtil.playerNameResolver(guiUser)));
+                sendMessage(source, Component.translatable("morefish.command.shop.forced", ArgumentUtil.player(guiUser)));
             }
         }
     }

@@ -11,8 +11,6 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
-import static me.elsiff.morefish.MoreFish.lang;
-
 @NullMarked
 @SuppressWarnings("UnstableApiUsage")
 public class DataComponentDialog extends MusiDialog {
@@ -42,7 +40,7 @@ public class DataComponentDialog extends MusiDialog {
 
     @Override
     protected DialogType type() {
-        ActionButton applyButton = actionButton(lang().getComponent("editor", "apply"), (view, audience) -> {
+        ActionButton applyButton = actionButton(Component.translatable("morefish.editor.apply"), (view, audience) -> {
             String component = view.getText(COMPONENT);
             if (component == null) {
                 fishIconDialog.dataComponents.remove(componentKey);

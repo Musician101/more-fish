@@ -8,14 +8,13 @@ import net.kyori.adventure.text.ComponentLike;
 import org.jspecify.annotations.NullMarked;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
 class MFEnd implements MFCommand, PaperLiteralCommand.AdventureFormat {
 
     @Override
     public ComponentLike description(CommandSourceStack source) {
-        return lang().getComponent("command", "end", "description");
+        return Component.translatable("morefish.command.end.description");
     }
 
     @Override
@@ -30,13 +29,12 @@ class MFEnd implements MFCommand, PaperLiteralCommand.AdventureFormat {
 
     @Override
     public Integer execute(CommandContext<CommandSourceStack> context) {
-        CommandSourceStack source = context.getSource();
         if (getPlugin().getCompetition().isEnabled()) {
             getPlugin().getCompetitionHost().closeCompetition();
-            sendMessage(context, lang().getComponent("main", "contest", "stop"));
+            sendMessage(context, Component.translatable("morefish.main.contest.stop"));
         }
         else {
-            sendMessage(context, lang().getComponent("main", "already-stopped"));
+            sendMessage(context, Component.translatable("morefish.main.already-stopped"));
         }
 
         return 1;

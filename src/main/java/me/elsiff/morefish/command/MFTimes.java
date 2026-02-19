@@ -7,28 +7,30 @@ import io.papermc.paper.command.brigadier.CommandSourceStack;
 import me.elsiff.morefish.competition.FishingCompetitionAutoRunner.CompetitionTimes;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.translation.Argument;
 import org.jspecify.annotations.NullMarked;
-import org.spongepowered.configurate.NodePath;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
 class MFTimes implements MFCommand, PaperLiteralCommand.AdventureFormat {
 
-    private static final NodePath TIMES = NodePath.path("command", "times");
-
     @Override
     public Integer execute(CommandContext<CommandSourceStack> context) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm z");
-        String times = Lists.partition(getPlugin().getAutoRunner().getCompetitionTimes(), 6).stream().map(list -> list.stream().map(CompetitionTimes::getStartTime).map(ZonedDateTime.now()::with).map(l -> l.format(formatter)).collect(Collectors.joining(", "))).collect(Collectors.joining("<newline>"));
-        sendMessage(context, lang().getComponent(TIMES.withAppendedChild("message"), Placeholder.parsed("times", times)));
+        String times = Lists.partition(getPlugin().getAutoRunner().getCompetitionTimes(), 6).stream().map(list -> asString(list, formatter)).collect(Collectors.joining("<newline>"));
+        sendMessage(context, Component.translatable("morefish.command.times.message", Argument.component("times", MiniMessage.miniMessage().deserialize(times))));
         return 1;
+    }
+
+    private String asString(List<CompetitionTimes> times, DateTimeFormatter formatter) {
+        return times.stream().map(CompetitionTimes::getStartTime).map(ZonedDateTime.now()::with).map(l -> l.format(formatter)).collect(Collectors.joining(", "));
     }
 
     @Override
@@ -38,7 +40,7 @@ class MFTimes implements MFCommand, PaperLiteralCommand.AdventureFormat {
 
     @Override
     public ComponentLike description(CommandSourceStack source) {
-        return lang().getComponent(TIMES.withAppendedChild("description"));
+        return Component.translatable("morefish.command.times.description");
     }
 
     @Override

@@ -10,12 +10,9 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-import org.spongepowered.configurate.NodePath;
 
 import java.util.List;
 import java.util.function.Predicate;
-
-import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
 @SuppressWarnings("UnstableApiUsage")
@@ -47,7 +44,7 @@ public class LocationYConditionDialog extends FishConditionDialog<LocationYCondi
     private Double parse(String key, DialogResponseView view, Audience audience, Predicate<Double> validator) {
         Double min = parseNumber(view.getText(key), Double::parseDouble, validator);
         if (min == null) {
-            Component errorMessage = lang().getComponent(conditionPath.plus(NodePath.path(key, "error")));
+            Component errorMessage = Component.translatable(conditionPath + key + ".error");
             audience.showDialog(new ErrorDialog(errorMessage, this).build());
         }
 
@@ -72,12 +69,12 @@ public class LocationYConditionDialog extends FishConditionDialog<LocationYCondi
     }
 
     private DialogInput input(String key, double initial) {
-        Component label = lang().getComponent(conditionPath.plus(NodePath.path(key, "label")));
+        Component label = Component.translatable(conditionPath + key + ".label");
         return textInput(key, label, initial);
     }
 
     @Override
     protected List<DialogBody> body() {
-        return List.of(DialogBody.plainMessage(lang().getComponent(conditionPath.withAppendedChild("warning"))));
+        return List.of(DialogBody.plainMessage(Component.translatable(conditionPath + ".warning")));
     }
 }

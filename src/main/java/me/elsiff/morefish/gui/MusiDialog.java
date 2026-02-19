@@ -13,13 +13,10 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickCallback;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-import org.spongepowered.configurate.NodePath;
 
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
-
-import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
 @SuppressWarnings("UnstableApiUsage")
@@ -42,11 +39,7 @@ public abstract class MusiDialog {
     }
 
     protected DialogAction customClick(DialogActionCallback callback) {
-        return customClick(callback, DEFAULT_CALLBACK_OPTIONS);
-    }
-
-    protected DialogAction customClick(DialogActionCallback callback, ClickCallback.Options options) {
-        return DialogAction.customClick(callback, options);
+        return DialogAction.customClick(callback, DEFAULT_CALLBACK_OPTIONS);
     }
 
     protected ActionButton backButton() {
@@ -56,13 +49,11 @@ public abstract class MusiDialog {
     }
 
     protected ActionButton backButton(DialogActionCallback callback) {
-        NodePath path = NodePath.path("gui", "back");
-        Component label = lang().getComponent(path.withAppendedChild("label"));
-        return actionButton(label, callback);
+        return actionButton(Component.translatable("morefish.gui.back"), callback);
     }
 
     protected ActionButton confirmButton(DialogActionCallback callback) {
-        return actionButton(lang().getComponent("editor", "confirm"), callback);
+        return actionButton(Component.translatable("morefish.editor.confirm"), callback);
     }
 
     protected ActionButton dialogButton(MusiDialog dialog) {
@@ -70,15 +61,15 @@ public abstract class MusiDialog {
     }
 
     protected ActionButton deleteButton(DialogActionCallback callback) {
-        return actionButton(lang().getComponent("editor", "delete"), callback);
+        return actionButton(Component.translatable("morefish.editor.delete"), callback);
     }
 
     protected ActionButton discardButton(DialogActionCallback callback) {
-        return actionButton(lang().getComponent("editor", "discard"), callback);
+        return actionButton(Component.translatable("morefish.editor.discard"), callback);
     }
 
     protected ActionButton saveButton(DialogActionCallback callback) {
-        return actionButton(lang().getComponent("editor", "save"), callback);
+        return actionButton(Component.translatable("morefish.editor.save"), callback);
     }
 
     protected ActionButton actionButton(Component label, DialogActionCallback callback) {
@@ -95,10 +86,6 @@ public abstract class MusiDialog {
 
     protected DialogInput boolInput(String key, Component label, boolean initial) {
         return DialogInput.bool(key, label).initial(initial).build();
-    }
-
-    protected DialogInput numberRangeInput(String key, Component label, float start, float end, float initial, float step) {
-        return DialogInput.numberRange(key, label, start, end).initial(initial).step(step).build();
     }
 
     protected DialogInput singleOptionInput(String key, Component label, List<OptionEntry> entries) {

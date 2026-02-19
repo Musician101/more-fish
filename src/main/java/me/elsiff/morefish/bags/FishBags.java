@@ -1,6 +1,7 @@
 package me.elsiff.morefish.bags;
 
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.translation.Argument;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -11,7 +12,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-import org.spongepowered.configurate.NodePath;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -27,12 +27,10 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
 public class FishBags implements Listener {
 
-    private static final NodePath FISH_BAGS_PATH = NodePath.path("main", "fish-bags");
     private final List<FishBag> bags = new ArrayList<>();
 
     public boolean addFish(Player player, ItemStack itemStack) {
@@ -92,7 +90,7 @@ public class FishBags implements Listener {
             bags.filter(path -> path.getFileName().toString().endsWith(".yml")).forEach(this::load);
         }
         catch (IOException e) {
-            getPlugin().getComponentLogger().error(lang().getComponent(FISH_BAGS_PATH.withAppendedChild("load-error")), e);
+            getPlugin().getComponentLogger().error(Component.translatable("morefish.main.fish-bags.load-error"), e);
         }
     }
 
@@ -105,7 +103,7 @@ public class FishBags implements Listener {
             return;
         }
 
-        Bukkit.getGlobalRegionScheduler().run(getPlugin(), task -> player.sendMessage(lang().getComponent("main", "contraband-alert")));
+        Bukkit.getGlobalRegionScheduler().run(getPlugin(), task -> player.sendMessage(Component.translatable("morefish.main.contraband-alert")));
     }
 
     private void save(FishBag fishBag) {
@@ -123,7 +121,8 @@ public class FishBags implements Listener {
             yaml.save(bagsFolder.resolve(uuid + ".yml").toFile());
         }
         catch (IOException e) {
-            getPlugin().getComponentLogger().error(lang().getComponent(FISH_BAGS_PATH.withAppendedChild("save-error"), Placeholder.parsed("uuid", uuid.toString())), e);
+            Component message = Component.translatable("morefish.main.fish-bags.save-error", Argument.string("uuid", uuid.toString()));
+            getPlugin().getComponentLogger().error(message, e);
         }
     }
 

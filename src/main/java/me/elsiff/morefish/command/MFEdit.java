@@ -15,8 +15,6 @@ import org.jspecify.annotations.NullMarked;
 import java.util.List;
 import java.util.function.Supplier;
 
-import static me.elsiff.morefish.MoreFish.lang;
-
 @NullMarked
 public class MFEdit implements MFCommand, PaperLiteralCommand.AdventureFormat {
 
@@ -32,7 +30,7 @@ public class MFEdit implements MFCommand, PaperLiteralCommand.AdventureFormat {
 
     @Override
     public ComponentLike description(CommandSourceStack source) {
-        return lang().getComponent("command", "edit", "description");
+        return Component.translatable("morefish.command.edit.description");
     }
 
     @Override

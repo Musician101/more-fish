@@ -11,7 +11,8 @@ import me.elsiff.morefish.gui.MoreFishGUI;
 import me.elsiff.morefish.hooker.VaultHooker;
 import me.elsiff.morefish.item.FishItemStackUtil;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.tag.resolver.Formatter;
+import net.kyori.adventure.text.TranslatableComponent;
+import net.kyori.adventure.text.minimessage.translation.Argument;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse.ResponseType;
 import org.bukkit.Material;
@@ -23,7 +24,6 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
-import org.spongepowered.configurate.NodePath;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -37,35 +37,24 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
 public final class FishShopGui extends MoreFishGUI implements PaperPagedChestGUI {
 
     private final FishBags fishBags;
     private final List<FishRarity> selectedRarities;
-    private final NodePath shopPath;
     private int page = 1;
 
     public FishShopGui(Player user) {
-        super(user, title(), 54);
+        super(user, Component.translatable("morefish.main.shop.title"), 54);
         this.selectedRarities = FishShopFilterDialog.FILTERS.getOrDefault(user.getUniqueId(), new ArrayList<>());
         this.fishBags = getPlugin().getFishBags();
-        this.shopPath = path();
         update();
-    }
-
-    private static Component title() {
-        return lang().getComponent(path().withAppendedChild("title"));
-    }
-
-    private static NodePath path() {
-        return NodePath.path("main", "shop");
     }
 
     @Override
     public void update() {
-        IntStream.range(45, 54).forEach(i -> addItem(i, Material.LIGHT_BLUE_STAINED_GLASS_PANE));
+        IntStream.range(45, 54).forEach(this::addGlassPane);
         List<ItemStack> fish = fishBags.getFish(player, page);
         int slotsPerPage = 45;
         List<ItemStack> fishToAdd = getPage(fish, page, slotsPerPage, (a, b) -> 0);
@@ -89,7 +78,7 @@ public final class FishShopGui extends MoreFishGUI implements PaperPagedChestGUI
 
         updatePriceIcon();
         updateUpgradeIcon(slotsPerPage);
-        setButton(47, createIcon(Material.CHEST, lang().getComponent(shopPath.withAppendedChild("sale-filter-icon-name"))), ClickType.LEFT, p -> {
+        setButton(47, createIcon(Material.CHEST, Component.translatable("morefish.main.shop.sale-filter-icon-name")), ClickType.LEFT, p -> {
             Dialog dialog = new FishShopFilterDialog(selectedRarities).build();
             p.showDialog(dialog);
         });
@@ -168,7 +157,7 @@ public final class FishShopGui extends MoreFishGUI implements PaperPagedChestGUI
     }
 
     private void updatePriceIcon(double price) {
-        Component name = lang().getComponent(shopPath.withAppendedChild("sell-icon-name"), Formatter.number("amount", price));
+        TranslatableComponent name = Component.translatable("morefish.main.shop.sell-icon-name", Argument.numeric("amount", price));
         setButton(49, createIcon(Material.EMERALD, name), ClickType.LEFT, this::priceClick);
     }
 
@@ -182,14 +171,13 @@ public final class FishShopGui extends MoreFishGUI implements PaperPagedChestGUI
             }).filter(entry -> entry.getKey() > userMaxAllowedPages).sorted(Comparator.comparingInt(Entry::getKey)).toList();
 
             if (upgradeEntries.isEmpty()) {
-                addItem(51, Material.LIGHT_BLUE_STAINED_GLASS_PANE);
+                addGlassPane(51);
                 return;
             }
 
             Entry<Integer, Integer> upgrade = upgradeEntries.getFirst();
-            NodePath upgradeIconPath = shopPath.withAppendedChild("upgrade-icon");
-            Component name = lang().getComponent(upgradeIconPath.withAppendedChild("name"));
-            List<Component> lore = lang().getComponents(upgradeIconPath.withAppendedChild("lore"));
+            TranslatableComponent name = Component.translatable("morefish.main.shop.upgrade-icon.name");
+            TranslatableComponent lore = Component.translatable("morefish.main.shop.upgrade-icon.lore");
             ItemStack icon = createIcon(Material.GOLD_INGOT, name, lore);
             setButton(51, icon, ClickType.LEFT, p -> {
                 MoreFish plugin = getPlugin();
@@ -199,7 +187,7 @@ public final class FishShopGui extends MoreFishGUI implements PaperPagedChestGUI
                     return;
                 }
 
-                p.sendMessage(lang().getComponent(shopPath.withAppendedChild("not-enough-money")));
+                p.sendMessage(Component.translatable("morefish.main.shop.not-enough-money"));
             });
         }
     }
@@ -207,7 +195,7 @@ public final class FishShopGui extends MoreFishGUI implements PaperPagedChestGUI
     private void priceClick(Player p) {
         List<ItemStack> filteredFish = getFilteredFish();
         if (filteredFish.isEmpty()) {
-            p.sendMessage(lang().getComponent(shopPath.withAppendedChild("no-fish-to-sell")));
+            p.sendMessage(Component.translatable("morefish.main.shop.no-fish-to-sell"));
         }
         else {
             double totalPrice = getTotalPrice();
@@ -224,7 +212,7 @@ public final class FishShopGui extends MoreFishGUI implements PaperPagedChestGUI
             getEconomy().depositPlayer(player, fishList.stream().mapToDouble(this::price).sum());
             fishBags.update(player, inventory.getContents(), page);
             updatePriceIcon(totalPrice);
-            p.sendMessage(lang().getComponent(shopPath.withAppendedChild("fish-sold"), Formatter.number("total-price", totalPrice)));
+            p.sendMessage(Component.translatable("morefish.main.shop.fish-sold", Argument.numeric("total-price", totalPrice)));
         }
     }
 }

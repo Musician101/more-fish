@@ -1,9 +1,9 @@
 package me.elsiff.morefish.records;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.jspecify.annotations.NullMarked;
 import org.spongepowered.configurate.ConfigurationNode;
-import org.spongepowered.configurate.NodePath;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -12,33 +12,24 @@ import java.util.List;
 import java.util.UUID;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
 public final class FishingLogs extends FishRecordKeeper {
 
-    private final NodePath fishingLogsPath = NodePath.path("main", "fishing-logs");
-
     @Override
     public void save() {
-        NodePath savePath = fishingLogsPath.withAppendedChild("save");
         try {
             if (Files.notExists(getPath())) {
                 Files.createDirectories(getPath().getParent());
                 Files.createFile(getPath());
             }
 
-            if (loader == null) {
-                getPlugin().getComponentLogger().error(lang().getComponent(savePath.withAppendedChild("critical-error")));
-                return;
-            }
-
-            ConfigurationNode node = loader.createNode();
+            ConfigurationNode node = loader().createNode();
             node.node("records").set(records);
-            loader.save(node);
+            loader().save(node);
         }
         catch (IOException e) {
-            getPlugin().getComponentLogger().error(lang().getComponent(savePath.withAppendedChild("error")), e);
+            getPlugin().getComponentLogger().error(Component.translatable("morefish.main.fishing-logs.error.save"), e);
         }
     }
 
@@ -51,12 +42,12 @@ public final class FishingLogs extends FishRecordKeeper {
                     Files.createFile(getPath());
                 }
 
-                initLoader();
-                ConfigurationNode node = loader.load();
+                loader();
+                ConfigurationNode node = loader().load();
                 records.addAll(node.node("records").getList(FishRecord.class, List.of()));
             }
             catch (IOException e) {
-                getPlugin().getComponentLogger().error(lang().getComponent(fishingLogsPath.withAppendedChild("load-error")), e);
+                getPlugin().getComponentLogger().error(Component.translatable("morefish.main.fishing-logs.error.load"), e);
             }
 
             loading = false;

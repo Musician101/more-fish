@@ -2,9 +2,9 @@ package me.elsiff.morefish.competition;
 
 import com.google.common.collect.Lists;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
-import net.kyori.adventure.text.minimessage.tag.resolver.Formatter;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.minimessage.translation.Argument;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.jspecify.annotations.NullMarked;
@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
 public final class FishingCompetitionAutoRunner {
@@ -42,7 +41,13 @@ public final class FishingCompetitionAutoRunner {
         int hours = remainingTime.toHoursPart();
         int minutes = remainingTime.toMinutesPart();
         if (hours > 0) {
-            sb.append(hours).append(" hour").append((hours > 1 ? "s" : ""));
+            sb.append(hours);
+            if (hours > 1) {
+                sb.append("<lang:morefish.main.announcement.pre-announcement.hour.plural>");
+            }
+            else {
+                sb.append("<lang:morefish.main.announcement.pre-announcement.hour.singular>");
+            }
         }
 
         if (minutes > 0) {
@@ -50,11 +55,16 @@ public final class FishingCompetitionAutoRunner {
                 sb.append(" ");
             }
 
-            sb.append(minutes).append(" minute").append((minutes > 1 ? "s" : ""));
+            sb.append(minutes);
+            if (hours > 1) {
+                sb.append("<lang:morefish.main.announcement.pre-announcement.minute.plural>");
+            }
+            else {
+                sb.append("<lang:morefish.main.announcement.pre-announcement.minute.singular>");
+            }
         }
 
-        TagResolver resolver = TagResolver.resolver(Placeholder.parsed("time-remaining", sb.toString()), Formatter.number("required-players", requiredPlayers));
-        Bukkit.broadcast(lang().getComponent(resolver, "main", "announcement", "pre-announcement"));
+        Bukkit.broadcast(Component.translatable("morefish.main.announcement.pre-announcement.message", Argument.numeric("required-players", requiredPlayers), Argument.tagResolver(Placeholder.parsed("time-remaining", sb.toString()))));
     }
 
     public void enable() {
@@ -80,7 +90,8 @@ public final class FishingCompetitionAutoRunner {
     }
 
     public List<CompetitionTimes> getCompetitionTimes() {
-        return Lists.transform(getPlugin().getConfig().getStringList("auto-running.start-time"), CompetitionTimes::new);
+        List<String> times = getPlugin().getConfig().getStringList("auto-running.start-time");
+        return Lists.transform(times, CompetitionTimes::new);
     }
 
     private FishingCompetitionHost getCompetitionHost() {

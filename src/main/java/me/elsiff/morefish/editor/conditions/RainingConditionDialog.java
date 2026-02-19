@@ -11,8 +11,6 @@ import org.jspecify.annotations.Nullable;
 import java.util.List;
 import java.util.Objects;
 
-import static me.elsiff.morefish.MoreFish.lang;
-
 @NullMarked
 @SuppressWarnings("UnstableApiUsage")
 public class RainingConditionDialog extends FishConditionDialog<RainingCondition> {
@@ -31,7 +29,7 @@ public class RainingConditionDialog extends FishConditionDialog<RainingCondition
 
     @Override
     protected List<DialogInput> inputs() {
-        Component label = lang().getComponent("editor", "enabled");
+        Component label = Component.translatable("morefish.editor.enabled");
         return List.of(boolInput(RAINING, label, condition().value()));
     }
 

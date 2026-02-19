@@ -29,7 +29,7 @@ dependencies {
     paperweight.paperDevBundle("1.21.11-R0.1-SNAPSHOT")
     compileOnlyApi("com.github.MilkBowl:VaultAPI:1.7.1")
     compileOnlyApi("com.gmail.nossr50.mcMMO:mcMMO:2.2.048")
-    api("com.github.Musician101.MusiGUI:paper:3fb38265d4")
+    api("com.github.Musician101.MusiGUI:paper:c4f5089b33")
     api("com.github.Musician101.MusiCommand:paper:be49f96ace")
     api("com.github.Musician101:MusiBoard:e5951243ac")
 }

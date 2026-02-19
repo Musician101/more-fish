@@ -20,7 +20,6 @@ import org.jspecify.annotations.Nullable;
 import java.util.List;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.MoreFish.lang;
 
 @NullMarked
 class MFTop implements PaperLiteralCommand.AdventureFormat {
@@ -37,7 +36,7 @@ class MFTop implements PaperLiteralCommand.AdventureFormat {
 
     @Override
     public ComponentLike description(CommandSourceStack source) {
-        return lang().getComponent("command", "top", "description");
+        return Component.translatable("morefish.command.top.description");
     }
 
     @Override
