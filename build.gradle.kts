@@ -1,16 +1,14 @@
 plugins {
-    java
     `java-library`
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.gradleup.shadow") version "9.3.0"
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 subprojects {
     apply {
-        plugin("java")
         plugin("java-library")
-        plugin("com.github.johnrengelman.shadow")
+        plugin("com.gradleup.shadow")
     }
 
     group = "me.elsiff"
@@ -24,13 +22,19 @@ subprojects {
     }
 
     tasks {
+        build {
+            dependsOn(shadowJar)
+        }
+
         shadowJar {
             dependencies {
-                include(dependency("io.musician101.musigui:"))
+                include(dependency("com.github.Musician101.MusiGUI:.*"))
+                include(dependency("com.github.Musician101.MusiCommand:.*"))
             }
 
+            archiveClassifier = ""
             relocate("io.musician101.musigui", "me.elsiff.morefish.lib.io.musician101.musigui")
-            dependsOn("build")
+            relocate("io.musician101.musicommand", "me.elsiff.morefish.lib.io.musician101.musicommand")
         }
     }
 }

@@ -126,3 +126,5 @@ logs/
 sponge/build/
 paper/build/
 paper/lib/
+
+neoforge/build/

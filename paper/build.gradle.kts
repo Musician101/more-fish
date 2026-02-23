@@ -1,31 +1,30 @@
+import xyz.jpenilla.resourcefactory.bukkit.Permission
+import xyz.jpenilla.resourcefactory.paper.PaperPluginYaml
+
+plugins {
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.19"
+    id("xyz.jpenilla.run-paper") version "2.3.1"
+    id("xyz.jpenilla.resource-factory-paper-convention") version "1.3.1"
+}
+
 repositories {
+    maven("https://libraries.minecraft.net")
     maven("https://papermc.io/repo/repository/maven-public/")
     maven("https://oss.sonatype.org/content/repositories/snapshots/")
-    maven("https://repo.dmulloy2.net/nexus/repository/public/")
+    maven("https://nexus.neetgames.com/repository/maven-releases/")
+    // mcMMO depends on WorldGuard, but Gradle failed to find it
+    maven("https://maven.enginehub.org/repo/")
     maven("https://jitpack.io")
-    maven("https://libraries.minecraft.net/")
-    mavenCentral()
 }
 
 dependencies {
     api(project(":common"))
-    compileOnlyApi("com.comphenix.protocol:ProtocolLib:5.1.0")
+    paperweight.paperDevBundle("1.21.11-R0.1-SNAPSHOT")
     compileOnlyApi("com.github.MilkBowl:VaultAPI:1.7.1")
-    compileOnlyApi("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
-    compileOnlyApi(files("lib/mcMMO.jar"))
-
-    api("com.github.musician101.musigui:paper:1.2.2") {
-        exclude("io.papermc.paper")
-    }
-    api("com.github.Musician101:Bukkitier:1.3.3") {
-        exclude("org.spigotmc")
-    }
-    //TODO temp to fix package names
-    //api("com.github.Musician101:MusiBoard:1.0.1") {
-    api("com.github.Musician101:MusiBoard:master-SNAPSHOT") {
-        exclude("io.papermc.paper")
-        exclude("com.github.Musician101")
-    }
+    compileOnlyApi("com.gmail.nossr50.mcMMO:mcMMO:2.2.048")
+    api("com.github.Musician101.MusiGUI:paper:c4f5089b33")
+    api("com.github.Musician101.MusiCommand:paper:be49f96ace")
+    api("com.github.Musician101:MusiBoard:e5951243ac")
 }
 
 tasks {
@@ -52,5 +51,33 @@ tasks {
         dependsOn("shadowJar")
         from("build/libs/${project.name}-${project.version}.jar")
         into("server/plugins")
+    }
+}
+
+paperPluginYaml {
+    main = "me.elsiff.morefish.MoreFish"
+    apiVersion = "1.21.11"
+    authors.addAll("elsiff", "Musician101")
+    foliaSupported = true
+    dependencies.server {
+        create("mcMMO") {
+            load = PaperPluginYaml.Load.BEFORE
+            required = false
+            joinClasspath = true
+        }
+        create("MusiBoard") {
+            load = PaperPluginYaml.Load.BEFORE
+            required = false
+            joinClasspath = true
+        }
+        create("Vault") {
+            load = PaperPluginYaml.Load.BEFORE
+            required = false
+            joinClasspath = true
+        }
+    }
+    permissions.create("morefish.admin") {
+        default = Permission.Default.OP
+        description = "Gives the user the ability to control the fishing contest."
     }
 }

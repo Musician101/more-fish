@@ -2,18 +2,20 @@ import org.spongepowered.gradle.plugin.config.PluginLoaders
 import org.spongepowered.plugin.metadata.model.PluginDependency
 
 plugins {
-    id("org.spongepowered.gradle.plugin") version "2.1.1"
+    id("org.spongepowered.gradle.plugin") version "2.3.0"
 }
 
 dependencies {
     api(project(":common"))
-    api("com.github.musician101.musigui:sponge:1.2.2")
+    //api("com.github.musician101.musigui:sponge:1.2.2")
+    api("com.github.Musician101.MusiGUI:sponge:c4f5089b33")
+    api("com.github.Musician101.MusiCommand:sponge:be49f96ace")
     //TODO temp dependency due to new project
-    api("io.musician101:spongecmd:1.0-SNAPSHOT")
+    //api("io.musician101:spongecmd:1.0-SNAPSHOT")
 }
 
 sponge {
-    apiVersion("10.0.0")
+    apiVersion("18.0.0-SNAPSHOT")
     plugin("morefish") {
         loader {
             name(PluginLoaders.JAVA_PLAIN)
@@ -41,9 +43,6 @@ tasks {
     shadowJar {
         dependencies {
             include(dependency(":common"))
-            include(dependency("io.musician101:"))
         }
-
-        relocate("io.musician101.bukkitier", "com.campmongoose.serversaturday.lib.io.musician101.bukkitier")
     }
 }
