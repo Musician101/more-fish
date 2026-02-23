@@ -3,90 +3,94 @@ package me.elsiff.morefish.command;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import io.musician101.bukkitier.command.ArgumentCommand;
-import io.musician101.bukkitier.command.Command;
-import io.musician101.bukkitier.command.LiteralCommand;
-import me.elsiff.morefish.command.argument.FishArgumentType;
-import me.elsiff.morefish.fishing.fishrecords.FishRecord;
-import me.elsiff.morefish.fishing.fishrecords.FishRecordKeeper;
+import io.musician101.musicommand.paper.command.PaperArgumentCommand;
+import io.musician101.musicommand.paper.command.PaperCommand;
+import io.musician101.musicommand.paper.command.PaperLiteralCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import me.elsiff.morefish.command.argument.RecordsArgumentType;
+import me.elsiff.morefish.command.argument.RecordsArgumentType.Holder;
+import me.elsiff.morefish.records.FishRecord;
+import me.elsiff.morefish.records.FishRecordKeeper;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.text.Lang.raw;
 
-class MFTop implements LiteralCommand {
+@NullMarked
+class MFTop implements PaperLiteralCommand.AdventureFormat {
 
-    private static void informAboutRanking(CommandContext<CommandSender> context, FishRecordKeeper recordKeeper, List<FishRecord> records) {
-        recordKeeper.informAboutRanking(context.getSource(), records);
-    }
-
-    @NotNull
-    @Override
-    public String description(@NotNull CommandSender sender) {
-        return raw("command-top-description");
-    }
-
-    @NotNull
-    @Override
-    public String usage(@NotNull CommandSender sender) {
-        return "/mf top [alltime [<sort>]|competition]";
+    private void informAboutRanking(CommandContext<CommandSourceStack> context, FishRecordKeeper recordKeeper, @Nullable List<FishRecord> records) {
+        CommandSender sender = context.getSource().getSender();
+        if (records != null) {
+            recordKeeper.informAboutRanking(sender, records);
+        }
+        else {
+            recordKeeper.informAboutRanking(sender);
+        }
     }
 
     @Override
-    public int execute(@NotNull CommandContext<CommandSender> context) {
+    public ComponentLike description(CommandSourceStack source) {
+        return Component.translatable("morefish.command.top.description");
+    }
+
+    @Override
+    public ComponentLike usage(CommandSourceStack source) {
+        return Component.text("/mf top [alltime [<sort>]|competition]");
+    }
+
+    @Override
+    public Integer execute(CommandContext<CommandSourceStack> context) {
         informAboutRanking(context, getPlugin().getCompetition(), null);
         return 1;
     }
 
-    @NotNull
     @Override
     public String name() {
         return "top";
     }
 
-    @NotNull
     @Override
-    public List<Command<? extends ArgumentBuilder<CommandSender, ?>>> arguments() {
+    public List<PaperCommand<? extends ArgumentBuilder<CommandSourceStack, ?>, ComponentLike>> children() {
         return List.of(new AllTimeCommand(), new CompetitionCommand());
     }
 
-    static class AllTimeCommand implements LiteralCommand {
+    class AllTimeCommand implements PaperLiteralCommand.AdventureFormat {
 
         @Override
-        public int execute(@NotNull CommandContext<CommandSender> context) {
+        public Integer execute(CommandContext<CommandSourceStack> context) {
             informAboutRanking(context, getPlugin().getFishingLogs(), null);
             return 1;
         }
 
-        @NotNull
         @Override
         public String name() {
             return "alltime";
         }
 
         @Override
-        public @NotNull List<Command<? extends ArgumentBuilder<CommandSender, ?>>> arguments() {
+        public List<PaperCommand<? extends ArgumentBuilder<CommandSourceStack, ?>, ComponentLike>> children() {
             return List.of(new FishArgument());
         }
 
-        static class FishArgument implements ArgumentCommand<FishArgumentType.Holder> {
+        class FishArgument implements PaperArgumentCommand.AdventureFormat<Holder> {
 
-            @NotNull
             @Override
-            public ArgumentType<FishArgumentType.Holder> type() {
-                return new FishArgumentType();
+            public ArgumentType<RecordsArgumentType.Holder> type() {
+                return new RecordsArgumentType();
             }
 
             @Override
-            public int execute(@NotNull CommandContext<CommandSender> context) {
-                informAboutRanking(context, getPlugin().getFishingLogs(), context.getArgument(name(), FishArgumentType.Holder.class).get());
+            public Integer execute(CommandContext<CommandSourceStack> context) {
+                informAboutRanking(context, getPlugin().getFishingLogs(), RecordsArgumentType.getRecords(context, name()));
                 return 1;
             }
 
-            @NotNull
             @Override
             public String name() {
                 return "fish";
@@ -94,16 +98,14 @@ class MFTop implements LiteralCommand {
         }
     }
 
-    static class CompetitionCommand implements LiteralCommand {
+    class CompetitionCommand implements PaperLiteralCommand.AdventureFormat {
 
         @Override
-        public int execute(@NotNull CommandContext<CommandSender> context) {
-            CommandSender sender = context.getSource();
-            getPlugin().getCompetition().informAboutRanking(sender);
+        public Integer execute(CommandContext<CommandSourceStack> context) {
+            informAboutRanking(context, getPlugin().getCompetition(), null);
             return 1;
         }
 
-        @NotNull
         @Override
         public String name() {
             return "competition";

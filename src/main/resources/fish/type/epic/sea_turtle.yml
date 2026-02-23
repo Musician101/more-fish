@@ -1,0 +1,9 @@
+display-name: Sea Turtle
+length-max: 130
+length-min: 90
+icon:
+  schema_version: 1
+  DataVersion: 4671
+  id: minecraft:turtle_egg
+id: morefish:epic/sea_turtle
+rarity: morefish:epic

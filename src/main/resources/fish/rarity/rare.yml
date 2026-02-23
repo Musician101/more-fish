@@ -1,0 +1,8 @@
+color: dark_blue
+display-name: RARE
+conditions:
+  mcmmo-skills:
+    Fishing: 25
+weight: 2200
+price-multiplier: 2
+id: morefish:rare

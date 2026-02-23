@@ -1,122 +1,159 @@
 package me.elsiff.morefish;
 
+import io.musician101.musicommand.paper.PaperMusiCommand;
+import me.elsiff.morefish.bags.FishBags;
 import me.elsiff.morefish.command.MFMain;
-import me.elsiff.morefish.fishing.FishBags;
-import me.elsiff.morefish.fishing.FishTypeTable;
-import me.elsiff.morefish.fishing.FishingListener;
-import me.elsiff.morefish.fishing.competition.FishingCompetition;
-import me.elsiff.morefish.fishing.competition.FishingCompetitionAutoRunner;
-import me.elsiff.morefish.fishing.competition.FishingCompetitionHost;
-import me.elsiff.morefish.fishing.fishrecords.FishingLogs;
+import me.elsiff.morefish.competition.FishingCompetition;
+import me.elsiff.morefish.competition.FishingCompetitionAutoRunner;
+import me.elsiff.morefish.competition.FishingCompetitionHost;
+import me.elsiff.morefish.fish.FishingListener;
+import me.elsiff.morefish.fish.registry.FishRarities;
+import me.elsiff.morefish.fish.registry.FishTypes;
 import me.elsiff.morefish.hooker.McmmoHooker;
 import me.elsiff.morefish.hooker.MusiBoardHooker;
 import me.elsiff.morefish.hooker.VaultHooker;
-import me.elsiff.morefish.text.Lang;
+import me.elsiff.morefish.lang.ArgumentUtil;
+import me.elsiff.morefish.lang.Lang;
+import me.elsiff.morefish.records.FishingLogs;
+import me.elsiff.morefish.shop.FishShopFilterDialog;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
+import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.minimessage.translation.Argument;
 import org.bukkit.Server;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
-import static io.musician101.bukkitier.Bukkitier.registerCommand;
-import static me.elsiff.morefish.text.Lang.replace;
+import java.io.IOException;
+import java.util.List;
 
+@NullMarked
 public final class MoreFish extends JavaPlugin {
 
-    @NotNull
     private final FishingLogs fishingLogs = new FishingLogs();
-    @NotNull
     private final FishingCompetitionAutoRunner autoRunner = new FishingCompetitionAutoRunner();
-    @NotNull
     private final FishingCompetition competition = new FishingCompetition();
-    @NotNull
     private final FishingCompetitionHost competitionHost = new FishingCompetitionHost();
-    @NotNull
     private final FishBags fishBags = new FishBags();
-    @NotNull
-    private final FishTypeTable fishTypeTable = new FishTypeTable();
-    @NotNull
+    private final FishRarities rarities = new FishRarities();
+    private final FishTypes types = new FishTypes();
     private final McmmoHooker mcmmo = new McmmoHooker();
-    @NotNull
     private final MusiBoardHooker musiBoard = new MusiBoardHooker();
-    @NotNull
     private final VaultHooker vault = new VaultHooker();
+    private final Lang lang = new Lang();
 
     public static MoreFish getPlugin() {
         return getPlugin(MoreFish.class);
     }
 
-    public void applyConfig() {
-        Bukkit.getAsyncScheduler().runNow(this, task -> {
-            getServer().getOnlinePlayers().forEach(player -> {
-                Component title = player.getOpenInventory().title();
-                if (title.equals(replace("<mf-lang:shop-gui-title>")) || title.equals(replace("<mf-lang:sales-filter-title>"))) {
-                    player.getScheduler().run(this, t -> {
-                        player.closeInventory();
-                        player.sendMessage(replace("<mf-lang:gui-closed-config-update>"));
-                    }, null);
-                }
-            });
+    public static Lang lang() {
+        return getPlugin().lang;
+    }
 
-            saveDefaultConfig();
-            reloadConfig();
-            fishTypeTable.load();
-            getSLF4JLogger().info("Loaded {} rarities and {} fish types", fishTypeTable.getRarities().size(), fishTypeTable.getTypes().size());
-            if (autoRunner.isEnabled()) {
-                autoRunner.disable();
+    private void closeGUI() {
+        getServer().getOnlinePlayers().forEach(player -> {
+            if (FishShopFilterDialog.FILTERS.containsKey(player.getUniqueId())) {
+                player.getScheduler().run(this, t -> {
+                    player.closeDialog();
+                    player.sendMessage(Component.translatable("morefish.gui.closed-config-update"));
+                }, null);
             }
 
-            if (getConfig().getBoolean("auto-running.enable")) {
-                autoRunner.enable();
+            Component title = player.getOpenInventory().title();
+            if (title.equals(Component.translatable("morefish.main.shop.gui-title"))) {
+                player.getScheduler().run(this, t -> {
+                    player.closeInventory();
+                    player.sendMessage(Component.translatable("morefish.gui.closed-config-update"));
+                }, null);
             }
 
-            Lang.reload();
-            getSLF4JLogger().info("Loaded language configuration file.");
         });
     }
 
-    @NotNull
+    public void applyMainConfig() {
+        if (autoRunner.isEnabled()) {
+            autoRunner.disable();
+        }
+
+        closeGUI();
+        saveDefaultConfig();
+        reloadConfig();
+        if (getConfig().getBoolean("auto-running.enable")) {
+            autoRunner.enable();
+        }
+
+
+        getComponentLogger().info(Component.translatable("morefish.main.config.config.success"));
+    }
+
+    public void applyFishConfig() {
+        closeGUI();
+        try {
+            rarities.load();
+            types.load();
+            ComponentLike rarityCount = Argument.numeric("rarity-count", rarities.values().size());
+            ComponentLike typeCount = Argument.numeric("type-count", types.values().size());
+            Component message = Component.translatable("morefish.main.config.fish.success", rarityCount, typeCount);
+            getComponentLogger().info(message);
+        }
+        catch (IOException e) {
+            Component message = Component.translatable("morefish.main.config.fish.success", ArgumentUtil.error(e.getMessage()));
+            getComponentLogger().info(message, e);
+        }
+    }
+
+    public void applyLangConfig() {
+        try {
+            lang.load();
+            getComponentLogger().info(Component.translatable("morefish.main.config.lang.success"));
+        }
+        catch (IOException e) {
+            getSLF4JLogger().error("An error occurred while trying to load language files.", e);
+        }
+    }
+
+    public void applyConfig() {
+        applyLangConfig();
+        applyMainConfig();
+        applyFishConfig();
+    }
+
     public FishingLogs getFishingLogs() {
         return fishingLogs;
     }
 
-    @NotNull
     public FishingCompetition getCompetition() {
         return competition;
     }
 
-    @NotNull
     public FishingCompetitionHost getCompetitionHost() {
         return competitionHost;
     }
 
-    @NotNull
     public FishingCompetitionAutoRunner getAutoRunner() {
         return autoRunner;
     }
 
-    @NotNull
     public FishBags getFishBags() {
         return fishBags;
     }
 
-    @NotNull
-    public FishTypeTable getFishTypeTable() {
-        return fishTypeTable;
+    public FishRarities rarities() {
+        return rarities;
     }
 
-    @NotNull
+    public FishTypes types() {
+        return types;
+    }
+
     public McmmoHooker getMcmmo() {
         return mcmmo;
     }
 
-    @NotNull
     public MusiBoardHooker getMusiBoard() {
         return musiBoard;
     }
 
-    @NotNull
     public VaultHooker getVault() {
         return vault;
     }
@@ -133,7 +170,7 @@ public final class MoreFish extends JavaPlugin {
             autoRunner.disable();
         }
 
-        getSLF4JLogger().info("Plugin has been disabled.");
+        getComponentLogger().info(Component.translatable("morefish.main.plugin.disabled"));
     }
 
     @Override
@@ -148,7 +185,7 @@ public final class MoreFish extends JavaPlugin {
         PluginManager pm = server.getPluginManager();
         pm.registerEvents(new FishingListener(), this);
         pm.registerEvents(fishBags, this);
-        registerCommand(getPlugin(), new MFMain());
-        getSLF4JLogger().info("Plugin has been enabled.");
+        PaperMusiCommand.newAdventureInstance(this).registerCommand(new MFMain(), List.of("mf", "fish"));
+        getComponentLogger().info(Component.translatable("morefish.main.plugin.enabled"));
     }
 }

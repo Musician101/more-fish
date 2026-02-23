@@ -3,23 +3,22 @@ package me.elsiff.morefish.hooker;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Optional;
 
+@NullMarked
 public final class VaultHooker implements PluginHooker {
 
     @Nullable
     private Economy economy;
     private boolean hasHooked;
 
-    @NotNull
     public Optional<Economy> getEconomy() {
         return Optional.ofNullable(economy);
     }
 
-    @NotNull
     public String getPluginName() {
         return "Vault";
     }

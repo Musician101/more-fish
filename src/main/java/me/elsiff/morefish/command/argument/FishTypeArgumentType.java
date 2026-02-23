@@ -1,41 +1,47 @@
 package me.elsiff.morefish.command.argument;
 
-import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import me.elsiff.morefish.fishing.FishType;
-import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
+import io.papermc.paper.command.brigadier.argument.CustomArgumentType;
+import me.elsiff.morefish.fish.FishType;
+import org.bukkit.NamespacedKey;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
 
-public class FishTypeArgumentType implements ArgumentType<FishType> {
+@NullMarked
+public class FishTypeArgumentType implements CustomArgumentType.Converted<FishType, NamespacedKey> {
 
-    @NotNull
-    public static FishType get(@NotNull CommandContext<CommandSender> context) {
+    public static FishType getFishType(CommandContext<CommandSourceStack> context) {
         return context.getArgument("fish", FishType.class);
     }
 
-    private Stream<FishType> fishes() {
-        return getPlugin().getFishTypeTable().getTypes().stream();
+    private Stream<FishType> types() {
+        return getPlugin().types().stream();
+    }
+
+    @Override
+    public ArgumentType<NamespacedKey> getNativeType() {
+        return ArgumentTypes.namespacedKey();
     }
 
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-        fishes().map(FishType::name).filter(name -> name.startsWith(builder.getRemaining())).forEach(builder::suggest);
+        types().map(FishType::getKey).map(NamespacedKey::asString).filter(key -> key.startsWith(builder.getRemaining())).forEach(builder::suggest);
         return builder.buildFuture();
     }
 
     @Override
-    public FishType parse(StringReader reader) throws CommandSyntaxException {
-        String name = reader.readString();
-        return fishes().filter(f -> f.name().equals(name)).findFirst().orElseThrow(() -> new SimpleCommandExceptionType(() -> name + " is not a valid fish.").createWithContext(reader));
+    public FishType convert(NamespacedKey nativeType) throws CommandSyntaxException {
+        return getPlugin().types().get(nativeType).orElseThrow(() -> new SimpleCommandExceptionType(() -> nativeType + " is not a valid fish type.").create());
     }
 }

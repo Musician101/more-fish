@@ -1,0 +1,13 @@
+commands:
+  - minecraft:effect give @p minecraft:nausea 5 1
+  - tellraw @p [{"text":"[MoreFish]","color":"aqua"},{"text":"Aw Barf! That is one stinky
+    fish!","color":"white"}]
+length-max: 1
+display-name: Stinky Fish
+length-min: 1
+icon:
+  schema_version: 1
+  DataVersion: 4671
+  id: minecraft:cod
+id: morefish:junk/stinky_fish
+rarity: morefish:junk

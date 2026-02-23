@@ -1,48 +1,45 @@
 package me.elsiff.morefish.command;
 
 import com.mojang.brigadier.context.CommandContext;
-import io.musician101.bukkitier.command.LiteralCommand;
-import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
+import io.musician101.musicommand.paper.command.PaperLiteralCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
+import org.jspecify.annotations.NullMarked;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.text.Lang.raw;
-import static me.elsiff.morefish.text.Lang.replace;
 
-class MFEnd implements LiteralCommand {
+@NullMarked
+class MFEnd implements MFCommand, PaperLiteralCommand.AdventureFormat {
 
-    @NotNull
     @Override
-    public String description(@NotNull CommandSender sender) {
-        return raw("command-end-description");
-    }
-
-    @NotNull
-    @Override
-    public String usage(@NotNull CommandSender sender) {
-        return "/mf end";
+    public ComponentLike description(CommandSourceStack source) {
+        return Component.translatable("morefish.command.end.description");
     }
 
     @Override
-    public boolean canUse(@NotNull CommandSender sender) {
-        return sender.hasPermission("morefish.admin");
+    public ComponentLike usage(CommandSourceStack source) {
+        return Component.text("/mf end");
     }
 
     @Override
-    public int execute(@NotNull CommandContext<CommandSender> context) {
-        CommandSender sender = context.getSource();
+    public boolean canUse(CommandSourceStack source) {
+        return hasPermission(source, "morefish.admin");
+    }
+
+    @Override
+    public Integer execute(CommandContext<CommandSourceStack> context) {
         if (getPlugin().getCompetition().isEnabled()) {
             getPlugin().getCompetitionHost().closeCompetition();
-            sender.sendMessage(replace("<mf-lang:contest-stop>"));
+            sendMessage(context, Component.translatable("morefish.main.contest.stop"));
         }
         else {
-            sender.sendMessage(replace("<mf-lang:already-stopped>"));
+            sendMessage(context, Component.translatable("morefish.main.already-stopped"));
         }
 
         return 1;
     }
 
-    @NotNull
     @Override
     public String name() {
         return "end";

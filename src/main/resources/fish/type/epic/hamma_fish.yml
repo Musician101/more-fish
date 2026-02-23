@@ -1,0 +1,12 @@
+display-name: Hamma Fish
+length-max: 190
+length-min: 150
+icon:
+  schema_version: 1
+  DataVersion: 4671
+  components:
+    minecraft:lore: '["<italic><dark_purple>I''m back in da house, hamma hamma
+            hamma"]'
+  id: minecraft:cod
+id: morefish:epic/hamma_fish
+rarity: morefish:epic

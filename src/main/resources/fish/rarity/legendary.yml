@@ -1,0 +1,9 @@
+weight: 70
+firework: true
+color: gold
+display-name: LEGENDARY
+conditions:
+  mcmmo-skills:
+    Fishing: 100
+price-multiplier: 10
+id: morefish:legendary

@@ -2,14 +2,18 @@ package me.elsiff.morefish.hooker;
 
 import com.gmail.nossr50.api.ExperienceAPI;
 import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
+import me.elsiff.morefish.util.EnumUtils;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
+import java.util.Optional;
+
+@NullMarked
 public final class McmmoHooker implements PluginHooker {
 
     private boolean hasHooked;
 
-    @NotNull
     public String getPluginName() {
         return "mcMMO";
     }
@@ -24,7 +28,14 @@ public final class McmmoHooker implements PluginHooker {
         }
     }
 
-    public int skillLevelOf(@NotNull Player player, @NotNull PrimarySkillType skillType) {
+    public int skillLevelOf(Player player, PrimarySkillType skillType) {
         return ExperienceAPI.getLevel(player, skillType);
+    }
+
+    @Nullable
+    public PrimarySkillType getSkill(String skillName) {
+        Optional<PrimarySkillType> skillType = EnumUtils.get(skillName, PrimarySkillType.class);
+        return skillType.orElse(null);
+
     }
 }

@@ -1,0 +1,12 @@
+id: morefish:junk/bagged_milk
+rarity: morefish:junk
+length-max: 20
+display-name: Bagged Milk
+length-min: 20
+icon:
+  schema_version: 1
+  DataVersion: 4671
+  id: minecraft:milk_bucket
+commands:
+  - tellraw @p [{"text":"[MoreFish] ","color":"aqua"},{"text":"Return this to your local
+    Merzetti.","color":"white"}]

@@ -1,0 +1,11 @@
+display-name: Admin's Wooden Axe
+length-max: 16
+length-min: 16
+icon:
+  schema_version: 1
+  DataVersion: 4671
+  components:
+    minecraft:lore: '["<gray>//cut"]'
+  id: minecraft:wooden_axe
+id: morefish:junk/wooden_axe
+rarity: morefish:junk

@@ -2,46 +2,49 @@ package me.elsiff.morefish.command;
 
 import com.google.common.collect.Lists;
 import com.mojang.brigadier.context.CommandContext;
-import io.musician101.bukkitier.command.LiteralCommand;
-import me.elsiff.morefish.fishing.competition.FishingCompetitionAutoRunner.CompetitionTimes;
-import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
+import io.musician101.musicommand.paper.command.PaperLiteralCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import me.elsiff.morefish.competition.FishingCompetitionAutoRunner.CompetitionTimes;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.translation.Argument;
+import org.jspecify.annotations.NullMarked;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.text.Lang.raw;
-import static me.elsiff.morefish.text.Lang.replace;
-import static me.elsiff.morefish.text.Lang.tagResolver;
 
-class MFTimes implements LiteralCommand {
+@NullMarked
+class MFTimes implements MFCommand, PaperLiteralCommand.AdventureFormat {
 
     @Override
-    public int execute(@NotNull CommandContext<CommandSender> context) {
-        CommandSender sender = context.getSource();
+    public Integer execute(CommandContext<CommandSourceStack> context) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm z");
-        String times = Lists.partition(getPlugin().getAutoRunner().getCompetitionTimes(), 6).stream().map(list -> list.stream().map(CompetitionTimes::getStartTime).map(ZonedDateTime.now()::with).map(l -> l.format(formatter)).collect(Collectors.joining(", "))).collect(Collectors.joining("<newline>"));
-        sender.sendMessage(replace("<mf-lang:command-times-message>", tagResolver("times", replace(times))));
+        String times = Lists.partition(getPlugin().getAutoRunner().getCompetitionTimes(), 6).stream().map(list -> asString(list, formatter)).collect(Collectors.joining("<newline>"));
+        sendMessage(context, Component.translatable("morefish.command.times.message", Argument.component("times", MiniMessage.miniMessage().deserialize(times))));
         return 1;
     }
 
-    @NotNull
+    private String asString(List<CompetitionTimes> times, DateTimeFormatter formatter) {
+        return times.stream().map(CompetitionTimes::getStartTime).map(ZonedDateTime.now()::with).map(l -> l.format(formatter)).collect(Collectors.joining(", "));
+    }
+
     @Override
     public String name() {
         return "times";
     }
 
-    @NotNull
     @Override
-    public String description(@NotNull CommandSender sender) {
-        return raw("command-times-description");
+    public ComponentLike description(CommandSourceStack source) {
+        return Component.translatable("morefish.command.times.description");
     }
 
-    @NotNull
     @Override
-    public String usage(@NotNull CommandSender sender) {
-        return "/mf clear [alltime|competition [<player>]]";
+    public ComponentLike usage(CommandSourceStack source) {
+        return Component.text("/mf clear [alltime|competition [<player>]]");
     }
 }

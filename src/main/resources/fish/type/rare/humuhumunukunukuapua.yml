@@ -1,0 +1,11 @@
+display-name: Humuhumunukunukuapua
+length-max: 80
+length-min: 40
+icon:
+  schema_version: 1
+  DataVersion: 4671
+  components:
+    minecraft:lore: '["<italic><dark_purple>Yes I''m real"]'
+  id: minecraft:cod
+id: morefish:rare/humuhumunukunukuapua
+rarity: morefish:rare

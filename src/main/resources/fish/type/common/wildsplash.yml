@@ -1,0 +1,11 @@
+display-name: Wildsplash
+length-max: 22
+length-min: 15
+icon:
+  schema_version: 1
+  DataVersion: 4671
+  id: minecraft:tropical_fish
+  components:
+    minecraft:lore: '["<aqua>Splish Splash I''m takin a bath!"]'
+id: morefish:common/wildsplash
+rarity: morefish:common

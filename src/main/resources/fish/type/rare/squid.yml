@@ -1,0 +1,13 @@
+commands:
+  - minecraft:effect give @p minecraft:blindness 5 1
+  - tellraw @p [{"text":"[MoreFish]","color":"aqua"},{"text":" The squid gifted you
+    some darkness!","color":"white"}]
+length-max: 50
+display-name: Squid
+length-min: 30
+icon:
+  schema_version: 1
+  DataVersion: 4671
+  id: minecraft:ink_sac
+id: morefish:rare/squid
+rarity: morefish:rare

@@ -1,0 +1,17 @@
+id: morefish:mythic/megalodon
+rarity: morefish:mythic
+length-max: 2200
+display-name: Megalodon
+length-min: 1500
+commands:
+  - minecraft:effect give @p minecraft:regeneration 2 127
+  - mcmmo:addxp @p Fishing 5000
+icon:
+  schema_version: 1
+  DataVersion: 4671
+  id: minecraft:tropical_fish
+  components:
+    minecraft:lore: '["<italic><dark_purple>Hey there big fella", "<blue>Get full
+            health and hunger", "<blue>when you eat it."]'
+    minecraft:food: '{nutrition:20,saturation:25.0f}'
+    minecraft:consumable: '{on_consume_effects:[{effects:[{ambient:1b,amplifier:10b,duration:1,id:"minecraft:instant_health",show_icon:1b}],type:"minecraft:apply_effects"}]}'

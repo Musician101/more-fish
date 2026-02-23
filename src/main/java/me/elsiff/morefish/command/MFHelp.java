@@ -1,37 +1,31 @@
 package me.elsiff.morefish.command;
 
-import com.mojang.brigadier.builder.ArgumentBuilder;
-import io.musician101.bukkitier.command.Command;
-import io.musician101.bukkitier.command.LiteralCommand;
-import io.musician101.bukkitier.command.help.HelpSubCommand;
+import com.mojang.brigadier.context.CommandContext;
+import io.musician101.musicommand.paper.command.PaperLiteralCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.plugin.configuration.PluginMeta;
 import net.kyori.adventure.text.Component;
-import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
+import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.minimessage.translation.Argument;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
-import static me.elsiff.morefish.text.Lang.replace;
-import static me.elsiff.morefish.text.Lang.tagResolver;
-import static net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.resolver;
 
-class MFHelp extends HelpSubCommand {
+@NullMarked
+class MFHelp implements MFCommand, PaperLiteralCommand.AdventureFormat {
 
-    public MFHelp(@NotNull LiteralCommand root) {
-        super(root, getPlugin());
+    private final PaperLiteralCommand.AdventureFormat root;
+
+    public MFHelp(PaperLiteralCommand.AdventureFormat root) {
+        this.root = root;
     }
 
     @Override
-    protected @NotNull Component commandInfo(@NotNull Command<? extends ArgumentBuilder<CommandSender, ?>> root, @NotNull Command<? extends ArgumentBuilder<CommandSender, ?>> command, @NotNull CommandSender sender) {
-        return replace("<mf-lang:command-help-info>", resolver(tagResolver("command-usage", root.usage(sender) + " " + command.name()), tagResolver("command-description", command.description(sender))));
-    }
-
-    @SuppressWarnings("UnstableApiUsage")
-    @NotNull
-    @Override
-    protected Component header() {
-        PluginMeta meta = plugin.getPluginMeta();
+    public Integer execute(CommandContext<CommandSourceStack> context) {
+        CommandSourceStack source = context.getSource();
+        PluginMeta meta = getPlugin().getPluginMeta();
         List<String> authors = meta.getAuthors();
         String authorsString = "";
         if (!authors.isEmpty()) {
@@ -43,6 +37,24 @@ class MFHelp extends HelpSubCommand {
             };
         }
 
-        return replace("<mf-lang:command-help-header>", resolver(tagResolver("authors", authorsString), tagResolver("plugin-display-name", meta.getDisplayName())));
+        Component header = Component.translatable("morefish.command.help.header", Argument.string("authors", authorsString), Argument.string("plugin-display-name", meta.getDisplayName()));
+        sendMessage(context, header);
+        root.children().stream().filter(cmd -> cmd.canUse(source)).forEach(cmd -> {
+            ComponentLike commandUsage = Argument.component("command-usage", cmd.usage(source));
+            ComponentLike commandDescription = Argument.component("command-description", cmd.description(source));
+            Component message = Component.translatable("morefish.command.help.info", commandUsage, commandDescription);
+            sendMessage(context, message);
+        });
+        return 1;
+    }
+
+    @Override
+    public String name() {
+        return "help";
+    }
+
+    @Override
+    public ComponentLike description(CommandSourceStack source) {
+        return Component.translatable("morefish.command.help.description");
     }
 }

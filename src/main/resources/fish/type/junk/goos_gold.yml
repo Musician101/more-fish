@@ -1,0 +1,13 @@
+display-name: Goos's Gold
+length-max: 5
+length-min: 5
+icon:
+  schema_version: 1
+  DataVersion: 4671
+  id: minecraft:gold_nugget
+  components:
+    minecraft:lore: '["<gold><i>For Halo and for the church!"]'
+commands:
+  - broadcast !&8[&6MoreFish&8] &#ffaa00@p has some of the mighty Goo's gold!
+id: morefish:junk/goos_gold
+rarity: morefish:junk

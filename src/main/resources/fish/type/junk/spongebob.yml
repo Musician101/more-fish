@@ -1,0 +1,10 @@
+skip-item-format: true
+display-name: Nice Cook Of The Krusty Krab
+length-max: 16
+length-min: 16
+icon:
+  schema_version: 1
+  DataVersion: 4671
+  id: minecraft:sponge
+id: morefish:junk/spongebob
+rarity: morefish:junk

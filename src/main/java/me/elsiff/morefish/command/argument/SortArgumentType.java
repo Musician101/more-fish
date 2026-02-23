@@ -1,26 +1,42 @@
 package me.elsiff.morefish.command.argument;
 
-import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
+import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.MessageComponentSerializer;
+import io.papermc.paper.command.brigadier.argument.CustomArgumentType;
 import me.elsiff.morefish.command.argument.SortArgumentType.SortType;
-import me.elsiff.morefish.fishing.fishrecords.FishRecord;
+import me.elsiff.morefish.fish.FishRarity;
+import me.elsiff.morefish.records.FishRecord;
 import me.elsiff.morefish.util.EnumUtils;
-import org.jetbrains.annotations.NotNull;
+import net.kyori.adventure.text.Component;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Comparator;
 import java.util.concurrent.CompletableFuture;
 
-public class SortArgumentType implements ArgumentType<SortType> {
+@NullMarked
+public class SortArgumentType implements CustomArgumentType.Converted<SortType, String> {
+
+    private static final DynamicCommandExceptionType INVALID_SORT_TYPE_ERROR = new DynamicCommandExceptionType(type -> MessageComponentSerializer.message().serialize(Component.text(type + " is not a valid sort type.")));
+
+    public static SortType getSortType(CommandContext<CommandSourceStack> context, String name) {
+        return context.getArgument(name, SortType.class);
+    }
 
     @Override
-    public SortType parse(StringReader reader) throws CommandSyntaxException {
-        String name = reader.readString();
-        return EnumUtils.getOrThrow(name, SortType.class, new SimpleCommandExceptionType(() -> name + " is not a valid record type.").createWithContext(reader));
+    public SortType convert(String nativeType) throws CommandSyntaxException {
+        return EnumUtils.getOrThrow(nativeType, SortType.class, INVALID_SORT_TYPE_ERROR.create(nativeType));
+    }
+
+    @Override
+    public ArgumentType<String> getNativeType() {
+        return StringArgumentType.word();
     }
 
     @Override
@@ -35,18 +51,16 @@ public class SortArgumentType implements ArgumentType<SortType> {
         TIMESTAMP,
         PLAYER;
 
-        @NotNull
         public Comparator<FishRecord> natural() {
             return switch (this) {
                 case LENGTH -> FishRecord::compareTo;
-                case NAME -> Comparator.comparing(FishRecord::getFishName);
-                case RARITY -> Comparator.comparingDouble(FishRecord::getRarityProbability).reversed();
+                case NAME -> Comparator.comparing(r -> r.fish().type().getKey());
+                case RARITY -> Comparator.<FishRecord, FishRarity>comparing(r -> r.fish().rarity()).reversed();
                 case TIMESTAMP -> Comparator.comparingLong(FishRecord::timestamp);
                 case PLAYER -> Comparator.comparing(FishRecord::fisher);
             };
         }
 
-        @NotNull
         public Comparator<FishRecord> reversed() {
             return natural().reversed();
         }
