@@ -5,7 +5,6 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.minimessage.translation.MiniMessageTranslator;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.NodePath;
 import org.spongepowered.configurate.yaml.NodeStyle;
@@ -27,7 +26,6 @@ import static me.elsiff.morefish.MoreFish.getPlugin;
 public class Lang extends MiniMessageTranslator {
 
     private final Map<Locale, ConfigurationNode> locales = new HashMap<>();
-    private final ConfigurationNode node = CommentedConfigurationNode.root();
 
     @Override
     public Key name() {
@@ -42,10 +40,6 @@ public class Lang extends MiniMessageTranslator {
         }
 
         return node.node(NodePath.of(key.split("\\."))).getString();
-    }
-
-    public String rawString(String key) {
-        return node.node(NodePath.of(key.split("\\."))).getString(key);
     }
 
     public void load() throws IOException {

@@ -18,8 +18,6 @@ import org.jspecify.annotations.NullMarked;
 import java.util.ArrayList;
 import java.util.List;
 
-import static me.elsiff.morefish.MoreFish.lang;
-
 @NullMarked
 @SuppressWarnings("UnstableApiUsage")
 public class ColorDialog extends MusiDialog {
@@ -41,8 +39,7 @@ public class ColorDialog extends MusiDialog {
             DialogInput red = colorSlider("red", color.red());
             DialogInput green = colorSlider("green", color.green());
             DialogInput blue = colorSlider("blue", color.blue());
-            String testPhrase = lang().rawString("morefish.editor.rarity.selected.color.test-phrase");
-            DialogBody body = DialogBody.plainMessage(Component.text(testPhrase, color));
+            DialogBody body = DialogBody.plainMessage(Component.translatable("morefish.editor.rarity.selected.color.test-phrase", color));
             DialogBase base = DialogBase.builder(label).externalTitle(label).inputs(List.of(red, green, blue)).body(List.of(body)).build();
             b.empty().base(base).type(type());
         });
