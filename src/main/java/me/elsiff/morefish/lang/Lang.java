@@ -31,7 +31,7 @@ public class Lang extends MiniMessageTranslator {
 
     @Override
     public Key name() {
-        return Key.key("serversaturday:lang");
+        return Key.key("morefish:lang");
     }
 
     @Override
