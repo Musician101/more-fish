@@ -12,8 +12,6 @@ import org.spongepowered.configurate.serialize.TypeSerializer;
 
 import java.lang.reflect.Type;
 
-import static me.elsiff.morefish.MoreFish.getPlugin;
-
 @NullMarked
 public class PlayerAnnouncementSerializer implements TypeSerializer<PlayerAnnouncement> {
 
@@ -25,8 +23,7 @@ public class PlayerAnnouncementSerializer implements TypeSerializer<PlayerAnnoun
         if (node.isNull()) {
             return null;
         }
-
-        getPlugin().getSLF4JLogger().error(node.toString());
+        
         PlayerAnnouncement.Type announcementType = EnumUtils.getOrThrow(TYPE.get(node), PlayerAnnouncement.Type.class, new SerializationException("type in " + node.path() + " is not a valid announcement type."));
         double radius = RADIUS.get(node);
         if (radius > 0) {
