@@ -12,8 +12,6 @@ import org.jspecify.annotations.NullMarked;
 import java.util.ArrayList;
 import java.util.List;
 
-import static me.elsiff.morefish.MoreFish.getPlugin;
-
 @NullMarked
 @SuppressWarnings("UnstableApiUsage")
 public class FishConditionsDialog extends MusiDialog {
@@ -31,10 +29,6 @@ public class FishConditionsDialog extends MusiDialog {
         dialogs.add(new BiomesConditionDialog(this).build());
         dialogs.add(new EnchantmentsConditionDialog(this).build());
         dialogs.add(new LocationYConditionDialog(this).build());
-        if (getPlugin().getMcmmo().hasHooked()) {
-            dialogs.add(new McmmoSkillsConditionDialog(this).build());
-        }
-
         dialogs.add(new PotionEffectsConditionDialog(this).build());
         dialogs.add(new RainingConditionDialog(this).build());
         dialogs.add(new ThunderingConditionDialog(this).build());

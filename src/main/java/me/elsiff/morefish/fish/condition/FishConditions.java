@@ -26,8 +26,6 @@ public class FishConditions implements ComponentLike, TagResolver {
     @Nullable
     private LocationYCondition locationY;
     @Nullable
-    private McmmoSkillsCondition mcmmoSkills;
-    @Nullable
     private PotionEffectsCondition potionEffects;
     @Nullable
     private RainingCondition raining;
@@ -60,14 +58,6 @@ public class FishConditions implements ComponentLike, TagResolver {
 
     public void locationY(@Nullable LocationYCondition locationY) {
         this.locationY = locationY;
-    }
-
-    public Optional<McmmoSkillsCondition> mcmmoSkills() {
-        return Optional.ofNullable(mcmmoSkills);
-    }
-
-    public void mcmmoSkills(@Nullable McmmoSkillsCondition mcmmoSkills) {
-        this.mcmmoSkills = mcmmoSkills;
     }
 
     public Optional<PotionEffectsCondition> potionEffects() {
@@ -124,10 +114,6 @@ public class FishConditions implements ComponentLike, TagResolver {
             canCatch = locationY().get().check(caught, fisher);
         }
 
-        if (mcmmoSkills().isPresent()) {
-            canCatch = mcmmoSkills().get().check(caught, fisher);
-        }
-
         if (potionEffects().isPresent()) {
             canCatch = potionEffects().get().check(caught, fisher);
         }
@@ -160,7 +146,6 @@ public class FishConditions implements ComponentLike, TagResolver {
                 case "biomes" -> resolve(name, biomes, arguments, ctx);
                 case "enchantments" -> resolve(name, enchantments, arguments, ctx);
                 case "location-y" -> resolve(name, locationY, arguments, ctx);
-                case "mcmmo-skills" -> resolve(name, mcmmoSkills, arguments, ctx);
                 case "potion-effects" -> resolve(name, potionEffects, arguments, ctx);
                 case "raining" -> resolve(name, raining, arguments, ctx);
                 case "thundering" -> resolve(name, thundering, arguments, ctx);

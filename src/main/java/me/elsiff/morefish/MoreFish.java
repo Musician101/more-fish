@@ -9,7 +9,6 @@ import me.elsiff.morefish.competition.FishingCompetitionHost;
 import me.elsiff.morefish.fish.FishingListener;
 import me.elsiff.morefish.fish.registry.FishRarities;
 import me.elsiff.morefish.fish.registry.FishTypes;
-import me.elsiff.morefish.hooker.McmmoHooker;
 import me.elsiff.morefish.hooker.MusiBoardHooker;
 import me.elsiff.morefish.hooker.VaultHooker;
 import me.elsiff.morefish.lang.ArgumentUtil;
@@ -37,7 +36,6 @@ public final class MoreFish extends JavaPlugin {
     private final FishBags fishBags = new FishBags();
     private final FishRarities rarities = new FishRarities();
     private final FishTypes types = new FishTypes();
-    private final McmmoHooker mcmmo = new McmmoHooker();
     private final MusiBoardHooker musiBoard = new MusiBoardHooker();
     private final VaultHooker vault = new VaultHooker();
     private final Lang lang = new Lang();
@@ -146,10 +144,6 @@ public final class MoreFish extends JavaPlugin {
         return types;
     }
 
-    public McmmoHooker getMcmmo() {
-        return mcmmo;
-    }
-
     public MusiBoardHooker getMusiBoard() {
         return musiBoard;
     }
@@ -176,7 +170,6 @@ public final class MoreFish extends JavaPlugin {
     @Override
     public void onEnable() {
         vault.hook();
-        mcmmo.hook();
         musiBoard.hook();
         applyConfig();
         fishBags.load();

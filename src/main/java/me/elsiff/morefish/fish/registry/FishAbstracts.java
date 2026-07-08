@@ -7,7 +7,6 @@ import me.elsiff.morefish.fish.condition.BiomesCondition;
 import me.elsiff.morefish.fish.condition.EnchantmentsCondition;
 import me.elsiff.morefish.fish.condition.FishConditions;
 import me.elsiff.morefish.fish.condition.LocationYCondition;
-import me.elsiff.morefish.fish.condition.McmmoSkillsCondition;
 import me.elsiff.morefish.fish.condition.PotionEffectsCondition;
 import me.elsiff.morefish.fish.condition.RainingCondition;
 import me.elsiff.morefish.fish.condition.ThunderingCondition;
@@ -20,7 +19,6 @@ import me.elsiff.morefish.serialize.fish.condition.BiomeConditionSerializer;
 import me.elsiff.morefish.serialize.fish.condition.EnchantmentsConditionSerializer;
 import me.elsiff.morefish.serialize.fish.condition.FishConditionsSerializer;
 import me.elsiff.morefish.serialize.fish.condition.LocationYConditionSerializer;
-import me.elsiff.morefish.serialize.fish.condition.McmmoSkillConditionSerializer;
 import me.elsiff.morefish.serialize.fish.condition.PotionEffectsConditionSerializer;
 import me.elsiff.morefish.serialize.fish.condition.RainingConditionSerializer;
 import me.elsiff.morefish.serialize.fish.condition.ThunderingConditionSerializer;
@@ -58,7 +56,6 @@ public abstract sealed class FishAbstracts<F extends FishAbstract<F>> implements
             .register(BiomesCondition.class, new BiomeConditionSerializer())
             .register(EnchantmentsCondition.class, new EnchantmentsConditionSerializer())
             .register(LocationYCondition.class, new LocationYConditionSerializer())
-            .register(McmmoSkillsCondition.class, new McmmoSkillConditionSerializer())
             .register(PotionEffectsCondition.class, new PotionEffectsConditionSerializer())
             .register(RainingCondition.class, new RainingConditionSerializer())
             .register(ThunderingCondition.class, new ThunderingConditionSerializer())

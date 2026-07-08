@@ -19,16 +19,12 @@ repositories {
     maven("https://libraries.minecraft.net")
     maven("https://papermc.io/repo/repository/maven-public/")
     maven("https://oss.sonatype.org/content/repositories/snapshots/")
-    maven("https://nexus.neetgames.com/repository/maven-releases/")
-    // mcMMO depends on WorldGuard, but Gradle failed to find it
-    maven("https://maven.enginehub.org/repo/")
     maven("https://jitpack.io")
 }
 
 dependencies {
     paperweight.paperDevBundle("26.2.build.+")
     compileOnlyApi("com.github.MilkBowl:VaultAPI:1.7.1")
-    compileOnlyApi("com.gmail.nossr50.mcMMO:mcMMO:2.2.048")
     api("com.github.Musician101.MusiGUI:paper:c4f5089b33")
     api("com.github.Musician101.MusiCommand:paper:be49f96ace")
     api("com.github.Musician101:MusiBoard:e5951243ac")
