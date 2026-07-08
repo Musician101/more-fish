@@ -61,11 +61,6 @@ paperPluginYaml {
     authors.addAll("elsiff", "Musician101")
     foliaSupported = true
     dependencies.server {
-        create("mcMMO") {
-            load = PaperPluginYaml.Load.BEFORE
-            required = false
-            joinClasspath = true
-        }
         create("MusiBoard") {
             load = PaperPluginYaml.Load.BEFORE
             required = false

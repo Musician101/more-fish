@@ -2,7 +2,6 @@ id: morefish:mythic/kraken
 rarity: morefish:mythic
 commands:
   - minecraft:effect give @p minecraft:regeneration 2 127
-  - mcmmo:addxp @p Fishing 5000
 length-max: 2200
 display-name: Kraken
 length-min: 1500

@@ -1,8 +1,5 @@
 color: dark_purple
 display-name: EPIC
-conditions:
-  mcmmo-skills:
-    Fishing: 50
 weight: 650
 price-multiplier: 5
 id: morefish:epic

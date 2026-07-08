@@ -5,7 +5,6 @@ display-name: Ecco the Dolphin
 length-min: 180
 commands:
   - minecraft:effect give @p minecraft:health_boost 120 4
-  - mcmmo:addxp @p Fishing 1000
 icon:
   schema_version: 1
   DataVersion: 4671

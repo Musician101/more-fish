@@ -1,7 +1,6 @@
 length-max: 240
 commands:
   - minecraft:effect give @p minecraft:strength 120 1
-  - mcmmo:addxp @p Fishing 1000
 display-name: Blue Shark
 length-min: 160
 icon:

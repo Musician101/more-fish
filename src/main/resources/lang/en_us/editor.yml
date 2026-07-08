@@ -40,10 +40,6 @@ morefish:
           min:
             label: "<gradient:#FF0000:#00FF00>Minimum"
             error: "Failed to parse minimum range. Make sure you typed it in correctly."
-        mcmmo-skills:
-          label: "<color:#00FF00>Mcmmo Skills"
-          mcmmo-skill: "<gradient:#55ffff:#aa00aa><mcmmo-skill>"
-          error: "Failed to parse skill level. Make sure you typed it in correctly and that it is equal to or greater than 0."
         potion-effects:
           potion-effect: "<color:#00FF00><potion-effect>"
           label: "<color:#00FF00>Potion Effects"
