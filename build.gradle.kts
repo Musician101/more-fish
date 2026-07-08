@@ -3,16 +3,16 @@ import xyz.jpenilla.resourcefactory.paper.PaperPluginYaml
 
 plugins {
     `java-library`
-    id("com.gradleup.shadow") version "9.3.0"
-    id("io.papermc.paperweight.userdev") version "2.0.0-beta.19"
-    id("xyz.jpenilla.run-paper") version "2.3.1"
+    id("com.gradleup.shadow") version "9.4.3"
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.21"
+    id("xyz.jpenilla.run-paper") version "3.0.2"
     id("xyz.jpenilla.resource-factory-paper-convention") version "1.3.1"
 }
 
 group = "me.elsiff"
 version = "4.4.0"
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+java.toolchain.languageVersion = JavaLanguageVersion.of(25)
 
 repositories {
     mavenCentral()
@@ -26,7 +26,7 @@ repositories {
 }
 
 dependencies {
-    paperweight.paperDevBundle("1.21.11-R0.1-SNAPSHOT")
+    paperweight.paperDevBundle("26.2.build.+")
     compileOnlyApi("com.github.MilkBowl:VaultAPI:1.7.1")
     compileOnlyApi("com.gmail.nossr50.mcMMO:mcMMO:2.2.048")
     api("com.github.Musician101.MusiGUI:paper:c4f5089b33")
