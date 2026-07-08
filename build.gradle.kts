@@ -51,13 +51,13 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("1.21.11")
+        minecraftVersion("26.2")
     }
 }
 
 paperPluginYaml {
     main = "me.elsiff.morefish.MoreFish"
-    apiVersion = "1.21.11"
+    apiVersion = "26.2"
     authors.addAll("elsiff", "Musician101")
     foliaSupported = true
     dependencies.server {
