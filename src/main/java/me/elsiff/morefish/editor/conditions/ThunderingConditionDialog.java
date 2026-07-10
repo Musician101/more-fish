@@ -9,6 +9,7 @@ import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 @NullMarked
@@ -17,8 +18,8 @@ public class ThunderingConditionDialog extends FishConditionDialog<ThunderingCon
 
     private static final String THUNDERING = "thundering";
 
-    public ThunderingConditionDialog(FishConditionsDialog fishConditionsDialog) {
-        super("thundering", fishConditionsDialog);
+    public ThunderingConditionDialog(FishConditionsDialog fishConditionsDialog, Locale locale) {
+        super("thundering", fishConditionsDialog, locale);
     }
 
     @Override
@@ -29,7 +30,7 @@ public class ThunderingConditionDialog extends FishConditionDialog<ThunderingCon
 
     @Override
     protected List<DialogInput> inputs() {
-        Component label = Component.translatable("morefish.editor.enabled");
+        Component label = translate("morefish.editor.enabled");
         return List.of(boolInput(THUNDERING, label, condition().value()));
     }
 

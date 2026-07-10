@@ -13,6 +13,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.function.Consumer;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
@@ -30,8 +31,8 @@ public abstract class FishAbstractDialog<F extends FishAbstract<F>> extends Musi
     protected static final String SKIP_ITEM_FORMAT = "skip_item_format";
     protected final F fishAbstract;
 
-    public FishAbstractDialog(Component label, F fishAbstract) {
-        super(label);
+    public FishAbstractDialog(Component label, F fishAbstract, Locale locale) {
+        super(label, locale);
         this.fishAbstract = fishAbstract;
     }
 
@@ -40,46 +41,46 @@ public abstract class FishAbstractDialog<F extends FishAbstract<F>> extends Musi
     }
 
     protected DialogInput commands() {
-        Component label = Component.translatable("morefish.editor.shared.commands");
+        Component label = translate("morefish.editor.shared.commands");
         String initial = String.join("\n", fishAbstract.commands());
         return DialogInput.text(COMMANDS, label).initial(initial).maxLength(Integer.MAX_VALUE).multiline(MultilineOptions.create(Integer.MAX_VALUE, 100)).build();
     }
 
     protected DialogInput displayName() {
-        Component label = Component.translatable("morefish.editor.shared.display-name");
+        Component label = translate("morefish.editor.shared.display-name");
         return textInput(DISPLAY_NAME, label, fishAbstract.displayName());
     }
 
     protected DialogInput doNotSell() {
-        Component label = Component.translatable("morefish.editor.shared.do-not-sell");
+        Component label = translate("morefish.editor.shared.do-not-sell");
         return boolInput(DO_NOT_SELL, label, fishAbstract.doNotSell());
     }
 
     protected DialogInput firework() {
-        Component label = Component.translatable("morefish.editor.shared.firework");
+        Component label = translate("morefish.editor.shared.firework");
         return boolInput(FIREWORK, label, fishAbstract.noDisplay());
     }
 
     protected DialogInput noDisplay() {
-        Component label = Component.translatable("morefish.editor.shared.no-display");
+        Component label = translate("morefish.editor.shared.no-display");
         return boolInput(NO_DISPLAY_NAME, label, fishAbstract.noDisplay());
     }
 
     protected DialogInput priceMultiplier() {
-        Component label = Component.translatable("morefish.editor.shared.price-multiplier.label");
+        Component label = translate("morefish.editor.shared.price-multiplier.label");
         return textInput(PRICE_MULTIPLIER, label, fishAbstract.priceMultiplier());
     }
 
     protected DialogInput skipItemFormat() {
-        Component label = Component.translatable("morefish.editor.shared.skip-item-format");
+        Component label = translate("morefish.editor.shared.skip-item-format");
         return boolInput(SKIP_ITEM_FORMAT, label, fishAbstract.noDisplay());
     }
 
     protected boolean saveInternal(DialogResponseView view, Audience audience) {
         Float priceMultiplier = parseNumber(view.getText(PRICE_MULTIPLIER), Float::parseFloat, f -> f > 0);
         if (priceMultiplier == null) {
-            Component errorMessage = Component.translatable("morefish.editor.shared.price-multiplier.error");
-            audience.showDialog(new ErrorDialog(errorMessage, this).build());
+            Component errorMessage = translate("morefish.editor.shared.price-multiplier.error");
+            audience.showDialog(new ErrorDialog(errorMessage, this, locale).build());
             return false;
         }
 
@@ -112,7 +113,7 @@ public abstract class FishAbstractDialog<F extends FishAbstract<F>> extends Musi
             applier.accept(oldValue);
             Component message = generalErrorMessage(e);
             getPlugin().getComponentLogger().error(message, e);
-            audience.showDialog(new ErrorDialog(message, this).build());
+            audience.showDialog(new ErrorDialog(message, this, locale).build());
             return false;
         }
     }

@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
@@ -29,14 +30,14 @@ public class NewFishTypeDialog extends MusiDialog {
     private static final String ID = "type_id";
     private static final String RARITY = "rarity";
 
-    public NewFishTypeDialog() {
-        super(Component.translatable("morefish.editor.type.selector.new.label"));
+    public NewFishTypeDialog(Locale locale) {
+        super(Component.translatable("morefish.editor.type.new.label"), locale);
     }
 
     @Override
     protected List<DialogInput> inputs() {
-        DialogInput id = textInput(ID, Component.translatable("morefish.editor.type.selector.new.id.label"));
-        DialogInput displayName = textInput(DISPLAY_NAME, Component.translatable("morefish.editor.type.selector.new.display-name.label"));
+        DialogInput id = textInput(ID, translate("morefish.editor.type.new.id.label"));
+        DialogInput displayName = textInput(DISPLAY_NAME, translate("morefish.editor.type.new.display-name.label"));
         return List.of(id, displayName, rarity());
     }
 
@@ -46,20 +47,20 @@ public class NewFishTypeDialog extends MusiDialog {
         rarities.sort(Comparator.reverseOrder());
         FishRarity initial = rarities.getFirst();
         rarities.stream().sorted(Comparator.reverseOrder()).forEach(r -> {
-            Component label = Component.translatable("morefish.main.item-format.display-name", r);
+            Component label = translate("morefish.editor.type.new.rarity.rarity", r);
             entries.add(OptionEntry.create(r.getKey().asString(), label, initial.equals(r)));
         });
-        Component label = Component.translatable("morefish.editor.type.selector.new.rarity.label");
+        Component label = translate("morefish.editor.type.new.rarity.label");
         return singleOptionInput(RARITY, label, entries);
     }
 
     @Override
     protected DialogType type() {
-        FishTypesDialog fishTypesDialog = new FishTypesDialog();
+        FishTypesDialog fishTypesDialog = new FishTypesDialog(locale);
         ActionButton confirm = confirmButton((view, audience) -> {
             String keyString = view.getText(ID);
-            Component errorMessage = Component.translatable("morefish.editor.type.selector.new.id.error.format");
-            ErrorDialog errorDialog = new ErrorDialog(errorMessage, this);
+            Component errorMessage = translate("morefish.editor.type.new.id.error.format");
+            ErrorDialog errorDialog = new ErrorDialog(errorMessage, this, locale);
             if (keyString == null) {
                 audience.showDialog(errorDialog.build());
                 return;
@@ -72,8 +73,8 @@ public class NewFishTypeDialog extends MusiDialog {
             }
 
             if (getPlugin().types().get(typeKey).isPresent()) {
-                Component alreadyExistsMessage = Component.translatable("morefish.editor.type.selector.new.id.error.already-exists");
-                audience.showDialog(new ErrorDialog(alreadyExistsMessage, this).build());
+                Component alreadyExistsMessage = translate("morefish.editor.type.new.id.error.already-exists");
+                audience.showDialog(new ErrorDialog(alreadyExistsMessage, this, locale).build());
                 return;
             }
 
@@ -85,15 +86,15 @@ public class NewFishTypeDialog extends MusiDialog {
 
             Optional<FishRarity> rarity = rarityKey == null ? Optional.empty() : getPlugin().rarities().get(rarityKey);
             if (rarity.isEmpty()) {
-                Component rarityError = Component.translatable("morefish.editor.type.selector.new.rarity.error");
-                audience.showDialog(new ErrorDialog(rarityError, this).build());
+                Component rarityError = translate("morefish.editor.type.new.rarity.error");
+                audience.showDialog(new ErrorDialog(rarityError, this, locale).build());
                 return;
             }
 
             String displayName = view.getText(DISPLAY_NAME);
             if (displayName == null || displayName.isBlank()) {
-                Component displayNameError = Component.translatable("morefish.editor.type.selector.new.display-name.error");
-                audience.showDialog(new ErrorDialog(displayNameError, this).build());
+                Component displayNameError = translate("morefish.editor.type.new.display-name.error");
+                audience.showDialog(new ErrorDialog(displayNameError, this, locale).build());
                 return;
             }
 
@@ -103,8 +104,8 @@ public class NewFishTypeDialog extends MusiDialog {
                 audience.showDialog(fishTypesDialog.build());
             }
             catch (IOException e) {
-                Component message = Component.translatable("morefish.editor.type.selector.new.save-failed", Argument.string("name", keyString));
-                audience.showDialog(new ErrorDialog(message, fishTypesDialog).build());
+                Component message = translate("morefish.editor.type.new.save-failed", Argument.string("name", keyString));
+                audience.showDialog(new ErrorDialog(message, fishTypesDialog, locale).build());
                 getPlugin().getComponentLogger().error(message, e);
             }
         });

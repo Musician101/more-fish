@@ -81,7 +81,7 @@ public final class MoreFish extends JavaPlugin {
         }
 
 
-        getComponentLogger().info(Component.translatable("morefish.main.config.config.success"));
+        getComponentLogger().info(Component.translatable("morefish.main.config.success"));
     }
 
     public void applyFishConfig() {
@@ -91,11 +91,11 @@ public final class MoreFish extends JavaPlugin {
             types.load();
             ComponentLike rarityCount = Argument.numeric("rarity-count", rarities.values().size());
             ComponentLike typeCount = Argument.numeric("type-count", types.values().size());
-            Component message = Component.translatable("morefish.main.config.fish.success", rarityCount, typeCount);
+            Component message = Component.translatable("morefish.main.fish.success", rarityCount, typeCount);
             getComponentLogger().info(message);
         }
         catch (IOException e) {
-            Component message = Component.translatable("morefish.main.config.fish.success", ArgumentUtil.error(e.getMessage()));
+            Component message = Component.translatable("morefish.main.fish.error", ArgumentUtil.error(e.getMessage()));
             getComponentLogger().info(message, e);
         }
     }
@@ -103,7 +103,7 @@ public final class MoreFish extends JavaPlugin {
     public void applyLangConfig() {
         try {
             lang.load();
-            getComponentLogger().info(Component.translatable("morefish.main.config.lang.success"));
+            getComponentLogger().info(Component.translatable("morefish.main.lang.success"));
         }
         catch (IOException e) {
             getSLF4JLogger().error("An error occurred while trying to load language files.", e);

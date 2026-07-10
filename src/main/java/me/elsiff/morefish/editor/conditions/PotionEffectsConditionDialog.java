@@ -17,14 +17,15 @@ import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 @NullMarked
 @SuppressWarnings("UnstableApiUsage")
 public class PotionEffectsConditionDialog extends FishConditionDialog<PotionEffectsCondition> {
 
-    public PotionEffectsConditionDialog(FishConditionsDialog fishConditionsDialog) {
-        super("potion-effects", fishConditionsDialog);
+    public PotionEffectsConditionDialog(FishConditionsDialog fishConditionsDialog, Locale locale) {
+        super("potion-effects", fishConditionsDialog, locale);
     }
 
     @Override
@@ -33,8 +34,8 @@ public class PotionEffectsConditionDialog extends FishConditionDialog<PotionEffe
         for (PotionEffectType p : registryValues(RegistryKey.MOB_EFFECT).toList()) {
             Integer level = parseNumber(dialogKey(p), Integer::parseInt, i -> i >= 0);
             if (level == null) {
-                Component errorMessage = Component.translatable(conditionPath + "error");
-                audience.showDialog(new ErrorDialog(errorMessage, this).build());
+                Component errorMessage = translate(conditionPath + "error");
+                audience.showDialog(new ErrorDialog(errorMessage, this, locale).build());
                 return;
             }
 
@@ -59,8 +60,8 @@ public class PotionEffectsConditionDialog extends FishConditionDialog<PotionEffe
         List<DialogInput> list = new ArrayList<>();
         registryValues(RegistryKey.MOB_EFFECT).sorted(this::sort).forEach(potionEffectType -> {
             int level = condition().value().getOrDefault(potionEffectType, 0);
-            ComponentLike argument = Argument.component("potion-effect", Component.translatable(potionEffectType));
-            Component label = Component.translatable(conditionPath + "potion-effect", argument);
+            ComponentLike argument = Argument.component("potion-effect", translate(potionEffectType));
+            Component label = translate(conditionPath + "potion-effect", argument);
             list.add(textInput(dialogKey(potionEffectType), label, level));
         });
         return list;

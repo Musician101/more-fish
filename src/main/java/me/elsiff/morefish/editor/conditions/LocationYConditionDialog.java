@@ -12,6 +12,7 @@ import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Predicate;
 
 @NullMarked
@@ -21,8 +22,8 @@ public class LocationYConditionDialog extends FishConditionDialog<LocationYCondi
     private static final String MAX = "max";
     private static final String MIN = "min";
 
-    public LocationYConditionDialog(FishConditionsDialog fishConditionsDialog) {
-        super("location-y", fishConditionsDialog);
+    public LocationYConditionDialog(FishConditionsDialog fishConditionsDialog, Locale locale) {
+        super("location-y", fishConditionsDialog, locale);
     }
 
     @Override
@@ -44,8 +45,8 @@ public class LocationYConditionDialog extends FishConditionDialog<LocationYCondi
     private Double parse(String key, DialogResponseView view, Audience audience, Predicate<Double> validator) {
         Double min = parseNumber(view.getText(key), Double::parseDouble, validator);
         if (min == null) {
-            Component errorMessage = Component.translatable(conditionPath + key + ".error");
-            audience.showDialog(new ErrorDialog(errorMessage, this).build());
+            Component errorMessage = translate(conditionPath + key + ".error");
+            audience.showDialog(new ErrorDialog(errorMessage, this, locale).build());
         }
 
         return min;
@@ -69,12 +70,12 @@ public class LocationYConditionDialog extends FishConditionDialog<LocationYCondi
     }
 
     private DialogInput input(String key, double initial) {
-        Component label = Component.translatable(conditionPath + key + ".label");
+        Component label = translate(conditionPath + key + ".label");
         return textInput(key, label, initial);
     }
 
     @Override
     protected List<DialogBody> body() {
-        return List.of(DialogBody.plainMessage(Component.translatable(conditionPath + ".warning")));
+        return List.of(DialogBody.plainMessage(translate(conditionPath + "warning")));
     }
 }

@@ -37,11 +37,13 @@ class MFHelp implements MFCommand, PaperLiteralCommand.AdventureFormat {
             };
         }
 
-        Component header = Component.translatable("morefish.command.help.header", Argument.string("authors", authorsString), Argument.string("plugin-display-name", meta.getDisplayName()));
+        ComponentLike authorsArgument = Argument.string("authors", authorsString);
+        ComponentLike pluginName = Argument.string("plugin-display-name", meta.getDisplayName());
+        Component header = Component.translatable("morefish.command.help.header", authorsArgument, pluginName);
         sendMessage(context, header);
         root.children().stream().filter(cmd -> cmd.canUse(source)).forEach(cmd -> {
             ComponentLike commandUsage = Argument.component("command-usage", cmd.usage(source));
-            ComponentLike commandDescription = Argument.component("command-description", cmd.description(source));
+            ComponentLike commandDescription = Argument.component("command-description", cmd.description(source).asComponent());
             Component message = Component.translatable("morefish.command.help.info", commandUsage, commandDescription);
             sendMessage(context, message);
         });

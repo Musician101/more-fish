@@ -46,7 +46,7 @@ public class FishIcon {
             itemStack.setData(DataComponentTypes.CUSTOM_NAME, translate("morefish.main.item-format.display-name", catcher.locale(), arguments));
             List<Component> lore = new ArrayList<>();
             lore.add(translate("morefish.main.item-format.lore.length", catcher.locale(), arguments));
-            lore.add(translate("morefish.main.item-format.lore.catcher", catcher.locale(), arguments));
+            lore.add(translate("morefish.main.item-format.lore.caught", catcher.locale(), arguments));
             ItemLore itemLore = itemStack.getData(DataComponentTypes.LORE);
             TagResolver resolver = TagResolver.resolver(TagResolverUtil.playerResolver(catcher), fish, fish.rarity(), fish.type());
             lore.addAll(parseLore(itemLore == null ? List.of() : itemLore.lines(), resolver));

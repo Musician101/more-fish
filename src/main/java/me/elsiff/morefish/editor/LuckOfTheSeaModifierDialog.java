@@ -17,6 +17,7 @@ import org.jspecify.annotations.NullMarked;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 @NullMarked
 @SuppressWarnings("UnstableApiUsage")
@@ -26,8 +27,8 @@ public class LuckOfTheSeaModifierDialog extends MusiDialog {
     private static final String AMOUNT = "amount";
     private final FishRarityDialog fishRarityDialog;
 
-    public LuckOfTheSeaModifierDialog(FishRarityDialog fishRarityDialog) {
-        super(Component.translatable("morefish.editor.rarity.selected.luck-of-the-sea-modifier.label"));
+    public LuckOfTheSeaModifierDialog(FishRarityDialog fishRarityDialog, Locale locale) {
+        super(Component.translatable("morefish.editor.rarity.selected.luck-of-the-sea-modifier.label"), locale);
         this.fishRarityDialog = fishRarityDialog;
     }
 
@@ -37,11 +38,11 @@ public class LuckOfTheSeaModifierDialog extends MusiDialog {
         List<OptionEntry> typeEntries = Arrays.stream(LuckOfTheSeaModifier.Type.values()).map(type -> {
             String typeString = StringUtils.capitalise(type.toString().toLowerCase());
             ComponentLike argument = Argument.string("modifier-type", typeString);
-            Component label = Component.translatable("morefish.editor.rarity.selected.luck-of-the-sea-modifier.modifier-type", argument);
+            Component label = translate("morefish.editor.rarity.selected.luck-of-the-sea-modifier.modifier-type", argument);
             return OptionEntry.create(type.toString(), label, type == modifier.type());
         }).toList();
-        DialogInput type = singleOptionInput(TYPE, Component.translatable("morefish.editor.rarity.selected.luck-of-the-sea-modifier.type"), typeEntries);
-        DialogInput amount = textInput(AMOUNT, Component.translatable("morefish.editor.rarity.selected.luck-of-the-sea-modifier.amount"), modifier.amount());
+        DialogInput type = singleOptionInput(TYPE, translate("morefish.editor.rarity.selected.luck-of-the-sea-modifier.type"), typeEntries);
+        DialogInput amount = textInput(AMOUNT, translate("morefish.editor.rarity.selected.luck-of-the-sea-modifier.amount"), modifier.amount());
         return List.of(type, amount);
     }
 
@@ -51,8 +52,8 @@ public class LuckOfTheSeaModifierDialog extends MusiDialog {
             Type type = Arrays.stream(Type.values()).filter(t -> t.toString().equalsIgnoreCase(view.getText(TYPE))).findFirst().orElse(Type.FLAT);
             Float amount = parseNumber(view.getText(AMOUNT), Float::parseFloat, f -> f >= 0);
             if (amount == null) {
-                Component errorMessage = Component.translatable("morefish.editor.rarity.selected.luck-of-the-sea-modifier.error");
-                audience.showDialog(new ErrorDialog(errorMessage, this).build());
+                Component errorMessage = translate("morefish.editor.rarity.selected.luck-of-the-sea-modifier.error");
+                audience.showDialog(new ErrorDialog(errorMessage, this, locale).build());
                 return;
             }
 

@@ -10,11 +10,16 @@ import io.papermc.paper.registry.data.dialog.input.DialogInput;
 import io.papermc.paper.registry.data.dialog.input.SingleOptionDialogInput.OptionEntry;
 import io.papermc.paper.registry.data.dialog.type.DialogType;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.TranslatableComponent;
 import net.kyori.adventure.text.event.ClickCallback;
+import net.kyori.adventure.translation.GlobalTranslator;
+import net.kyori.adventure.translation.Translatable;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -25,9 +30,11 @@ public abstract class MusiDialog {
     public static final ClickCallback.Options DEFAULT_CALLBACK_OPTIONS = ClickCallback.Options.builder().uses(1).lifetime(ClickCallback.DEFAULT_LIFETIME).build();
 
     protected final Component label;
+    protected final Locale locale;
 
-    public MusiDialog(Component label) {
-        this.label = label;
+    public MusiDialog(Component label, Locale locale) {
+        this.locale = locale;
+        this.label = label instanceof TranslatableComponent ? translate((TranslatableComponent) label) : label;
     }
 
     public Component label() {
@@ -36,6 +43,18 @@ public abstract class MusiDialog {
 
     public Dialog build() {
         return Dialog.create(b -> b.empty().type(type()).base(base()));
+    }
+
+    protected Component translate(Translatable translatable) {
+        return translate(Component.translatable(translatable));
+    }
+
+    protected Component translate(String translationKey, ComponentLike... arguments) {
+        return translate(Component.translatable(translationKey, arguments));
+    }
+
+    protected Component translate(TranslatableComponent component) {
+        return GlobalTranslator.render(component, locale);
     }
 
     protected DialogAction customClick(DialogActionCallback callback) {
@@ -49,11 +68,11 @@ public abstract class MusiDialog {
     }
 
     protected ActionButton backButton(DialogActionCallback callback) {
-        return actionButton(Component.translatable("morefish.gui.back"), callback);
+        return actionButton(translate("morefish.gui.back"), callback);
     }
 
     protected ActionButton confirmButton(DialogActionCallback callback) {
-        return actionButton(Component.translatable("morefish.editor.confirm"), callback);
+        return actionButton(translate("morefish.editor.confirm"), callback);
     }
 
     protected ActionButton dialogButton(MusiDialog dialog) {
@@ -61,15 +80,15 @@ public abstract class MusiDialog {
     }
 
     protected ActionButton deleteButton(DialogActionCallback callback) {
-        return actionButton(Component.translatable("morefish.editor.delete"), callback);
+        return actionButton(translate("morefish.editor.delete"), callback);
     }
 
     protected ActionButton discardButton(DialogActionCallback callback) {
-        return actionButton(Component.translatable("morefish.editor.discard"), callback);
+        return actionButton(translate("morefish.editor.discard"), callback);
     }
 
     protected ActionButton saveButton(DialogActionCallback callback) {
-        return actionButton(Component.translatable("morefish.editor.save"), callback);
+        return actionButton(translate("morefish.editor.save"), callback);
     }
 
     protected ActionButton actionButton(Component label, DialogActionCallback callback) {

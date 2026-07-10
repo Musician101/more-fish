@@ -17,22 +17,23 @@ import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 @NullMarked
 @SuppressWarnings("UnstableApiUsage")
 public class EnchantmentsConditionDialog extends FishConditionDialog<EnchantmentsCondition> {
 
-    public EnchantmentsConditionDialog(FishConditionsDialog fishConditionsDialog) {
-        super("enchantments", fishConditionsDialog);
+    public EnchantmentsConditionDialog(FishConditionsDialog fishConditionsDialog, Locale locale) {
+        super("enchantments", fishConditionsDialog, locale);
     }
 
     @Override
     protected List<DialogInput> inputs() {
         List<DialogInput> list = new ArrayList<>();
         registryValues(RegistryKey.ENCHANTMENT).sorted(this::sort).forEach(enchantment -> {
-            ComponentLike argument = Argument.component("enchantment", Component.translatable(enchantment));
-            Component label = Component.translatable(conditionPath + "enchantment", argument);
+            ComponentLike argument = Argument.component("enchantment", translate(enchantment));
+            Component label = translate(conditionPath + "enchantment", argument);
             int level = condition().value().getOrDefault(enchantment, 0);
             list.add(textInput(dialogKey(enchantment), label, level));
         });
@@ -52,8 +53,8 @@ public class EnchantmentsConditionDialog extends FishConditionDialog<Enchantment
         for (Enchantment enchantment : registryValues(RegistryKey.ENCHANTMENT).toList()) {
             Integer level = parseNumber(view.getText(dialogKey(enchantment)), Integer::parseInt, i -> i >= 0);
             if (level == null) {
-                Component errorMessage = Component.translatable(conditionPath + "error");
-                audience.showDialog(new ErrorDialog(errorMessage, this).build());
+                Component errorMessage = translate(conditionPath + "error");
+                audience.showDialog(new ErrorDialog(errorMessage, this, locale).build());
                 return;
             }
 

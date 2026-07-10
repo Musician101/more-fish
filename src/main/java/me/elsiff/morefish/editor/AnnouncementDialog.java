@@ -14,6 +14,7 @@ import org.jspecify.annotations.NullMarked;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 @NullMarked
 @SuppressWarnings("UnstableApiUsage")
@@ -23,8 +24,8 @@ public class AnnouncementDialog extends MusiDialog {
     private static final String RADIUS = "radius";
     private final FishAbstractDialog<?> fishAbstractDialog;
 
-    public AnnouncementDialog(FishAbstractDialog<?> fishAbstractDialog) {
-        super(Component.translatable("morefish.editor.shared.announcement.label"));
+    public AnnouncementDialog(FishAbstractDialog<?> fishAbstractDialog, Locale locale) {
+        super(Component.translatable("morefish.editor.shared.announcement.label"), locale);
         this.fishAbstractDialog = fishAbstractDialog;
     }
 
@@ -38,8 +39,8 @@ public class AnnouncementDialog extends MusiDialog {
         ActionButton yes = saveButton((view, audience) -> {
             Double radius = parseNumber(view.getText(RADIUS), Double::parseDouble, d -> d > 0);
             if (radius == null) {
-                Component errorMessage = Component.translatable("morefish.editor.shared.announcement.radius.error");
-                audience.showDialog(new ErrorDialog(errorMessage, this).build());
+                Component errorMessage = translate("morefish.editor.shared.announcement.radius.error");
+                audience.showDialog(new ErrorDialog(errorMessage, this, locale).build());
                 return;
             }
 
@@ -59,16 +60,16 @@ public class AnnouncementDialog extends MusiDialog {
         List<OptionEntry> optionEntries = Arrays.stream(Type.values()).map(t -> {
             PlayerAnnouncement announcement = fishAbstract.announcement();
             String key = "morefish.editor.shared.announcement." + t.toString().toLowerCase();
-            Component label = Component.translatable(key, announcement);
+            Component label = translate(key, announcement);
             return OptionEntry.create(t.toString(), label, announcement.type() == t);
         }).toList();
-        Component label = Component.translatable("morefish.editor.shared.announcement.type");
+        Component label = translate("morefish.editor.shared.announcement.type");
         return singleOptionInput(TYPE, label, optionEntries);
     }
 
     private DialogInput radius() {
         FishAbstract<?> fishAbstract = fishAbstractDialog.fishAbstract;
-        Component label = Component.translatable("morefish.editor.shared.announcement.radius.label");
+        Component label = translate("morefish.editor.shared.announcement.radius.label");
         return textInput(RADIUS, label, fishAbstract.announcement().radius());
     }
 }

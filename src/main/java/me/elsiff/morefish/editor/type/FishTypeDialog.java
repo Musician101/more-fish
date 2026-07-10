@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
@@ -33,13 +34,13 @@ public class FishTypeDialog extends FishAbstractDialog<FishType> {
     private static final String MIN_LENGTH = "min_length";
     private static final String RARITY = "rarity";
 
-    public FishTypeDialog(FishType type) {
-        super(Component.translatable("morefish.editor.type.selected.label.internal", type, type.rarity()), type);
+    public FishTypeDialog(FishType type, Locale locale) {
+        super(Component.translatable("morefish.editor.type.selected.label.internal", type, type.rarity()), type, locale);
     }
 
     @Override
     protected DialogBase base() {
-        Component externalLabel = Component.translatable("morefish.editor.type.selected.label.external", fishAbstract);
+        Component externalLabel = translate("morefish.editor.type.selected.label.external", fishAbstract);
         return DialogBase.builder(label).externalTitle(externalLabel).inputs(inputs()).body(body()).build();
     }
 
@@ -49,12 +50,12 @@ public class FishTypeDialog extends FishAbstractDialog<FishType> {
     }
 
     private DialogInput minLength() {
-        Component label = Component.translatable("morefish.editor.type.selected.min-length.label");
+        Component label = translate("morefish.editor.type.selected.min-length.label");
         return textInput(MIN_LENGTH, label, fishAbstract.minLength());
     }
 
     private DialogInput maxLength() {
-        Component label = Component.translatable("morefish.editor.type.selected.max-length.label");
+        Component label = translate("morefish.editor.type.selected.max-length.label");
         return textInput(MAX_LENGTH, label, fishAbstract.maxLength());
     }
 
@@ -62,19 +63,19 @@ public class FishTypeDialog extends FishAbstractDialog<FishType> {
         List<OptionEntry> entries = new ArrayList<>();
         getPlugin().rarities().stream().sorted(Comparator.reverseOrder()).forEach(r -> {
             FishRarity rarity = fishAbstract.rarity();
-            Component label = Component.translatable("morefish.editor.type.selected.rarity.rarity", rarity);
+            Component label = translate("morefish.editor.type.selected.rarity.rarity", rarity);
             entries.add(OptionEntry.create(r.getKey().asString(), label, rarity.equals(r)));
         });
-        Component label = Component.translatable("morefish.editor.type.selected.rarity.label");
+        Component label = translate("morefish.editor.type.selected.rarity.label");
         return singleOptionInput(RARITY, label, entries);
     }
 
     @Override
     protected DialogType type() {
         List<ActionButton> buttons = new ArrayList<>();
-        buttons.add(dialogButton(new AnnouncementDialog(this)));
-        buttons.add(dialogButton(new FishConditionsDialog(this)));
-        buttons.add(dialogButton(new FishIconDialog(this)));
+        buttons.add(dialogButton(new AnnouncementDialog(this, locale)));
+        buttons.add(dialogButton(new FishConditionsDialog(this, locale)));
+        buttons.add(dialogButton(new FishIconDialog(this, locale)));
         buttons.add(saveButton());
         buttons.add(deleteButton());
         return DialogType.multiAction(buttons, discardButton(), 2);
@@ -88,15 +89,15 @@ public class FishTypeDialog extends FishAbstractDialog<FishType> {
 
             Double maxLength = parseNumber(view.getText(MAX_LENGTH), Double::parseDouble, d -> d > 0);
             if (maxLength == null) {
-                Component errorMessage = Component.translatable("morefish.editor.type.selected.max-length.error");
-                audience.showDialog(new ErrorDialog(errorMessage, this).build());
+                Component errorMessage = translate("morefish.editor.type.selected.max-length.error");
+                audience.showDialog(new ErrorDialog(errorMessage, this, locale).build());
                 return;
             }
 
             Double minLength = parseNumber(view.getText(MIN_LENGTH), Double::parseDouble, d -> d > 0 && d < maxLength);
             if (minLength == null) {
-                Component errorMessage = Component.translatable("morefish.editor.type.selected.min-length.error");
-                audience.showDialog(new ErrorDialog(errorMessage, this).build());
+                Component errorMessage = translate("morefish.editor.type.selected.min-length.error");
+                audience.showDialog(new ErrorDialog(errorMessage, this, locale).build());
                 return;
             }
 
@@ -108,8 +109,8 @@ public class FishTypeDialog extends FishAbstractDialog<FishType> {
 
             Optional<FishRarity> rarity = rarityKey == null ? Optional.empty() : getPlugin().rarities().get(rarityKey);
             if (rarity.isEmpty()) {
-                Component errorMessage = Component.translatable("morefish.editor.type.selected.rarity.error");
-                audience.showDialog(new ErrorDialog(errorMessage, this).build());
+                Component errorMessage = translate("morefish.editor.type.selected.rarity.error");
+                audience.showDialog(new ErrorDialog(errorMessage, this, locale).build());
                 return;
             }
 
@@ -121,15 +122,15 @@ public class FishTypeDialog extends FishAbstractDialog<FishType> {
             fishAbstract.maxLength(maxLength);
             try {
                 getPlugin().types().save(fishAbstract);
-                audience.showDialog(new FishTypesDialog().build());
+                audience.showDialog(new FishTypesDialog(locale).build());
             }
             catch (IOException e) {
                 fishAbstract.rarity(oldRarity);
                 fishAbstract.minLength(oldMinLength);
                 fishAbstract.maxLength(oldMaxLength);
-                Component message = Component.translatable("morefish.editor.type.selected.save-failed", ArgumentUtil.error(e.getMessage()), fishAbstract);
+                Component message = translate("morefish.editor.type.selected.save-failed", ArgumentUtil.error(e.getMessage()), fishAbstract);
                 getPlugin().getComponentLogger().error(message, e);
-                audience.showDialog(new ErrorDialog(message, this).build());
+                audience.showDialog(new ErrorDialog(message, this, locale).build());
             }
         });
     }
@@ -138,18 +139,18 @@ public class FishTypeDialog extends FishAbstractDialog<FishType> {
         return deleteButton((view, audience) -> {
             try {
                 getPlugin().types().delete(fishAbstract);
-                audience.showDialog(new FishTypesDialog().build());
+                audience.showDialog(new FishTypesDialog(locale).build());
             }
             catch (IOException e) {
-                Component message = Component.translatable("morefish.editor.rarity.selected.delete-failed", ArgumentUtil.error(e.getMessage()), fishAbstract);
+                Component message = translate("morefish.editor.rarity.selected.delete-failed", ArgumentUtil.error(e.getMessage()), fishAbstract);
                 getPlugin().getComponentLogger().error(message, e);
-                audience.showDialog(new ErrorDialog(message, this).build());
+                audience.showDialog(new ErrorDialog(message, this, locale).build());
             }
         });
     }
 
     private ActionButton discardButton() {
-        return discardButton(showDialog(new FishRaritiesDialog()));
+        return discardButton(showDialog(new FishRaritiesDialog(locale)));
     }
 
     @Override
@@ -159,6 +160,6 @@ public class FishTypeDialog extends FishAbstractDialog<FishType> {
 
     @Override
     protected Component generalErrorMessage(Throwable throwable) {
-        return Component.translatable("morefish.editor.type.selected.save-failed", ArgumentUtil.error(throwable.getMessage()), fishAbstract);
+        return translate("morefish.editor.type.selected.save-failed", ArgumentUtil.error(throwable.getMessage()), fishAbstract);
     }
 }

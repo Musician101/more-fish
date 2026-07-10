@@ -15,14 +15,15 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 @NullMarked
 @SuppressWarnings("UnstableApiUsage")
 public class BiomesConditionDialog extends FishConditionDialog<BiomesCondition> {
 
-    public BiomesConditionDialog(FishConditionsDialog fishConditionsDialog) {
-        super("biome", fishConditionsDialog);
+    public BiomesConditionDialog(FishConditionsDialog fishConditionsDialog, Locale locale) {
+        super("biome", fishConditionsDialog, locale);
     }
 
     @Override
@@ -48,8 +49,8 @@ public class BiomesConditionDialog extends FishConditionDialog<BiomesCondition> 
     protected List<DialogInput> inputs() {
         List<DialogInput> list = new ArrayList<>();
         registryValues(RegistryKey.BIOME).sorted(this::sort).forEach(biome -> {
-            ComponentLike argument = Argument.component("biome", Component.translatable(biome.translationKey()));
-            Component label = Component.translatable(conditionPath + "biome", argument);
+            ComponentLike argument = Argument.component("biome", translate(biome.translationKey()));
+            Component label = translate(conditionPath + "biome", argument);
             BiomesCondition condition = condition();
             boolean initial = condition != null && condition.value().contains(biome);
             list.add(boolInput(dialogKey(biome), label, initial));

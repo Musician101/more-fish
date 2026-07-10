@@ -9,6 +9,7 @@ import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 @NullMarked
@@ -17,8 +18,8 @@ public class RainingConditionDialog extends FishConditionDialog<RainingCondition
 
     private static final String RAINING = "raining";
 
-    public RainingConditionDialog(FishConditionsDialog fishConditionsDialog) {
-        super("raining", fishConditionsDialog);
+    public RainingConditionDialog(FishConditionsDialog fishConditionsDialog, Locale locale) {
+        super("raining", fishConditionsDialog, locale);
     }
 
     @Override
@@ -29,7 +30,7 @@ public class RainingConditionDialog extends FishConditionDialog<RainingCondition
 
     @Override
     protected List<DialogInput> inputs() {
-        Component label = Component.translatable("morefish.editor.enabled");
+        Component label = translate("morefish.editor.enabled");
         return List.of(boolInput(RAINING, label, condition().value()));
     }
 

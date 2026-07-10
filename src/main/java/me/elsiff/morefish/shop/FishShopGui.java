@@ -79,7 +79,7 @@ public final class FishShopGui extends MoreFishGUI implements PaperPagedChestGUI
         updatePriceIcon();
         updateUpgradeIcon(slotsPerPage);
         setButton(47, createIcon(Material.CHEST, Component.translatable("morefish.main.shop.sale-filter-icon-name")), ClickType.LEFT, p -> {
-            Dialog dialog = new FishShopFilterDialog(selectedRarities).build();
+            Dialog dialog = new FishShopFilterDialog(selectedRarities, p.locale()).build();
             p.showDialog(dialog);
         });
     }

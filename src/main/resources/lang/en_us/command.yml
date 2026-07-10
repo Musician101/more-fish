@@ -28,10 +28,7 @@ morefish:
     help:
       description: "Shows the help info for /morefish"
       header: "<gradient:#555555:#FF5300:#555555>> ===== <hover:show_text:'<color:#BDB76B>Developed by <authors>'><plugin-display-name></hover> ===== <"
-      command:
-        description: "<gray><command-description>"
-        usage: "<color:#FF5300><command-usage>"
-      info: "<lang:morefish.command.help.command.description> <dark_gray>- <lang:morefish.command.help.command.usage>"
+      info: "<gray><command-description> <dark_gray>- <color:#FF5300><command-usage>"
     reload:
       description: "Reloads the config, fish, and language data from disk."
       fail: "<lang:morefish.main.prefix> <white>Failed to reload: Please check your console."

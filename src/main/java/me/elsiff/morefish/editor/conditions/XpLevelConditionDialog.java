@@ -10,6 +10,7 @@ import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
+import java.util.Locale;
 
 @NullMarked
 @SuppressWarnings("UnstableApiUsage")
@@ -17,16 +18,16 @@ public class XpLevelConditionDialog extends FishConditionDialog<XpLevelCondition
 
     private static final String XP_LEVEL = "xp_level";
 
-    public XpLevelConditionDialog(FishConditionsDialog fishConditionsDialog) {
-        super("xp-level", fishConditionsDialog);
+    public XpLevelConditionDialog(FishConditionsDialog fishConditionsDialog, Locale locale) {
+        super("xp-level", fishConditionsDialog, locale);
     }
 
     @Override
     protected void callback(DialogResponseView view, Audience audience) {
         Integer level = parseNumber(view.getText(XP_LEVEL), Integer::parseInt, i -> i >= 0);
         if (level == null) {
-            Component errorMessage = Component.translatable(conditionPath + ".error");
-            audience.showDialog(new ErrorDialog(errorMessage, this).build());
+            Component errorMessage = translate(conditionPath + "error");
+            audience.showDialog(new ErrorDialog(errorMessage, this, locale).build());
             return;
         }
 
@@ -35,7 +36,7 @@ public class XpLevelConditionDialog extends FishConditionDialog<XpLevelCondition
 
     @Override
     protected List<DialogInput> inputs() {
-        Component label = Component.translatable(conditionPath + ".level");
+        Component label = translate(conditionPath + "level");
         return List.of(textInput(XP_LEVEL, label, condition().value()));
     }
 

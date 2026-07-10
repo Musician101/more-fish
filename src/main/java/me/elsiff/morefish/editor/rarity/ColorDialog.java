@@ -17,6 +17,7 @@ import org.jspecify.annotations.NullMarked;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @NullMarked
 @SuppressWarnings("UnstableApiUsage")
@@ -24,8 +25,8 @@ public class ColorDialog extends MusiDialog {
 
     private final FishRarityDialog rarityDialog;
 
-    public ColorDialog(FishRarityDialog rarityDialog) {
-        super(Component.translatable("morefish.editor.rarity.selected.color.label"));
+    public ColorDialog(FishRarityDialog rarityDialog, Locale locale) {
+        super(Component.translatable("morefish.editor.rarity.selected.color.label"), locale);
         this.rarityDialog = rarityDialog;
     }
 
@@ -39,14 +40,15 @@ public class ColorDialog extends MusiDialog {
             DialogInput red = colorSlider("red", color.red());
             DialogInput green = colorSlider("green", color.green());
             DialogInput blue = colorSlider("blue", color.blue());
-            DialogBody body = DialogBody.plainMessage(Component.translatable("morefish.editor.rarity.selected.color.test-phrase", color));
+            Component message = translate(Component.translatable("morefish.editor.rarity.selected.color.test-phrase", color));
+            DialogBody body = DialogBody.plainMessage(message);
             DialogBase base = DialogBase.builder(label).externalTitle(label).inputs(List.of(red, green, blue)).body(List.of(body)).build();
             b.empty().base(base).type(type());
         });
     }
 
     private DialogInput colorSlider(String colorType, float value) {
-        Component label = Component.translatable("morefish.editor.rarity.selector.color" + colorType);
+        Component label = translate("morefish.editor.rarity.selected.color." + colorType);
         return DialogInput.numberRange(colorType, label, 0, 255).initial(value).step(1F).build();
     }
 
@@ -64,7 +66,7 @@ public class ColorDialog extends MusiDialog {
                 audience.showDialog(build());
             }
         }));
-        buttons.add(actionButton(Component.translatable("morefish.editor.test"), (view, audience) -> {
+        buttons.add(actionButton(translate("morefish.editor.test"), (view, audience) -> {
             float red = getFloat(view, "red");
             float green = getFloat(view, "green");
             float blue = getFloat(view, "blue");
@@ -76,7 +78,7 @@ public class ColorDialog extends MusiDialog {
     }
 
     private ActionButton namedColorButton(NamedTextColor color) {
-        Component label = Component.translatable("morefish.editor.rarity.selected.color.preset-color", ArgumentUtil.namedTextColor(color));
+        Component label = translate("morefish.editor.rarity.selected.color.preset-color", ArgumentUtil.namedTextColor(color));
         return actionButton(label, (v, a) -> a.showDialog(build(color)));
     }
 

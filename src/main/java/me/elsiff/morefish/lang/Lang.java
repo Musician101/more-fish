@@ -3,6 +3,7 @@ package me.elsiff.morefish.lang;
 import me.elsiff.morefish.util.ExceptionUtils;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.minimessage.translation.MiniMessageTranslator;
+import net.kyori.adventure.translation.GlobalTranslator;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -48,10 +49,16 @@ public class Lang extends MiniMessageTranslator {
         getPlugin().saveResource("lang/en_us/gui.yml", false);
         getPlugin().saveResource("lang/en_us/main.yml", false);
         ExceptionUtils.throwIOException("One or more errors occurred while loading language files.", Locale.availableLocales().map(this::loadLocale).mapMulti(Optional::ifPresent));
+        GlobalTranslator.translator().addSource(this);
     }
 
     private Optional<IOException> loadLocale(Locale locale) {
-        try (Stream<Path> localeStream = Files.walk(getPlugin().getDataPath().resolve("lang/" + locale.toString().toLowerCase()))) {
+        Path localePath = getPlugin().getDataPath().resolve("lang/" + locale.toString().toLowerCase());
+        if (!Files.exists(localePath)) {
+            return Optional.empty();
+        }
+
+        try (Stream<Path> localeStream = Files.walk(localePath)) {
             return localeStream.filter(this::isYAML).map(this::loader).map(loader -> loadFile(locale, loader)).filter(Objects::nonNull).collect(ExceptionUtils.toIOException("One or more errors occurred while loading " + locale));
         }
         catch (IOException e) {
@@ -60,7 +67,7 @@ public class Lang extends MiniMessageTranslator {
     }
 
     private boolean isYAML(Path path) {
-        return !Files.isDirectory(path) && path.getFileName().toString().endsWith("*.yml");
+        return !Files.isDirectory(path) && path.getFileName().toString().endsWith(".yml");
     }
 
     private YamlConfigurationLoader loader(Path path) {
@@ -70,7 +77,8 @@ public class Lang extends MiniMessageTranslator {
     @Nullable
     private IOException loadFile(Locale locale, YamlConfigurationLoader loader) {
         try {
-            locales.put(locale, loader.load());
+            ConfigurationNode newNode = locales.getOrDefault(locale, loader.createNode()).mergeFrom(loader.load());
+            locales.put(locale, newNode);
             return null;
         }
         catch (IOException e) {

@@ -14,6 +14,7 @@ import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Stream;
 
 @NullMarked
@@ -23,8 +24,8 @@ public abstract class FishConditionDialog<C extends FishCondition<?>> extends Mu
     protected final FishConditionsDialog fishConditionsDialog;
     protected final String conditionPath;
 
-    protected FishConditionDialog(String conditionType, FishConditionsDialog fishConditionsDialog) {
-        super(Component.translatable("morefish.editor.shared.conditions." + conditionType + ".label"));
+    protected FishConditionDialog(String conditionType, FishConditionsDialog fishConditionsDialog, Locale locale) {
+        super(Component.translatable("morefish.editor.shared.conditions." + conditionType + ".label"), locale);
         this.fishConditionsDialog = fishConditionsDialog;
         this.conditionPath = "morefish.editor.shared.conditions." + conditionType + ".";
     }

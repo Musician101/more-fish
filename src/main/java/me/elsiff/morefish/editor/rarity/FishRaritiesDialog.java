@@ -10,6 +10,7 @@ import org.jspecify.annotations.NullMarked;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
 
@@ -17,19 +18,19 @@ import static me.elsiff.morefish.MoreFish.getPlugin;
 @SuppressWarnings("UnstableApiUsage")
 public class FishRaritiesDialog extends MusiDialog {
 
-    public FishRaritiesDialog() {
-        super(Component.translatable("morefish.editor.rarity.selector.label"));
+    public FishRaritiesDialog(Locale locale) {
+        super(Component.translatable("morefish.editor.rarity.selector.label"), locale);
     }
 
     @Override
     protected DialogType type() {
         List<ActionButton> buttons = new ArrayList<>();
         getPlugin().rarities().stream().sorted(Comparator.reverseOrder()).forEach(r -> buttons.add(button(r)));
-        buttons.add(actionButton(Component.translatable("morefish.editor.rarity.selector.new"), showDialog(new NewFishRarityDialog())));
+        buttons.add(actionButton(translate("morefish.editor.rarity.new.label"), showDialog(new NewFishRarityDialog(locale))));
         return DialogType.multiAction(buttons, backButton(), 2);
     }
 
     private ActionButton button(FishRarity rarity) {
-        return dialogButton(new FishRarityDialog(rarity));
+        return dialogButton(new FishRarityDialog(rarity, locale));
     }
 }

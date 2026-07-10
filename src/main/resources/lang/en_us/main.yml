@@ -2,7 +2,7 @@ morefish:
   main:
     already-stopped: "<lang:morefish.main.prefix> <white>The contest is already stopped."
     announcement:
-      catch: "<lang:morefish.main.prefix> <yellow><player:head><player> <white>caught <fish-rarity:color><fish:length:#.##>cm <fish:sprite> <bold><fish-rarity:color><fish-type:display-name-with-rarity>."
+      catch: "<lang:morefish.main.prefix> <yellow><player:head> <player> <white>caught <fish-rarity:color><fish:length:#.##>cm <fish:sprite> <bold><fish-rarity:color><fish-type:display-name>."
       pre-announcement:
         message: "<lang:morefish.main.prefix> <white>If there are <gold><required-players> <white>or more players online in <gold><time-remaining><white>, the next competition will begin!"
         time-remaining: "<hours> <minutes>"
@@ -14,15 +14,13 @@ morefish:
           plural: "minutes"
       new-1st: "<lang:morefish.main.prefix> <yellow><player> <white>is now 1st!"
     config:
-      config:
-        success: "Loaded config.yml successfully!"
+      success: "Loaded config.yml successfully!"
     fish:
       success: "Loaded <rarity-count> rarities and <type-count> types."
       error: "<error>"
     lang:
       success: "Loaded language configuration files."
       error: "<error>"
-      list-error: "Someone broke <node-path>"
     contraband-alert: "<red><click:run_command:/mf contraband>[MF] CONTRABAND DETECTED IN YOUR FISH BAG. CLICK THIS MESSAGE TO RETRIEVE IT NOW."
     contest:
       start: "<lang:morefish.main.prefix> <white>The fishing contest has started!"

@@ -13,6 +13,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 @NullMarked
 @SuppressWarnings("UnstableApiUsage")
@@ -20,8 +21,8 @@ public class TimeConditionDialog extends FishConditionDialog<TimeCondition> {
 
     private static final String TIME = "time";
 
-    public TimeConditionDialog(FishConditionsDialog fishConditionsDialog) {
-        super("time", fishConditionsDialog);
+    public TimeConditionDialog(FishConditionsDialog fishConditionsDialog, Locale locale) {
+        super("time", fishConditionsDialog, locale);
     }
 
     @Override
@@ -33,14 +34,14 @@ public class TimeConditionDialog extends FishConditionDialog<TimeCondition> {
 
     @Override
     protected List<DialogInput> inputs() {
-        Component label = Component.translatable(conditionPath + ".label");
+        Component label = translate(conditionPath + "label");
         List<OptionEntry> options = Arrays.stream(TimeState.values()).map(this::option).toList();
         return List.of(singleOptionInput(TIME, label, options));
     }
 
     private OptionEntry option(TimeState timeState) {
         String s = timeState.toString().toLowerCase();
-        return OptionEntry.create(s, Component.translatable(conditionPath + "." + s), condition().value() == timeState);
+        return OptionEntry.create(s, translate(conditionPath + s), condition().value() == timeState);
     }
 
     @Override

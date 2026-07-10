@@ -9,6 +9,7 @@ import org.jspecify.annotations.NullMarked;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
 
@@ -16,19 +17,19 @@ import static me.elsiff.morefish.MoreFish.getPlugin;
 @SuppressWarnings("UnstableApiUsage")
 public class FishTypesDialog extends MusiDialog {
 
-    public FishTypesDialog() {
-        super(Component.translatable("morefish.editor.type.selector.label"));
+    public FishTypesDialog(Locale locale) {
+        super(Component.translatable("morefish.editor.type.selector.label"), locale);
     }
 
     @Override
     protected DialogType type() {
         List<ActionButton> buttons = new ArrayList<>();
         getPlugin().types().stream().sorted(FishType::compareTo).forEach(t -> buttons.add(button(t)));
-        buttons.add(actionButton(Component.translatable("morefish.editor.type.selector.label"), showDialog(new NewFishTypeDialog())));
+        buttons.add(actionButton(translate("morefish.editor.type.new.label"), showDialog(new NewFishTypeDialog(locale))));
         return DialogType.multiAction(buttons, backButton(), 2);
     }
 
     private ActionButton button(FishType type) {
-        return dialogButton(new FishTypeDialog(type));
+        return dialogButton(new FishTypeDialog(type, locale));
     }
 }

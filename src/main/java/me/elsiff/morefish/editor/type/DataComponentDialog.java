@@ -10,6 +10,7 @@ import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
+import java.util.Locale;
 
 @NullMarked
 @SuppressWarnings("UnstableApiUsage")
@@ -21,8 +22,8 @@ public class DataComponentDialog extends MusiDialog {
     @Nullable
     private final String dataComponent;
 
-    public DataComponentDialog(Component label, FishIconDialog fishIconDialog, String componentKey, @Nullable String dataComponent) {
-        super(label);
+    public DataComponentDialog(Component label, FishIconDialog fishIconDialog, String componentKey, @Nullable String dataComponent, Locale locale) {
+        super(label, locale);
         this.fishIconDialog = fishIconDialog;
         this.componentKey = componentKey;
         this.dataComponent = dataComponent;
@@ -40,7 +41,7 @@ public class DataComponentDialog extends MusiDialog {
 
     @Override
     protected DialogType type() {
-        ActionButton applyButton = actionButton(Component.translatable("morefish.editor.apply"), (view, audience) -> {
+        ActionButton applyButton = actionButton(translate("morefish.editor.apply"), (view, audience) -> {
             String component = view.getText(COMPONENT);
             if (component == null) {
                 fishIconDialog.dataComponents.remove(componentKey);

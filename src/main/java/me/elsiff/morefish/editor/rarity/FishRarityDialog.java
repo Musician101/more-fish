@@ -17,6 +17,7 @@ import org.jspecify.annotations.NullMarked;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static me.elsiff.morefish.MoreFish.getPlugin;
 
@@ -27,13 +28,13 @@ public class FishRarityDialog extends FishAbstractDialog<FishRarity> {
     private static final String FILTER_DEFAULT = "filter_default";
     private static final String WEIGHT = "weight";
 
-    public FishRarityDialog(FishRarity rarity) {
-        super(Component.translatable("morefish.editor.rarity.selected.label.internal", rarity), rarity);
+    public FishRarityDialog(FishRarity rarity, Locale locale) {
+        super(Component.translatable("morefish.editor.rarity.selected.label.internal", rarity), rarity, locale);
     }
 
     @Override
     protected DialogBase base() {
-        Component externalLabel = Component.translatable("morefish.editor.rarity.selected.label.external", fishAbstract);
+        Component externalLabel = translate("morefish.editor.rarity.selected.label.external", fishAbstract);
         return DialogBase.builder(label).externalTitle(externalLabel).inputs(inputs()).body(body()).build();
     }
 
@@ -44,7 +45,7 @@ public class FishRarityDialog extends FishAbstractDialog<FishRarity> {
 
     @Override
     protected Component generalErrorMessage(Throwable throwable) {
-        return Component.translatable("morefish.editor.rarity.selected.save-failed", ArgumentUtil.error(throwable.getMessage()), fishAbstract);
+        return translate("morefish.editor.rarity.selected.save-failed", ArgumentUtil.error(throwable.getMessage()), fishAbstract);
     }
 
     @Override
@@ -53,25 +54,25 @@ public class FishRarityDialog extends FishAbstractDialog<FishRarity> {
     }
 
     private DialogInput filterDefault() {
-        Component label = Component.translatable("morefish.editor.rarity.selected.filter-default");
+        Component label = translate("morefish.editor.rarity.selected.filter-default");
         return boolInput(FILTER_DEFAULT, label, fishAbstract.filterDefaultEnabled());
     }
 
     private DialogInput weight() {
-        Component label = Component.translatable("morefish.editor.rarity.selected.weight.label");
+        Component label = translate("morefish.editor.rarity.selected.weight.label");
         return textInput(WEIGHT, label, fishAbstract.weight());
     }
 
     @Override
     protected DialogType type() {
         List<ActionButton> buttons = new ArrayList<>();
-        buttons.add(dialogButton(new AnnouncementDialog(this)));
-        buttons.add(dialogButton(new ColorDialog(this)));
-        buttons.add(dialogButton(new FishConditionsDialog(this)));
-        buttons.add(dialogButton(new LuckOfTheSeaModifierDialog(this)));
+        buttons.add(dialogButton(new AnnouncementDialog(this, locale)));
+        buttons.add(dialogButton(new ColorDialog(this, locale)));
+        buttons.add(dialogButton(new FishConditionsDialog(this, locale)));
+        buttons.add(dialogButton(new LuckOfTheSeaModifierDialog(this, locale)));
         buttons.add(saveButton());
         buttons.add(deleteButton());
-        ActionButton discardButton = discardButton(showDialog(new FishRaritiesDialog()));
+        ActionButton discardButton = discardButton(showDialog(new FishRaritiesDialog(locale)));
         return DialogType.multiAction(buttons, discardButton, 2);
     }
 
@@ -83,8 +84,8 @@ public class FishRarityDialog extends FishAbstractDialog<FishRarity> {
 
             Integer weight = parseNumber(view.getText(WEIGHT), Integer::parseInt, i -> i > 0);
             if (weight == null) {
-                Component errorMessage = Component.translatable("morefish.editor.rarity.selected.weight.error");
-                audience.showDialog(new ErrorDialog(errorMessage, this).build());
+                Component errorMessage = translate("morefish.editor.rarity.selected.weight.error");
+                audience.showDialog(new ErrorDialog(errorMessage, this, locale).build());
                 return;
             }
 
@@ -92,12 +93,12 @@ public class FishRarityDialog extends FishAbstractDialog<FishRarity> {
             setValue(weight, fishAbstract::weight);
             try {
                 save();
-                audience.showDialog(new FishRaritiesDialog().build());
+                audience.showDialog(new FishRaritiesDialog(locale).build());
             }
             catch (IOException e) {
-                Component message = Component.translatable("morefish.editor.rarity.selected.save-failed", ArgumentUtil.error(e.getMessage()), fishAbstract);
+                Component message = translate("morefish.editor.rarity.selected.save-failed", ArgumentUtil.error(e.getMessage()), fishAbstract);
                 getPlugin().getComponentLogger().error(message, e);
-                audience.showDialog(new ErrorDialog(message, this).build());
+                audience.showDialog(new ErrorDialog(message, this, locale).build());
             }
         });
     }
@@ -106,12 +107,12 @@ public class FishRarityDialog extends FishAbstractDialog<FishRarity> {
         return deleteButton((view, audience) -> {
             try {
                 getPlugin().rarities().delete(fishAbstract);
-                audience.showDialog(new FishRaritiesDialog().build());
+                audience.showDialog(new FishRaritiesDialog(locale).build());
             }
             catch (IOException e) {
-                Component message = Component.translatable("morefish.editor.rarity.selected.delete-failed", ArgumentUtil.error(e.getMessage()), fishAbstract);
+                Component message = translate("morefish.editor.rarity.selected.delete-failed", ArgumentUtil.error(e.getMessage()), fishAbstract);
                 getPlugin().getComponentLogger().error(message, e);
-                audience.showDialog(new ErrorDialog(message, this).build());
+                audience.showDialog(new ErrorDialog(message, this, locale).build());
             }
         });
     }

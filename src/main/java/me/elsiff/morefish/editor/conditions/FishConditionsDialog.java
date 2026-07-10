@@ -11,6 +11,7 @@ import org.jspecify.annotations.NullMarked;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @NullMarked
 @SuppressWarnings("UnstableApiUsage")
@@ -18,22 +19,22 @@ public class FishConditionsDialog extends MusiDialog {
 
     final FishAbstractDialog<?> fishAbstractDialog;
 
-    public FishConditionsDialog(FishAbstractDialog<?> fishAbstractDialog) {
-        super(Component.translatable("morefish.editor.shared.conditions.label"));
+    public FishConditionsDialog(FishAbstractDialog<?> fishAbstractDialog, Locale locale) {
+        super(Component.translatable("morefish.editor.shared.conditions.label"), locale);
         this.fishAbstractDialog = fishAbstractDialog;
     }
 
     @Override
     protected DialogType type() {
         List<Dialog> dialogs = new ArrayList<>();
-        dialogs.add(new BiomesConditionDialog(this).build());
-        dialogs.add(new EnchantmentsConditionDialog(this).build());
-        dialogs.add(new LocationYConditionDialog(this).build());
-        dialogs.add(new PotionEffectsConditionDialog(this).build());
-        dialogs.add(new RainingConditionDialog(this).build());
-        dialogs.add(new ThunderingConditionDialog(this).build());
-        dialogs.add(new TimeConditionDialog(this).build());
-        dialogs.add(new XpLevelConditionDialog(this).build());
+        dialogs.add(new BiomesConditionDialog(this, locale).build());
+        dialogs.add(new EnchantmentsConditionDialog(this, locale).build());
+        dialogs.add(new LocationYConditionDialog(this, locale).build());
+        dialogs.add(new PotionEffectsConditionDialog(this, locale).build());
+        dialogs.add(new RainingConditionDialog(this, locale).build());
+        dialogs.add(new ThunderingConditionDialog(this, locale).build());
+        dialogs.add(new TimeConditionDialog(this, locale).build());
+        dialogs.add(new XpLevelConditionDialog(this, locale).build());
         return DialogType.dialogList(RegistrySet.valueSet(RegistryKey.DIALOG, dialogs)).exitAction(backButton(showDialog(fishAbstractDialog))).build();
     }
 }

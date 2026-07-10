@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 @NullMarked
@@ -32,8 +33,8 @@ public class FishIconDialog extends MusiDialog {
     final Map<String, String> dataComponents;
     private final FishTypeDialog fishTypeDialog;
 
-    public FishIconDialog(FishTypeDialog fishTypeDialog) {
-        super(Component.translatable("morefish.editor.type.selected.icon.label"));
+    public FishIconDialog(FishTypeDialog fishTypeDialog, Locale locale) {
+        super(Component.translatable("morefish.editor.type.selected.icon.label"), locale);
         this.fishTypeDialog = fishTypeDialog;
         this.dataComponents = dataComponents();
     }
@@ -61,8 +62,8 @@ public class FishIconDialog extends MusiDialog {
     @Override
     protected List<DialogInput> inputs() {
         ItemStack itemStack = itemStack();
-        DialogInput itemId = textInput(ITEM_ID, Component.translatable("morefish.editor.type.selected.icon.id.label"), itemStack.getType().key().asString());
-        DialogInput amount = textInput(AMOUNT, Component.translatable("morefish.editor.type.selected.icon.amount.label"), itemStack.getAmount());
+        DialogInput itemId = textInput(ITEM_ID, translate("morefish.editor.type.selected.icon.id.label"), itemStack.getType().key().asString());
+        DialogInput amount = textInput(AMOUNT, translate("morefish.editor.type.selected.icon.amount.label"), itemStack.getAmount());
         return List.of(itemId, amount);
     }
 
@@ -73,8 +74,8 @@ public class FishIconDialog extends MusiDialog {
         Arrays.stream(DataComponents.values()).forEach(d -> buttons.add(button(d)));
         buttons.add(saveButton((view, audience) -> {
             String id = view.getText(ITEM_ID);
-            Component idErrorLabel = Component.translatable("morefish.editor.type.selected.icon.id.error");
-            ErrorDialog idErrorDialog = new ErrorDialog(idErrorLabel, this);
+            Component idErrorLabel = translate("morefish.editor.type.selected.icon.id.error");
+            ErrorDialog idErrorDialog = new ErrorDialog(idErrorLabel, this, locale);
             if (id == null) {
                 audience.showDialog(idErrorDialog.build());
                 return;
@@ -88,8 +89,8 @@ public class FishIconDialog extends MusiDialog {
 
             Integer amount = parseNumber(view.getText(AMOUNT), Integer::parseInt, i -> i > 0);
             if (amount == null) {
-                Component message = Component.translatable("morefish.editor.type.selected.icon.amount.error");
-                audience.showDialog(new ErrorDialog(message, this).build());
+                Component message = translate("morefish.editor.type.selected.icon.amount.error");
+                audience.showDialog(new ErrorDialog(message, this, locale).build());
                 return;
             }
 
@@ -110,8 +111,8 @@ public class FishIconDialog extends MusiDialog {
         String component = dataComponents.get(dataComponentString);
         String name = StringUtils.capitaliseAllWords(dataComponentString.replaceAll("_", " "));
         ComponentLike argument = Argument.string("data-component", name);
-        Component label = Component.translatable("morefish.editor.type.selected.icon.data-component.label", argument);
-        return dialogButton(new DataComponentDialog(label, this, dataComponentString, component));
+        Component label = translate("morefish.editor.type.selected.icon.data-component.label", argument);
+        return dialogButton(new DataComponentDialog(label, this, dataComponentString, component, locale));
     }
 
     // DataComponent implementation provided by Paper is still experimental and not fully implemented.

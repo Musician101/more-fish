@@ -66,6 +66,20 @@ morefish:
         error: "Failed to parse price multiplier. Make sure you typed it in correctly and that it is greater than 0."
       skip-item-format: "<color:#ffffff>Skip Item Format"
     type:
+      new:
+        label: "<gradient:#55ff55:#00aa00:#55ff55>New Fish"
+        display-name:
+          error: "Display Name is null or empty. Make sure you typed it correctly."
+          label: "Display Name"
+        id:
+          error:
+            format: "ID is malformed or null. Make sure you typed it correctly."
+            already-exists: "ID is malformed or null. Make sure you typed it correctly."
+          label: "ID"
+        rarity:
+          error: "The selected rarity is either null or isn't a registered rarity."
+          label: "Rarity"
+          rarity: "<fish-rarity:color><fish-rarity:display-name>"
       selected:
         delete-failed: "One or more errors occurred while deleting <fish-type:display-name>: <error><newline>More info may be in the console."
         icon:
@@ -94,20 +108,6 @@ morefish:
         save-failed: "<white>One or more errors occurred while saving <fish-type:display-name>: <error><newline><lang:morefish.main.prefix> <white>More info may be in the console."
       selector:
         label: "<gold>Select A Fish To Edit"
-        new:
-          label: "<gradient:#55ff55:#00aa00:#55ff55>New Fish"
-          display-name:
-            error: "Display Name is null or empty. Make sure you typed it correctly."
-            label: "Display Name"
-          id:
-            error:
-              format: "ID is malformed or null. Make sure you typed it correctly."
-              already-exists: "ID is malformed or null. Make sure you typed it correctly."
-            label: "ID"
-          rarity:
-            error: "The selected rarity is either null or isn't a registered rarity."
-            label: "Rarity"
-            rarity: "<fish-rarity:color><fish-rarity:display-name>"
     rarity:
       new:
         label: "<gradient:#55ff55:#00aa00:#55ff55>New Rarity"

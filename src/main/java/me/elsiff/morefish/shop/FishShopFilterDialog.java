@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -24,8 +25,8 @@ public class FishShopFilterDialog extends MusiDialog {
     public static final Map<UUID, List<FishRarity>> FILTERS = new HashMap<>();
     private final List<FishRarity> filters;
 
-    public FishShopFilterDialog(List<FishRarity> filters) {
-        super(Component.translatable("morefish.main.sales-filter.label"));
+    public FishShopFilterDialog(List<FishRarity> filters, Locale locale) {
+        super(Component.translatable("morefish.main.sales-filter.label"), locale);
         this.filters = filters;
     }
 
