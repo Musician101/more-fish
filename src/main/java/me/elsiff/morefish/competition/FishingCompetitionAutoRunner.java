@@ -3,6 +3,7 @@ package me.elsiff.morefish.competition;
 import com.google.common.collect.Lists;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.translation.Argument;
 import org.bukkit.Bukkit;
@@ -43,10 +44,10 @@ public final class FishingCompetitionAutoRunner {
         if (hours > 0) {
             sb.append(hours);
             if (hours > 1) {
-                sb.append("<lang:morefish.main.announcement.pre-announcement.hour.plural>");
+                sb.append(" <lang:morefish.main.announcement.pre-announcement.hour.plural>");
             }
             else {
-                sb.append("<lang:morefish.main.announcement.pre-announcement.hour.singular>");
+                sb.append(" <lang:morefish.main.announcement.pre-announcement.hour.singular>");
             }
         }
 
@@ -56,15 +57,17 @@ public final class FishingCompetitionAutoRunner {
             }
 
             sb.append(minutes);
-            if (hours > 1) {
-                sb.append("<lang:morefish.main.announcement.pre-announcement.minute.plural>");
+            if (minutes > 1) {
+                sb.append(" <lang:morefish.main.announcement.pre-announcement.minute.plural>");
             }
             else {
-                sb.append("<lang:morefish.main.announcement.pre-announcement.minute.singular>");
+                sb.append(" <lang:morefish.main.announcement.pre-announcement.minute.singular>");
             }
         }
 
-        Bukkit.broadcast(Component.translatable("morefish.main.announcement.pre-announcement.message", Argument.numeric("required-players", requiredPlayers), Argument.tagResolver(Placeholder.parsed("time-remaining", sb.toString()))));
+        ComponentLike requiredPlayersArgument = Argument.numeric("required-players", requiredPlayers);
+        ComponentLike timeRemainingArgument = Argument.tagResolver(Placeholder.parsed("time-remaining", sb.toString()));
+        Bukkit.broadcast(Component.translatable("morefish.main.announcement.pre-announcement.message", requiredPlayersArgument, timeRemainingArgument));
     }
 
     public void enable() {

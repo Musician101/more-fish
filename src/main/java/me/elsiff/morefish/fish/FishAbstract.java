@@ -7,7 +7,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.VirtualComponent;
 import net.kyori.adventure.text.minimessage.Context;
-import net.kyori.adventure.text.minimessage.ParsingException;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.ArgumentQueue;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -115,11 +114,8 @@ public abstract class FishAbstract<F extends FishAbstract<F>> implements Compara
     }
 
     @SuppressWarnings("PatternValidation")
-    @Override
-    public @Nullable Tag resolve(String name, ArgumentQueue arguments, Context ctx) throws ParsingException {
+    protected @Nullable Tag resolve(String name, String value, ArgumentQueue arguments, Context ctx) {
         if (has(name)) {
-            arguments.reset();
-            String value = arguments.popOr(tagKey + " needs at least 1 argument.").value();
             return switch (value) {
                 case "announcement" -> announcement.resolve(value, arguments, ctx);
                 case "commands" ->

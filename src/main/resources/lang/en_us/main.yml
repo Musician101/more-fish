@@ -2,15 +2,15 @@ morefish:
   main:
     already-stopped: "<lang:morefish.main.prefix> <white>The contest is already stopped."
     announcement:
-      catch: "<lang:morefish.main.prefix> <yellow><player:head> <player> <white>caught <fish-rarity:color><fish:length:#.##>cm <fish:sprite> <bold><fish-rarity:color><fish-type:display-name>."
+      catch: "<lang:morefish.main.prefix> <yellow><player:head> <player> <white>caught <fish-rarity:color><fish:length:#.##>cm <reset><fish:sprite> <bold><fish-rarity:color><fish-type:display-name>."
       pre-announcement:
         message: "<lang:morefish.main.prefix> <white>If there are <gold><required-players> <white>or more players online in <gold><time-remaining><white>, the next competition will begin!"
         time-remaining: "<hours> <minutes>"
         hour:
-          single: "hour"
+          singular: "hour"
           plural: "hours"
         minute:
-          single: "minute"
+          singular: "minute"
           plural: "minutes"
       new-1st: "<lang:morefish.main.prefix> <yellow><player> <white>is now 1st!"
     config:
@@ -67,6 +67,6 @@ morefish:
       no-catches: "<lang:morefish.main.prefix> <white>Nobody has caught anything yet."
       player:
         no-catch: "<lang:morefish.main.prefix> <white>You didn't catch any fish."
-        record: "<lang:morefish.main.prefix> <white>You're <ordinal>.: <fish-record:length:#.##>cm <fish-record:name>"
-      ranked-record: "<lang:morefish.main.prefix> <yellow><ordinal>.: <dark_gray><player>, <fish-record:length:#.##>cm <fish-record:name>"
+        record: "<lang:morefish.main.prefix> <white>You're <ordinal>.: <fish-record:length:#.##>cm <fish-record:fish-type:display-name>"
+      ranked-record: "<lang:morefish.main.prefix> <yellow><ordinal>.: <dark_gray><fish-record:fisher>, <fish-record:length:#.##>cm <fish-record:fish-type:display-name>"
     type-selector-new-name: "<gradient:#ff5900:#5555ff>Select A Fish To Edit"

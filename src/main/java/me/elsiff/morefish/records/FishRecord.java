@@ -43,7 +43,7 @@ public record FishRecord(UUID fisher, Fish fish,
             case "fish-type" -> fish.type().resolve(value, arguments, ctx);
             case "fisher" -> TagResolverUtil.playerNameTag(Bukkit.getOfflinePlayer(fisher));
             case "length" -> TagResolverUtil.numberTag(value, fish.length(), arguments, ctx);
-            case "rarity-name" -> fish.type().rarity().resolve(value, arguments, ctx);
+            case "fish-rarity" -> fish.type().rarity().resolve(value, arguments, ctx);
             default -> null;
         };
     }

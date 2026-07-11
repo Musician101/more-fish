@@ -47,7 +47,7 @@ public final class FishRarity extends FishAbstract<FishRarity> {
                         TagResolverUtil.booleanTag(value, filterDefaultEnabled, arguments, ctx);
                 case "luck-of-the-sea-modifier" -> luckOfTheSeaModifier.resolve(value, arguments, ctx);
                 case "weight" -> TagResolverUtil.numberTag(value, weight, arguments, ctx);
-                default -> super.resolve(name, arguments, ctx);
+                default -> resolve(name, value, arguments, ctx);
             };
         }
 

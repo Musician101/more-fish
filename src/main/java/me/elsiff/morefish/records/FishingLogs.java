@@ -1,5 +1,6 @@
 package me.elsiff.morefish.records;
 
+import io.leangen.geantyref.TypeToken;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.jspecify.annotations.NullMarked;
@@ -25,7 +26,7 @@ public final class FishingLogs extends FishRecordKeeper {
             }
 
             ConfigurationNode node = loader().createNode();
-            node.node("records").set(records);
+            node.node("records").set(new TypeToken<>() {}, records);
             loader().save(node);
         }
         catch (IOException e) {

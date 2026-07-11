@@ -20,7 +20,7 @@ morefish:
     fishing-logs:
       description: "Shows all the fish you've caught."
       none: "<lang:morefish.main.prefix> <white>You have not caught any fish yet."
-      record: "<color:#ff312e><fish-record:length:#.##>cm <fish-record:name> <color:#ffe100><fish-record:date:'MMMMM d, yyyy @ h:mm z'>"
+      record: "<color:#ff312e><fish-record:length:#.##>cm <fish-record:fish-type:display-name> <color:#ffe100><fish-record:date:'MMMM d, YYYY @ h:mm z'>"
     give:
       description: "Give a player a fish."
       receiver: "<lang:morefish.main.prefix> <white>You just received a <fish-type:display-name>."

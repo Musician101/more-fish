@@ -43,7 +43,7 @@ public final class FishingCompetition extends FishRecordKeeper {
 
             ConfigurationNode node = loader().createNode();
             ConfigurateException ex = new ConfigurateException();
-            IntStream.range(0, records.size()).boxed().map(CheckedConsumer.asFunction(i -> node.node(i).set(records.get(i)))).filter(Objects::nonNull).forEach(ex::addSuppressed);
+            IntStream.range(0, records.size()).boxed().map(CheckedConsumer.asFunction(i -> node.node((i + 1) + "").set(records.get(i)))).filter(Objects::nonNull).forEach(ex::addSuppressed);
             loader().save(node);
             if (ex.getSuppressed().length > 0) {
                 throw ex;

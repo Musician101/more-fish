@@ -52,6 +52,10 @@ public final class FishingCompetitionTimerBarHandler implements Listener {
         timerBar = BossBar.bossBar(timerBarTitle(duration), 1, barColor, Overlay.NOTCHED_10);
         Bukkit.getOnlinePlayers().forEach(player -> player.showBossBar(timerBar));
         barUpdatingTask = Bukkit.getAsyncScheduler().runAtFixedRate(getPlugin(), task -> {
+            if (remainingSeconds == 0) {
+                return;
+            }
+
             remainingSeconds--;
             timerBar.name(timerBarTitle(remainingSeconds));
             timerBar.progress((float) remainingSeconds / duration);

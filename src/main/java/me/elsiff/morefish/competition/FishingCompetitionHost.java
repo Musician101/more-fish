@@ -86,6 +86,6 @@ public final class FishingCompetitionHost {
         timerTask = Bukkit.getAsyncScheduler().runDelayed(getPlugin(), task -> closeCompetition(), duration, TimeUnit.SECONDS);
         timerBarHandler.enableTimer(duration);
         Bukkit.broadcast(Component.translatable("morefish.main.contest.start"));
-        Bukkit.broadcast(Component.translatable("morefish.main.contenst.timer", ArgumentUtil.timeRemaining(duration)));
+        Bukkit.broadcast(Component.translatable("morefish.main.contest.timer", ArgumentUtil.timeRemaining(duration)));
     }
 }

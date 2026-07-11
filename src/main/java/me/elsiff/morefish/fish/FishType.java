@@ -170,7 +170,6 @@ public final class FishType extends FishAbstract<FishType> {
 
             FishRecord record = new FishRecord(player.getUniqueId(), fish, System.currentTimeMillis());
             fc.add(record);
-            getPlugin().getFishingLogs().add(record);
         }
 
         if (fish.type().announcement().type() != PlayerAnnouncement.Type.NONE) {
@@ -193,7 +192,7 @@ public final class FishType extends FishAbstract<FishType> {
                 case "min-length" -> TagResolverUtil.numberTag("min-length", minLength, arguments, ctx);
                 case "name-with-rarity" ->
                         Tag.preProcessParsed((noDisplay() ? "" : rarity().displayName().toUpperCase() + " ") + displayName());
-                default -> super.resolve(name, arguments, ctx);
+                default -> resolve(name, value, arguments, ctx);
             };
         }
 
